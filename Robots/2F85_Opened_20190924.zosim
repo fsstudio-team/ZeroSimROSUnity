@@ -1,0 +1,669 @@
+{
+  "document_name": "2F85_Opened_20190924",
+  "document_version": "1.0",
+  "mesh_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "transform_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "components": [
+    {
+      "name": "2f85-opened"
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-base-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-base-step_visual_.obj"
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger1-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-finger1-step_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 4.7173373138529146E-06,
+        "volume": 4.7173373138529146E-06,
+        "center_mass": [
+          -0.0427253470899416,
+          0.054022457090621409,
+          -1.8483812140540784E-13
+        ],
+        "inertia": [
+          [
+            1.2279485490053935E-10,
+            5.3761554708625658E-11,
+            -1.2827043014466606E-20
+          ],
+          [
+            5.3761554708625658E-11,
+            7.5735932070065323E-10,
+            7.3585500378315439E-22
+          ],
+          [
+            -1.2827043014466606E-20,
+            7.3585500378315439E-22,
+            7.90486034904605E-10
+          ]
+        ]
+      }
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger2-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-finger2-step_visual_.obj"
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger3-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-finger3-step_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 1.0105295199703226E-05,
+        "volume": 1.0105295199703226E-05,
+        "center_mass": [
+          -0.032219121286568363,
+          0.083418892892878252,
+          4.8125306811235245E-08
+        ],
+        "inertia": [
+          [
+            3.1884733935773368E-09,
+            -1.348387833935367E-09,
+            -1.0402376430038154E-14
+          ],
+          [
+            -1.348387833935367E-09,
+            2.8491321014034413E-09,
+            1.1162061478466279E-14
+          ],
+          [
+            -1.0402376430038154E-14,
+            1.1162061478466279E-14,
+            2.9596645404256618E-09
+          ]
+        ]
+      }
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger4-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-finger4-step_visual_.obj"
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-fingertips-step",
+      "visual_mesh_file": "visual_meshes/defeatured-2f-85-pad-open-fingertips-step_visual_.obj"
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "defeatured-2f-85-pad-open-base-step-occurrence",
+      "component_name": "defeatured-2f-85-pad-open-base-step",
+      "translation": [
+        5.2582938E-14,
+        0.00546904374,
+        0.0934257358
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": [],
+      "rigidbody": {
+        "mass": 2.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "type": "fixed"
+        },
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger1-step-occurrence",
+          "type": "joint.hinge",
+          "anchor": [
+            -0.0306,
+            0.055,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "connected_anchor": [
+            -0.0306023322,
+            0.0550000034,
+            -0.000199995935
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger1-step-occurrence",
+          "parent_occurrence": "defeatured-2f-85-pad-open-base-step-occurrence"
+        },
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0127,
+            0.0615,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "connected_anchor": [
+            -0.0127793141,
+            0.0614304245,
+            -5.00008464E-05
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 42.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+          "parent_occurrence": "defeatured-2f-85-pad-open-base-step-occurrence"
+        },
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence",
+          "type": "joint.hinge",
+          "anchor": [
+            -0.0127,
+            0.0615,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "connected_anchor": [
+            -0.0127019566,
+            0.06149998,
+            -0.000149995089
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 42.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger3-step-occurrence",
+          "parent_occurrence": "defeatured-2f-85-pad-open-base-step-occurrence"
+        },
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger1-step-occurrence_1",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0306,
+            0.055,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "connected_anchor": [
+            -0.03060233,
+            0.0550000034,
+            0.000199995935
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger1-step-occurrence_1",
+          "parent_occurrence": "defeatured-2f-85-pad-open-base-step-occurrence"
+        }
+      ],
+      "controllers": [
+        {
+          "name": "controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence",
+          "type": "controller.servor_motor_actuator",
+          "hinge_joint": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence",
+          "min_limit_degrees": 0.0,
+          "max_limit_degrees": 42.0,
+          "pid_controller": {
+            "name": "controller.pid_controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence",
+            "type": "controller.pid",
+            "kp": 25.0,
+            "ki": 15.0,
+            "kd": 0.5,
+            "set_point": 0.0,
+            "dead_band_epsilon": 0.0,
+            "maximum_output": 1000.0
+          }
+        },
+        {
+          "name": "controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+          "type": "controller.servor_motor_actuator",
+          "hinge_joint": "hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+          "min_limit_degrees": 0.0,
+          "max_limit_degrees": 42.0,
+          "pid_controller": {
+            "name": "controller.pid_controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+            "type": "controller.pid",
+            "kp": 25.0,
+            "ki": 15.0,
+            "kd": 0.5,
+            "set_point": 0.0,
+            "dead_band_epsilon": 0.0,
+            "maximum_output": 1000.0
+          }
+        },
+        {
+          "name": "controller.2fingergrip_defeatured-2f-85-pad-open-base-step-occurrence",
+          "type": "controller.2fingergrip",
+          "servo_motor_actuators": [
+            "controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence",
+            "controller.servor_motor_actuator_hinge_joint_from_defeatured-2f-85-pad-open-base-step-occurrence_to_defeatured-2f-85-pad-open-finger3-step-occurrence_1"
+          ],
+          "min_limit_degrees": 0.0,
+          "max_limit_degrees": 42.0,
+          "speed": 0.5
+        }
+      ]
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger1-step-occurrence",
+      "component_name": "defeatured-2f-85-pad-open-finger1-step",
+      "translation": [
+        -0.00134992437,
+        0.004738121,
+        0.09362573
+      ],
+      "rotation_quaternion": [
+        8.64195052E-16,
+        9.956051E-16,
+        -0.0122111822,
+        0.999925435
+      ],
+      "parent_name": "none",
+      "children": [
+        {
+          "name": "defeatured-2f-85-pad-open-finger2-step-occurrence",
+          "component_name": "defeatured-2f-85-pad-open-finger2-step",
+          "translation": [
+            -0.00134992437,
+            0.004738121,
+            0.09262574
+          ],
+          "rotation_quaternion": [
+            1.06189715E-16,
+            1.80564131E-17,
+            -0.0122261625,
+            0.999925256
+          ],
+          "parent_name": "defeatured-2f-85-pad-open-finger1-step-occurrence",
+          "children": [],
+          "joints": [],
+          "controllers": []
+        }
+      ],
+      "rigidbody": {
+        "mass": 0.2,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [],
+      "controllers": []
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger3-step-occurrence",
+      "component_name": "defeatured-2f-85-pad-open-finger3-step",
+      "translation": [
+        -0.00150531973,
+        0.00517692557,
+        0.09357573
+      ],
+      "rotation_quaternion": [
+        1.60555955E-16,
+        3.30563766E-16,
+        -0.0122243278,
+        0.9999253
+      ],
+      "parent_name": "none",
+      "children": [],
+      "joints": [
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-finger3-step-occurrence_to_defeatured-2f-85-pad-open-finger4-step-occurrence",
+          "type": "joint.hinge",
+          "anchor": [
+            -0.05084,
+            0.104,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "connected_anchor": [
+            -0.0508380681,
+            0.103998311,
+            0.00094999373
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger4-step-occurrence",
+          "parent_occurrence": "defeatured-2f-85-pad-open-finger3-step-occurrence"
+        }
+      ],
+      "rigidbody": {
+        "mass": 0.1,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "controllers": []
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger4-step-occurrence",
+      "component_name": "defeatured-2f-85-pad-open-finger4-step",
+      "translation": [
+        0.001055069,
+        0.006392683,
+        0.09262574
+      ],
+      "rotation_quaternion": [
+        -4.04533142E-17,
+        2.81508521E-17,
+        2.2381857E-05,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": [
+        {
+          "name": "defeatured-2f-85-pad-open-fingertips-step-occurrence",
+          "component_name": "defeatured-2f-85-pad-open-fingertips-step",
+          "translation": [
+            0.001055069,
+            0.006392683,
+            0.09262574
+          ],
+          "rotation_quaternion": [
+            -1.4013906E-15,
+            2.92365763E-17,
+            2.2381857E-05,
+            1.0
+          ],
+          "parent_name": "defeatured-2f-85-pad-open-finger4-step-occurrence",
+          "children": [],
+          "joints": [],
+          "controllers": []
+        }
+      ],
+      "joints": [],
+      "rigidbody": {
+        "mass": 0.2,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "controllers": []
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger1-step-occurrence_1",
+      "component_name": "defeatured-2f-85-pad-open-finger1-step",
+      "translation": [
+        0.00134992437,
+        0.004738121,
+        0.09362573
+      ],
+      "rotation_quaternion": [
+        -0.0122111822,
+        0.999925435,
+        -2.561108E-16,
+        -9.733483E-16
+      ],
+      "parent_name": "none",
+      "children": [
+        {
+          "name": "defeatured-2f-85-pad-open-finger2-step-occurrence_1",
+          "component_name": "defeatured-2f-85-pad-open-finger2-step",
+          "translation": [
+            0.00134992437,
+            0.004738121,
+            0.0934257358
+          ],
+          "rotation_quaternion": [
+            -0.0122261625,
+            0.999925256,
+            -1.67686927E-16,
+            8.25116E-18
+          ],
+          "parent_name": "defeatured-2f-85-pad-open-finger1-step-occurrence_1",
+          "children": [],
+          "joints": [],
+          "controllers": []
+        }
+      ],
+      "joints": [],
+      "rigidbody": {
+        "mass": 0.2,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "controllers": []
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger3-step-occurrence_1",
+      "component_name": "defeatured-2f-85-pad-open-finger3-step",
+      "translation": [
+        -0.04654061,
+        0.04629156,
+        0.09347574
+      ],
+      "rotation_quaternion": [
+        8.061838E-17,
+        -8.96683835E-17,
+        -0.659414232,
+        0.7517798
+      ],
+      "parent_name": "none",
+      "children": [],
+      "joints": [
+        {
+          "name": "hinge_joint_from_defeatured-2f-85-pad-open-finger3-step-occurrence_1_to_defeatured-2f-85-pad-open-finger4-step-occurrence_1",
+          "type": "joint.hinge",
+          "anchor": [
+            -0.05084,
+            0.104,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "connected_anchor": [
+            -0.0509957671,
+            0.103863381,
+            -1.04775759E-17
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "defeatured-2f-85-pad-open-finger4-step-occurrence_1",
+          "parent_occurrence": "defeatured-2f-85-pad-open-finger3-step-occurrence_1"
+        }
+      ],
+      "rigidbody": {
+        "mass": 0.1,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "controllers": []
+    },
+    {
+      "name": "defeatured-2f-85-pad-open-finger4-step-occurrence_1",
+      "component_name": "defeatured-2f-85-pad-open-finger4-step",
+      "translation": [
+        -0.001055069,
+        0.006392683,
+        0.09347574
+      ],
+      "rotation_quaternion": [
+        2.2381857E-05,
+        1.0,
+        -7.791568E-17,
+        5.59571935E-17
+      ],
+      "parent_name": "none",
+      "children": [
+        {
+          "name": "defeatured-2f-85-pad-open-fingertips-step-occurrence_1",
+          "component_name": "defeatured-2f-85-pad-open-fingertips-step",
+          "translation": [
+            -0.001055069,
+            0.006392683,
+            0.09347574
+          ],
+          "rotation_quaternion": [
+            2.2381857E-05,
+            1.0,
+            1.28302166E-15,
+            5.713794E-17
+          ],
+          "parent_name": "defeatured-2f-85-pad-open-finger4-step-occurrence_1",
+          "children": [],
+          "joints": [],
+          "controllers": []
+        }
+      ],
+      "joints": [],
+      "rigidbody": {
+        "mass": 0.2,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "controllers": []
+    }
+  ],
+  "position_transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "mesh_transform_scale": [
+    -1.0,
+    1.0,
+    1.0
+  ]
+}

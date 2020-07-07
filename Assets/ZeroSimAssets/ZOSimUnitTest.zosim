@@ -1,0 +1,309 @@
+{
+  "document_name": "ZOSimUnitTest",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "ZOSimUnitTest"
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "Cube",
+      "translation": [
+        0.0,
+        2.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "primitive": {
+        "type": "cube",
+        "dimensions": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "has_collisions": true,
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "rigidbody": {
+        "mass": 1.24,
+        "drag": 0.01,
+        "angular_drag": 0.01,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "name": "joint.hinge_from_Cube",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            -2.41410685,
+            5.88243628,
+            -2.28037024
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 1.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "parent_occurrence": "Cube"
+        }
+      ],
+      "controllers": [],
+      "children": []
+    },
+    {
+      "name": "Cube2",
+      "translation": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "joints": [],
+      "controllers": [],
+      "children": [
+        {
+          "name": "ChildCube",
+          "translation": [
+            0.0,
+            3.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "Cube2",
+          "rigidbody": {
+            "mass": 1.0,
+            "drag": 0.0,
+            "angular_drag": 0.05,
+            "use_gravity": true,
+            "is_kinematic": false
+          },
+          "joints": [
+            {
+              "name": "joint.hinge_from_Cube",
+              "type": "joint.hinge",
+              "anchor": [
+                0.0,
+                0.5,
+                0.0
+              ],
+              "axis": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "connected_anchor": [
+                -2.41410685,
+                7.88243628,
+                -2.28037024
+              ],
+              "use_spring": false,
+              "spring": {
+                "spring": 1.0,
+                "damper": 0.0,
+                "target_position": 0.0
+              },
+              "use_motor": false,
+              "motor": {
+                "target_velocity": 0.0,
+                "force": 0.0,
+                "free_spin": false
+              },
+              "use_limits": false,
+              "limits": {
+                "min": 0.0,
+                "max": 0.0,
+                "bounciness": 0.0,
+                "bounce_min_velocity": 0.2,
+                "contact_distance": 0.0
+              },
+              "parent_occurrence": "ChildCube"
+            }
+          ],
+          "controllers": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "TestSphere",
+      "translation": [
+        2.35,
+        1.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "primitive": {
+        "type": "sphere",
+        "dimensions": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "has_collisions": true,
+        "color": [
+          0.0,
+          1.0,
+          0.0,
+          1.0
+        ]
+      },
+      "joints": [],
+      "controllers": [],
+      "children": [
+        {
+          "name": "ChildCube",
+          "translation": [
+            0.0,
+            3.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "TestSphere",
+          "rigidbody": {
+            "mass": 1.0,
+            "drag": 0.0,
+            "angular_drag": 0.05,
+            "use_gravity": true,
+            "is_kinematic": false
+          },
+          "joints": [
+            {
+              "name": "joint.hinge_from_Cube",
+              "type": "joint.hinge",
+              "anchor": [
+                0.0,
+                0.5,
+                0.0
+              ],
+              "axis": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "connected_anchor": [
+                -0.06410694,
+                7.88243628,
+                -2.28037024
+              ],
+              "use_spring": false,
+              "spring": {
+                "spring": 1.0,
+                "damper": 0.0,
+                "target_position": 0.0
+              },
+              "use_motor": false,
+              "motor": {
+                "target_velocity": 0.0,
+                "force": 0.0,
+                "free_spin": false
+              },
+              "use_limits": false,
+              "limits": {
+                "min": 0.0,
+                "max": 0.0,
+                "bounciness": 0.0,
+                "bounce_min_velocity": 0.2,
+                "contact_distance": 0.0
+              },
+              "parent_occurrence": "ChildCube"
+            }
+          ],
+          "controllers": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
