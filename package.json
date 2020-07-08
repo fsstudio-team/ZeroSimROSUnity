@@ -9,6 +9,9 @@
     "simulation",
     "ROS"
   ],
+  "dependencies": {
+    "com.unity.burst": "1.2.3"
+  },
   "samples": [
     {
       "displayName": "ZeroSim samples",
