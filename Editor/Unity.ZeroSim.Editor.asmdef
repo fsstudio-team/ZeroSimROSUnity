@@ -1,0 +1,17 @@
+{
+    "name": "Unity.ZeroSim.Editor",
+    "references": [
+        "Unity.ZeroSim"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

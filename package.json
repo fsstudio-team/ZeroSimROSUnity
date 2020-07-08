@@ -9,8 +9,15 @@
     "simulation",
     "ROS"
   ],
+  "samples": [
+    {
+      "displayName": "ZeroSim samples",
+      "description": "ZeroSim samples",
+      "path": "Samples~/ZeroSimSamples"
+    }
+  ],
   "author": {
-    "name": "Unity",
+    "name": "FS Studio",
     "email": "micah@fsstudio.com",
     "url": "http://www.fsstudio.com"
   }
