@@ -6,7 +6,7 @@ using UnityEditor;
 namespace ZO.Editor {
 
     [CustomEditor(typeof(ZO.ZOSimDocumentRoot))]
-    public class ZOSimRootComponentEditor : UnityEditor.Editor {
+    public class ZOSimDocumentRootEditor : UnityEditor.Editor {
 
         public override void OnInspectorGUI() {
 
@@ -16,12 +16,18 @@ namespace ZO.Editor {
 
             if (GUILayout.Button("Save ZOSim")) {
                 Debug.Log("INFO: ZOSimBaseComponent Save ZOSim");
-                zoSimBaseComponent.SaveToZOSimFile();
+                if (EditorUtility.DisplayDialog("Override File:", "Override File: " + zoSimBaseComponent.ZOSimDocumentFilePath, "OK", "Cancel")) {
+                    zoSimBaseComponent.SaveToZOSimFile(zoSimBaseComponent.ZOSimDocumentFilePath);
+                }
+
             }
 
             if (GUILayout.Button("Load ZOSim")) {
                 Debug.Log("INFO: ZOSimBaseComponent Load ZOSim");
-                zoSimBaseComponent.LoadFromZOSimFile(zoSimBaseComponent.ZOSimDocumentFilePath);
+                if (EditorUtility.DisplayDialog("Override Object:", "Override Object with file: " + zoSimBaseComponent.ZOSimDocumentFilePath, "OK", "Cancel")) {
+
+                    zoSimBaseComponent.LoadFromZOSimFile(zoSimBaseComponent.ZOSimDocumentFilePath);
+                }
             }
 
         }

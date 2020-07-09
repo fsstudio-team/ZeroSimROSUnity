@@ -403,11 +403,17 @@ namespace ZO.ROS {
                 }
             }
 
+            Debug.Log("INFO: ZOROSBridgeConnection::ConnectAsync connected...");
+
             // inform listeners of connection
             if (OnConnectedToROSBridge != null) {
-                await OnConnectedToROSBridge(this);
+                try {
+                    await OnConnectedToROSBridge(this);
+                } catch (Exception e) {
+                    Debug.LogError("ERROR: ConnectAsync::OnConnectedToROSBridge: " + e.ToString());
+
+                }
             }
-            Debug.Log("INFO: ZOROSBridgeConnection::RunAsync connected...");
 
             await ClientReadAsync();
 
@@ -700,7 +706,7 @@ namespace ZO.ROS {
 
         private async Task ClientReadAsync() {
             Debug.Log("INFO: ZOROSBridgeConnection::ClientReadAsync Start");
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 100];  // BUGBUG: hardwired buffer.  TODO: handle when we get messages larger then the buffer!
 
             while (_isConnected) {
                 int bytesRead = -1;
@@ -782,7 +788,6 @@ namespace ZO.ROS {
 
                                         await SendBSONAsync(memoryStream);
                                     }
-
                                 }
 
                             } else {

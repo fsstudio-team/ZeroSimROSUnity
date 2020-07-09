@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ZO.Util;
+using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Geometry;
 
 namespace ZO.ROS.Unity.Publisher {
@@ -22,7 +22,7 @@ namespace ZO.ROS.Unity.Publisher {
         protected override void ZOStart() {
             base.ZOStart();
             // if the child frame id is not set then set it to be the name of this game object.
-            if (ChildFrameID.Length == 0) {  
+            if (ChildFrameID.Length == 0) {
                 ChildFrameID = this.gameObject.name;
             }
 
@@ -38,5 +38,40 @@ namespace ZO.ROS.Unity.Publisher {
             ROSUnityManager.BroadcastTransform(_transformMessage);
 
         }
+
+
+        public override string Type {
+            get { return "ros.transform_publisher"; }
+        }
+
+        public override JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("update_rate_hz", UpdateRateHz),
+                new JProperty("frame_id", FrameID),
+                new JProperty("child_frame_id", ChildFrameID)
+            );
+            JSON = json;
+            return json;
+        }
+
+        public override void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+            Name = json["name"].Value<string>();
+            FrameID = json["frame_id"].Value<string>();
+            ChildFrameID = json["child_frame_id"].Value<string>();
+            UpdateRateHz = json["update_rate_hz"].Value<float>();
+        }
+
+        public override void OnROSBridgeConnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSTransformPublisher::OnROSBridgeConnected");
+
+        }
+
+        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSTransformPublisher::OnROSBridgeDisconnected");
+        }
+
+
     }
 }

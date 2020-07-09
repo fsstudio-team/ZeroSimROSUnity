@@ -58,7 +58,7 @@ namespace ZO.Import {
             get; set;
         }
 
-        ZOSimDocumentRoot _baseComponent;
+        ZOSimDocumentRoot _documentRoot;
 
         [MenuItem("Zero Sim/Import ZeroSim Project...")]
         static public void ImportZeroSimProject() {
@@ -123,11 +123,11 @@ namespace ZO.Import {
             GameObject rootGameObject = new GameObject(ZeroSimJSON["document_name"].Value<string>());
 
             // add the base component
-            _baseComponent = rootGameObject.AddComponent<ZO.ZOSimDocumentRoot>();
+            _documentRoot = rootGameObject.AddComponent<ZO.ZOSimDocumentRoot>();
             string zosimSaveToFilePath = Path.Combine(ExportDirectoryPath, DocumentName + ".zosim");
             string zosimSaveToFilePathUnityRelative = MakeRelativePath(Application.dataPath, zosimSaveToFilePath);
-            _baseComponent.ZOSimDocumentFilePath = zosimSaveToFilePathUnityRelative;
-            _baseComponent.JSON = ZeroSimJSON;
+            _documentRoot.ZOSimDocumentFilePath = zosimSaveToFilePathUnityRelative;
+            _documentRoot.JSON = ZeroSimJSON;
 
 
 
@@ -229,10 +229,10 @@ namespace ZO.Import {
             occurenceGo.transform.parent = parentOccurenceGo.transform;
 
             ZOSimOccurrence zosimOccurence = occurenceGo.AddComponent<ZO.ZOSimOccurrence>();
-            zosimOccurence.DocumentRoot = _baseComponent;
+            zosimOccurence.DocumentRoot = _documentRoot;
 
 
-            zosimOccurence.ImportZeroSim(occurrenceJson);
+            zosimOccurence.ImportZeroSim(_documentRoot, occurrenceJson);
 
             // recursively visit all the children of this occurence
             foreach (JObject childOccurrence in occurrenceJson["children"]) {

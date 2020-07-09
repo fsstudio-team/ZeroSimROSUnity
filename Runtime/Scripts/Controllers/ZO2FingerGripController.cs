@@ -30,19 +30,19 @@ namespace ZO.Controllers {
         private JObject _json;
         public JObject JSON {
             get {
-                if (_json == null) {
-                    _json = BuildJSON();
-                }
+                // if (_json == null) {
+                //     _json = BuildJSON();
+                // }
                 return _json;
 
             }
         }
 
-        public void ImportZeroSim(JObject json) {
-            // TODO:
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
+            throw new System.NotImplementedException("TODO");
         }
 
-        public JObject BuildJSON(UnityEngine.Object parent = null) {
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject gripControllerJSON = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -52,11 +52,12 @@ namespace ZO.Controllers {
                 new JProperty("max_limit_degrees", _minMaxLimitsDegrees.y),
                 new JProperty("speed", _onKeyMoveSpeed)
             );
+            _json = gripControllerJSON;
             return gripControllerJSON;
 
         }
 
-        public void LoadFromJSON(JObject json) {
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
             throw new System.NotImplementedException("TODO!");
         }
 

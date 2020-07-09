@@ -33,20 +33,20 @@ namespace ZO {
         /// <see>ZOImportZeroSim</see>
         /// </summary>
         /// <param name="json"></param>
-        void ImportZeroSim(JObject json);
+        void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json);
 
         /// <summary>
         /// From the current state of the object it will generate the JSON for this object and any children.
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        JObject BuildJSON(UnityEngine.Object parent = null);
+        JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null);
 
         /// <summary>
         /// Sets the state of the object from JSON. JSON could come from file or network or wherever.
         /// </summary>
         /// <param name="json"></param>
-        void LoadFromJSON(JObject json);
+        void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json);
         
     }
 }

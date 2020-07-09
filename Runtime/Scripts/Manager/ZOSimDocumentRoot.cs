@@ -27,33 +27,24 @@ namespace ZO {
         public JObject JSON {
             get => _json;
             set => _json = value;
-            // get {
-            //     // if (_json == null) {
-            //     //     _json = BuildZOSimDocument();
-            //     // }
-
-            //     return _json;
-            // }
-            // set { _json = value; }
         }
         private List<JObject> _components = null;
+        
+        private List<Action<ZOSimDocumentRoot>> _postLoadFromJSONNotifiers = new List<Action<ZOSimDocumentRoot>>();
+
+        /// <summary>
+        /// If a ZOSimTypeInterface needs to be notified after a LoadFrom a ZOSim File.
+        /// For example a ZOHingeJoint needs to fixup the connected bodies that may or
+        /// may not exist during the LoadFromJSON call.
+        /// </summary>
+        /// <param name="notification"></param>
+        public void AddPostLoadFromJSONNotification(Action<ZOSimDocumentRoot> notification) {
+            _postLoadFromJSONNotifiers.Add(notification);
+        } 
 
 
         // Start is called before the first frame update
         void Start() {
-            // if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
-            //     // load ZeroSim definition
-            //     if (File.Exists(_zoSimDocumentFilePath)) {
-            //         using (StreamReader file = File.OpenText(_zoSimDocumentFilePath)) {
-            //             using (JsonTextReader reader = new JsonTextReader(file)) {
-            //                 _json = (JObject)JToken.ReadFrom(reader);
-            //             }
-            //         }
-            //     }
-            // } else {  // In Play Mode
-
-            // }
-
             _json = BuildZOSimDocument();
         }
 
@@ -128,7 +119,7 @@ namespace ZO {
             foreach (Transform child in transform) {
                 ZOSimOccurrence zoSimOccurrence = child.GetComponent<ZOSimOccurrence>();
                 if (zoSimOccurrence) {
-                    JObject occurrenceJSON = zoSimOccurrence.BuildJSON();
+                    JObject occurrenceJSON = zoSimOccurrence.BuildJSON(this);
                     zoSimOccurrence.JSON = occurrenceJSON;
 
                     occurrences.Add(occurrenceJSON);
@@ -144,10 +135,10 @@ namespace ZO {
         /// <summary>
         /// Saves to ZOSim file.
         /// </summary>
-        public void SaveToZOSimFile() {
+        public void SaveToZOSimFile(string filePath) {
             JSON = BuildZOSimDocument();
             // Save ZoSim file
-            using (StreamWriter streamWriter = File.CreateText(ZOSimDocumentFilePath)) {
+            using (StreamWriter streamWriter = File.CreateText(filePath)) {
                 streamWriter.Write(JSON.ToString());
             }
         }
@@ -189,9 +180,14 @@ namespace ZO {
                     go.transform.parent = this.transform;
                     simOccurrence = go.AddComponent<ZOSimOccurrence>();
                 }
-                simOccurrence.LoadFromJSON(occurreneJSON);
+                simOccurrence.LoadFromJSON(this, occurreneJSON);
             }
 
+            // notify anyone who needs to do any fixup post load
+            foreach(Action<ZOSimDocumentRoot> postLoadNotify in _postLoadFromJSONNotifiers) {
+                postLoadNotify(this);
+            }
+            _postLoadFromJSONNotifiers.Clear();
             // TODO: store components
             // TODO: remove any occurrences that are not in the zosim file
             // TODO: check if visual mesh files exists

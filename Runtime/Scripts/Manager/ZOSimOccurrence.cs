@@ -1,4 +1,5 @@
-﻿// using System.Numerics;
+﻿using System;
+// using System.Numerics;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,8 @@ using UnityEditor;
 using Newtonsoft.Json.Linq;
 using ZO.Physics;
 using ZO.Util.Extensions;
+using ZO.Controllers;
+using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
@@ -75,8 +78,22 @@ namespace ZO {
         }
 
 
+        /// <summary>
+        /// Finds a hinge joint by name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ZOHingeJoint GetHingeJointNamed(string name) {
+            ZOHingeJoint[] hingeJoints = GetComponents<ZOHingeJoint>();
+            foreach (ZOHingeJoint hingeJoint in hingeJoints) {
+                if (hingeJoint.Name == name) {
+                    return hingeJoint;
+                }
+            }
+            return null;
+        }
 
-        public void LoadFromJSON(JObject json) {
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
             Name = json["name"].Value<string>();
             JSON = json;
 
@@ -110,6 +127,7 @@ namespace ZO {
             // load primitive type if exists
             if (json.ContainsKey("primitive")) {
                 JObject primitiveJSON = json["primitive"].Value<JObject>();
+                Collider collider = null;
                 // get mesh filter. if it doesn't exist create it.
                 MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
                 MeshRenderer meshRenderer = null;
@@ -119,50 +137,77 @@ namespace ZO {
                     meshRenderer.material = new Material(Shader.Find("Diffuse"));
 
                     if (primitiveJSON["type"].Value<string>() == "cube") {
-                        meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
+                        GameObject.DestroyImmediate(go);
+
                         meshFilter.sharedMesh.name = "Cube Instance";
                         bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
                         if (hasCollisions) {
-                            gameObject.AddComponent<BoxCollider>();
+                            collider = gameObject.AddComponent<BoxCollider>();
                         }
                     }
 
                     if (primitiveJSON["type"].Value<string>() == "sphere") {
-                        meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
+                        GameObject.DestroyImmediate(go);
+
+                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
                         meshFilter.sharedMesh.name = "Sphere Instance";
                         bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
                         if (hasCollisions) {
-                            gameObject.AddComponent<SphereCollider>();
+                            collider = gameObject.AddComponent<SphereCollider>();
                         }
                     }
 
                     if (primitiveJSON["type"].Value<string>() == "capsule") {
-                        meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Capsule.fbx");
+                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Capsule.fbx");
+                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
+                        GameObject.DestroyImmediate(go);
                         meshFilter.sharedMesh.name = "Capsule Instance";
                         bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
                         if (hasCollisions) {
-                            gameObject.AddComponent<CapsuleCollider>();
+                            collider = gameObject.AddComponent<CapsuleCollider>();
                         }
                     }
 
                     if (primitiveJSON["type"].Value<string>() == "cylinder") {
-                        meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
+                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
+                        GameObject.DestroyImmediate(go);
+                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
                         meshFilter.sharedMesh.name = "Cylinder Instance";
                         bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
                         if (hasCollisions) {
                             MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
                             meshCollider.convex = true;
+                            collider = meshCollider;
                         }
                     }
+
                 }
+
+                // set physics material if exists
+                if (primitiveJSON.ContainsKey("physics_material")) {
+                    JObject physicsMaterialJSON = primitiveJSON["physics_material"].Value<JObject>();
+                    PhysicMaterial physicMaterial = new PhysicMaterial();
+                    physicMaterial.bounciness = physicsMaterialJSON["bounciness"].Value<float>();
+                    physicMaterial.dynamicFriction = physicsMaterialJSON["dynamic_friction"].Value<float>();
+                    physicMaterial.staticFriction = physicsMaterialJSON["static_friction"].Value<float>();
+                    collider.sharedMaterial = physicMaterial;
+                }
+
 
                 // set color
                 meshRenderer = gameObject.GetComponent<MeshRenderer>();
                 meshRenderer.sharedMaterial.color = primitiveJSON.ToColorOrDefault("color", meshRenderer.sharedMaterial.color);
 
-
+                // scale is how Unity primitives are sized
                 this.transform.localScale = primitiveJSON.ToVector3OrDefault("dimensions", this.transform.localScale);
-                
+
             }
 
 
@@ -183,6 +228,7 @@ namespace ZO {
 
 
             // load the joints
+            // TODO: change this to be some sort of factory 
             if (json.ContainsKey("joints")) {
                 foreach (JObject joint in json["joints"].Value<JArray>()) {
                     if (joint["type"].Value<string>() == "joint.hinge") {
@@ -200,7 +246,58 @@ namespace ZO {
                             hingeJoint.CreateRequirements();
                         }
 
-                        hingeJoint.LoadFromJSON(joint);
+                        hingeJoint.LoadFromJSON(documentRoot, joint);
+                    }
+                }
+            }
+
+            // load the controllers
+            // TODO: change this to be some sort of factory to allow easy third party extension
+            if (json.ContainsKey("controllers")) {
+                foreach (JObject controllerJSON in json["controllers"].Value<JArray>()) {
+                    if (controllerJSON["type"].Value<string>() == "controller.differential_drive") {
+                        ZODifferentialDriveController controller = null;
+                        // Type t = System.Type.GetType("blah");
+                        // this.gameObject.AddComponent(t);
+                        // check if controller exists 
+                        ZODifferentialDriveController[] existingControllers = this.GetComponents<ZODifferentialDriveController>();
+                        foreach (ZODifferentialDriveController cont in existingControllers) {
+                            if (cont.Name == controllerJSON["name"].Value<string>()) {
+                                controller = cont;
+                                break;
+                            }
+                        }
+                        // if controller doesn't exist then create it
+                        if (controller == null) {
+                            controller = this.gameObject.AddComponent<ZODifferentialDriveController>();
+                        }
+
+                        // finally load from JSON
+                        controller.LoadFromJSON(documentRoot, controllerJSON);
+                    }
+                }
+            }
+
+            // load ros specific stuff
+            // TODO: change this to be some sort of factory
+            if (json.ContainsKey("ros")) {
+                foreach (JObject rosJSON in json["ros"].Value<JArray>()) {
+                    if (rosJSON["type"].Value<string>() == "ros.transform_publisher") {
+                        ZOROSTransformPublisher transformPublisher = null;
+                        // check if transform publisher exists
+                        ZOROSTransformPublisher[] transformPublishers = this.GetComponents<ZOROSTransformPublisher>();
+                        foreach (ZOROSTransformPublisher tf in transformPublishers) {
+                            if (tf.Name == rosJSON["name"].Value<string>()) {
+                                transformPublisher = tf;
+                                break;
+                            }
+                        }
+
+                        // if transform publisher doesn't exist create it
+                        if (transformPublisher == null) {
+                            transformPublisher = this.gameObject.AddComponent<ZOROSTransformPublisher>();
+                        }
+                        transformPublisher.LoadFromJSON(documentRoot, rosJSON);
                     }
                 }
             }
@@ -216,7 +313,7 @@ namespace ZO {
                     go.transform.parent = this.transform;
                     simOccurrence = go.AddComponent<ZOSimOccurrence>();
                 }
-                simOccurrence.LoadFromJSON(occurrenceJSON);
+                simOccurrence.LoadFromJSON(documentRoot, occurrenceJSON);
             }
 
             //TODO: remove any children not in the children list
@@ -225,7 +322,7 @@ namespace ZO {
 
         }
 
-        public void ImportZeroSim(JObject json) {
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
             _json = json;
 
 #if UNITY_EDITOR            
@@ -373,7 +470,7 @@ namespace ZO {
 #endif // #if UNITY_EDITOR
         }
 
-        public JObject BuildJSON(Object parent = null) {
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject occurrence = new JObject();
 
             // TODO: check with document root if there is a zosim component reference 
@@ -391,45 +488,60 @@ namespace ZO {
             // build 3d primitive if exists
             MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
             if (meshFilter) {
-                
-                MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
-                if (meshFilter.sharedMesh.name == "Cube Instance") {
+                MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+                Collider collider = null;
+
+                if (meshFilter.sharedMesh.name.Contains("Cube")) {
+                    collider = gameObject.GetComponent<BoxCollider>();
                     occurrence["primitive"] = new JObject(
                         new JProperty("type", "cube"),
                         new JProperty("dimensions", transform.localScale.ToJSON()),
-                        new JProperty("has_collisions", gameObject.GetComponent<BoxCollider>() ? true : false),
+                        new JProperty("has_collisions", collider ? true : false),
                         new JProperty("color", meshRenderer.sharedMaterial.color.ToJSON())
                     );
                 }
-                if (meshFilter.sharedMesh.name == "Sphere Instance") {
+                if (meshFilter.sharedMesh.name.Contains("Sphere")) {
+                    collider = gameObject.GetComponent<SphereCollider>();
                     occurrence["primitive"] = new JObject(
                         new JProperty("type", "sphere"),
                         new JProperty("dimensions", transform.localScale.ToJSON()),
-                        new JProperty("has_collisions", gameObject.GetComponent<SphereCollider>() ? true : false),
+                        new JProperty("has_collisions", collider ? true : false),
                         new JProperty("color", meshRenderer.sharedMaterial.color.ToJSON())
-                    ); 
-                } 
-                if (meshFilter.sharedMesh.name == "Capsule Instance") {
+                    );
+                }
+                if (meshFilter.sharedMesh.name.Contains("Capsule")) {
+                    collider = gameObject.GetComponent<CapsuleCollider>();
                     occurrence["primitive"] = new JObject(
                         new JProperty("type", "capsule"),
                         new JProperty("dimensions", transform.localScale.ToJSON()),
-                        new JProperty("has_collisions", gameObject.GetComponent<CapsuleCollider>() ? true : false),
+                        new JProperty("has_collisions", collider ? true : false),
                         new JProperty("color", meshRenderer.sharedMaterial.color.ToJSON())
-                    ); 
-                } 
-                if (meshFilter.sharedMesh.name == "Cylinder Instance") {
+                    );
+                }
+                if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
+                    collider = gameObject.GetComponent<MeshCollider>();
                     occurrence["primitive"] = new JObject(
                         new JProperty("type", "cylinder"),
                         new JProperty("dimensions", transform.localScale.ToJSON()),
-                        new JProperty("has_collisions", gameObject.GetComponent<MeshCollider>() ? true : false),
+                        new JProperty("has_collisions", collider ? true : false),
                         new JProperty("color", meshRenderer.sharedMaterial.color.ToJSON())
-                    ); 
-                } 
-                
+                    );
+                }
+
+                // generate physics material if necessary (friction, restitution)
+                if (collider != null && collider.sharedMaterial != null) {
+                    JObject primitiveJSON = occurrence["primitive"].Value<JObject>();
+                    primitiveJSON.Add("physics_material",
+                        new JObject(
+                            new JProperty("bounciness", collider.sharedMaterial.bounciness),
+                            new JProperty("dynamic_friction", collider.sharedMaterial.dynamicFriction),
+                            new JProperty("static_friction", collider.sharedMaterial.staticFriction)
+                        )
+                    );
+                }
 
             }
-            // Debug.Log("INFO: Mesh name: " + mesh.name);
 
             // rigid body
             Rigidbody rigidbody = GetComponent<Rigidbody>();
@@ -448,6 +560,7 @@ namespace ZO {
             // Joints & Controllers
             JArray joints = new JArray();
             JArray controllers = new JArray();
+            JArray ros = new JArray();
 
             // FixedJoint
             // TODO: make a ZOFixedJoint 
@@ -470,9 +583,14 @@ namespace ZO {
 
                 // handle joint types
                 if (subtypes[0] == "joint") {
-                    joints.Add(simType.JSON);
+                    JObject jointJSON = simType.BuildJSON(documentRoot, this);
+                    joints.Add(jointJSON);
                 } else if (subtypes[0] == "controller") {
-                    controllers.Add(simType.JSON);
+                    JObject contollerJSON = simType.BuildJSON(documentRoot, this);
+                    controllers.Add(contollerJSON);
+                } else if (subtypes[0] == "ros") {
+                    JObject rosJSON = simType.BuildJSON(documentRoot, this);
+                    ros.Add(rosJSON);
                 }
 
             }
@@ -480,13 +598,14 @@ namespace ZO {
 
             occurrence["joints"] = joints;
             occurrence["controllers"] = controllers;
+            occurrence["ros"] = ros;
 
             // go through the children
             JArray children = new JArray();
             foreach (Transform child in transform) {
                 ZOSimOccurrence simOccurrence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurrence) {
-                    JObject child_json = simOccurrence.BuildJSON(this);
+                    JObject child_json = simOccurrence.BuildJSON(documentRoot, this);
                     children.Add(child_json);
                 }
             }

@@ -5,46 +5,87 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
-using ZO.ROS.MessageTypes.Gazebo;
+// using ZO.ROS.MessageTypes.ZOSim;
+// using ZO.ROS.MessageTypes.Gazebo;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.Unity.Publisher;
 
 namespace ZO.ROS.Unity {
 
+    // [System.Serializable]
     /// <summary>
     /// On ROS Connect & Disconnect event type definition. 
     /// </summary>
-    [System.Serializable]
-    public class ZOROSBridgeConnectEvent : UnityEngine.Events.UnityEvent<ZOROSUnityManager, ZOROSBridgeConnection> { }
+    // public class ZOROSBridgeConnectEvent : UnityEngine.Events.UnityEvent<ZOROSUnityManager, ZOROSBridgeConnection> { }
+
 
     /// <summary>
     /// Manage ROS with Unity specific functionality.
     /// </summary>
-    [ExecuteAlways]
+    /// [ExecuteAlways]
     public class ZOROSUnityManager : MonoBehaviour {
+
+        /// <summary>
+        /// The default ROS namespace for this simulation.
+        /// </summary>
+        public string _namespace = "/zerosim";
+
+        public string Namespace {
+            get => _namespace;
+        }
+
+        /// <summary>
+        /// IP or hostname of the ROS Bridge
+        /// </summary>
         public string Hostname = "localhost";
+
+        /// <summary>
+        /// TCP Port for the ROS bridge. Do not change unless the default ROS Bridge port has been changed.
+        /// </summary>
         public int Port = 9090;
+
+        /// <summary>
+        /// JSON or BSON serialization.  Recommended to stick with BSON as it is the most efficient.
+        /// </summary>
         public ZOROSBridgeConnection.SerializationType _serializationType = ZOROSBridgeConnection.SerializationType.BSON;
 
 
         /// <summary>
-        /// Unity event called when connected to ROS Bridge.
+        /// Event handler delegate definition that is used for ROS Bridge connect & disconnect events.
         /// </summary>
         /// <returns></returns>
-        public ZOROSBridgeConnectEvent _connectEvent = new ZOROSBridgeConnectEvent();
-        public ZOROSBridgeConnectEvent ROSBridgeConnectEvent {
-            get => _connectEvent;
+        public delegate void ROSBridgeConnectionChangeHandler(object sender);
+        public event ROSBridgeConnectionChangeHandler _connectEvent;
+        // public ZOROSBridgeConnectEvent _connectEvent = new ZOROSBridgeConnectEvent();
+
+        /// <summary>
+        /// Unity event that is called when connected to ROS bridge.
+        /// </summary>
+        /// <value></value>
+        public event ROSBridgeConnectionChangeHandler ROSBridgeConnectEvent {
+            add {
+                _connectEvent += value;
+            }
+            remove {
+                _connectEvent -= value;
+            }
         }
 
+        public event ROSBridgeConnectionChangeHandler _disconnectEvent;
         /// <summary>
         /// Unity event called when disconnected from ROS Bridge
         /// </summary>
         /// <returns></returns>
-        public ZOROSBridgeConnectEvent _disconnectEvent = new ZOROSBridgeConnectEvent();
-        public ZOROSBridgeConnectEvent ROSBridgeDisconnectEvent {
-            get => _disconnectEvent;
+        public event ROSBridgeConnectionChangeHandler ROSBridgeDisconnectEvent {
+            add {
+                _disconnectEvent += value;
+            }
+            remove {
+                _disconnectEvent -= value;
+            }
         }
 
         /// <summary>
@@ -77,7 +118,8 @@ namespace ZO.ROS.Unity {
             get => _defaultZeroSimAssets;
         }
 
-        private Queue<Tuple<SpawnModelServiceRequest, string>> _spawnModelRequests = new Queue<Tuple<SpawnModelServiceRequest, string>>();
+
+        // publish 
         [SerializeField] public ZOROSTransformPublisher _rootMapTransformPublisher;
         public ZOROSTransformPublisher RootMapTransform {
             get => _rootMapTransformPublisher;
@@ -131,10 +173,24 @@ namespace ZO.ROS.Unity {
                     rosBridge.Advertise("/tf", _transformBroadcast.MessageType);
 
                     // advertise SpawnModel service
-                    rosBridge.AdvertiseService<SpawnModelServiceRequest>("gazebo/spawn_urdf_model", "gazebo_msgs/SpawnModel", SpawnModelHandler);
+                    // rosBridge.AdvertiseService<SpawnModelServiceRequest>("gazebo/spawn_urdf_model", "gazebo_msgs/SpawnModel", (bridge, msg, id) => {
+                    //     Debug.Log("INFO: got gazebo/spawn_urdf_model");
+                    //     // report back success
+                    //     ROSBridgeConnection.ServiceResponse<ZOSimSpawnServiceResponse>(new ZOSimSpawnServiceResponse() {
+                    //         success = true,
+                    //         status_message = "done!"
+                    //     }, "gazebo/spawn_urdf_model", true, id);
 
-                    // inform listeners we have connected
-                    _connectEvent.Invoke(this, rosBridge);
+                    //     return Task.CompletedTask;
+                    // });
+                    // rosBridge.AdvertiseService<ZOSimSpawnServiceRequest>(_namespace + "/spawn_zosim_model", "zero_sim_ros/ZOSimSpawn", SpawnModelHandler);
+
+                    try {
+                        // inform listeners we have connected
+                        _connectEvent.Invoke(this);
+                    } catch (System.Exception e) {
+                        Debug.LogError("ERROR: ZOROSUnityManager Connected Invoke: " + e.ToString());
+                    }
 
 
                     return Task.CompletedTask;
@@ -143,7 +199,7 @@ namespace ZO.ROS.Unity {
                     Debug.Log("INFO: Disconnected to ROS Bridge");
 
                     // inform listeners we have disconnected
-                    _disconnectEvent.Invoke(this, rosBridge);
+                    _disconnectEvent.Invoke(this);
 
                     // Unadvertise broadcast tf 
                     rosBridge.UnAdvertise("/tf");
@@ -162,7 +218,7 @@ namespace ZO.ROS.Unity {
 
         private void OnDestroy() {
             ROSBridgeConnection.UnAdvertise("/tf");
-            ROSBridgeConnection.UnAdvertiseService("gazebo/spawn_urdf_model");
+            ROSBridgeConnection.UnAdvertiseService(_namespace + "/spawn_zosim_model");
             ROSBridgeConnection.Stop();
         }
 
@@ -171,38 +227,12 @@ namespace ZO.ROS.Unity {
         void Update() {
             // publish map transform
             if (ROSBridgeConnection.IsConnected) {
+
                 _transformBroadcast.transforms = _transformsToBroadcast.ToArray();
                 ROSBridgeConnection.Publish<TFMessage>(_transformBroadcast, "/tf");
                 _transformsToBroadcast.Clear();
             }
 
-            // handle any spawn model requests
-            while (_spawnModelRequests.Count > 0) {
-                Tuple<SpawnModelServiceRequest, string> spawnRequestAndId = _spawnModelRequests.Dequeue();
-                SpawnModelServiceRequest spawnRequest = spawnRequestAndId.Item1;
-                string id = spawnRequestAndId.Item2;
-
-                GameObject loadedAsset = DefaultAssets.LoadAsset<GameObject>(spawnRequest.model_name);
-                if (loadedAsset != null) {
-                    Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
-                    Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
-                    Instantiate(loadedAsset, position, rotation);
-
-                    // report back success
-                    ROSBridgeConnection.ServiceResponse<SpawnModelServiceResponse>(new SpawnModelServiceResponse() {
-                        success = true,
-                        status_message = "done!"
-                    }, "gazebo/spawn_urdf_model", true, id);
-
-                } else { // error loading asset
-                    ROSBridgeConnection.ServiceResponse<SpawnModelServiceResponse>(new SpawnModelServiceResponse() {
-                        success = false,
-                        status_message = "ERROR: loading model: " + spawnRequest.model_name
-                    }, "gazebo/spawn_urdf_model", false, id);
-
-                }
-
-            }
         }
 
         public void BroadcastTransform(TransformStampedMessage transformStamped) {
@@ -212,15 +242,6 @@ namespace ZO.ROS.Unity {
 
         }
 
-        private Task SpawnModelHandler(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg, string id) {
-            Debug.Log("INFO: ZOROSUnityManager::SpawnModelHandler");
-
-            // queue up the spawn model because it needs to be done in the main thread Update()
-            _spawnModelRequests.Enqueue(new Tuple<SpawnModelServiceRequest, string>((SpawnModelServiceRequest)msg, id));
-
-
-            return Task.CompletedTask;
-        }
     }
 
 }

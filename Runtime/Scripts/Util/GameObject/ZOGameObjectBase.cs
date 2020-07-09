@@ -60,16 +60,24 @@ namespace ZO.Util {
         // -------------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Start function for ZO Sensors
+        /// Start function for Zero Sim Objects
         /// </summary>
         protected virtual void ZOStart() { }
-        /// <summary>Update function for ZO sensors. Will run inside this Monobehavior's Update function.</summary>
+
+        /// <summary>
+        /// Destruction function for Zero Sim Objects
+        /// </summary>
+        protected virtual void ZOOnDestroy() { }
+
+        /// <summary>Update function for Zero Sim Objects. Will run inside this Monobehavior's Update function.</summary>
         protected virtual void ZOUpdate() { }
-        /// <summary>FixedUpdate function for ZO sensors. Will run inside this Monobehavior's Update function</summary>
+        
+        /// <summary>FixedUpdate function for Zero Sim Objects. Will run inside this Monobehavior's Update function</summary>
         protected virtual void ZOFixedUpdate() { }
 
         /// <summary>HZ synched function that runs inside Monobehavior's Update function. It's guaranteed to use the set frequency HZ for this sensor.</summary>
         protected virtual void ZOUpdateHzSynchronized() { }
+        
         /// <summary>HZ synched function that runs inside Monobehavior's FixedUpdate function. It's guaranteed to use the set frequency HZ for this sensor.</summary>
         protected virtual void ZOFixedUpdateHzSynchronized() { }
 
@@ -84,6 +92,10 @@ namespace ZO.Util {
             NextUpdateTime = _nextUpdateTimeOffset;
             NextFixedUpdateTime = _nextUpdateTimeOffset;
             _nextUpdateTimeOffset += 0.13f;
+        }
+
+        private void OnDestroy() {
+            ZOOnDestroy();
         }
 
         /// <summary>

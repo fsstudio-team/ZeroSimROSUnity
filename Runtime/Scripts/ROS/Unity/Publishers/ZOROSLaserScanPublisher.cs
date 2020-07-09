@@ -33,24 +33,35 @@ namespace ZO.ROS.Unity.Publisher {
 
         }
 
-
-        private void OnDestroy() {
-            ROSBridgeConnection?.UnAdvertise(_ROSTopic);
+        protected override void ZOStart() {
+            base.ZOStart();
+            if (ZOROSBridgeConnection.Instance.IsConnected) {
+                Initialize();
+            }
         }
 
-        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
-            Debug.Log("INFO: ZOROSLaserScanPublisher::OnROSBridgeConnected");
-
+        private void Initialize() {
             // advertise
-            rosBridgeConnection.Advertise(_ROSTopic, _rosLaserScanMessage.MessageType);
+            ROSBridgeConnection.Advertise(ROSTopic, _rosLaserScanMessage.MessageType);
 
             // hookup to the sensor update delegate
             _lidar2DSensor.OnPublishDelegate = OnPublishLidarScanDelegate;
+
         }
 
-        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
+
+        protected override void ZOOnDestroy() {
+            ROSBridgeConnection?.UnAdvertise(ROSTopic);
+        }
+
+        public override void OnROSBridgeConnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSLaserScanPublisher::OnROSBridgeConnected");
+            Initialize();
+        }
+
+        public override void OnROSBridgeDisconnected(object rosUnityManager) {
             Debug.Log("INFO: ZOROSLaserScanPublisher::OnROSBridgeDisconnected");
-            ROSBridgeConnection.UnAdvertise(_ROSTopic);
+            ROSBridgeConnection.UnAdvertise(ROSTopic);
         }
 
         private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string lidarId, float[] ranges) {

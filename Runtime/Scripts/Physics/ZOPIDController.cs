@@ -108,21 +108,24 @@ namespace ZO.Physics {
             private set { _name = value; }
         }
 
+
+        ZOSimDocumentRoot _documentRoot = null;
         private JObject _json;
         public JObject JSON {
             get {
-                if (_json == null) {
-                    _json = BuildJSON();
-                }
+                // if (_json == null) {
+                //     _json = BuildJSON(_documentRoot);
+                // }
                 return _json;
             }
         }
 
-        public void ImportZeroSim(JObject json) {
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
             // TODO:
+            throw new System.NotImplementedException("TODO");
         }
 
-        public JObject BuildJSON(UnityEngine.Object parent = null) {
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject gripControllerJSON = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -137,7 +140,7 @@ namespace ZO.Physics {
             return gripControllerJSON;
         }
 
-        public void LoadFromJSON(JObject json) {
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);
 
             _json = json;

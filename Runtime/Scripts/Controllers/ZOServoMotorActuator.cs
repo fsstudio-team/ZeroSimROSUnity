@@ -74,34 +74,36 @@ namespace ZO.Controllers {
             private set { _name = value; }
         }
 
+        private ZOSimDocumentRoot _documentRoot = null;
         private JObject _json;
         public JObject JSON {
             get {
-                if (_json == null) {
-                    _json = BuildJSON();
-                }
+                // if (_json == null) {
+                //     _json = BuildJSON();
+                // }
                 return _json;
             }
         }
 
-        public void ImportZeroSim(JObject json) {
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
             throw new System.NotImplementedException("TODO!");
         }
 
-        public JObject BuildJSON(UnityEngine.Object parent = null) {
-            JObject gripControllerJSON = new JObject(
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
                 new JProperty("hinge_joint", _hingeJoint.Name),
                 new JProperty("min_limit_degrees", MinSteeringLockDegrees),
                 new JProperty("max_limit_degrees", MaxSteeringLockDegrees),
-                new JProperty("pid_controller", _pidController.JSON)
+                new JProperty("pid_controller", _pidController.BuildJSON(documentRoot))
 
             );
-            return gripControllerJSON;
+            _json = json;
+            return json;
         }
 
-        public void LoadFromJSON(JObject json) {
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);
 
             _json = json;
@@ -114,7 +116,7 @@ namespace ZO.Controllers {
             if (_pidController == null) {
                 _pidController = new ZOPIDController();
             }
-            _pidController.LoadFromJSON(json["pid_controller"].Value<JObject>());
+            _pidController.LoadFromJSON(documentRoot, json["pid_controller"].Value<JObject>());
 
         }
 

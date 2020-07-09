@@ -40,9 +40,9 @@ namespace ZO.Physics {
         private JObject _json;
         public JObject JSON {
             get {
-                if (_json == null) {
-                    _json = BuildJSON();
-                }
+                // if (_json == null) {
+                //     _json = BuildJSON();
+                // }
                 return _json;
             }
         }
@@ -81,8 +81,8 @@ namespace ZO.Physics {
         //     }
         // }
 
-        public JObject BuildJSON(UnityEngine.Object parent = null) {
-            JObject hingedJointJSON = new JObject(
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
                 new JProperty("anchor", ZOSimDocumentRoot.ToJSON(UnityJoint.anchor)),
@@ -115,26 +115,26 @@ namespace ZO.Physics {
                 ZOSimOccurrence connected_occurrence = UnityJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
 
                 if (connected_occurrence) {
-                    hingedJointJSON["connected_occurrence"] = connected_occurrence.Name;
+                    json["connected_occurrence"] = connected_occurrence.Name;
                 }
             }
 
             ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
             if (parent_occurrence) {
-                hingedJointJSON["parent_occurrence"] = parent_occurrence.Name;
+                json["parent_occurrence"] = parent_occurrence.Name;
             }
+            _json = json;
 
-
-            return hingedJointJSON;
+            return json;
         }
 
-        public void ImportZeroSim(JObject json) {
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
             throw new System.NotImplementedException("TODO!");
             // TODO:
         }
 
 
-        public void LoadFromJSON(JObject json) {
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
             throw new System.NotImplementedException("TODO!");
         }
 

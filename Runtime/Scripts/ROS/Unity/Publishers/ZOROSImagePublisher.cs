@@ -16,33 +16,37 @@ namespace ZO.ROS.Unity.Publisher {
     public class ZOROSImagePublisher : ZOROSUnityGameObjectBase {
 
         public ZORGBCamera _rgbCameraSensor;
-        // public string _ROSTopic = "unity_image/image";
-        // public string _ROSId = "camera";
-
-        // public string ROSTopic { get => _ROSTopic; }
-        // public string ROSId { get => _ROSId; }
-        // private ZOROSBridgeConnection ROSBridgeConnection { get; set; }
         private ImageMessage _rosImageMessage = new ImageMessage();
-        // private HeaderMessage _rosHeader = new HeaderMessage();
 
 
-        private void OnDestroy() {
-            ROSBridgeConnection?.UnAdvertise(_ROSTopic);
+        protected override void ZOStart() {
+            base.ZOStart();
+            if (ZOROSBridgeConnection.Instance.IsConnected) {
+                Initialize();
+            }
+        }
+        protected override void ZOOnDestroy() {
+            ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
 
-        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
-            Debug.Log("INFO: ZOImagePublisher::OnROSBridgeConnected");
-            // ROSBridgeConnection = rosBridgeConnection;
-
+        private void Initialize() {
             // advertise
-            rosBridgeConnection.Advertise(_ROSTopic, _rosImageMessage.MessageType, ROSId);
+            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType, ROSId);
 
             // hookup to the sensor update delegate
             _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishRGBImageDelegate;
+
         }
 
-        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
+        public override void OnROSBridgeConnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOImagePublisher::OnROSBridgeConnected");
+            Initialize();
+
+        }
+
+        public override void OnROSBridgeDisconnected(object rosUnityManager) {
             Debug.Log("INFO: ZOImagePublisher::OnROSBridgeDisconnected");
+            ROSBridgeConnection.UnAdvertise(ROSTopic);
         }
 
         private Task OnPublishRGBImageDelegate(ZORGBCamera rgbCamera, string cameraId, int width, int height, byte[] rgbData) {

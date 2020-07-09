@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.MessageTypes.Nav;
@@ -11,6 +11,7 @@ using ZO.ROS.MessageTypes.Std;
 using ZO.ROS;
 using ZO.ROS.Unity;
 using ZO.Util;
+
 
 namespace ZO.Controllers {
 
@@ -31,16 +32,29 @@ namespace ZO.Controllers {
     /// <reference>
     /// See: https://github.com/ros-controls/ros_controllers/blob/indigo-devel/diff_drive_controller/include/diff_drive_controller/diff_drive_controller.h
     /// </reference>
-    public class ZODifferentialDriveController : ZOGameObjectBase {
+    public class ZODifferentialDriveController : ZOGameObjectBase, ZOSimTypeInterface {
 
-        public Rigidbody _connectedBody;
+        public String _name;
+        public string Name {
+            get {
+                if (string.IsNullOrEmpty(_name))
+                    _name = gameObject.name + "_" + Type;
+                return _name;
+            }
+            private set => _name = value;
+        }
+
+        public ZOSimOccurrence _connectedBody;
+        public Rigidbody ConnectedRigidBody {
+            get { return _connectedBody.GetComponent<Rigidbody>(); }
+        }
         public ZO.Physics.ZOHingeJoint _rightWheelMotor;
         public ZO.Physics.ZOHingeJoint _leftWheelMotor;
         public float _wheelRadius = 0;
         public float _wheelSeperation = 0;
 
-        public ZO.Physics.ZOSpeedLimiter _speedLimiterLinear;
-        public ZO.Physics.ZOSpeedLimiter _speedLimiterAngular;
+        // public ZO.Physics.ZOSpeedLimiter _speedLimiterLinear;
+        // public ZO.Physics.ZOSpeedLimiter _speedLimiterAngular;
 
         private float _linearVelocity = 0;
         private float _angularVelocity = 0;
@@ -63,11 +77,40 @@ namespace ZO.Controllers {
             get => _angularVelocity;
         }
 
+        private JObject _json;
+        public JObject JSON {
+            get => _json;
+            set => _json = value;
+        }
+
+
+
+        public string Type {
+            get {
+                return "controller.differential_drive";
+            }
+        }
+
+
         // Start is called before the first frame update
         protected override void ZOStart() {
             // auto-connect to ROS Bridge connection and disconnect events
-            ZOROSUnityManager.Instance.ROSBridgeConnectEvent.AddListener(OnROSBridgeConnected);
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent.AddListener(OnROSBridgeConnected);
+            ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeConnected;
+
+            if (ZOROSBridgeConnection.Instance.IsConnected) {
+                // subscribe to Twist Message
+                ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(_Id, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+
+                // adverise Odometry Message
+                ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
+
+            }
+        }
+
+        protected override void ZOOnDestroy() {
+            ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeConnected;
         }
 
         protected override void ZOFixedUpdate() {
@@ -78,50 +121,49 @@ namespace ZO.Controllers {
         protected override void ZOFixedUpdateHzSynchronized() {
 
             // publish odometry
-            if (ROSBridgeConnection != null) {
-                if (ROSBridgeConnection.IsConnected) {
+            if (ZOROSBridgeConnection.Instance.IsConnected) {
 
-                    // NOTE: Just echoing back the true odometry.  
-                    // TODO: calculat the odometry see: CalculateOdometryOpenLoop
-                    _odometryMessage.Update(); // update times stamps
+                // NOTE: Just echoing back the true odometry.  
+                // TODO: calculat the odometry see: CalculateOdometryOpenLoop
+                _odometryMessage.Update(); // update times stamps
 
-                    // BUGBUG: not super clear on where the pose should be?
-                    _odometryMessage.pose.pose.GlobalUnityTransform = _connectedBody.transform;
+                // BUGBUG: not super clear on where the pose should be?
+                _odometryMessage.pose.pose.GlobalUnityTransform = ConnectedRigidBody.transform;
 
-                    // get velocity in /odom frame
-                    Vector3 linear = _connectedBody.velocity;
-                    _odometryMessage.twist.twist.angular.z = -_connectedBody.angularVelocity.y; // NOTE: negating velocity?
+                // get velocity in /odom frame
+                Vector3 linear = ConnectedRigidBody.velocity;
+                _odometryMessage.twist.twist.angular.z = -ConnectedRigidBody.angularVelocity.y; // NOTE: negating velocity?
 
-                    float yaw = _connectedBody.transform.localRotation.eulerAngles.y * Mathf.Deg2Rad;
-                    _odometryMessage.twist.twist.linear.x = Mathf.Cos(yaw) * linear.z + Mathf.Sin(yaw) * linear.x;
-                    _odometryMessage.twist.twist.linear.y = Mathf.Cos(yaw) * linear.x - Mathf.Sin(yaw) * linear.z;
-                    // set covariance
-                    // see: https://robotics.stackexchange.com/questions/15265/ros-gazebo-odometry-issue
-                    // # Odometry covariances for the encoder output of the robot. These values should
-                    // # be tuned to your robot's sample odometry data, but these values are a good place
-                    // # to start
-                    // pose_covariance_diagonal : [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-                    // twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-                    _odometryMessage.pose.covariance[0] = 1e-3;
-                    _odometryMessage.pose.covariance[7] = 1e-3;
-                    _odometryMessage.pose.covariance[14] = 1e6;
-                    _odometryMessage.pose.covariance[21] = 1e6;
-                    _odometryMessage.pose.covariance[28] = 1e6;
-                    _odometryMessage.pose.covariance[35] = 1e3;
+                float yaw = ConnectedRigidBody.transform.localRotation.eulerAngles.y * Mathf.Deg2Rad;
+                _odometryMessage.twist.twist.linear.x = Mathf.Cos(yaw) * linear.z + Mathf.Sin(yaw) * linear.x;
+                _odometryMessage.twist.twist.linear.y = Mathf.Cos(yaw) * linear.x - Mathf.Sin(yaw) * linear.z;
+                // set covariance
+                // see: https://robotics.stackexchange.com/questions/15265/ros-gazebo-odometry-issue
+                // # Odometry covariances for the encoder output of the robot. These values should
+                // # be tuned to your robot's sample odometry data, but these values are a good place
+                // # to start
+                // pose_covariance_diagonal : [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+                // twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+                _odometryMessage.pose.covariance[0] = 1e-3;
+                _odometryMessage.pose.covariance[7] = 1e-3;
+                _odometryMessage.pose.covariance[14] = 1e6;
+                _odometryMessage.pose.covariance[21] = 1e6;
+                _odometryMessage.pose.covariance[28] = 1e6;
+                _odometryMessage.pose.covariance[35] = 1e3;
 
-                    _odometryMessage.twist.covariance[0] = 1e-3;
-                    _odometryMessage.twist.covariance[7] = 1e-3;
-                    _odometryMessage.twist.covariance[14] = 1e6;
-                    _odometryMessage.twist.covariance[21] = 1e6;
-                    _odometryMessage.twist.covariance[28] = 1e6;
-                    _odometryMessage.twist.covariance[35] = 1e3;
+                _odometryMessage.twist.covariance[0] = 1e-3;
+                _odometryMessage.twist.covariance[7] = 1e-3;
+                _odometryMessage.twist.covariance[14] = 1e6;
+                _odometryMessage.twist.covariance[21] = 1e6;
+                _odometryMessage.twist.covariance[28] = 1e6;
+                _odometryMessage.twist.covariance[35] = 1e3;
 
-                    // BUGBUG: not super clear on this being a child of map?
-                    _odometryMessage.header.frame_id = "map";
+                // BUGBUG: not super clear on this being a child of map?
+                _odometryMessage.header.frame_id = "map";
 
-                    ROSBridgeConnection.Publish<OdometryMessage>(_odometryMessage, "/odom");
-                }
+                ZOROSBridgeConnection.Instance.Publish<OdometryMessage>(_odometryMessage, "/odom");
             }
+
 
             // todo broadcast various joint transforms
             // see: https://github.com/ros-simulation/gazebo_ros_pkgs/blob/kinetic-devel/gazebo_plugins/src/gazebo_ros_diff_drive.cpp
@@ -250,24 +292,23 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         /// </summary>
         public string _ROSTopicSubscription = "/cmd_vel";
         public string _Id = "unity_diff_control";
-        private ZOROSBridgeConnection ROSBridgeConnection { get; set; }
         private TwistMessage _twistMessage = new TwistMessage();
         private OdometryMessage _odometryMessage = new OdometryMessage();
 
 
-        public void OnROSBridgeConnected(ROS.Unity.ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
+        public void OnROSBridgeConnected(object rosUnityManager) {
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeConnected");
-            ROSBridgeConnection = rosBridgeConnection;
 
             // subscribe to Twist Message
-            ROSBridgeConnection.Subscribe<TwistMessage>(_Id, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+            ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(_Id, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
 
             // adverise Odometry Message
-            ROSBridgeConnection.Advertise("/odom", _odometryMessage.MessageType);
+            ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
         }
 
-        public void OnROSBridgeDisconnected(ROS.Unity.ZOROSUnityManager rosUnityManager, ZOROSBridgeConnection rosBridgeConnection) {
-            Debug.Log("INFO: ZOImagePublisher::OnROSBridgeDisconnected");
+        public void OnROSBridgeDisconnected(object rosUnityManager) {
+            ZOROSBridgeConnection.Instance.UnAdvertise(_ROSTopicSubscription);
+            Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeDisconnected");
         }
 
         public Task OnROSTwistMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
@@ -276,6 +317,56 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
 
             return Task.CompletedTask;
         }
+
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
+            throw new System.NotImplementedException("TODO");
+        }
+
+        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("connected_body", _connectedBody.Name),
+                new JProperty("right_wheel_motor", new JObject(
+                    new JProperty("occurrence_name", _rightWheelMotor.GetComponent<ZOSimOccurrence>().Name),
+                    new JProperty("hinge_joint_name", _rightWheelMotor.Name)
+                )),
+                new JProperty("left_wheel_motor", new JObject(
+                    new JProperty("occurrence_name", _leftWheelMotor.GetComponent<ZOSimOccurrence>().Name),
+                    new JProperty("hinge_joint_name", _leftWheelMotor.Name)
+                )),
+                new JProperty("wheel_radius", _wheelRadius),
+                new JProperty("wheel_seperation", _wheelSeperation),
+                new JProperty("update_rate_hz", UpdateRateHz)
+            );
+            JSON = json;
+            return json;
+        }
+
+        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+            JSON = json;
+            Name = json["name"].Value<string>();
+            _wheelRadius = json["wheel_radius"].Value<float>();
+            _wheelSeperation = json["wheel_seperation"].Value<float>();
+            UpdateRateHz = json["update_rate_hz"].Value<float>();
+
+            documentRoot.AddPostLoadFromJSONNotification((docRoot) => {
+
+                // find and hook up the motors
+                if (JSON.ContainsKey("connected_body")) {
+                    _connectedBody = docRoot.GetOccurrence(JSON["connected_body"].Value<string>());
+                    ZOSimOccurrence rightWheelOccurrence = docRoot.GetOccurrence(JSON["right_wheel_motor"]["occurrence_name"].Value<string>());
+                    ZOSimOccurrence leftWheelOccurrence = docRoot.GetOccurrence(JSON["left_wheel_motor"]["occurrence_name"].Value<string>());
+
+                    _rightWheelMotor = rightWheelOccurrence.GetHingeJointNamed(JSON["right_wheel_motor"]["hinge_joint_name"].Value<string>());
+                    _leftWheelMotor = leftWheelOccurrence.GetHingeJointNamed(JSON["left_wheel_motor"]["hinge_joint_name"].Value<string>());
+
+
+                }
+            });
+
+        }
+
 
 
     }
