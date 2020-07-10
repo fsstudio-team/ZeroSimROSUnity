@@ -42,7 +42,9 @@ namespace ZO.ROS.Unity.Service {
                 Debug.Log("INFO: Spawning ZeroSim model: " + spawnRequest.model_name);
 
                 try {
-                    GameObject loadedAsset = ROSUnityManager.DefaultAssets.LoadAsset<GameObject>(spawnRequest.model_prefab_name);
+                    Debug.LogError("TODO: Reimplement asset loading with addressables");
+                    //GameObject loadedAsset = ROSUnityManager.DefaultAssets.LoadAsset<GameObject>(spawnRequest.model_prefab_name);
+                    GameObject loadedAsset = null;
                     if (loadedAsset != null) {
                         Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
                         Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
