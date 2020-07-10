@@ -109,16 +109,6 @@ namespace ZO.ROS.Unity {
         }
 
 
-        private AssetBundle _defaultZeroSimAssets = null;
-        /// <summary>
-        /// Default Asset Bundle readonly accessor.
-        /// </summary>
-        /// <value>AssetBundle</value>
-        public AssetBundle DefaultAssets {
-            get => _defaultZeroSimAssets;
-        }
-
-
         // publish 
         [SerializeField] public ZOROSTransformPublisher _rootMapTransformPublisher;
         public ZOROSTransformPublisher RootMapTransform {
@@ -155,15 +145,6 @@ namespace ZO.ROS.Unity {
                 }
             } else { // in play mode
 
-                if (_defaultZeroSimAssets == null) {
-                    // Load default asset bundles
-                    _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
-                    if (_defaultZeroSimAssets == null) {
-                        Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
-                    } else {
-                        Debug.Log("INFO: Load zerosimrobots asset bundle success!");
-                    }
-                }
 
                 ROSBridgeConnection.Serialization = _serializationType;
                 ROSBridgeConnection.OnConnectedToROSBridge = (rosBridge) => {

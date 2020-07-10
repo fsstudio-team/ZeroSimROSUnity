@@ -6,7 +6,7 @@ using ZO.Util;
 
 
 namespace ZO.ROS.Unity {
-    public abstract class ZOROSUnityGameObjectBase : ZOGameObjectBase, ZOROSUnityInterface, ZOSimTypeInterface {
+    public abstract class ZOROSUnityGameObjectBase : ZOGameObjectBase, ZOROSUnityInterface, ZOSerializationInterface {
 
         public string _ROSTopic = "";
         public string _ROSId = "";
@@ -72,12 +72,12 @@ namespace ZO.ROS.Unity {
         protected override void ZOStart() {
             // auto-connect to ROS Bridge connection and disconnect events
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
         }
 
         protected override void ZOOnDestroy() {
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
         }
 
 

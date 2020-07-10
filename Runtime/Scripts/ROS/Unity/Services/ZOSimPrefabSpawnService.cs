@@ -46,7 +46,8 @@ namespace ZO.ROS.Unity.Service {
                     if (loadedAsset != null) {
                         Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
                         Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
-                        Instantiate(loadedAsset, position, rotation);
+                        GameObject instance = Instantiate(loadedAsset, position, rotation);
+                        instance.name = spawnRequest.model_name;
 
                         // report back success
                         ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {

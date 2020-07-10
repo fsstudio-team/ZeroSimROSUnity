@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace ZO.Controllers {
 
     [ExecuteAlways]
-    public class ZO2FingerGripController : MonoBehaviour, ZO.ZOSimTypeInterface {
+    public class ZO2FingerGripController : MonoBehaviour, ZO.ZOSerializationInterface {
 
         [SerializeField] public string _name;
         public Vector2 _minMaxLimitsDegrees = new Vector2(0, 45);

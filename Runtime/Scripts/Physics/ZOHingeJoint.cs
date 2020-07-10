@@ -13,7 +13,7 @@ namespace ZO.Physics {
     /// JSON format.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZO.ZOSimTypeInterface {
+    public class ZOHingeJoint : MonoBehaviour, ZO.ZOSerializationInterface {
 
         [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
         public UnityEngine.HingeJoint UnityHingeJoint {

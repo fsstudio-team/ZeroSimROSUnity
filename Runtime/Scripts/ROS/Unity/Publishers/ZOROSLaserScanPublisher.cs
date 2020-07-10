@@ -76,7 +76,7 @@ namespace ZO.ROS.Unity.Publisher {
             _rosLaserScanMessage.range_max = lidar.RangeMax;
             _rosLaserScanMessage.ranges = ranges;
 
-            ROSBridgeConnection.Publish(_rosLaserScanMessage, _ROSTopic, _ROSId);
+            ROSBridgeConnection.Publish(_rosLaserScanMessage, ROSTopic, ROSId);
 
             return Task.CompletedTask;
         }

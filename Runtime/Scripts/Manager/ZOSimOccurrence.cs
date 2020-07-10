@@ -22,7 +22,7 @@ namespace ZO {
     /// defines "instance" properties such as position & orientation.
     /// 
     /// </summary>
-    public class ZOSimOccurrence : MonoBehaviour, ZOSimTypeInterface {
+    public class ZOSimOccurrence : MonoBehaviour, ZOSerializationInterface {
 
         [ZO.Util.ZOReadOnly] [SerializeField] public ZOSimDocumentRoot _documentRoot;
 
@@ -577,8 +577,8 @@ namespace ZO {
             }
 
             // save rest of objects that implement the ZOSimTypeInterface
-            ZOSimTypeInterface[] simTypes = GetComponents<ZO.ZOSimTypeInterface>();
-            foreach (ZOSimTypeInterface simType in simTypes) {
+            ZOSerializationInterface[] simTypes = GetComponents<ZO.ZOSerializationInterface>();
+            foreach (ZOSerializationInterface simType in simTypes) {
                 string[] subtypes = simType.Type.Split('.');
 
                 // handle joint types

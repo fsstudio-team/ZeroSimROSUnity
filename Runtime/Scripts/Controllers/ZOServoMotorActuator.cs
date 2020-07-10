@@ -13,7 +13,7 @@ namespace ZO.Controllers {
     /// A PID controlled servo motor controller.
     /// </summary>
     [ExecuteAlways]
-    public class ZOServoMotorActuator : MonoBehaviour, ZO.ZOSimTypeInterface {
+    public class ZOServoMotorActuator : MonoBehaviour, ZO.ZOSerializationInterface {
 
         public string _name;
         public ZOHingeJoint _hingeJoint;

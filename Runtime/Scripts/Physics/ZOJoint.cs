@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace ZO.Physics {
 
     [ExecuteAlways]
-    public class ZOJoint : MonoBehaviour, ZO.ZOSimTypeInterface {
+    public class ZOJoint : MonoBehaviour, ZO.ZOSerializationInterface {
 
         [SerializeField] public UnityEngine.Joint _unityJoint;
         public UnityEngine.Joint UnityJoint {

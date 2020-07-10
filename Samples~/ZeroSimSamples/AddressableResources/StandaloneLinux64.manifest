@@ -1,7 +1,0 @@
-ManifestFileVersion: 0
-CRC: 2199678201
-AssetBundleManifest:
-  AssetBundleInfos:
-    Info_0:
-      Name: default_zero_sim_assets
-      Dependencies: {}

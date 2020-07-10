@@ -7,7 +7,7 @@ namespace ZO.Physics {
     /// Proportional Integral Derivative (PID) controller.
     /// </summary>
     [System.Serializable]
-    public class ZOPIDController : ZO.ZOSimTypeInterface {
+    public class ZOPIDController : ZO.ZOSerializationInterface {
         public string _name;
 
         [UnityEngine.Tooltip("Proportional constant (counters current error)")]
