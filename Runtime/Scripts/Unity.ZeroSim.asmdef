@@ -1,7 +1,9 @@
 {
     "name": "Unity.ZeroSim",
     "references": [
-        "Unity.Burst"
+        "Unity.Burst",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
