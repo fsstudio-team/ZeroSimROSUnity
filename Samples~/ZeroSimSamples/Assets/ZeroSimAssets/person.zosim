@@ -1,0 +1,45 @@
+{
+  "document_name": "person",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "person"
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "occurrence",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "visuals": [
+        {
+          "model_name": "teapot"
+        }
+      ]
+    }
+  ]
+}

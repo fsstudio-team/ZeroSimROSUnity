@@ -1,0 +1,544 @@
+{
+  "document_name": "ZOSimSimpleBot",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "ZOSimSimpleBot",
+      "controllers": [
+        {
+          "name": "ros.publisher.joint_states_ZOSimSimpleBot",
+          "type": "ros.publisher.joint_states",
+          "ros_topic": "/zerosim/joint_states",
+          "update_rate_hz": 4.0
+        }
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "base_link",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "name": "right_wheel_motor",
+          "type": "joint.hinge",
+          "anchor": [
+            0.146,
+            -0.014,
+            0.066
+          ],
+          "world_anchor": [
+            0.146,
+            0.036,
+            0.066
+          ],
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            -1.41109506E-08,
+            1.0000006,
+            0.0
+          ],
+          "world_connected_anchor": [
+            -1.41109506E-08,
+            1.05000055,
+            0.0
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 1.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "right_wheel",
+          "parent_occurrence": "base_link"
+        },
+        {
+          "name": "left_wheel_motor",
+          "type": "joint.hinge",
+          "anchor": [
+            -0.146,
+            -0.014,
+            0.066
+          ],
+          "world_anchor": [
+            -0.146,
+            0.036,
+            0.066
+          ],
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            -4.2332843E-08,
+            -1.0000006,
+            0.0
+          ],
+          "world_connected_anchor": [
+            -4.2332843E-08,
+            -0.9500006,
+            0.0
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 1.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "left_wheel",
+          "parent_occurrence": "base_link"
+        }
+      ],
+      "controllers": [
+        {
+          "name": "base_link_controller.differential_drive",
+          "type": "controller.differential_drive",
+          "connected_body": "base_link",
+          "right_wheel_motor": {
+            "occurrence_name": "base_link",
+            "hinge_joint_name": "right_wheel_motor"
+          },
+          "left_wheel_motor": {
+            "occurrence_name": "base_link",
+            "hinge_joint_name": "left_wheel_motor"
+          },
+          "wheel_radius": 0.033,
+          "wheel_seperation": 0.287,
+          "update_rate_hz": 10.0
+        }
+      ],
+      "ros": [
+        {
+          "name": "ros.transform_publisher_base_link",
+          "type": "ros.publisher.transform",
+          "ros_topic": "",
+          "update_rate_hz": 10.0,
+          "frame_id": "map",
+          "child_frame_id": "base_link"
+        }
+      ],
+      "children": [
+        {
+          "name": "lidar_2d",
+          "translation": [
+            0.0,
+            0.1652,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "base_link",
+          "ros": [
+            {
+              "name": "ros.transform_publisher_lidar_2d",
+              "type": "ros.publisher.transform",
+              "ros_topic": "",
+              "update_rate_hz": 10.0,
+              "frame_id": "base_link",
+              "child_frame_id": "scan"
+            },
+            {
+              "name": "ros.publisher.image_lidar_2d",
+              "type": "ros.publisher.scan",
+              "ros_topic": "scan",
+              "update_rate_hz": 10.0,
+              "lidar2d_name": ""
+            }
+          ],
+          "sensors": [
+            {
+              "name": "",
+              "type": "sensor.lidar2d",
+              "update_rate_hz": 10.0,
+              "min_angle_degrees": 0.0,
+              "max_angle_degrees": 360.0,
+              "angle_increment_degrees": 1.0,
+              "min_range_distance_meters": 0.1,
+              "max_range_distance_meters": 20.0,
+              "parent_occurrence": "lidar_2d"
+            }
+          ]
+        },
+        {
+          "name": "rgb_camera",
+          "translation": [
+            0.0,
+            0.182199985,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            1.0,
+            -4.371139E-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "base_link",
+          "ros": [
+            {
+              "name": "simplebot_camera_publisher",
+              "type": "ros.publisher.image",
+              "ros_topic": "image",
+              "update_rate_hz": 20.0,
+              "rgb_camera_name": "simplebot_camera"
+            }
+          ],
+          "sensors": [
+            {
+              "name": "simplebot_camera",
+              "type": "sensor.rgbcamera",
+              "width": 640,
+              "height": 480,
+              "aspect_ratio": 1.33333337,
+              "field_of_view": 60.0,
+              "depth": 0.0,
+              "sensor_size": [
+                36.0,
+                24.0
+              ],
+              "focal_length": 50.0,
+              "parent_occurrence": "rgb_camera"
+            }
+          ],
+          "children": [
+            {
+              "name": "Cube",
+              "translation": [
+                0.0,
+                0.0285,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                0.01,
+                0.01,
+                0.01
+              ],
+              "parent_name": "rgb_camera",
+              "primitive": {
+                "type": "cube",
+                "dimensions": [
+                  0.01,
+                  0.01,
+                  0.01
+                ],
+                "has_collisions": false,
+                "color": [
+                  0.192450956,
+                  0.5755294,
+                  0.0,
+                  1.0
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "main_chassis_body",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.287,
+            0.08,
+            0.3
+          ],
+          "parent_name": "base_link",
+          "primitive": {
+            "type": "cube",
+            "dimensions": [
+              0.287,
+              0.08,
+              0.3
+            ],
+            "has_collisions": true,
+            "color": [
+              0.192450956,
+              0.5755294,
+              0.0,
+              1.0
+            ],
+            "physics_material": {
+              "bounciness": 0.0,
+              "dynamic_friction": 0.6,
+              "static_friction": 0.6
+            }
+          }
+        },
+        {
+          "name": "right_castor",
+          "translation": [
+            0.1094,
+            -0.042,
+            -0.1379
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.01,
+            0.01,
+            0.01
+          ],
+          "parent_name": "base_link",
+          "primitive": {
+            "type": "sphere",
+            "dimensions": [
+              0.01,
+              0.01,
+              0.01
+            ],
+            "has_collisions": true,
+            "color": [
+              0.192450956,
+              0.5755294,
+              0.0,
+              1.0
+            ],
+            "physics_material": {
+              "bounciness": 0.0,
+              "dynamic_friction": 0.0,
+              "static_friction": 0.0
+            }
+          }
+        },
+        {
+          "name": "left_castor",
+          "translation": [
+            -0.1094,
+            -0.042,
+            -0.1379
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.01,
+            0.01,
+            0.01
+          ],
+          "parent_name": "base_link",
+          "primitive": {
+            "type": "sphere",
+            "dimensions": [
+              0.01,
+              0.01,
+              0.01
+            ],
+            "has_collisions": true,
+            "color": [
+              0.192450956,
+              0.5755294,
+              0.0,
+              1.0
+            ],
+            "physics_material": {
+              "bounciness": 0.0,
+              "dynamic_friction": 0.0,
+              "static_friction": 0.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "right_wheel",
+      "translation": [
+        0.156,
+        -0.014,
+        0.066
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.7071068,
+        0.7071068
+      ],
+      "scale": [
+        0.066,
+        0.01,
+        0.066
+      ],
+      "primitive": {
+        "type": "cylinder",
+        "dimensions": [
+          0.066,
+          0.01,
+          0.066
+        ],
+        "has_collisions": true,
+        "color": [
+          0.192450956,
+          0.5755294,
+          0.0,
+          1.0
+        ],
+        "physics_material": {
+          "bounciness": 0.0,
+          "dynamic_friction": 1.0,
+          "static_friction": 1.0
+        }
+      },
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      }
+    },
+    {
+      "name": "left_wheel",
+      "translation": [
+        -0.156,
+        -0.014,
+        0.066
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.7071068,
+        0.7071068
+      ],
+      "scale": [
+        0.066,
+        0.01,
+        0.066
+      ],
+      "primitive": {
+        "type": "cylinder",
+        "dimensions": [
+          0.066,
+          0.01,
+          0.066
+        ],
+        "has_collisions": true,
+        "color": [
+          0.192450956,
+          0.5755294,
+          0.0,
+          1.0
+        ],
+        "physics_material": {
+          "bounciness": 0.0,
+          "dynamic_friction": 1.0,
+          "static_friction": 1.0
+        }
+      },
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      }
+    }
+  ]
+}
