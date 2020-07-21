@@ -4,14 +4,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 using ZO.Util;
+using ZO.Util.Extensions;
+using ZO.ROS.Unity;
 
 namespace ZO.Sensors {
     [RequireComponent(typeof(Camera))]
-    public class ZORGBCamera : ZOGameObjectBase {
+    public class ZORGBCamera : ZOGameObjectBase, ZOSerializationInterface {
         [Header("Camera Parameters")]
-        string _cameraId = "none";
+        // string _cameraId = "none";
         public Camera _camera;
+        public Camera UnityCamera {
+            get => _camera;
+            private set => _camera = value;
+        }
         public int _width = 1280;
         public int _height = 720;
 
@@ -22,7 +29,6 @@ namespace ZO.Sensors {
         [Header("Debug")]
         public Vector2 _debugWindowPosition = new Vector2(10, 10);
         private Texture2D _debugTexture;
-
 
         // ~~~~~~ Delegate Callbacks ~~~~~~
         /// <summary>
@@ -47,8 +53,17 @@ namespace ZO.Sensors {
 
         // Start is called before the first frame update
         protected override void ZOStart() {
+            Initialize();
+        }
+
+        protected void Initialize() {
+            // if camera is not assigned see if we have a camera component on this game object
             if (_camera == null) {
                 _camera = this.GetComponent<Camera>();
+            }
+
+            if (_postProcessMaterial == null) {
+                _postProcessMaterial = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBPostProcessMaterial");
             }
 
             _renderTexture = new RenderTexture(_width, _height, 16, RenderTextureFormat.ARGB32);
@@ -65,7 +80,7 @@ namespace ZO.Sensors {
             if (SystemInfo.supportsAsyncGPUReadback == true) {
                 Debug.Log("INFO: Native support for AsyncGPUReadback");
             } else {
-                Debug.Log("WARNING: NO support for native AsyncGPUReadback. Using 3rd party.");
+                Debug.LogWarning("WARNING: NO support for native AsyncGPUReadback. Using 3rd party.");
             }
 
         }
@@ -125,7 +140,7 @@ namespace ZO.Sensors {
                                 _colorPixels24[c3 + 2] = (byte)(rawTextureData[c4 + 3]);
 
                             }
-                            OnPublishRGBImageDelegate(this, _cameraId, _width, _height, _colorPixels24);
+                            OnPublishRGBImageDelegate(this, Name, _width, _height, _colorPixels24);
                             UnityEngine.Profiling.Profiler.EndSample();
                         } else {
                             // Debug.Log("skip");
@@ -153,6 +168,82 @@ namespace ZO.Sensors {
                 }
             }
         }
+
+#region ZOSerializationInterface
+        public string Type {
+            get { return "sensor.rgbcamera"; }
+        }
+
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        private JObject _json;
+        public JObject JSON {
+            get => _json;
+        }
+
+
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("width", _width),
+                new JProperty("height", _height),
+                new JProperty("aspect_ratio", UnityCamera.aspect),
+                new JProperty("field_of_view", UnityCamera.fieldOfView),
+                new JProperty("depth", UnityCamera.depth),
+                new JProperty("sensor_size", UnityCamera.sensorSize.ToJSON()),
+                new JProperty("focal_length", UnityCamera.focalLength)
+            );
+
+
+            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
+            if (parent_occurrence) {
+                json["parent_occurrence"] = parent_occurrence.Name;
+            }
+
+            _json = json;
+
+            return json;
+        }
+
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
+            throw new System.NotImplementedException("TODO!");
+            // TODO:
+        }
+
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            // Assert.Equals(json["type"].Value<string>() == Type);
+
+            if (UnityCamera == null) {  // check if there is already a camera assigned.
+                UnityCamera = GetComponent<Camera>();  // check if we have a camera component but it is unassigend
+                if (UnityCamera == null) {
+                    // we have no camera so create one
+                    UnityCamera = gameObject.AddComponent<Camera>();
+                }
+            }
+            _json = json;
+            Name = json.ValueOrDefault("name", Name);
+            _width = json.ValueOrDefault("width", _width);
+            _height = json.ValueOrDefault("height", _height);
+            UnityCamera.aspect = json.ValueOrDefault("aspect_ratio", UnityCamera.aspect);
+            UnityCamera.fieldOfView = json.ValueOrDefault("field_of_view", UnityCamera.fieldOfView);
+            UnityCamera.depth = json.ValueOrDefault("depth", UnityCamera.depth);
+            UnityCamera.sensorSize = json.ToVector2OrDefault("sensor_size", UnityCamera.sensorSize);
+            UnityCamera.focalLength = json.ValueOrDefault("focal_length", UnityCamera.focalLength);   
+
+            Initialize();
+
+        }
+#endregion
+
 
 
     }

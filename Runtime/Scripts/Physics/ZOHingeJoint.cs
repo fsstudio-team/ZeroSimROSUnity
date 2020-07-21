@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
+using ZO;
 
 namespace ZO.Physics {
 
@@ -13,7 +14,7 @@ namespace ZO.Physics {
     /// JSON format.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZO.ZOSerializationInterface {
+    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface {
 
         [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
         public UnityEngine.HingeJoint UnityHingeJoint {
@@ -22,20 +23,8 @@ namespace ZO.Physics {
             }
         }
 
-        [SerializeField] public string _name;
 
-        public string Type {
-            get { return "joint.hinge"; }
-        }
 
-        public string Name {
-            get {
-                return _name;
-            }
-            private set {
-                _name = value;
-            }
-        }
 
         //TODO: move the actual motor update into FixedUpdate otherwise it won't work
         public float AngularVelocityDegrees {
@@ -53,26 +42,26 @@ namespace ZO.Physics {
             }
         }
 
-        private JObject _json;
-        public JObject JSON {
+        /// <summary>
+        /// The current angle in degrees of the hinge joint relative to it's start position.
+        /// </summary>
+        /// <value></value>
+        public float AngleDegrees {
             get {
-                // if (_json == null) {
-                //     _json = BuildJSON();
-                // }
-                return _json;
-
+                return UnityHingeJoint.angle;
             }
         }
 
-        // void Start() {
+        public float TorqueNewtonMeters {
+            get {
+                return UnityHingeJoint.motor.force;
+            }
+        }
 
-        //     // if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
 
-        //     // }
-        // }
 
         private void Reset() {
-            CreateRequirements();    
+            CreateRequirements();
         }
 
         public void CreateRequirements() {
@@ -107,14 +96,47 @@ namespace ZO.Physics {
         // }
 
 
+#region ZOSerializationInterface
+        public string Type {
+            get { return "joint.hinge"; }
+        }
 
-        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        private JObject _json;
+        public JObject JSON {
+            get {
+                // if (_json == null) {
+                //     _json = BuildJSON();
+                // }
+                return _json;
+
+            }
+        }
+
+
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            // calculate the world anchor position
+            Vector3 worldAnchor = this.transform.TransformPoint(UnityHingeJoint.anchor);
+            Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
+            Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
                 new JProperty("anchor", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.anchor)),
+                new JProperty("world_anchor", ZOSimDocumentRoot.ToJSON(worldAnchor)),
                 new JProperty("axis", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.axis)),
+                new JProperty("world_axis", ZOSimDocumentRoot.ToJSON(worldAxis)),
                 new JProperty("connected_anchor", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.connectedAnchor)),
+                new JProperty("world_connected_anchor", ZOSimDocumentRoot.ToJSON(worldConnectedAnchor)),
                 new JProperty("use_spring", UnityHingeJoint.useSpring),
                 new JProperty("spring", new JObject(
                     new JProperty("spring", UnityHingeJoint.spring.spring),
@@ -142,7 +164,11 @@ namespace ZO.Physics {
 
                 if (connected_occurrence) {
                     json["connected_occurrence"] = connected_occurrence.Name;
+                } else {
+                    Debug.LogWarning("WARNING: Could not get connected occurrence for ZOHingeJoint: " + Name + "\nPerhaps there is a missing ZOSimOccurrence?");
                 }
+            } else {
+                Debug.LogWarning("WARNING: Could not get connected occurrence for ZOHingeJoint: " + Name);
             }
 
             ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
@@ -160,7 +186,7 @@ namespace ZO.Physics {
             // TODO:
         }
 
-        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);
 
             _json = json;
@@ -205,17 +231,15 @@ namespace ZO.Physics {
 
             // find connected body.  this likely will need to be done post LoadFromJSON as it may
             // not be created yet.
-            documentRoot.AddPostLoadFromJSONNotification((docRoot) => {
+            documentRoot.OnPostDeserializationNotification((docRoot) => {
                 if (JSON.ContainsKey("connected_occurrence")) {
                     ZOSimOccurrence connectedOccurrence = docRoot.GetOccurrence(JSON["connected_occurrence"].Value<string>());
                     UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
                 }
             });
 
-
-
         }
-
+#endregion
 
     }
 

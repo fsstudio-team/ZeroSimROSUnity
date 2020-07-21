@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.ZOSim;
-using UnityEngine.AddressableAssets;
 
 namespace ZO.ROS.Unity.Service {
 
     /// <summary>
-    /// A ROS Spawn Service for .zosim files and Unity prefabs.
+    /// A ROS Spawn Service for Unity prefabs.
     /// </summary>
     public class ZOSimPrefabSpawnService : ZOROSUnityGameObjectBase {
 
@@ -37,79 +36,47 @@ namespace ZO.ROS.Unity.Service {
             while (_spawnZOSimModelRequests.Count > 0) {
 
                 Tuple<ZOSimPrefabSpawnRequest, string> spawnRequestAndId = _spawnZOSimModelRequests.Dequeue();
-                
-                ProcessSpawnRequest(spawnRequestAndId);
-            }
+                ZOSimPrefabSpawnRequest spawnRequest = spawnRequestAndId.Item1;
+                string service_request_id = spawnRequestAndId.Item2;
 
-        }
+                Debug.Log("INFO: Spawning ZeroSim model: " + spawnRequest.model_name);
 
-        private async void ProcessSpawnRequest(Tuple<ZOSimPrefabSpawnRequest, string> spawnRequestAndId)
-        {
-            ZOSimPrefabSpawnRequest spawnRequest = spawnRequestAndId.Item1;
-            string service_request_id = spawnRequestAndId.Item2;
+                try {
+                    GameObject loadedAsset = ROSUnityManager.DefaultAssets.LoadAsset<GameObject>(spawnRequest.model_prefab_name);
+                    if (loadedAsset != null) {
+                        Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
+                        Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
+                        GameObject instance = Instantiate(loadedAsset, position, rotation);
+                        instance.name = spawnRequest.model_name;
 
-            Debug.Log("INFO: Spawning ZeroSim model: " + spawnRequest.model_name);
+                        // report back success
+                        ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
+                            success = true,
+                            status_message = "done!"
+                        }, ROSTopic, true, service_request_id);
 
-            try {
-                Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
-                Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
+                    } else { // error loading asset
+                        ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
+                            success = false,
+                            status_message = "ERROR: loading model: " + spawnRequest.model_name
+                        }, ROSTopic, false, service_request_id);
 
-                var asyncOperationHandle = Addressables.InstantiateAsync(spawnRequest.prefab_address, position, rotation);
-                await asyncOperationHandle.Task;
+                    }
 
-                if(asyncOperationHandle.Task.IsCanceled || asyncOperationHandle.Task.IsFaulted){
+
+
+                } catch (System.Exception e) {
+                    Debug.LogError("ERROR: spawning model: " + e.ToString());
+
+                    // report back error
                     ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
-                        success = false,
-                        status_message = "ERROR: loading model: " + spawnRequest.model_name
-                    }, ROSTopic, false, service_request_id);
+                        success = true,
+                        status_message = "ERROR: " + e.ToString()
+                    }, ROSTopic, true, service_request_id);
 
-                    return;
                 }
 
-                GameObject instance = asyncOperationHandle.Result;
-                instance.name = spawnRequest.model_name;
 
-                // report back success
-                ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
-                    success = true,
-                    status_message = "done!"
-                }, ROSTopic, true, service_request_id);
-
-
-                // // spawn a new gameobject
-                // GameObject newZoSimModel = new GameObject(spawnRequest.model_name);
-
-                // newZoSimModel.transform.parent = null;  // make it child of the world
-
-                // // set the initial position and orientation
-                // Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
-                // Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
-                // newZoSimModel.transform.position = position;
-                // newZoSimModel.transform.rotation = rotation;
-
-                // // load from JSON
-                // ZOSimDocumentRoot simDocumentRoot = newZoSimModel.AddComponent<ZOSimDocumentRoot>();
-                // JObject zosimModelJSON = JObject.Parse(spawnRequest.model_zosim);
-                // simDocumentRoot.LoadFromJSON(zosimModelJSON);
-
-                // // fixup name
-                // newZoSimModel.name = spawnRequest.model_name;
-
-                // report back success
-                // ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
-                //     success = true,
-                //     status_message = "success!"
-                // }, ROSTopic, true, service_request_id);
-
-
-            } catch (System.Exception e) {
-                Debug.LogError("ERROR: spawning model: " + e.ToString());
-
-                // report back error
-                ROSBridgeConnection.ServiceResponse<ZOSimPrefabSpawnResponse>(new ZOSimPrefabSpawnResponse() {
-                    success = true,
-                    status_message = "ERROR: " + e.ToString()
-                }, ROSTopic, true, service_request_id);
 
             }
 
@@ -130,16 +97,6 @@ namespace ZO.ROS.Unity.Service {
             });
 
         }
-
-        // private Task SpawnModelHandler(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg, string id) {
-        //     Debug.Log("INFO: ZOROSUnityManager::SpawnModelHandler");
-
-        //     // queue up the spawn model because it needs to be done in the main thread Update()
-        //     _spawnZOSimModelRequests.Enqueue(new Tuple<ZOSimSpawnServiceRequest, string>((ZOSimSpawnServiceRequest)msg, id));
-
-
-        //     return Task.CompletedTask;
-        // }
 
 
         public override void OnROSBridgeConnected(object rosUnityManager) {

@@ -11,6 +11,7 @@ using ZO.ROS.MessageTypes.Std;
 using ZO.ROS;
 using ZO.ROS.Unity;
 using ZO.Util;
+using ZO.Physics;
 
 
 namespace ZO.Controllers {
@@ -48,8 +49,27 @@ namespace ZO.Controllers {
         public Rigidbody ConnectedRigidBody {
             get { return _connectedBody.GetComponent<Rigidbody>(); }
         }
-        public ZO.Physics.ZOHingeJoint _rightWheelMotor;
-        public ZO.Physics.ZOHingeJoint _leftWheelMotor;
+        [SerializeField][ZOReadOnly] public ZOHingeJoint _rightWheelMotor;
+
+        /// <summary>
+        /// Hinge joint that drives the right wheel.
+        /// </summary>
+        /// <value></value>
+        public ZOHingeJoint RightWheelMotor {
+            get => _rightWheelMotor;
+            set => _rightWheelMotor = value;
+        }
+        
+        [SerializeField][ZOReadOnly] public ZOHingeJoint _leftWheelMotor;
+
+        /// <summary>
+        /// Hinge joint that drive the left wheel.
+        /// </summary>
+        /// <value></value>
+        public ZOHingeJoint LeftWheelMotor {
+            get => _leftWheelMotor;
+            set => _leftWheelMotor = value;
+        }
         public float _wheelRadius = 0;
         public float _wheelSeperation = 0;
 
@@ -100,7 +120,7 @@ namespace ZO.Controllers {
 
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 // subscribe to Twist Message
-                ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(_Id, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+                ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(Name, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
 
                 // adverise Odometry Message
                 ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
@@ -115,7 +135,7 @@ namespace ZO.Controllers {
 
         protected override void ZOFixedUpdate() {
             // update the motors
-            LinearVelocity = (float)_twistMessage.linear.x * Mathf.Rad2Deg;
+            LinearVelocity = (float)-_twistMessage.linear.x * Mathf.Rad2Deg;
             AngularVelocity = (float)_twistMessage.angular.z * Mathf.Rad2Deg;
         }
         protected override void ZOFixedUpdateHzSynchronized() {
@@ -193,8 +213,8 @@ void GazeboRosDiffDrive::publishWheelTF()
 
         }
         private void UpdateMotors() {
-            float leftVelocity = (LinearVelocity - AngularVelocity * _wheelSeperation / 2.0f) / _wheelRadius;
-            float rightVelocity = (LinearVelocity + AngularVelocity * _wheelSeperation / 2.0f) / _wheelRadius;
+            float leftVelocity = (LinearVelocity + AngularVelocity * _wheelSeperation / 2.0f) / _wheelRadius;
+            float rightVelocity = (LinearVelocity - AngularVelocity * _wheelSeperation / 2.0f) / _wheelRadius;
 
             _rightWheelMotor.AngularVelocityDegrees = rightVelocity;
             _leftWheelMotor.AngularVelocityDegrees = leftVelocity;
@@ -291,7 +311,6 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         /// To test: `rosrun turtlebot3 turtlebot3_teleop_key`
         /// </summary>
         public string _ROSTopicSubscription = "/cmd_vel";
-        public string _Id = "unity_diff_control";
         private TwistMessage _twistMessage = new TwistMessage();
         private OdometryMessage _odometryMessage = new OdometryMessage();
 
@@ -300,7 +319,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeConnected");
 
             // subscribe to Twist Message
-            ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(_Id, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+            ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(Name, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
 
             // adverise Odometry Message
             ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
@@ -322,7 +341,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             throw new System.NotImplementedException("TODO");
         }
 
-        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -343,14 +362,14 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             return json;
         }
 
-        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             JSON = json;
             Name = json["name"].Value<string>();
             _wheelRadius = json["wheel_radius"].Value<float>();
             _wheelSeperation = json["wheel_seperation"].Value<float>();
             UpdateRateHz = json["update_rate_hz"].Value<float>();
 
-            documentRoot.AddPostLoadFromJSONNotification((docRoot) => {
+            documentRoot.OnPostDeserializationNotification((docRoot) => {
 
                 // find and hook up the motors
                 if (JSON.ContainsKey("connected_body")) {

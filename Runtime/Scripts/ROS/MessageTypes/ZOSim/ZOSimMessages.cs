@@ -135,10 +135,16 @@ namespace ZO.ROS.MessageTypes.ZOSim {
         public string model_prefab_name { get; set; }
 
         /// <summary>
-        /// The address of the asset
+        /// the file name of the Unity asset bundle.  If empty  uses the "default_zero_sim_assets"
         /// </summary>
         /// <value></value>
-        public string prefab_address { get; set; }
+        public string unity_asset_bundle { get; set; }
+
+        /// <summary>
+        /// the file name of the Unity asset bundle.  URI to download a Unity asset bundle.  If empty  uses the "default_zero_sim_assets"
+        /// </summary>
+        /// <value></value>
+        public string unity_asset_bundle_uri { get; set; }
 
         /// <summary>
         /// spawn robot and all ROS interfaces under this namespace
@@ -167,15 +173,17 @@ namespace ZO.ROS.MessageTypes.ZOSim {
         public ZOSimPrefabSpawnRequest() {
             this.model_name = "";
             this.model_prefab_name = "";
-            this.prefab_address = "";
+            this.unity_asset_bundle = "";
+            this.unity_asset_bundle_uri = "";
             this.initial_pose = new PoseMessage();
             this.reference_frame = "world";
         }
 
-        public ZOSimPrefabSpawnRequest(string model_name, string prefab_address, PoseMessage initial_pose, string reference_frame) {
+        public ZOSimPrefabSpawnRequest(string model_name, string model_prefab_name, string unity_asset_bundle, string unity_asset_bundle_uri, PoseMessage initial_pose, string reference_frame) {
             this.model_name = model_name;
             this.model_prefab_name = model_prefab_name;
-            this.prefab_address = prefab_address;
+            this.unity_asset_bundle = unity_asset_bundle;
+            this.unity_asset_bundle_uri = unity_asset_bundle_uri;
             this.initial_pose = new PoseMessage();
             this.reference_frame = reference_frame;
         }

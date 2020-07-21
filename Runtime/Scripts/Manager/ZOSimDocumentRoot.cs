@@ -1,9 +1,11 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
@@ -24,28 +26,44 @@ namespace ZO {
             set { _zoSimDocumentFilePath = value; }
         }
         private JObject _json;
+
+        /// <summary>
+        /// The ZOSim JSON for this document root.
+        /// </summary>
+        /// <value></value>
         public JObject JSON {
             get => _json;
             set => _json = value;
         }
+
+        /// <summary>
+        /// The name of this zosim document root. Note that it *should* be unique, so if you are 
+        /// spawing a bunch of these make sure to set the "document_name" in the ZeroSim JSON to
+        /// something unique!
+        /// </summary>
+        /// <value></value>
+        public string Name {
+            get => gameObject.name;
+            set => gameObject.name = value;
+        }
         private List<JObject> _components = null;
-        
+
         private List<Action<ZOSimDocumentRoot>> _postLoadFromJSONNotifiers = new List<Action<ZOSimDocumentRoot>>();
 
         /// <summary>
-        /// If a ZOSimTypeInterface needs to be notified after a LoadFrom a ZOSim File.
+        /// If someone needs to be notified after a deserialization a ZOSim File.
         /// For example a ZOHingeJoint needs to fixup the connected bodies that may or
-        /// may not exist during the LoadFromJSON call.
+        /// may not exist during the Deserialize call.
         /// </summary>
         /// <param name="notification"></param>
-        public void AddPostLoadFromJSONNotification(Action<ZOSimDocumentRoot> notification) {
+        public void OnPostDeserializationNotification(Action<ZOSimDocumentRoot> notification) {
             _postLoadFromJSONNotifiers.Add(notification);
-        } 
+        }
 
 
         // Start is called before the first frame update
         void Start() {
-            _json = BuildZOSimDocument();
+            _json = Serialize();
         }
 
         public JObject GetComponentJSON(string componentName) {
@@ -85,6 +103,11 @@ namespace ZO {
 
         }
 
+        /// <summary>
+        /// Get zosim occurrence by name.
+        /// </summary>
+        /// <param name="occurrenceName">the name of the occurrence</param>
+        /// <returns>ZOSimOccurrence</returns>
         public ZOSimOccurrence GetOccurrence(string occurrenceName) {
             Transform t = transform.Find(occurrenceName);
             if (t != null) {
@@ -94,14 +117,15 @@ namespace ZO {
             return null;
         }
 
+
         /// <summary>
-        /// Builds ZOSim document from traversing hierarchy.
+        /// Builds ZOSim document by traversing hierarchy.
         /// </summary>
         /// <returns></returns>
-        public JObject BuildZOSimDocument() {
+        public JObject Serialize() {
             // create new ZeroSim JSON document from scratch
             JObject zoSimDocumentJSON = new JObject(
-                new JProperty("document_name", gameObject.name),
+                new JProperty("document_name", Name),
                 new JProperty("document_version", "1.0"),
                 new JProperty("mesh_scale", new JArray(new float[] { 1.0f, 1.0f, 1.0f })),
                 new JProperty("transform_scale", new JArray(new float[] { 1.0f, 1.0f, 1.0f })),
@@ -110,16 +134,27 @@ namespace ZO {
             );
 
             // we are always the "root" component
-            zoSimDocumentJSON["components"].Value<JArray>().Add(new JObject(
-                new JProperty("name", gameObject.name)
-            ));
+            JObject rootComponent = new JObject(new JProperty("name", Name));
+            zoSimDocumentJSON["components"].Value<JArray>().Add(rootComponent);
+
+            // serialize the controllers.  For example Joint State Publisher.
+            ZOSerializationInterface[] controllers = this.GetComponents<ZOSerializationInterface>();
+            if (controllers.Length > 0) {
+                JArray controllersJSONArray = new JArray();
+                foreach (ZOSerializationInterface controller in controllers) {
+                    JObject controllerJSON = controller.Serialize(this);
+                    controllersJSONArray.Add(controllerJSON);
+                }
+
+                rootComponent.Add("controllers", controllersJSONArray);
+            }
 
             // build the occurrences
             JArray occurrences = new JArray();
             foreach (Transform child in transform) {
                 ZOSimOccurrence zoSimOccurrence = child.GetComponent<ZOSimOccurrence>();
                 if (zoSimOccurrence) {
-                    JObject occurrenceJSON = zoSimOccurrence.BuildJSON(this);
+                    JObject occurrenceJSON = zoSimOccurrence.Serialize(this);
                     zoSimOccurrence.JSON = occurrenceJSON;
 
                     occurrences.Add(occurrenceJSON);
@@ -136,7 +171,7 @@ namespace ZO {
         /// Saves to ZOSim file.
         /// </summary>
         public void SaveToZOSimFile(string filePath) {
-            JSON = BuildZOSimDocument();
+            JSON = Serialize();
             // Save ZoSim file
             using (StreamWriter streamWriter = File.CreateText(filePath)) {
                 streamWriter.Write(JSON.ToString());
@@ -157,21 +192,62 @@ namespace ZO {
                 }
 
                 // load json file
-                LoadFromJSON(JSON);
+                Deserialize(JSON);
 
             } else {
                 Debug.LogError("ERROR: Could not load ZoSim Project. File does not exist: " + filePath);
             }
         }
 
-        public void LoadFromJSON(JObject json) {
+        public void Deserialize(JObject json) {
             JSON = json;
 
-            gameObject.name = JSON["document_name"].Value<string>();
+            Name = JSON["document_name"].Value<string>();
+
+            // get the root component which is named the same name as this root document
+            JObject rootComponentJSON = null;
+            if (JSON.ContainsKey("components")) {
+                JArray componentsJSONArray = JSON["components"].Value<JArray>();
+
+                foreach (JObject componentJson in componentsJSONArray) {
+                    if (componentJson["name"].Value<string>() == Name) {
+                        rootComponentJSON = componentJson;
+                        break;
+                    }
+                }
+
+            }
+
+            if (rootComponentJSON != null) {
+                // if we have a root component JSON do any required deserialization
+                if (rootComponentJSON.ContainsKey("controllers")) {
+                    foreach (JObject controllerJSON in rootComponentJSON["controllers"].Value<JArray>()) {
+                        // TODO: implement some sort of factory for these things...
+                        if (controllerJSON["type"].Value<string>() == "ros.publisher.joint_states") {
+                            // check if already a component and if not create it
+                            ZOROSJointStatesPublisher[] jointStatesPublishers = this.GetComponents<ZOROSJointStatesPublisher>();
+                            ZOROSJointStatesPublisher jointStatesPublisher = null;
+                            foreach (ZOROSJointStatesPublisher jsp in jointStatesPublishers) {
+                                if (jsp.Name == controllerJSON["name"].Value<string>()) {
+                                    jointStatesPublisher = jsp;
+                                    break;
+                                }
+                            }
+                            if (jointStatesPublisher == null) {
+                                // doesn't exist so create it
+                                jointStatesPublisher = this.gameObject.AddComponent<ZOROSJointStatesPublisher>();
+                            }
+                            jointStatesPublisher.Deserialize(this, controllerJSON);
+                        }
+                    }
+                }
+            }
+
+
 
             // go through occurrences                
-            foreach (JObject occurreneJSON in JSON["occurrences"].Value<JArray>()) {
-                string occurrenceName = occurreneJSON["name"].Value<string>();
+            foreach (JObject occurrenceJSON in JSON["occurrences"].Value<JArray>()) {
+                string occurrenceName = occurrenceJSON["name"].Value<string>();
 
                 ZOSimOccurrence simOccurrence = GetOccurrence(occurrenceName);
                 if (simOccurrence == null) {
@@ -180,11 +256,11 @@ namespace ZO {
                     go.transform.parent = this.transform;
                     simOccurrence = go.AddComponent<ZOSimOccurrence>();
                 }
-                simOccurrence.LoadFromJSON(this, occurreneJSON);
+                simOccurrence.Deserialize(this, occurrenceJSON);
             }
 
             // notify anyone who needs to do any fixup post load
-            foreach(Action<ZOSimDocumentRoot> postLoadNotify in _postLoadFromJSONNotifiers) {
+            foreach (Action<ZOSimDocumentRoot> postLoadNotify in _postLoadFromJSONNotifiers) {
                 postLoadNotify(this);
             }
             _postLoadFromJSONNotifiers.Clear();

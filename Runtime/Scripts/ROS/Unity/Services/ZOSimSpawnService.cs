@@ -51,6 +51,7 @@ namespace ZO.ROS.Unity.Service {
 
                     // set the initial position and orientation
                     Vector3 position = spawnRequest.initial_pose.position.ToUnityVector3();
+                    Debug.Log("INFO: Spawning at location: " + position.ToString());
                     Quaternion rotation = spawnRequest.initial_pose.orientation.ToUnityQuaternion();
                     newZoSimModel.transform.position = position;
                     newZoSimModel.transform.rotation = rotation;
@@ -58,10 +59,12 @@ namespace ZO.ROS.Unity.Service {
                     // load from JSON
                     ZOSimDocumentRoot simDocumentRoot = newZoSimModel.AddComponent<ZOSimDocumentRoot>();
                     JObject zosimModelJSON = JObject.Parse(spawnRequest.model_zosim);
-                    simDocumentRoot.LoadFromJSON(zosimModelJSON);
+                    simDocumentRoot.Deserialize(zosimModelJSON);
 
                     // fixup name
-                    newZoSimModel.name = spawnRequest.model_name;
+                    // TODO: check that the name is unique and if not generate a unique name or maybe return a
+                    // warning that the name is not unique?  probably the later.
+                    simDocumentRoot.Name = spawnRequest.model_name;
 
                     // report back success
                     ROSBridgeConnection.ServiceResponse<ZOSimSpawnServiceResponse>(new ZOSimSpawnServiceResponse() {

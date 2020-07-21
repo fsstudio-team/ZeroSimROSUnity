@@ -41,13 +41,14 @@ namespace ZO.ROS.Unity.Publisher {
 
 
         public override string Type {
-            get { return "ros.transform_publisher"; }
+            get { return "ros.publisher.transform"; }
         }
 
-        public override JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
+                new JProperty("ros_topic", ROSTopic),
                 new JProperty("update_rate_hz", UpdateRateHz),
                 new JProperty("frame_id", FrameID),
                 new JProperty("child_frame_id", ChildFrameID)
@@ -56,9 +57,10 @@ namespace ZO.ROS.Unity.Publisher {
             return json;
         }
 
-        public override void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             Name = json["name"].Value<string>();
             FrameID = json["frame_id"].Value<string>();
+            ROSTopic = json["ros_topic"].Value<string>();
             ChildFrameID = json["child_frame_id"].Value<string>();
             UpdateRateHz = json["update_rate_hz"].Value<float>();
         }

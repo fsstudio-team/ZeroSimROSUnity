@@ -839,8 +839,21 @@ namespace ZO.ROS {
             if (_isConnected == false) {
                 return;
             }
+            if (_tcpClient.Connected == false) {
+                _isConnected = false;
+                return;
+            }
+            if (_tcpClient.GetStream() == null) {
+                _isConnected = false;
+                return;
+            }
 
-            await _tcpClient.GetStream().WriteAsync(byteArray, 0, byteArray.Length);
+            try {
+
+                await _tcpClient.GetStream()?.WriteAsync(byteArray, 0, byteArray.Length);
+            } catch (Exception e) {
+                Debug.LogError("ERROR: ZOROSBridgeConnection::SendBSONAsync: " + e.ToString());
+            }
         }
         public async Task SendBSONAsync(MemoryStream memoryStream) {
             await SendBSONAsync(memoryStream.ToArray());

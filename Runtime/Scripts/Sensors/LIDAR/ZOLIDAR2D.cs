@@ -2,35 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using Unity.Burst;
+using Newtonsoft.Json.Linq;
 using ZO.Util;
+using ZO.Util.Extensions;
+using ZO.ROS.Unity;
 
 namespace ZO.Sensors {
 
+
     /// <summary>
-    /// ranges[i] = laserScan.ranges[i];
-    /// directions[i] = new Vector3(Mathf.Cos(laserScan.angle_min + laserScan.angle_increment * i), Mathf.Sin(laserScan.angle_min + laserScan.angle_increment * i), 0).Ros2Unity();
- 
+    /// 2D LIDAR Simulation.
     /// </summary>
-
-    public class ZOLIDAR2D : ZOGameObjectBase {
-        /// <summary>
-        /// A generic 2D LIDAR sensor.  
-        /// </summary>
-
-        public string _lidarId = "Not Set";
-
+    public class ZOLIDAR2D : ZOGameObjectBase, ZOSerializationInterface {
 
 
         [Header("FOV")]
-        public float _angleMinDegrees = 0.0f;
-        public float _angleMaxDegrees = 360.0f;
+        public float _minAngleDegrees = 0.0f;
+        public float _maxAngleDegrees = 360.0f;
         public float _angleIncrementDegrees = 1.0f;
 
-        public float _rangeMin = 0.1f;
-        public float _rangeMax = 20.0f;
+        public float _minRangeDistanceMeters = 0.1f;
+        public float _maxRangeDistanceMeters = 20.0f;
 
         // ~~~~~~ Delegate Callbacks ~~~~~~
         /// <summary>
@@ -44,20 +36,59 @@ namespace ZO.Sensors {
         public Func<ZOLIDAR2D, string, float[], Task> OnPublishDelegate { get; set; }
 
         // Property Accessors
-        public float AngelMinDegrees { get => _angleMinDegrees; }
-        public float AngleMaxDegrees { get => _angleMaxDegrees; }
-        public float RangeMin { get => _rangeMin; }
-        public float RangeMax { get => _rangeMax; }
-        public float AngleIncrementDegrees { get => _angleIncrementDegrees; }
-        public float FOVDegrees { 
-            get {
-                return AngleMaxDegrees - AngelMinDegrees;
-            }
+        /// <summary>
+        /// Minimum angle FOV.  For a full 360 set minimum angle to 0 and maximum angle to 360.
+        /// </summary>
+        /// <value></value>
+        public float MinAngleDegrees {
+            get => _minAngleDegrees;
+            set => _minAngleDegrees = value;
         }
 
-        public string LidarID {
-            get => _lidarId;
-            set => _lidarId = value;
+        /// <summary>
+        /// Maximum angle FOV.  For a full 360 set minimum angle to 0 and maximum angle to 360.
+        /// </summary>
+        /// <value></value>
+        public float MaxAngleDegrees {
+            get => _maxAngleDegrees;
+            set => _maxAngleDegrees = value;
+        }
+
+        /// <summary>
+        /// Minimum distance range of the laser.
+        /// </summary>
+        /// <value></value>
+        public float MinRangeDistanceMeters {
+            get => _minRangeDistanceMeters;
+            set => _minRangeDistanceMeters = value;
+        }
+
+        /// <summary>
+        /// Maximum distance range of the laser
+        /// </summary>
+        /// <value></value>
+        public float MaxRangeDistanceMeters {
+            get => _maxRangeDistanceMeters;
+            set => _maxRangeDistanceMeters = value;
+        }
+
+        /// <summary>
+        /// The scan increment in degrees of the laser.
+        /// </summary>
+        /// <value></value>
+        public float AngleIncrementDegrees {
+            get => _angleIncrementDegrees;
+            set => _angleIncrementDegrees = value;
+        }
+
+        /// <summary>
+        /// Field of View in degrees.
+        /// </summary>
+        /// <value></value>
+        public float FOVDegrees {
+            get {
+                return MaxAngleDegrees - MinAngleDegrees;
+            }
         }
 
 
@@ -67,8 +98,8 @@ namespace ZO.Sensors {
         /// </summary>
         /// <value>seconds</value>
         public float ScanTimeSeconds {
-            get { 
-                return UpdateRateHz > 0.0f ? 1.0f/UpdateRateHz : 1.0f/100.0f;
+            get {
+                return UpdateRateHz > 0.0f ? 1.0f / UpdateRateHz : 1.0f / 100.0f;
             }
         }
 
@@ -94,17 +125,19 @@ namespace ZO.Sensors {
         private Ray[] _rays;
         private RaycastHit[] _raycastHits;
         private float[] _ranges;
+
+        #region ZOGameObjectBase        
         // Start is called before the first frame update
         protected override void ZOStart() {
             Debug.Log("INFO: ZOLIDAR2D::Start");
             _rayCount = Mathf.RoundToInt(FOVDegrees / AngleIncrementDegrees);
             _rays = new Ray[_rayCount];
             _raycastHits = new RaycastHit[_rayCount];
-            _ranges = new float[_rayCount];            
+            _ranges = new float[_rayCount];
         }
 
 
-        private void OnDestroy() {
+        protected override void ZOOnDestroy() {
         }
 
         protected override void ZOFixedUpdateHzSynchronized() {
@@ -112,31 +145,98 @@ namespace ZO.Sensors {
             // do raycasts
             // TODO: use batch raycasts like the 3d raycast
             for (int i = 0; i < _rayCount; i++) {
-                Vector3 axis = new Vector3(0, AngelMinDegrees - AngleIncrementDegrees * i, 0);
+                Vector3 axis = new Vector3(0, MinAngleDegrees - AngleIncrementDegrees * i, 0);
                 Vector3 direction = Quaternion.Euler(axis) * transform.forward;
                 _rays[i] = new Ray(transform.position, direction);
                 _ranges[i] = 0;
 
                 _raycastHits[i] = new RaycastHit();
-                if (UnityEngine.Physics.Raycast(_rays[i], out _raycastHits[i], RangeMax)) {
-                    if (_raycastHits[i].distance >= RangeMin && _raycastHits[i].distance <= RangeMax) {
+                if (UnityEngine.Physics.Raycast(_rays[i], out _raycastHits[i], MaxRangeDistanceMeters)) {
+                    if (_raycastHits[i].distance >= MinRangeDistanceMeters && _raycastHits[i].distance <= MaxRangeDistanceMeters) {
                         _ranges[i] = _raycastHits[i].distance;
 
                         if (IsDebug == true) {
                             Debug.DrawLine(transform.position, _raycastHits[i].point, Color.green, ScanTimeSeconds);
                         }
-                    } 
-                } 
+                    }
+                }
             }
 
             // publish
             if (OnPublishDelegate != null) {
-                OnPublishDelegate(this, LidarID, _ranges);
+                OnPublishDelegate(this, Name, _ranges);
             }
 
             UnityEngine.Profiling.Profiler.EndSample();
 
         }
+        #endregion // ZOGameObjectBase
+
+        #region ZOSerializationInterface
+        public string Type {
+            get { return "sensor.lidar2d"; }
+        }
+
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        private JObject _json;
+        public JObject JSON {
+            get => _json;
+        }
+
+
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("update_rate_hz", UpdateRateHz),
+                new JProperty("min_angle_degrees", MinAngleDegrees),
+                new JProperty("max_angle_degrees", MaxAngleDegrees),
+                new JProperty("angle_increment_degrees", AngleIncrementDegrees),
+                new JProperty("min_range_distance_meters", MinRangeDistanceMeters),
+                new JProperty("max_range_distance_meters", MaxRangeDistanceMeters)
+
+            );
+
+
+            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
+            if (parent_occurrence) {
+                json["parent_occurrence"] = parent_occurrence.Name;
+            }
+
+            _json = json;
+
+            return json;
+        }
+
+        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
+            throw new System.NotImplementedException("TODO!");
+            // TODO:
+        }
+
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            // Assert.Equals(json["type"].Value<string>() == Type);
+            _json = json;
+            Name = json.ValueOrDefault("name", Name);
+            UpdateRateHz = json.ValueOrDefault("update_rate_hz", UpdateRateHz);
+
+            MinAngleDegrees = json.ValueOrDefault("min_angle_degrees", MinAngleDegrees);
+            MaxAngleDegrees = json.ValueOrDefault("max_angle_degrees", MaxAngleDegrees);
+            AngleIncrementDegrees = json.ValueOrDefault("angle_increment_degrees", AngleIncrementDegrees);
+            MinRangeDistanceMeters = json.ValueOrDefault("min_range_distance_meters", MinRangeDistanceMeters);
+            MaxRangeDistanceMeters = json.ValueOrDefault("max_range_distance_meters", MaxRangeDistanceMeters);
+
+        }
+        #endregion
+
 
     }
 }

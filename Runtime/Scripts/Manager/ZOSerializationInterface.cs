@@ -10,7 +10,7 @@ namespace ZO {
 
         /// <summary>
         /// Property for getting the JSON of this object.
-        /// <see>LoadFromJSON & BuildJSON</see>
+        /// <see>Serialize & Deserialize</see>
         /// </summary>
         /// <value></value>
         JObject JSON { get; }
@@ -40,13 +40,13 @@ namespace ZO {
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null);
+        JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null);
 
         /// <summary>
         /// Sets the state of the object from JSON. JSON could come from file or network or wherever.
         /// </summary>
         /// <param name="json"></param>
-        void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json);
+        void Deserialize(ZOSimDocumentRoot documentRoot, JObject json);
         
     }
 }

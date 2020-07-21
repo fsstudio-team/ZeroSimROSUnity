@@ -81,7 +81,7 @@ namespace ZO.Physics {
         //     }
         // }
 
-        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -134,7 +134,7 @@ namespace ZO.Physics {
         }
 
 
-        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             throw new System.NotImplementedException("TODO!");
         }
 

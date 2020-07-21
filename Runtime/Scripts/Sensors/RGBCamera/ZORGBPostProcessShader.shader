@@ -5,6 +5,10 @@
         _MainTex ("Texture", 2D) = "white" {}
         [Toggle(FLIP_Y)]
         _FlipY ("Flip Y", Float) = 0        
+
+        [Toggle(FLIP_X)]
+        _FlipX ("Flip X", Float) = 0        
+
     }
     SubShader
     {
@@ -18,6 +22,7 @@
             #pragma fragment frag
 
             #pragma shader_feature FLIP_Y
+            #pragma shader_feature FLIP_X
 
             #include "UnityCG.cginc"
 
@@ -40,7 +45,12 @@
                 o.uv = v.uv;
                 #ifdef FLIP_Y                
                     o.uv.y = 1.0 - o.uv.y;
+                #endif       
+
+                #ifdef FLIP_X                
+                    o.uv.x = 1.0 - o.uv.x;
                 #endif                
+
                 return o;
             }
 

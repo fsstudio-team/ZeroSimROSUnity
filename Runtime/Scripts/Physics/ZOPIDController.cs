@@ -125,7 +125,7 @@ namespace ZO.Physics {
             throw new System.NotImplementedException("TODO");
         }
 
-        public JObject BuildJSON(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject gripControllerJSON = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -140,7 +140,7 @@ namespace ZO.Physics {
             return gripControllerJSON;
         }
 
-        public void LoadFromJSON(ZOSimDocumentRoot documentRoot, JObject json) {
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);
 
             _json = json;

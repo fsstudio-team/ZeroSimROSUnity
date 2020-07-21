@@ -8,24 +8,14 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
-// using ZO.ROS.MessageTypes.ZOSim;
-// using ZO.ROS.MessageTypes.Gazebo;
-using ZO.ROS.MessageTypes;
 using ZO.ROS.Unity.Publisher;
 
 namespace ZO.ROS.Unity {
 
-    // [System.Serializable]
-    /// <summary>
-    /// On ROS Connect & Disconnect event type definition. 
-    /// </summary>
-    // public class ZOROSBridgeConnectEvent : UnityEngine.Events.UnityEvent<ZOROSUnityManager, ZOROSBridgeConnection> { }
-
-
     /// <summary>
     /// Manage ROS with Unity specific functionality.
     /// </summary>
-    /// [ExecuteAlways]
+    [ExecuteAlways]
     public class ZOROSUnityManager : MonoBehaviour {
 
         /// <summary>
@@ -115,7 +105,19 @@ namespace ZO.ROS.Unity {
         /// </summary>
         /// <value>AssetBundle</value>
         public AssetBundle DefaultAssets {
-            get => _defaultZeroSimAssets;
+            get {
+                if (_defaultZeroSimAssets == null) {
+                    // Load default asset bundles
+                    _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
+                    if (_defaultZeroSimAssets == null) {
+                        Debug.LogWarning("WARNING: failed to load default_zero_sim_assets asset bundle");
+                    } else {
+                        Debug.Log("INFO: Load default_zero_sim_assets asset bundle success!");
+                    }
+
+                }
+                return _defaultZeroSimAssets;
+            }
         }
 
 
@@ -129,10 +131,9 @@ namespace ZO.ROS.Unity {
                 _rootMapTransformPublisher.ChildFrameID = "map";
                 _rootMapTransformPublisher.UpdateRateHz = 1.0f;
                 _rootMapTransformPublisher.ROSTopic = "";
-                _rootMapTransformPublisher.ROSId = "";
+                // _rootMapTransformPublisher.ROSId = "";
             }
         }
-
 
         private void Awake() {
             if (_instance == null) {
@@ -142,28 +143,46 @@ namespace ZO.ROS.Unity {
                 Debug.LogError("ERROR: Cannot have two ZOROSUnityManager's!!!");
                 Destroy(this.gameObject);
             }
-        }
 
+            if (_defaultZeroSimAssets == null) {
+                // Load default asset bundles
+                _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
+                if (_defaultZeroSimAssets == null) {
+                    Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
+                } else {
+                    Debug.Log("INFO: Load zerosimrobots asset bundle success!");
+                }
+            }
+
+        }
 
         // Start is called before the first frame update
         void Start() {
+            // if (_instance == null) {
+            //     _instance = this;
+            //     // DontDestroyOnLoad(this.gameObject);
+            // } else if (_instance != this) {
+            //     Debug.LogError("ERROR: Cannot have two ZOROSUnityManager's!!!");
+            //     Destroy(this.gameObject);
+            // }
+
+            // if (_defaultZeroSimAssets == null) {
+            //     // Load default asset bundles
+            //     _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
+            //     if (_defaultZeroSimAssets == null) {
+            //         Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
+            //     } else {
+            //         Debug.Log("INFO: Load zerosimrobots asset bundle success!");
+            //     }
+            // }
 
 
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
-                if (RootMapTransform == null) { // create the root map transform
+                if (RootMapTransform == null) { // create the root map transform if doesn't exist
                     RootMapTransform = gameObject.AddComponent<ZOROSTransformPublisher>();
                 }
             } else { // in play mode
 
-                if (_defaultZeroSimAssets == null) {
-                    // Load default asset bundles
-                    _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
-                    if (_defaultZeroSimAssets == null) {
-                        Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
-                    } else {
-                        Debug.Log("INFO: Load zerosimrobots asset bundle success!");
-                    }
-                }
 
                 ROSBridgeConnection.Serialization = _serializationType;
                 ROSBridgeConnection.OnConnectedToROSBridge = (rosBridge) => {
@@ -220,6 +239,10 @@ namespace ZO.ROS.Unity {
             ROSBridgeConnection.UnAdvertise("/tf");
             ROSBridgeConnection.UnAdvertiseService(_namespace + "/spawn_zosim_model");
             ROSBridgeConnection.Stop();
+            if (_defaultZeroSimAssets != null) {
+                _defaultZeroSimAssets.Unload(true);
+                _defaultZeroSimAssets = null;
+            }
         }
 
 
@@ -235,6 +258,10 @@ namespace ZO.ROS.Unity {
 
         }
 
+        /// <summary>
+        /// The ROS "/tf" topic broadcast. Provides an easy way to publish coordinate frame transform information. 
+        /// </summary>
+        /// <param name="transformStamped"></param>
         public void BroadcastTransform(TransformStampedMessage transformStamped) {
             if (ROSBridgeConnection.IsConnected) {
                 _transformsToBroadcast.Add(transformStamped);
