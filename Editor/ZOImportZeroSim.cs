@@ -148,6 +148,7 @@ namespace ZO.Import {
             // save out scales to JSON 
             ZeroSimJSON["position_transform_scale"] = new JArray(_positionTransformScale.x, _positionTransformScale.y, _positionTransformScale.z);
             ZeroSimJSON["mesh_transform_scale"] = new JArray(_meshTransformScale.x, _meshTransformScale.y, _meshTransformScale.z);
+            ZeroSimJSON["asset_bundle"] = DocumentName.ToLower();
 
             // create the root game object that contains the ZOSimDocumentRoot
             GameObject rootGameObject = new GameObject(ZeroSimJSON["document_name"].Value<string>());
@@ -194,6 +195,7 @@ namespace ZO.Import {
             assetImporter.SetAssetBundleNameAndVariant(DocumentName, "");
 
             // build the asset bundle
+            Debug.Log("INFO: Building asset bundles...");
             BuildPipeline.BuildAssetBundles("AssetBundles", BuildAssetBundleOptions.None, BuildTarget.StandaloneLinux64);
 
 

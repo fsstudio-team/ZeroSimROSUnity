@@ -9,7 +9,7 @@ using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
-    // BUGBUG: ??? necessary ??? [ExecuteAlways]
+    // [ExecuteAlways]
     /// <summary>
     /// A ZOSim root document. This is the "document root" and first component in a ZoSim definition.
     /// For example the Unity structure could be:
@@ -50,7 +50,7 @@ namespace ZO {
         /// </summary>
         /// <value></value>
         public string Name {
-            
+
             get => gameObject.name;
             // BUGBUG:  If there is an associated asset bundle it also needs to be renamed and rebuilt.  TODO
             set => gameObject.name = value;
@@ -69,7 +69,8 @@ namespace ZO {
             get {
                 if (_assetBundle == null) {
                     // Load default asset bundles
-                    _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name));
+                    // NOTE:  asset bundle names are always lower case
+                    _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
                     if (_assetBundle == null) {
                         Debug.LogWarning("WARNING: failed to load document root asset bundle: " + Name);
                     } else {
@@ -80,6 +81,38 @@ namespace ZO {
                 return _assetBundle;
             }
 
+        }
+
+        /// <summary>
+        /// Attempts to find an assets, first checking asset bundle and then in the Assets directory.
+        /// NOTE: if only a partial name is give it will return all matches of asset that has the name.
+        /// </summary>
+        /// <param name="name">Either full asset path or a partial name.  If given just a partial name 
+        /// and there are multiple matches it will return all the assets that have that partial name.
+        /// </param>
+        /// <returns></returns>
+        public UnityEngine.Object[] FindAssetsByName(string name) {
+            List<UnityEngine.Object> result = new List<UnityEngine.Object>();
+            UnityEngine.Object asset = AssetBundle.LoadAsset(name);
+
+            if (asset) {
+                // found an exact match so just return that
+                result.Add(asset);
+                return result.ToArray();
+            } else {
+                // get all the names in the asset bundle and try to make a match
+                string[] assetNames = AssetBundle.GetAllAssetNames();
+                foreach (string assetName in assetNames) {
+                    if (assetName.Contains(name)) {
+                        asset = AssetBundle.LoadAsset(assetName);
+                        if (asset) {
+                            result.Add(asset);
+                        }
+                    }
+                }
+
+            }
+            return result.ToArray();
         }
 
         private List<JObject> _components = new List<JObject>();
@@ -100,6 +133,32 @@ namespace ZO {
         // Start is called before the first frame update
         void Start() {
             // BUGBUG: ??? necessary ??? _json = Serialize();
+        }
+
+        private void OnDestroy() {
+            if (_assetBundle != null) {
+                _assetBundle.Unload(true);
+                _assetBundle = null;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Reset is called when the user hits the Reset button in the Inspector's context menu or when adding the component the first time. 
+        /// This function is only called in editor mode. Reset is most commonly used to give good default values in the Inspector.
+        /// </summary>
+        void Reset() {
+            Debug.Log("INFO: ZOSimDocumentRoot::Reset");
+        }
+
+
+        /// <summary>
+        /// This function is called when the script is loaded or a value is changed in the Inspector (Called in the editor only).
+        /// You can use this to ensure that when you modify data in an editor, that data stays within a certain range.
+        /// </summary>
+        void OnValidate() {
+            // TODO: if name is changed then we need to rebuild the asset bundle
         }
 
 
@@ -160,6 +219,9 @@ namespace ZO {
         /// </summary>
         /// <returns></returns>
         public JObject Serialize() {
+            // unload asset bundle because otherwise weird stuff can happen
+            AssetBundle.Unload(true);
+
             // create new ZeroSim JSON document from scratch
             JObject zoSimDocumentJSON = new JObject(
                 new JProperty("document_name", Name),
@@ -254,6 +316,10 @@ namespace ZO {
         }
 
         public void Deserialize(JObject json) {
+
+            // unload asset bundle because otherwise weird stuff can happen
+            AssetBundle.Unload(true);
+
             JSON = json;
             Name = JSON["document_name"].Value<string>();
 

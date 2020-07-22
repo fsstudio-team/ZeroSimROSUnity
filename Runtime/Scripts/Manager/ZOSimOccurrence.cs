@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 // using System.Numerics;
 using System.IO;
 using System.Collections;
@@ -316,12 +317,38 @@ namespace ZO {
                 visualsContainerGo.transform.localRotation = Quaternion.identity;
 
                 foreach (JObject visualJSON in json["visuals"].Value<JArray>()) {
-                    // create a visual gameobject
-                    GameObject visualGo = new GameObject(visualJSON["name"].Value<string>());
-                    DeserializeGeometricPrimitive(visualGo, visualJSON);
 
-                    // parent the visuals container
-                    visualGo.transform.parent = visualsContainerGo.transform;
+                    if (visualJSON["type"].Value<string>() == "primitive.mesh") {
+                        UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(visualJSON["name"].Value<string>());
+                        if (assetObjects.Length > 0) {
+                            GameObject visualGo = Instantiate(assetObjects[0] as GameObject); // BUGBUG: only gets the first object
+                            visualGo.transform.parent = visualsContainerGo.transform;
+
+                            visualGo.transform.localPosition = visualJSON.ToVector3OrDefault("translation", visualGo.transform.localPosition);
+                            visualGo.transform.localRotation = visualJSON.ToQuaternionOrDefault("rotation_quaternion", visualGo.transform.localRotation);
+                            visualGo.transform.localRotation = Quaternion.Euler(visualJSON.ToVector3OrDefault("rotation_euler_degrees", visualGo.transform.localRotation.eulerAngles));
+                            visualGo.transform.localScale = visualJSON.ToVector3OrDefault("scale", visualGo.transform.localScale);
+
+
+
+                        } else {
+                            Debug.LogWarning("WARNING: Could not load asset: " + visualJSON["name"].Value<string>() + " may need to add to the asset bundle");
+
+                            // string[] assetNames = DocumentRoot.AssetBundle.GetAllAssetNames();
+                            // foreach(string assetName in assetNames) {
+                            //     Debug.Log(assetName);
+                            // }
+                        }
+                    } else {
+                        // Handle geometric primitive e.g., Box, Capsule, Sphere, Cylinder
+                        // create a visual gameobject
+                        GameObject visualGo = new GameObject(visualJSON["name"].Value<string>());
+                        DeserializeGeometricPrimitive(visualGo, visualJSON);
+
+                        // parent the visuals container
+                        visualGo.transform.parent = visualsContainerGo.transform;
+
+                    }
                     /* TODO: refactor model name to be more of a "mesh" and or a "prefab" loader
                     GameObject loadedAsset = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<GameObject>(visualJSON["model_name"].Value<string>());
                     if (loadedAsset != null) {
@@ -340,6 +367,10 @@ namespace ZO {
                     */
 
                 }
+            }
+
+            if (json.ContainsKey("collisions")) {
+                // TODO
             }
 
 
@@ -419,7 +450,7 @@ namespace ZO {
                         string collisionMeshFile = Path.GetFileNameWithoutExtension(fileName);
 #if UNITY_EDITOR   
                         string[] collisionMeshPrefabGUIDS = AssetDatabase.FindAssets(collisionMeshFile);
-                     
+
                         foreach (string collisionMeshPrefabGUID in collisionMeshPrefabGUIDS) {
                             string collisionMeshPrefabPath = AssetDatabase.GUIDToAssetPath(collisionMeshPrefabGUID);
                             string collisionMeshPrefabPathBaseName = Path.GetFileNameWithoutExtension(collisionMeshPrefabPath);
@@ -492,7 +523,6 @@ namespace ZO {
             JObject occurrence = new JObject();
 
             // TODO: check with document root if there is a zosim component reference 
-
             occurrence["name"] = Name;
 
             occurrence["translation"] = transform.localPosition.ToJSON();
@@ -586,11 +616,13 @@ namespace ZO {
             // go through the children
             JArray children = new JArray();
             JArray visuals = new JArray();
+            JArray collisions = new JArray();
             foreach (Transform child in transform) {
 
                 // BUGBUG: visual models can only be determined at Unity Editor time not runtime... hmmm...
 
                 // check for any visuals
+                // NOTE: a gameobject named visuals is treated as a special container of visual objects
                 if (child.name == "visuals") {
                     // go through the children of the visuals and get all the models
                     foreach (Transform visualsChild in child) {
@@ -598,18 +630,87 @@ namespace ZO {
                         primitiveJSON = SerializeGeometricPrimitive(visualsChild.gameObject);
                         if (primitiveJSON != null) {
                             visuals.Add(primitiveJSON);
+                        } else {
+                            // not a geometric primitive type but likely a mesh so lets try to find the mesh in the AssetBundle
+                            UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(visualsChild.name);
+                            if (assetObjects.Length > 0) {
+                                JObject meshPrimitiveJSON = new JObject(
+                                    new JProperty("type", "primitive.mesh"),
+                                    new JProperty("name", visualsChild.name),
+                                    new JProperty("has_collisions", false), // BUGBUG: in theory we could have collisions but we hardwire to not
+                                    new JProperty("translation", visualsChild.localPosition.ToJSON()),
+                                    new JProperty("rotation_quaternion", visualsChild.localRotation.ToJSON()),
+                                    new JProperty("scale", visualsChild.localScale.ToJSON())
+                                );
+
+                                visuals.Add(meshPrimitiveJSON);
+                            } else {
+                                Debug.LogWarning("WARNING: asset: " + visualsChild.name + "does not exist in bundle: " + DocumentRoot.AssetBundle.name + " try to add the asset to the asset bundle");
+                            }
+                            // Debug.Log("INFO: found mesh in asset bundle: " + visualsChild.name);
                         }
 
 #if UNITY_EDITOR // cannot deal with prefabs during runtime.  FIXME?
-                        PrefabAssetType prefabAssetType = PrefabUtility.GetPrefabAssetType(visualsChild);
-                        Debug.Log("INFO: visuals prefab asset type: " + prefabAssetType.ToString());
-                        if (prefabAssetType == PrefabAssetType.Model) {
-                            JObject modelJSON = new JObject(
-                                new JProperty("model_name", visualsChild.name)
-                            );
-                            visuals.Add(modelJSON);
-                        }
+                        // PrefabAssetType prefabAssetType = PrefabUtility.GetPrefabAssetType(visualsChild);
+                        // Debug.Log("INFO: visuals prefab asset type: " + prefabAssetType.ToString());
+                        // if (prefabAssetType == PrefabAssetType.Model) {
+                        //     JObject modelJSON = new JObject(
+                        //         new JProperty("model_name", visualsChild.name)
+                        //     );
+                        //     visuals.Add(modelJSON);
+                        // }
 #endif // #if UNITY_EDITOR
+                    }
+                }
+
+                // check for any visuals
+                // NOTE: a gameobject named collisions is treated as a special container of collision objects
+                if (child.name == "collisions") {
+                    // go through the children of the visuals and get all the models
+                    foreach (Transform collisionChild in child) {
+                        // check if it is a primitive type (cube, sphere, cylinder, etc)
+                        primitiveJSON = SerializeGeometricPrimitive(collisionChild.gameObject);
+                        if (primitiveJSON != null) {
+                            collisions.Add(primitiveJSON);
+                        } else {
+                            // not a geometric primitive type but likely a mesh so lets try to find the mesh in the AssetBundle
+                            // GameObject meshGo = DocumentRoot.AssetBundle.LoadAsset<GameObject>(collisionChild.name);
+                            UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(collisionChild.name);
+
+                            if (assetObjects.Length > 0) {
+                                MeshCollider collider = collisionChild.gameObject.GetComponent<MeshCollider>();
+                                if (collider != null) {
+                                    JObject meshPrimitiveJSON = new JObject(
+                                        new JProperty("type", "primitive.mesh"),
+                                        new JProperty("name", collisionChild.name),
+                                        new JProperty("has_collisions", true),
+                                        new JProperty("is_convex", collider.convex),
+
+                                        new JProperty("translation", collisionChild.localPosition.ToJSON()),
+                                        new JProperty("rotation_quaternion", collisionChild.localRotation.ToJSON()),
+                                        new JProperty("scale", collisionChild.localScale.ToJSON())
+                                    );
+
+                                    if (collider.sharedMaterial != null) {
+                                        primitiveJSON.Add("physics_material",
+                                            new JObject(
+                                                new JProperty("bounciness", collider.sharedMaterial.bounciness),
+                                                new JProperty("dynamic_friction", collider.sharedMaterial.dynamicFriction),
+                                                new JProperty("static_friction", collider.sharedMaterial.staticFriction)
+                                            )
+                                        );
+                                    }
+
+                                    collisions.Add(meshPrimitiveJSON);
+
+                                } else {  // does not have a mesh collider attached
+                                    Debug.LogWarning("WARNING: object in collisions does not have a proper MeshCollider: " + collisionChild.name);
+
+                                }
+                            }
+                            // Debug.Log("INFO: found mesh in asset bundle: " + visualsChild.name);
+                        }
+
                     }
                 }
 
@@ -625,9 +726,15 @@ namespace ZO {
                 occurrence["visuals"] = visuals;
             }
 
+            if (collisions.Count > 0) {
+                occurrence["collisions"] = collisions;
+            }
+
             if (children.Count > 0) {
                 occurrence["children"] = children;
             }
+
+
 
 
             return occurrence;
