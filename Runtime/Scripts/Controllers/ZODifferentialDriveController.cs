@@ -337,9 +337,6 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             return Task.CompletedTask;
         }
 
-        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("TODO");
-        }
 
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(

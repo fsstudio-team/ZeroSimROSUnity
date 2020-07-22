@@ -83,14 +83,6 @@ namespace ZO.ROS.Unity {
             get { return "undefined"; }
         }
 
-        /// <summary>
-        /// OBSOLETE!!!!
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="json"></param>
-        public virtual void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("Derived class should implement");
-        }
 
         /// <summary>
         /// Dummy Serialize. Will throw exception if not implemented.`

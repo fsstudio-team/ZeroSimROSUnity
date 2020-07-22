@@ -46,12 +46,12 @@ namespace ZO {
             get => gameObject.name;
             set => gameObject.name = value;
         }
-        private List<JObject> _components = null;
+        private List<JObject> _components = new List<JObject>();
 
         private List<Action<ZOSimDocumentRoot>> _postLoadFromJSONNotifiers = new List<Action<ZOSimDocumentRoot>>();
 
         /// <summary>
-        /// If someone needs to be notified after a deserialization a ZOSim File.
+        /// If someone needs to be notified after a deserialization of a ZOSim File.
         /// For example a ZOHingeJoint needs to fixup the connected bodies that may or
         /// may not exist during the Deserialize call.
         /// </summary>
@@ -68,9 +68,9 @@ namespace ZO {
 
         public JObject GetComponentJSON(string componentName) {
             // find the component associated with the with the occurrence
-            if (_components == null) {
-                _components = _json["components"].ToObject<List<JObject>>();
-            }
+            // if (_components == null) {
+            //     _components = _json["components"].ToObject<List<JObject>>();
+            // }
 
             JObject componentJson = _components.Find(item => string.Equals(item["name"].Value<string>(), componentName));
             return componentJson;
@@ -204,20 +204,25 @@ namespace ZO {
 
             Name = JSON["document_name"].Value<string>();
 
-            // get the root component which is named the same name as this root document
+            
             JObject rootComponentJSON = null;
             if (JSON.ContainsKey("components")) {
                 JArray componentsJSONArray = JSON["components"].Value<JArray>();
 
                 foreach (JObject componentJson in componentsJSONArray) {
+                    // store the components
+                    _components.Add(componentJson);
+
+                    // get the root component which is named the same name as this root document
                     if (componentJson["name"].Value<string>() == Name) {
                         rootComponentJSON = componentJson;
-                        break;
                     }
                 }
 
             }
 
+            // add any stuff in the root component
+            // TODO: Not sure if this is really a nice way to go about things.  probably should remove.
             if (rootComponentJSON != null) {
                 // if we have a root component JSON do any required deserialization
                 if (rootComponentJSON.ContainsKey("controllers")) {
@@ -245,7 +250,8 @@ namespace ZO {
 
 
 
-            // go through occurrences                
+            // go through occurrences 
+            // NOTE:  occurrences could have children so this is a recursive operation               
             foreach (JObject occurrenceJSON in JSON["occurrences"].Value<JArray>()) {
                 string occurrenceName = occurrenceJSON["name"].Value<string>();
 
@@ -264,7 +270,6 @@ namespace ZO {
                 postLoadNotify(this);
             }
             _postLoadFromJSONNotifiers.Clear();
-            // TODO: store components
             // TODO: remove any occurrences that are not in the zosim file
             // TODO: check if visual mesh files exists
             // TODO: check if collision mesh files exists

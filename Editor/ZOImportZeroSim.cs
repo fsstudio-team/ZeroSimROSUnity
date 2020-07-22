@@ -119,26 +119,29 @@ namespace ZO.Import {
             ZeroSimJSON["position_transform_scale"] = new JArray(_positionTransformScale.x, _positionTransformScale.y, _positionTransformScale.z);
             ZeroSimJSON["mesh_transform_scale"] = new JArray(_meshTransformScale.x, _meshTransformScale.y, _meshTransformScale.z);
 
-            // Build Hierarchy of Fusion 360 "Occurrences" and save as a Unity prefab
+            // create the root game object that contains the ZOSimDocumentRoot
             GameObject rootGameObject = new GameObject(ZeroSimJSON["document_name"].Value<string>());
 
-            // add the base component
+            // add the document root component
             _documentRoot = rootGameObject.AddComponent<ZO.ZOSimDocumentRoot>();
             string zosimSaveToFilePath = Path.Combine(ExportDirectoryPath, DocumentName + ".zosim");
             string zosimSaveToFilePathUnityRelative = MakeRelativePath(Application.dataPath, zosimSaveToFilePath);
+
+            // deserialize the ZoSim JSON file
             _documentRoot.ZOSimDocumentFilePath = zosimSaveToFilePathUnityRelative;
-            _documentRoot.JSON = ZeroSimJSON;
+            _documentRoot.Deserialize(ZeroSimJSON);
 
 
 
             // turn off self collisions
             rootGameObject.AddComponent<ZO.Util.ZOTurnOffSelfCollision>();
 
-            foreach (JObject occurrence in ZeroSimJSON["occurrences"]) {
-                OnOccurrence(occurrence, rootGameObject, ZeroSimJSON);
-            }
+            // foreach (JObject occurrence in ZeroSimJSON["occurrences"]) {
+            //     OnOccurrence(occurrence, rootGameObject, ZeroSimJSON);
+            // }
 
 
+            // save prefab 
             string prefabFilePath = ExportDirectoryPath + "/" + ZeroSimJSON["document_name"].Value<string>() + ".prefab";
             prefabFilePath = AssetDatabase.GenerateUniqueAssetPath(prefabFilePath);
 
@@ -155,6 +158,10 @@ namespace ZO.Import {
         }
 
 
+        /// <summary>
+        /// Loads assets from a ZoSim component such as "visual_mesh_file" and "collission_meshes"
+        /// </summary>
+        /// <param name="component"></param>
         private void OnComponent(JObject component) {
             // Copy visual meshes
             if (component.ContainsKey("visual_mesh_file") == true) {
@@ -220,6 +227,8 @@ namespace ZO.Import {
             }
         }
 
+        /*
+
         private void OnOccurrence(JObject occurrenceJson, GameObject parentOccurenceGo, JObject jsonDoc) {
             Debug.Log("INFO: processing occurrence: " + occurrenceJson["name"]);
 
@@ -239,6 +248,7 @@ namespace ZO.Import {
                 OnOccurrence(childOccurrence, occurenceGo, jsonDoc);
             }
         }
+        */
 
         [MenuItem("Zero Sim/Apply Random Colors...")]
         static void ApplyRandomColors() {

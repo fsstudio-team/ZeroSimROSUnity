@@ -6,7 +6,7 @@ using UnityEditor;
 using Newtonsoft.Json.Linq;
 
 namespace ZO {
-    interface ZOSerializationInterface {
+    public interface ZOSerializationInterface {
 
         /// <summary>
         /// Property for getting the JSON of this object.
@@ -27,13 +27,6 @@ namespace ZO {
         /// <value></value>
         string Type { get; }
 
-        /// <summary>
-        /// Used for importing a ZeroSim document file.  Will import assets such as
-        /// visual and collision meshes.  
-        /// <see>ZOImportZeroSim</see>
-        /// </summary>
-        /// <param name="json"></param>
-        void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json);
 
         /// <summary>
         /// From the current state of the object it will generate the JSON for this object and any children.

@@ -181,10 +181,6 @@ namespace ZO.Physics {
             return json;
         }
 
-        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("TODO!");
-            // TODO:
-        }
 
         public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);

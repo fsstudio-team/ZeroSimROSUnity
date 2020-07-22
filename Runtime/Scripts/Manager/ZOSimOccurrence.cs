@@ -44,6 +44,7 @@ namespace ZO {
                 return _documentRoot;
             }
         }
+
         private void Start() {
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
                 // update root component
@@ -98,6 +99,7 @@ namespace ZO {
 
 
         public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            DocumentRoot = documentRoot;
             Name = json["name"].Value<string>();
             JSON = json;
 
@@ -132,92 +134,6 @@ namespace ZO {
             if (json.ContainsKey("primitive")) {
                 JObject primitiveJSON = json["primitive"].Value<JObject>();
                 DeserializeGeometricPrimitive(this.gameObject, primitiveJSON);
-                /*
-                Collider collider = null;
-                // get mesh filter. if it doesn't exist create it.
-                MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-                MeshRenderer meshRenderer = null;
-                if (meshFilter == null) {
-                    meshFilter = gameObject.AddComponent<MeshFilter>();
-                    meshRenderer = gameObject.AddComponent<MeshRenderer>();
-                    // meshRenderer.material = new Material(Shader.Find("Diffuse"));
-
-                    if (primitiveJSON["type"].Value<string>() == "cube") {
-                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
-                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
-                        meshRenderer.sharedMaterial = go.GetComponent<MeshRenderer>().sharedMaterial;
-                        GameObject.DestroyImmediate(go);
-
-                        meshFilter.sharedMesh.name = "Cube Instance";
-                        bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
-                        if (hasCollisions) {
-                            collider = gameObject.AddComponent<BoxCollider>();
-                        }
-                    }
-
-                    if (primitiveJSON["type"].Value<string>() == "sphere") {
-                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
-                        meshRenderer.sharedMaterial = go.GetComponent<MeshRenderer>().sharedMaterial;
-                        GameObject.DestroyImmediate(go);
-
-                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
-                        meshFilter.sharedMesh.name = "Sphere Instance";
-                        bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
-                        if (hasCollisions) {
-                            collider = gameObject.AddComponent<SphereCollider>();
-                        }
-                    }
-
-                    if (primitiveJSON["type"].Value<string>() == "capsule") {
-                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Capsule.fbx");
-                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
-                        meshRenderer.sharedMaterial = go.GetComponent<MeshRenderer>().sharedMaterial;
-                        GameObject.DestroyImmediate(go);
-                        meshFilter.sharedMesh.name = "Capsule Instance";
-                        bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
-                        if (hasCollisions) {
-                            collider = gameObject.AddComponent<CapsuleCollider>();
-                        }
-                    }
-
-                    if (primitiveJSON["type"].Value<string>() == "cylinder") {
-                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        meshFilter.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
-                        meshRenderer.sharedMaterial = go.GetComponent<MeshRenderer>().sharedMaterial;
-                        GameObject.DestroyImmediate(go);
-                        // meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
-                        meshFilter.sharedMesh.name = "Cylinder Instance";
-                        bool hasCollisions = primitiveJSON.ValueOrDefault<bool>("has_collisions", false);
-                        if (hasCollisions) {
-                            MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
-                            meshCollider.convex = true;
-                            collider = meshCollider;
-                        }
-                    }
-
-                }
-
-                // set physics material if exists
-                if (primitiveJSON.ContainsKey("physics_material")) {
-                    JObject physicsMaterialJSON = primitiveJSON["physics_material"].Value<JObject>();
-                    PhysicMaterial physicMaterial = new PhysicMaterial();
-                    physicMaterial.bounciness = physicsMaterialJSON["bounciness"].Value<float>();
-                    physicMaterial.dynamicFriction = physicsMaterialJSON["dynamic_friction"].Value<float>();
-                    physicMaterial.staticFriction = physicsMaterialJSON["static_friction"].Value<float>();
-                    collider.sharedMaterial = physicMaterial;
-                }
-
-
-                // set color
-                meshRenderer = gameObject.GetComponent<MeshRenderer>();
-                meshRenderer.sharedMaterial.color = primitiveJSON.ToColorOrDefault("color", meshRenderer.sharedMaterial.color);
-
-                // scale is how Unity primitives are sized
-                this.transform.localScale = primitiveJSON.ToVector3OrDefault("dimensions", this.transform.localScale);
-                */
             }
 
 
@@ -424,6 +340,93 @@ namespace ZO {
                     */
 
                 }
+            }
+
+            if (json.ContainsKey("component_name") == true) {
+                JObject componentJson = DocumentRoot.GetComponentJSON(json["component_name"].Value<string>());
+
+                if (componentJson.ContainsKey("visual_mesh_file") == true) {
+                    // create a visual gameobject
+                    GameObject visualsGo = new GameObject("visuals");
+                    visualsGo.transform.parent = gameObject.transform;
+                    visualsGo.transform.localPosition = Vector3.zero;
+                    visualsGo.transform.localRotation = Quaternion.identity;
+
+                    // Find the visual mesh prefab associated with the occurrence component
+                    string visual_mesh_file = componentJson["visual_mesh_file"].Value<string>();
+
+                    Debug.Log("INFO: visual_obj_mesh_file: " + visual_mesh_file);
+                    string visualMeshFile = Path.GetFileNameWithoutExtension(componentJson["visual_mesh_file"].Value<string>());
+                    Debug.Log("INFO: visual mesh file path: " + visualMeshFile);
+                    string[] visualMeshPrefabGUIDs = AssetDatabase.FindAssets(visualMeshFile);
+
+                    // NOTE: should only ever be one prefab but we will just go ahead and go through all potential returns   
+                    foreach (string meshPrefabGUID in visualMeshPrefabGUIDs) {
+                        // string meshPrefabGUID = visualMeshPrefabGUIDs[0];  //BUGBUG:  Always first one found
+                        string visualMeshPrefabPath = AssetDatabase.GUIDToAssetPath(meshPrefabGUID);
+
+                        if (visualMeshPrefabPath.Contains("/" + visualMeshFile + ".obj") || visualMeshPrefabPath.Contains("/" + visualMeshFile + ".fbx")) {
+                            Debug.Log("INFO: Found visual mesh prefab: " + visualMeshPrefabPath);
+
+                            GameObject visualMeshGoPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(visualMeshPrefabPath);
+                            GameObject visualMeshGo = PrefabUtility.InstantiatePrefab(visualMeshGoPrefab, visualsGo.transform) as GameObject;
+
+                            Vector3 newScale = visualMeshGo.transform.localScale;
+                            List<float> meshTransformScale = DocumentRoot.JSON["mesh_transform_scale"].ToObject<List<float>>();
+
+                            newScale.x = newScale.x * meshTransformScale[0];
+                            newScale.y = newScale.y * meshTransformScale[1];
+                            newScale.z = newScale.z * meshTransformScale[2];
+                            visualMeshGo.transform.localScale = newScale;
+
+                        }
+                    }
+                }
+
+                if (componentJson.ContainsKey("collision_meshes")) {
+                    // create a collision gameobject
+                    GameObject collisionsGo = new GameObject("collisions");
+                    collisionsGo.transform.parent = gameObject.transform;
+                    collisionsGo.transform.localPosition = Vector3.zero;
+                    collisionsGo.transform.localRotation = Quaternion.identity;
+
+                    // find the collision mesh prefabs associated with the occurrence component
+                    foreach (string fileName in componentJson["collision_meshes"]) {
+                        string collisionMeshFile = Path.GetFileNameWithoutExtension(fileName);
+                        string[] collisionMeshPrefabGUIDS = AssetDatabase.FindAssets(collisionMeshFile);
+                        foreach (string collisionMeshPrefabGUID in collisionMeshPrefabGUIDS) {
+                            string collisionMeshPrefabPath = AssetDatabase.GUIDToAssetPath(collisionMeshPrefabGUID);
+                            string collisionMeshPrefabPathBaseName = Path.GetFileNameWithoutExtension(collisionMeshPrefabPath);
+                            // FindAssets will glob a bunch of assets that aren't exactly the one we want so make sure here
+                            if (collisionMeshPrefabPathBaseName.Equals(collisionMeshFile)) {
+                                Debug.Log("INFO: Found collision mesh prefab: " + collisionMeshPrefabPath);
+                                GameObject collisionMeshGoPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(collisionMeshPrefabPath);
+
+                                // apply transforms on collision mesh
+                                GameObject collisionMeshGo = new GameObject(collisionMeshFile);
+                                collisionMeshGo.transform.parent = collisionsGo.transform;
+                                collisionMeshGo.transform.localPosition = Vector3.zero;
+                                collisionMeshGo.transform.localRotation = Quaternion.identity;
+                                Vector3 newScale = collisionMeshGo.transform.localScale;
+                                List<float> meshTransformScale = DocumentRoot.JSON["mesh_transform_scale"].ToObject<List<float>>();
+                                newScale.x = newScale.x * meshTransformScale[0];
+                                newScale.y = newScale.y * meshTransformScale[1];
+                                newScale.z = newScale.z * meshTransformScale[2];
+                                collisionMeshGo.transform.localScale = newScale;
+
+                                MeshCollider meshCollider = collisionMeshGo.AddComponent<MeshCollider>();
+                                MeshFilter meshFilter = collisionMeshGoPrefab.GetComponentInChildren<MeshFilter>();
+                                meshCollider.sharedMesh = meshFilter.sharedMesh;
+                                meshCollider.convex = true;
+
+                            }
+
+
+                        }
+                    }
+
+                }
+
             }
 
             if (json.ContainsKey("children")) {
@@ -830,7 +833,6 @@ namespace ZO {
 
             if (json.ContainsKey("component_name") == true) {
                 JObject componentJson = _documentRoot.GetComponentJSON(json["component_name"].Value<string>());
-
 
                 if (componentJson.ContainsKey("visual_mesh_file") == true) {
                     // create a visual gameobject

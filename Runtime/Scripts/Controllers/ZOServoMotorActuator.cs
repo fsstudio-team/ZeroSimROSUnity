@@ -85,9 +85,6 @@ namespace ZO.Controllers {
             }
         }
 
-        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("TODO!");
-        }
 
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(
