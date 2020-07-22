@@ -9,15 +9,22 @@ using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
-    [ExecuteAlways]
+    // BUGBUG: ??? necessary ??? [ExecuteAlways]
     /// <summary>
-    /// A ZOSim root docuemtn. This is the "document root" and first component in a ZoSim definition.
+    /// A ZOSim root document. This is the "document root" and first component in a ZoSim definition.
+    /// For example the Unity structure could be:
+    /// ZOSimDocumentRoot:
+    ///     ZOSimOccurrence:
+    ///     ZOSimOccurrence:
+    ///         ZOSimOccurrence:
+    ///         ZOSimOccurrence:
+    ///             ZOSimOccurrence:
     /// </summary>
     public class ZOSimDocumentRoot : MonoBehaviour {
 
 
         /// <summary>
-        /// The on di
+        /// The ZOSim JSON document path.
         /// </summary>
         /// <value></value>
         [SerializeField] public string _zoSimDocumentFilePath;
@@ -43,9 +50,38 @@ namespace ZO {
         /// </summary>
         /// <value></value>
         public string Name {
+            
             get => gameObject.name;
+            // BUGBUG:  If there is an associated asset bundle it also needs to be renamed and rebuilt.  TODO
             set => gameObject.name = value;
         }
+
+
+        private AssetBundle _assetBundle = null;
+
+        /// <summary>
+        /// A ZoSim document can have an asset bundle associated with it that contains things like
+        /// visual and collision meshes.
+        /// NOTE:  This lazy loads the asset bundle on first request
+        /// </summary>
+        /// <value></value>
+        public AssetBundle AssetBundle {
+            get {
+                if (_assetBundle == null) {
+                    // Load default asset bundles
+                    _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name));
+                    if (_assetBundle == null) {
+                        Debug.LogWarning("WARNING: failed to load document root asset bundle: " + Name);
+                    } else {
+                        Debug.Log("INFO: Load document root asset bundle success. " + Name);
+                    }
+
+                }
+                return _assetBundle;
+            }
+
+        }
+
         private List<JObject> _components = new List<JObject>();
 
         private List<Action<ZOSimDocumentRoot>> _postLoadFromJSONNotifiers = new List<Action<ZOSimDocumentRoot>>();
@@ -63,16 +99,17 @@ namespace ZO {
 
         // Start is called before the first frame update
         void Start() {
-            _json = Serialize();
+            // BUGBUG: ??? necessary ??? _json = Serialize();
         }
 
-        public JObject GetComponentJSON(string componentName) {
-            // find the component associated with the with the occurrence
-            // if (_components == null) {
-            //     _components = _json["components"].ToObject<List<JObject>>();
-            // }
 
-            JObject componentJson = _components.Find(item => string.Equals(item["name"].Value<string>(), componentName));
+        /// <summary>
+        /// Get the JSON for a ZoSim component name.
+        /// </summary>
+        /// <param name="componentName">The name of the component.</param>
+        /// <returns>A JSON Object of the conmponent or null if it doesn't exist.</returns>
+        public JObject GetComponentJSON(string componentName) {
+            JObject componentJson = _components?.Find(item => string.Equals(item["name"].Value<string>(), componentName));
             return componentJson;
 
         }
@@ -133,11 +170,28 @@ namespace ZO {
                 new JProperty("occurrences", new JArray())
             );
 
-            // we are always the "root" component
-            JObject rootComponent = new JObject(new JProperty("name", Name));
-            zoSimDocumentJSON["components"].Value<JArray>().Add(rootComponent);
+            JObject rootComponent = null;
+            if (_components.Count == 0) {
+                // we are always the "root" component
+                rootComponent = new JObject(new JProperty("name", Name));
+                zoSimDocumentJSON["components"].Value<JArray>().Add(rootComponent);
+
+            } else {
+                // re-add any components we have
+                JArray componentsJSON = zoSimDocumentJSON["components"].Value<JArray>();
+                foreach (JObject componentJSON in _components) {
+                    componentsJSON.Add(componentJSON);
+
+                    // store the root component to use for later
+                    if (componentJSON["name"].Value<string>() == Name) {
+                        rootComponent = componentJSON;
+                    }
+                }
+
+            }
 
             // serialize the controllers.  For example Joint State Publisher.
+            // TODO:  not sure if the document root should store these?  Kindof messy, but nicer on the Unity side?
             ZOSerializationInterface[] controllers = this.GetComponents<ZOSerializationInterface>();
             if (controllers.Length > 0) {
                 JArray controllersJSONArray = new JArray();
@@ -201,10 +255,9 @@ namespace ZO {
 
         public void Deserialize(JObject json) {
             JSON = json;
-
             Name = JSON["document_name"].Value<string>();
 
-            
+
             JObject rootComponentJSON = null;
             if (JSON.ContainsKey("components")) {
                 JArray componentsJSONArray = JSON["components"].Value<JArray>();

@@ -15,7 +15,7 @@ using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
-    [ExecuteAlways]
+    // BUGBUG: is this necessary? [ExecuteAlways]
     /// <summary>
     /// An occurrence (or instance) of a ZoSim "component".  
     /// NOTE: In the context of ZoSim a "component" is different then a Unity Component.  
@@ -342,6 +342,8 @@ namespace ZO {
                 }
             }
 
+
+            // load component if exists (this is usually from the CAD import) and not necessarily common if we created ZoSim exclusively in Unity
             if (json.ContainsKey("component_name") == true) {
                 JObject componentJson = DocumentRoot.GetComponentJSON(json["component_name"].Value<string>());
 
@@ -355,6 +357,10 @@ namespace ZO {
                     // Find the visual mesh prefab associated with the occurrence component
                     string visual_mesh_file = componentJson["visual_mesh_file"].Value<string>();
 
+#if UNITY_EDITOR // cannot deal with prefabs during runtime.  
+
+                    // we are doing an initial import so what we want to do is apply any mesh scaling
+                    // TODO:  we should be doing this in ZOImportZeroSim.cs not here
                     Debug.Log("INFO: visual_obj_mesh_file: " + visual_mesh_file);
                     string visualMeshFile = Path.GetFileNameWithoutExtension(componentJson["visual_mesh_file"].Value<string>());
                     Debug.Log("INFO: visual mesh file path: " + visualMeshFile);
@@ -381,6 +387,24 @@ namespace ZO {
 
                         }
                     }
+#else // NOT UNITY_EDITOR
+                    // Load from asset bundle
+                    GameObject meshGo = DocumentRoot.AssetBundle.LoadAsset<GameObject>(visual_mesh_file);
+                    if (meshGo != null) {
+                        Vector3 position = Vector3.zero; // TODO: store position
+                        Quaternion r = Quaternion.identity; // TODO: store rotation
+                        GameObject instance = Instantiate(meshGo, position, r);
+                        instance.name = visual_mesh_file;//visualJSON["model_name"].Value<string>();
+                        instance.transform.parent = visualsGo.transform;
+                        instance.transform.localPosition = position;
+                        instance.transform.localRotation = rotation;
+
+                    } else { // error loading asset
+                        Debug.LogWarning("WARNING: ZOSimOccurrence::LoadFromJSON could not load model: " + visual_mesh_file
+                        + " Make sure the model is in the AssetBundle");
+                    }
+
+#endif
                 }
 
                 if (componentJson.ContainsKey("collision_meshes")) {
@@ -393,7 +417,9 @@ namespace ZO {
                     // find the collision mesh prefabs associated with the occurrence component
                     foreach (string fileName in componentJson["collision_meshes"]) {
                         string collisionMeshFile = Path.GetFileNameWithoutExtension(fileName);
+#if UNITY_EDITOR   
                         string[] collisionMeshPrefabGUIDS = AssetDatabase.FindAssets(collisionMeshFile);
+                     
                         foreach (string collisionMeshPrefabGUID in collisionMeshPrefabGUIDS) {
                             string collisionMeshPrefabPath = AssetDatabase.GUIDToAssetPath(collisionMeshPrefabGUID);
                             string collisionMeshPrefabPathBaseName = Path.GetFileNameWithoutExtension(collisionMeshPrefabPath);
@@ -421,8 +447,10 @@ namespace ZO {
 
                             }
 
-
                         }
+#else // NOT UNITY EDITOR
+                        // TODO: handle collision meshes that are in the asset bundle
+#endif
                     }
 
                 }
@@ -763,8 +791,6 @@ namespace ZO {
                 go.transform.localPosition = primitiveJSON.ToVector3OrDefault("translation", go.transform.localPosition);
                 go.transform.localRotation = primitiveJSON.ToQuaternionOrDefault("rotation_quaternion", go.transform.localRotation);
                 go.transform.localRotation = Quaternion.Euler(primitiveJSON.ToVector3OrDefault("rotation_euler_degrees", go.transform.localRotation.eulerAngles));
-
-
 
                 // scale is how Unity primitives are sized
                 go.transform.localScale = primitiveJSON.ToVector3OrDefault("dimensions", go.transform.localScale);
