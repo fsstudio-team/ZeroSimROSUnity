@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Experimental.AssetImporters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -287,4 +288,16 @@ namespace ZO.Import {
 
     }
 
+
+    /// <summary>
+    /// Converts a .zosim file to a text asset
+    /// </summary>
+    [ScriptedImporter(1, "zosim")]
+    public class ZoSimImporter : ScriptedImporter {
+        public override void OnImportAsset(AssetImportContext ctx) {
+            TextAsset subAsset = new TextAsset(File.ReadAllText(ctx.assetPath));
+            ctx.AddObjectToAsset("text", subAsset);
+            ctx.SetMainObject(subAsset);
+        }
+    }
 }
