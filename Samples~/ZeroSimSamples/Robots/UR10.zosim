@@ -1,0 +1,330 @@
+{
+  "document_name": "UR10",
+  "document_version": "1.0",
+  "mesh_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "transform_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "components": [
+    {
+      "name": "universal-robots-ur10"
+    },
+    {
+      "name": "size-4-joint",
+      "visual_mesh_file": "visual_meshes/size-4-joint_visual_.obj",
+      "collision_meshes": [
+        "size-4-joint_collision_0.obj"
+      ]
+    },
+    {
+      "name": "size-2-joint",
+      "visual_mesh_file": "visual_meshes/size-2-joint_visual_.obj",
+      "collision_meshes": [
+        "size-2-joint_collision_0.obj"
+      ]
+    },
+    {
+      "name": "size-3-joint",
+      "visual_mesh_file": "visual_meshes/size-3-joint_visual_.obj",
+      "collision_meshes": [
+        "size-3-joint_collision_0.obj"
+      ]
+    },
+    {
+      "name": "tool-flange",
+      "visual_mesh_file": "visual_meshes/tool-flange_visual_.obj",
+      "collision_meshes": [
+        "tool-flange_collision_0.obj"
+      ]
+    },
+    {
+      "name": "lower-arm",
+      "visual_mesh_file": "visual_meshes/lower-arm_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 0.002663567866801342,
+        "volume": 0.002663567866801342,
+        "center_mass": [
+          -0.023610174103948212,
+          0.022236182468062426,
+          -0.0042755394705483252
+        ],
+        "inertia": [
+          [
+            2.5286138211039893E-06,
+            5.8004197893922992E-15,
+            8.5817308751889745E-15
+          ],
+          [
+            5.8004197893922992E-15,
+            4.7942274737727166E-05,
+            2.5009108341848287E-16
+          ],
+          [
+            8.5817308751889745E-15,
+            2.5009108341848287E-16,
+            4.7942274702229648E-05
+          ]
+        ]
+      },
+      "collision_meshes": [
+        "lower-arm_collision_0.obj",
+        "lower-arm_collision_1.obj"
+      ]
+    },
+    {
+      "name": "base",
+      "visual_mesh_file": "visual_meshes/base_visual_.obj",
+      "collision_meshes": [
+        "base_collision_0.obj"
+      ]
+    },
+    {
+      "name": "upper-arm",
+      "visual_mesh_file": "visual_meshes/upper-arm_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 0.0042979604101221446,
+        "volume": 0.0042979604101221446,
+        "center_mass": [
+          1.991392670791967E-12,
+          0.2337334735882759,
+          -4.6910810487400439E-11
+        ],
+        "inertia": [
+          [
+            8.2005384654307252E-05,
+            2.6871090536862146E-15,
+            -7.44533436965992E-16
+          ],
+          [
+            2.6871090536862146E-15,
+            6.4695308072623736E-06,
+            -5.461594453332476E-14
+          ],
+          [
+            -7.44533436965992E-16,
+            -5.461594453332476E-14,
+            8.200535681856757E-05
+          ]
+        ]
+      },
+      "collision_meshes": [
+        "upper-arm_collision_0.obj",
+        "upper-arm_collision_1.obj"
+      ]
+    },
+    {
+      "name": "size-3-elbow",
+      "visual_mesh_file": "visual_meshes/size-3-elbow_visual_.obj",
+      "collision_meshes": [
+        "size-3-elbow_collision_0.obj"
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "size-4-joint-occurrence",
+      "component_name": "size-4-joint",
+      "translation": [
+        2.3242148577756724E-17,
+        0.12799999999999984,
+        -9.6891414157790526E-16
+      ],
+      "rotation_quaternion": [
+        -2.2786090770951112E-15,
+        -0.70710678118654746,
+        0.70710678118654746,
+        -2.2354067416207419E-15
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-4-joint-occurrence_1",
+      "component_name": "size-4-joint",
+      "translation": [
+        -5.3307533747919461E-16,
+        0.12800000000000011,
+        -0.17600000000000124
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-2-joint-occurrence",
+      "component_name": "size-2-joint",
+      "translation": [
+        -1.3317603036699404E-14,
+        1.428000000000001,
+        -0.23139071053754295
+      ],
+      "rotation_quaternion": [
+        0.70710678118654757,
+        1.6084902505756531E-15,
+        1.0404274560865479E-15,
+        0.70710678118654746
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-3-joint-occurrence",
+      "component_name": "size-3-joint",
+      "translation": [
+        -0.0099999999999994468,
+        0.67440000000000011,
+        -0.10184071053754262
+      ],
+      "rotation_quaternion": [
+        -0.70710678118654735,
+        -3.8320069069750879E-15,
+        -1.0352797149446145E-15,
+        0.70710678118654768
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-2-joint-occurrence_1",
+      "component_name": "size-2-joint",
+      "translation": [
+        -3.4496354541412995E-15,
+        1.3123000000000005,
+        -0.11569071053754296
+      ],
+      "rotation_quaternion": [
+        0.70710678118654757,
+        -2.4826180524328041E-15,
+        5.1323303721835018E-15,
+        0.70710678118654746
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "tool-flange-occurrence",
+      "component_name": "tool-flange",
+      "translation": [
+        0.067218811525936659,
+        1.4543505965035632,
+        -0.254264396611279
+      ],
+      "rotation_quaternion": [
+        0.70710678118654757,
+        1.3388062093949581E-15,
+        1.3965892459681844E-15,
+        0.70710678118654746
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "lower-arm-occurrence",
+      "component_name": "lower-arm",
+      "translation": [
+        0.0042755394109088444,
+        1.0533761974696787,
+        -0.07042689281229568
+      ],
+      "rotation_quaternion": [
+        0.49999999999999745,
+        0.49999999999999928,
+        0.50000000000000289,
+        0.50000000000000067
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "base-occurrence",
+      "component_name": "base",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "upper-arm-occurrence",
+      "component_name": "upper-arm",
+      "translation": [
+        -3.3024384514406568E-15,
+        0.20700000000000326,
+        -0.17600000000000135
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-2-joint-occurrence_2",
+      "component_name": "size-2-joint",
+      "translation": [
+        -5.1042728368338033E-15,
+        1.3798000000000004,
+        -0.16389071053754289
+      ],
+      "rotation_quaternion": [
+        -3.8402982913715777E-17,
+        -9.8254957021092567E-17,
+        1.0,
+        -1.9346503565831321E-15
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "size-3-elbow-occurrence",
+      "component_name": "size-3-elbow",
+      "translation": [
+        -0.01389777527151225,
+        0.7590817113627476,
+        -0.045519593852710108
+      ],
+      "rotation_quaternion": [
+        0.70710678118655,
+        1.6093447701508635E-15,
+        -0.707106781186545,
+        1.3443916677479867E-15
+      ],
+      "parent_name": "none",
+      "children": []
+    }
+  ],
+  "position_transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "mesh_transform_scale": [
+    -1.0,
+    1.0,
+    1.0
+  ]
+}
