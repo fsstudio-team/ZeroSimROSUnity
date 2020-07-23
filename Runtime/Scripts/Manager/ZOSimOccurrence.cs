@@ -321,7 +321,13 @@ namespace ZO {
                     if (visualJSON["type"].Value<string>() == "primitive.mesh") {
                         UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(visualJSON["name"].Value<string>());
                         if (assetObjects.Length > 0) {
+#if UNITY_EDITOR
+                            GameObject visualGo = PrefabUtility.InstantiatePrefab(assetObjects[0]) as GameObject; // BUGBUG: only gets the first object in assetObjects
+
+#else // runtime
                             GameObject visualGo = Instantiate(assetObjects[0] as GameObject); // BUGBUG: only gets the first object
+#endif                            
+                            visualGo.name = visualJSON["name"].Value<string>();
                             visualGo.transform.parent = visualsContainerGo.transform;
 
                             visualGo.transform.localPosition = visualJSON.ToVector3OrDefault("translation", visualGo.transform.localPosition);
@@ -334,43 +340,79 @@ namespace ZO {
                         } else {
                             Debug.LogWarning("WARNING: Could not load asset: " + visualJSON["name"].Value<string>() + " may need to add to the asset bundle");
 
-                            // string[] assetNames = DocumentRoot.AssetBundle.GetAllAssetNames();
-                            // foreach(string assetName in assetNames) {
-                            //     Debug.Log(assetName);
-                            // }
                         }
                     } else {
                         // Handle geometric primitive e.g., Box, Capsule, Sphere, Cylinder
                         // create a visual gameobject
                         GameObject visualGo = new GameObject(visualJSON["name"].Value<string>());
-                        DeserializeGeometricPrimitive(visualGo, visualJSON);
 
                         // parent the visuals container
                         visualGo.transform.parent = visualsContainerGo.transform;
 
-                    }
-                    /* TODO: refactor model name to be more of a "mesh" and or a "prefab" loader
-                    GameObject loadedAsset = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<GameObject>(visualJSON["model_name"].Value<string>());
-                    if (loadedAsset != null) {
-                        Vector3 position = Vector3.zero; // TODO: store position
-                        Quaternion r = Quaternion.identity; // TODO: store rotation
-                        GameObject instance = Instantiate(loadedAsset, position, r);
-                        instance.name = visualJSON["model_name"].Value<string>();
-                        instance.transform.parent = visualsContainerGo.transform;
-                        instance.transform.localPosition = position;
-                        instance.transform.localRotation = rotation;
+                        DeserializeGeometricPrimitive(visualGo, visualJSON);
 
-                    } else { // error loading asset
-                        Debug.LogWarning("WARNING: ZOSimOccurrence::LoadFromJSON could not load model: " + visualJSON["model_name"].Value<string>()
-                        + " Make sure the model is in the AssetBundle");
                     }
-                    */
 
                 }
             }
 
             if (json.ContainsKey("collisions")) {
-                // TODO
+                // create a "visuals" gameobject "container"
+                GameObject collisionsContainerGo = new GameObject("collisions");
+                collisionsContainerGo.transform.parent = this.transform;
+                collisionsContainerGo.transform.localPosition = Vector3.zero;
+                collisionsContainerGo.transform.localRotation = Quaternion.identity;
+
+                foreach (JObject collisionJSON in json["collisions"].Value<JArray>()) {
+
+                    if (collisionJSON["type"].Value<string>() == "primitive.mesh") {
+                        UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(collisionJSON["name"].Value<string>());
+                        if (assetObjects.Length > 0) {
+#if UNITY_EDITOR
+                            GameObject collisionGo = PrefabUtility.InstantiatePrefab(assetObjects[0]) as GameObject; // BUGBUG: only gets the first object in assetObjects
+
+#else // runtime
+
+                            GameObject collisionGo = Instantiate(assetObjects[0] as GameObject); // BUGBUG: only gets the first object
+#endif                            
+                            collisionGo.name = collisionJSON["name"].Value<string>();
+                            collisionGo.transform.parent = collisionsContainerGo.transform;
+
+                            collisionGo.transform.localPosition = collisionJSON.ToVector3OrDefault("translation", collisionGo.transform.localPosition);
+                            collisionGo.transform.localRotation = collisionJSON.ToQuaternionOrDefault("rotation_quaternion", collisionGo.transform.localRotation);
+                            collisionGo.transform.localRotation = Quaternion.Euler(collisionJSON.ToVector3OrDefault("rotation_euler_degrees", collisionGo.transform.localRotation.eulerAngles));
+                            collisionGo.transform.localScale = collisionJSON.ToVector3OrDefault("scale", collisionGo.transform.localScale);
+
+                            MeshCollider meshCollider = collisionGo.AddComponent<MeshCollider>();
+                            // meshCollider.sharedMesh = collisionGo.GetComponentInChildren<Mesh>();
+                            meshCollider.convex = collisionJSON.ValueOrDefault<bool>("is_convex", meshCollider.convex);
+
+                            if (collisionJSON.ContainsKey("physics_material")) {
+                                JObject physicsMaterial = collisionJSON["physics_material"].Value<JObject>();
+                                meshCollider.sharedMaterial.bounciness = physicsMaterial.ValueOrDefault("bounciness", meshCollider.sharedMaterial.bounciness);
+                                meshCollider.sharedMaterial.dynamicFriction = physicsMaterial.ValueOrDefault("dynamic_friction", meshCollider.sharedMaterial.dynamicFriction);
+                                meshCollider.sharedMaterial.staticFriction = physicsMaterial.ValueOrDefault("static_friction", meshCollider.sharedMaterial.staticFriction);
+
+                            }
+
+                        } else {
+                            Debug.LogWarning("WARNING: Could not load asset: " + collisionJSON["name"].Value<string>() + " may need to add to the asset bundle");
+
+                        }
+                    } else {
+                        // Handle geometric primitive e.g., Box, Capsule, Sphere, Cylinder
+                        // create a visual gameobject
+                        GameObject collisionGo = new GameObject(collisionJSON["name"].Value<string>());
+
+                        // parent the visuals container
+                        collisionGo.transform.parent = collisionsContainerGo.transform;
+
+                        DeserializeGeometricPrimitive(collisionGo, collisionJSON);
+
+
+                    }
+
+                }
             }
 
 

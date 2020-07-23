@@ -9,7 +9,7 @@ using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
-    // [ExecuteAlways]
+    [ExecuteAlways]
     /// <summary>
     /// A ZOSim root document. This is the "document root" and first component in a ZoSim definition.
     /// For example the Unity structure could be:
@@ -57,7 +57,7 @@ namespace ZO {
         }
 
 
-        private AssetBundle _assetBundle = null;
+        private static AssetBundle _assetBundle = null;
 
         /// <summary>
         /// A ZoSim document can have an asset bundle associated with it that contains things like
@@ -93,6 +93,16 @@ namespace ZO {
         /// <returns></returns>
         public UnityEngine.Object[] FindAssetsByName(string name) {
             List<UnityEngine.Object> result = new List<UnityEngine.Object>();
+
+#if UNITY_EDITOR
+            string[] assets = UnityEditor.AssetDatabase.FindAssets(name);
+            foreach (string assetGuid in assets) {
+                string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(assetGuid);
+                UnityEngine.Object asset = UnityEditor.AssetDatabase.LoadMainAssetAtPath(assetPath);
+                result.Add(asset);
+
+            }
+#else // RUNTIME
             UnityEngine.Object asset = AssetBundle.LoadAsset(name);
 
             if (asset) {
@@ -112,8 +122,11 @@ namespace ZO {
                 }
 
             }
+#endif            
             return result.ToArray();
         }
+
+
 
         private List<JObject> _components = new List<JObject>();
 
@@ -132,6 +145,19 @@ namespace ZO {
 
         // Start is called before the first frame update
         void Start() {
+            // load the asset bundle if it is not loaded
+            if (_assetBundle == null) {
+                // Load default asset bundles
+                // NOTE:  asset bundle names are always lower case
+                _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
+                if (_assetBundle == null) {
+                    Debug.LogWarning("WARNING: failed to load document root asset bundle: " + Name);
+                } else {
+                    Debug.Log("INFO: Load document root asset bundle success. " + Name);
+                }
+
+            }
+
             // BUGBUG: ??? necessary ??? _json = Serialize();
         }
 
