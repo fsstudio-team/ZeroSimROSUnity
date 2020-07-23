@@ -70,7 +70,13 @@ namespace ZO {
                 if (_assetBundle == null) {
                     // Load default asset bundles
                     // NOTE:  asset bundle names are always lower case
-                    _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
+                    try {
+                        _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
+                    } catch (Exception e) {
+                        Debug.LogWarning("WARNING: Could not load asset bundle named: " + Name.ToLower()
+                        + " maybe asset bundle wasn't built. Exception: " + e.ToString());
+                    }
+
                     if (_assetBundle == null) {
                         Debug.LogWarning("WARNING: failed to load document root asset bundle: " + Name);
                     } else {
@@ -149,7 +155,12 @@ namespace ZO {
             if (_assetBundle == null) {
                 // Load default asset bundles
                 // NOTE:  asset bundle names are always lower case
-                _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
+                try {
+                    _assetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, Name.ToLower()));
+                } catch (Exception e) {
+                    Debug.LogWarning("WARNING: Could not load asset bundle named: " + Name.ToLower()
+                    + " maybe asset bundle wasn't built. Exception: " + e.ToString());
+                }
                 if (_assetBundle == null) {
                     Debug.LogWarning("WARNING: failed to load document root asset bundle: " + Name);
                 } else {
@@ -246,7 +257,7 @@ namespace ZO {
         /// <returns></returns>
         public JObject Serialize() {
             // unload asset bundle because otherwise weird stuff can happen
-            AssetBundle.Unload(true);
+            // AssetBundle.Unload(true);
 
             // create new ZeroSim JSON document from scratch
             JObject zoSimDocumentJSON = new JObject(
@@ -344,7 +355,7 @@ namespace ZO {
         public void Deserialize(JObject json) {
 
             // unload asset bundle because otherwise weird stuff can happen
-            AssetBundle.Unload(true);
+            // AssetBundle.Unload(true);
 
             JSON = json;
             Name = JSON["document_name"].Value<string>();

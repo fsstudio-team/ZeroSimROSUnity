@@ -1,0 +1,813 @@
+{
+  "document_name": "UR10_rigged",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "UR10_rigged"
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "base-occurrence",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "visuals": [
+        {
+          "type": "primitive.mesh",
+          "name": "base_visual_",
+          "has_collisions": false,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ],
+      "collisions": [
+        {
+          "type": "primitive.mesh",
+          "name": "base_collision_0",
+          "has_collisions": true,
+          "is_convex": true,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ],
+      "children": [
+        {
+          "name": "size-4-joint-occurrence",
+          "translation": [
+            0.0,
+            0.128000021,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -3.09086232E-08,
+            0.7071068,
+            -0.7071068,
+            -3.09086232E-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "base-occurrence",
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "size-4-joint_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ]
+            }
+          ],
+          "collisions": [
+            {
+              "type": "primitive.mesh",
+              "name": "size-4-joint_collision_0",
+              "has_collisions": true,
+              "is_convex": true,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ]
+            }
+          ],
+          "children": [
+            {
+              "name": "size-4-joint-occurrence_1",
+              "translation": [
+                0.0,
+                0.176000014,
+                0.0
+              ],
+              "rotation_quaternion": [
+                3.09086232E-08,
+                -0.7071068,
+                0.7071068,
+                -3.09086232E-08
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "size-4-joint-occurrence",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-4-joint_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ],
+              "collisions": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-4-joint_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "upper-arm-occurrence",
+              "translation": [
+                0.0,
+                0.176,
+                -0.07899999
+              ],
+              "rotation_quaternion": [
+                3.09086232E-08,
+                -0.7071068,
+                0.7071068,
+                -3.09086232E-08
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "size-4-joint-occurrence",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ],
+              "collisions": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_collision_1",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "size-3-joint-occurrence",
+              "translation": [
+                0.0100000035,
+                0.101840317,
+                -0.546400368
+              ],
+              "rotation_quaternion": [
+                -4.37114025E-08,
+                1.0,
+                2.19618927E-22,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "size-4-joint-occurrence",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-3-joint_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ],
+              "collisions": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-3-joint_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "name": "lower-arm-occurrence",
+                  "translation": [
+                    0.0142755527,
+                    -0.0314135551,
+                    0.378975928
+                  ],
+                  "rotation_quaternion": [
+                    -0.7071068,
+                    -1.10630793E-09,
+                    -0.7071068,
+                    -2.86960145E-08
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "size-3-joint-occurrence",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "lower-arm_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "collisions": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "lower-arm_collision_0",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    },
+                    {
+                      "type": "primitive.mesh",
+                      "name": "lower-arm_collision_1",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "size-3-elbow-occurrence",
+                  "translation": [
+                    -0.00389776728,
+                    -0.0563207865,
+                    0.08468139
+                  ],
+                  "rotation_quaternion": [
+                    -0.5,
+                    -0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "size-3-joint-occurrence",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "size-3-elbow_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "collisions": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "size-3-elbow_collision_0",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "size-2-joint-occurrence_1",
+                  "translation": [
+                    0.0100000128,
+                    0.0138502726,
+                    0.6378998
+                  ],
+                  "rotation_quaternion": [
+                    -1.0,
+                    -1.065814E-14,
+                    9.599848E-30,
+                    2.19618927E-22
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "size-3-joint-occurrence",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "size-2-joint_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "collisions": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "size-2-joint_collision_0",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "children": [
+                    {
+                      "name": "size-2-joint-occurrence_2",
+                      "translation": [
+                        0.0,
+                        -0.0481997728,
+                        -0.0675001144
+                      ],
+                      "rotation_quaternion": [
+                        3.09086161E-08,
+                        0.7071068,
+                        0.7071068,
+                        -3.09086232E-08
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "size-2-joint-occurrence_1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "size-2-joint_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ]
+                        }
+                      ],
+                      "collisions": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "size-2-joint_collision_0",
+                          "has_collisions": true,
+                          "is_convex": true,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ]
+                        }
+                      ],
+                      "children": [
+                        {
+                          "name": "size-2-joint-occurrence",
+                          "translation": [
+                            0.0,
+                            -0.0481996536,
+                            -0.06750023
+                          ],
+                          "rotation_quaternion": [
+                            -3.09086161E-08,
+                            -0.7071068,
+                            -0.7071068,
+                            -3.09086232E-08
+                          ],
+                          "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "parent_name": "size-2-joint-occurrence_2",
+                          "visuals": [
+                            {
+                              "type": "primitive.mesh",
+                              "name": "size-2-joint_visual_",
+                              "has_collisions": false,
+                              "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                -1.0,
+                                1.0,
+                                1.0
+                              ]
+                            }
+                          ],
+                          "collisions": [
+                            {
+                              "type": "primitive.mesh",
+                              "name": "size-2-joint_collision_0",
+                              "has_collisions": true,
+                              "is_convex": true,
+                              "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                -1.0,
+                                1.0,
+                                1.0
+                              ]
+                            }
+                          ],
+                          "children": [
+                            {
+                              "name": "tool-flange-occurrence",
+                              "translation": [
+                                0.06721886,
+                                -0.0228736382,
+                                -0.0263507366
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                -1.77635642E-15,
+                                1.0
+                              ],
+                              "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                              ],
+                              "parent_name": "size-2-joint-occurrence",
+                              "visuals": [
+                                {
+                                  "type": "primitive.mesh",
+                                  "name": "tool-flange_visual_",
+                                  "has_collisions": false,
+                                  "translation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                  ],
+                                  "rotation_quaternion": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                  ],
+                                  "scale": [
+                                    -1.0,
+                                    1.0,
+                                    1.0
+                                  ]
+                                }
+                              ],
+                              "collisions": [
+                                {
+                                  "type": "primitive.mesh",
+                                  "name": "tool-flange_collision_0",
+                                  "has_collisions": true,
+                                  "is_convex": true,
+                                  "translation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                  ],
+                                  "rotation_quaternion": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                  ],
+                                  "scale": [
+                                    -1.0,
+                                    1.0,
+                                    1.0
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
