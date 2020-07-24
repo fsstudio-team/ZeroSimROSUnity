@@ -26,7 +26,7 @@ namespace ZO.Physics {
     /// positions of the two anchors. For instance, ArticulationDofLock.LockedMotion will not allow any 
     /// relative motion at all.
     /// </summary>
-    public class ZOArticulatedBody : MonoBehaviour, ZOSerializationInterface {
+    public class ZOArticulatedBody : MonoBehaviour, ZOSerializationInterface, ZOJointInterface {
 
         public ArticulationBody _articulationBody;
 
@@ -84,6 +84,42 @@ namespace ZO.Physics {
             }
 
         }
+
+        /// <summary>
+        /// The joint position.  
+        /// 
+        /// For a hinge/revolute it would be the angle in radians.
+        /// 
+        /// For a linear/prismatic it would be the distance from center in meters.
+        /// </summary>
+        /// <value></value>
+        public float Position { 
+            get {
+                return UnityArticulationBody.jointPosition[0];
+            } 
+        }
+
+        /// <summary>
+        /// The velocity of the joint (rad/s or m/s)
+        /// </summary>
+        /// <value></value>
+        public float Velocity { 
+            get {
+                return UnityArticulationBody.jointVelocity[0];
+            }
+        }
+
+
+        /// <summary>
+        /// The effort that is applied to the joint (Nm or N)
+        /// </summary>
+        /// <value></value>
+        public float Effort { 
+            get {
+                return UnityArticulationBody.jointForce[0];
+            }
+        }
+
 
 
 

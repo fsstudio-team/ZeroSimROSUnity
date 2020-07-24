@@ -849,10 +849,9 @@ namespace ZO.ROS {
             }
 
             try {
-
                 await _tcpClient.GetStream()?.WriteAsync(byteArray, 0, byteArray.Length);
             } catch (Exception e) {
-                Debug.LogError("ERROR: ZOROSBridgeConnection::SendBSONAsync: " + e.ToString());
+                Debug.LogWarning("WARNING: ZOROSBridgeConnection::SendBSONAsync: " + e.ToString());
             }
         }
         public async Task SendBSONAsync(MemoryStream memoryStream) {

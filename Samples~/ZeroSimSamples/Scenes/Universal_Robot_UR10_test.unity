@@ -775,6 +775,7 @@ GameObject:
   - component: {fileID: 376474634}
   - component: {fileID: 376474633}
   - component: {fileID: 376474632}
+  - component: {fileID: 376474635}
   m_Layer: 0
   m_Name: UR10_rigged
   m_TagString: Untagged
@@ -822,6 +823,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &376474635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376474631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129fe926cb5f9784893878adb84b7b04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: /joint_states
+  _name: ros.publisher.joint_states_UR10_rigged
 --- !u!1 &395058793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,6 +1297,26 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 616282484}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &663082054 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 20697ea7cbeed561983199f2eaa2bce2,
+    type: 3}
+  m_PrefabInstance: {fileID: 873779741}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &663082058
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663082054}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6692290496178104961, guid: 20697ea7cbeed561983199f2eaa2bce2, type: 3}
 --- !u!1 &802314319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1847,7 +1886,7 @@ ArticulationBody:
   m_Enabled: 1
   m_Mass: 1
   m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
-  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_ParentAnchorRotation: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
   m_ComputeParentAnchor: 1
@@ -2278,6 +2317,75 @@ Transform:
   m_Father: {fileID: 2076295157}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1286058031
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1286058032}
+  - component: {fileID: 1286058034}
+  - component: {fileID: 1286058033}
+  m_Layer: 0
+  m_Name: ROSUnityManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1286058032
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286058031}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.00010551512, y: 0.7369251, z: -0.08581603}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1286058033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286058031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: /tf
+  _name: ros.publisher.transform_ROSUnityManager
+  _frameId: 
+  _childFrameId: map
+--- !u!114 &1286058034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286058031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e021f5f19ac66f578dc0cb3ac939b09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _namespace: /zerosim
+  Hostname: localhost
+  Port: 9090
+  _serializationType: 1
+  _rootMapTransformPublisher: {fileID: 1286058033}
 --- !u!1 &1298881059
 GameObject:
   m_ObjectHideFlags: 0

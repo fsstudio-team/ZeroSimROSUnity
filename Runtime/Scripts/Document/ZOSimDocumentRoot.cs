@@ -151,6 +151,10 @@ namespace ZO {
 
         // Start is called before the first frame update
         void Start() {
+
+            #if UNITY_EDITOR
+
+            #else // UNITY_EDITOR
             // load the asset bundle if it is not loaded
             if (_assetBundle == null) {
                 // Load default asset bundles
@@ -168,6 +172,7 @@ namespace ZO {
                 }
 
             }
+            #endif
 
             // BUGBUG: ??? necessary ??? _json = Serialize();
         }

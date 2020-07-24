@@ -6,6 +6,10 @@ using UnityEditor;
 using Newtonsoft.Json.Linq;
 
 namespace ZO {
+
+    /// <summary>
+    /// Defines a standard interface to serialize and deserialize ZOSim objects.
+    /// </summary>
     public interface ZOSerializationInterface {
 
         /// <summary>

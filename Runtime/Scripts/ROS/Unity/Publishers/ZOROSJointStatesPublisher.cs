@@ -37,21 +37,32 @@ namespace ZO.ROS.Unity.Publisher {
             // get all the joints
             // TODO: cache the joints assuming they don't change
             // TODO: we don't quite yet have a Joint base class fully implemented so we look for specific joints.
-            ZOHingeJoint[] hingeJoints = this.GetComponentsInChildren<ZOHingeJoint>();
+            ZOJointInterface[] jointsArray = this.GetComponentsInChildren<ZOJointInterface>();
+
+            // remove any fixed joints as it makes no sense to have state
+            List<ZOJointInterface> joints = new List<ZOJointInterface>();
+            foreach( ZOJointInterface joint in jointsArray) {
+                string[] typeHierarchy = joint.Type.Split('.');
+                if (typeHierarchy.Contains("fixedjoint")) {
+                    // skip
+                    continue;
+                }
+                joints.Add(joint);
+            }
 
             // setup the message arrays
-            _jointStatesMessage.name = new string[hingeJoints.Length];
-            _jointStatesMessage.position = new double[hingeJoints.Length];
-            _jointStatesMessage.velocity = new double[hingeJoints.Length];
-            _jointStatesMessage.effort = new double[hingeJoints.Length];
+            _jointStatesMessage.name = new string[joints.Count];
+            _jointStatesMessage.position = new double[joints.Count];
+            _jointStatesMessage.velocity = new double[joints.Count];
+            _jointStatesMessage.effort = new double[joints.Count];
 
             // fill in the arrays
             int i = 0;
-            foreach (ZOHingeJoint hingeJoint in hingeJoints) {
-                _jointStatesMessage.name[i] = hingeJoint.Name;
-                _jointStatesMessage.position[i] = hingeJoint.AngleDegrees * Mathf.Deg2Rad;
-                _jointStatesMessage.velocity[i] = hingeJoint.AngularVelocityDegrees * Mathf.Deg2Rad;
-                _jointStatesMessage.effort[i] = hingeJoint.TorqueNewtonMeters;
+            foreach (ZOJointInterface joint in joints) {
+                _jointStatesMessage.name[i] = joint.Name;
+                _jointStatesMessage.position[i] = joint.Position;
+                _jointStatesMessage.velocity[i] = joint.Velocity;
+                _jointStatesMessage.effort[i] = joint.Effort;
                 i++;
             }
 

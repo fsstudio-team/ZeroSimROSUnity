@@ -20,7 +20,7 @@ namespace ZO.Physics {
     /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface {
+    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface, ZOJointInterface {
 
         [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
 
@@ -35,46 +35,84 @@ namespace ZO.Physics {
         }
 
 
+        #region ZOJointInterface
 
+        /// <summary>
+        /// The hinge angle in radians.  
+        /// </summary>
+        /// <value></value>
+        public float Position {
+            get { return UnityHingeJoint.angle * Mathf.Deg2Rad; }
+        }
+
+        /// <summary>
+        /// The velocity of the hinge in rad/s
+        /// </summary>
+        /// <value></value>
+        public float Velocity {
+            get { return UnityHingeJoint.velocity * Mathf.Deg2Rad; }
+
+            set {
+                JointMotor motor = UnityHingeJoint.motor;
+                motor.targetVelocity = value * Mathf.Rad2Deg;
+                motor.freeSpin = false;
+                UnityHingeJoint.motor = motor;
+                UnityHingeJoint.useMotor = true;
+                UnityHingeJoint.useSpring = false;
+            }
+
+        }
+
+
+        /// <summary>
+        /// The effor that is applied to the hinge Nm
+        /// </summary>
+        /// <value></value>
+        public float Effort {
+            get { return UnityHingeJoint.motor.force; }
+        }
+
+
+        #endregion
 
         /// <summary>
         /// Set and get the angular velocity of the hinge joint.  In degrees.
         /// </summary>
         /// <value>Angular velocity in degrees</value>
-        public float AngularVelocityDegrees {
-            set {
-                JointMotor motor = _hingeJoint.motor;
-                motor.targetVelocity = value;
-                motor.freeSpin = false;
-                _hingeJoint.motor = motor;
-                _hingeJoint.useMotor = true;
-                _hingeJoint.useSpring = false;
-            }
+        // public float AngularVelocityDegrees {
+        //     set {
+        //         JointMotor motor = _hingeJoint.motor;
+        //         motor.targetVelocity = value;
+        //         motor.freeSpin = false;
+        //         _hingeJoint.motor = motor;
+        //         _hingeJoint.useMotor = true;
+        //         _hingeJoint.useSpring = false;
+        //     }
 
-            get {
-                return UnityHingeJoint.velocity;
-            }
-        }
+        //     get {
+        //         return UnityHingeJoint.velocity;
+        //     }
+        // }
 
         /// <summary>
         /// The current angle in degrees of the hinge joint relative to it's start position.
         /// </summary>
         /// <value></value>
-        public float AngleDegrees {
-            get {
-                return UnityHingeJoint.angle;
-            }
-        }
+        // public float AngleDegrees {
+        //     get {
+        //         return UnityHingeJoint.angle;
+        //     }
+        // }
 
         /// <summary>
         /// Read only maximum torque of this hinge joint motor.
         /// </summary>
         /// <value></value>
-        public float TorqueNewtonMeters {
-            get {
-                return UnityHingeJoint.motor.force;
-            }
-        }
+        // public float TorqueNewtonMeters {
+        //     get {
+        //         return UnityHingeJoint.motor.force;
+        //     }
+        // }
 
 
 
