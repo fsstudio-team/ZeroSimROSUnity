@@ -1,7 +1,8 @@
 {
     "name": "Unity.ZeroSim.Editor",
     "references": [
-        "Unity.ZeroSim"
+        "Unity.ZeroSim",
+        "MS.Shell.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -10,7 +10,8 @@
     "ROS"
   ],
   "dependencies": {
-    "com.unity.burst": "1.2.3"
+    "com.unity.burst": "1.2.3",
+    "com.ms.shell": "https://github.com/gpiffaretti/UnityShell.git"
   },
   "samples": [
     {
