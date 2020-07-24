@@ -1,0 +1,219 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Assertions;
+using Newtonsoft.Json.Linq;
+using ZO.Util.Extensions;
+using ZO;
+
+namespace ZO.Physics {
+
+    /// <summary>
+    /// A Zero Sim wrapper class for a Unity Articulated Body Supports writing and reading to ZeroSim 
+    /// JSON format.
+    /// 
+    /// A body that forms part of a Physics articulation.
+    /// An articulation is a set of bodies arranged in a logical tree. The parent-child link in this tree 
+    /// reflects that the bodies have their relative motion constrained. Articulations are solved by a 
+    /// Featherstone solver that works in reduced coordinates - that is each body has relative coordinates 
+    /// to its parent but only along the unlocked degrees of freedom. This guarantees there is no unwanted 
+    /// stretch.
+    /// 
+    /// Like with regular Joints, there are two anchors for each pair of connected articulation bodies. One 
+    /// anchor is defined in the parent body's reference frame, whereas the other one is defined in the 
+    /// child's reference frame. Changing the constraints, you directly affect the allowed space for relative 
+    /// positions of the two anchors. For instance, ArticulationDofLock.LockedMotion will not allow any 
+    /// relative motion at all.
+    /// </summary>
+    public class ZOArticulatedBody : MonoBehaviour, ZOSerializationInterface {
+
+        public ArticulationBody _articulationBody;
+
+        /// <summary>
+        /// Access to the Unity articulation body.
+        /// </summary>
+        /// <value></value>
+        public ArticulationBody UnityArticulationBody {
+            get {
+                return _articulationBody;
+            }
+            private set => _articulationBody = value;
+        }
+
+
+        /// <summary>
+        /// Gets the joint type string.
+        /// </summary>
+        /// <value></value>
+        public string ArticulationBodyJointType {
+            get {
+                return UnityArticulationBody.jointType.ToString().ToLower();
+            }
+        }
+
+
+        /// <summary>
+        /// Reset is a Unity call that gets called on creation in the editor.
+        /// </summary>
+        private void Reset() {
+            CreateRequirements();
+        }
+
+        public void CreateRequirements() {
+
+            // create if it doesn't exist
+            if (UnityArticulationBody == null) { // create Unity Hinge Joint
+                UnityArticulationBody = gameObject.AddComponent<ArticulationBody>();
+            }
+
+            // build the name from occurrences if they exist
+            if (_name == null) {
+                _name = Type;
+
+                ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                if (occurrence) {
+                    _name = _name + "_from_" + occurrence.Name;
+                }
+
+                ZOSimOccurrence connected_occurrence = UnityArticulationBody.transform.GetChild(0).gameObject.GetComponent<ZOSimOccurrence>();
+
+                if (connected_occurrence) {
+                    _name = _name + "_to_" + connected_occurrence.Name;
+                }
+            }
+
+        }
+
+
+
+
+        #region ZOSerializationInterface
+        public string Type {
+            get { return "joint.articulated_body." + ArticulationBodyJointType; }
+        }
+
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        private JObject _json;
+        public JObject JSON {
+            get {
+                return _json;
+            }
+        }
+
+
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            // calculate the world anchor position
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("mass", UnityArticulationBody.mass),
+                new JProperty("use_gravity", UnityArticulationBody.useGravity),
+                new JProperty("anchor_position", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorPosition)),
+                new JProperty("anchor_rotation_quaternion", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorRotation)),
+                new JProperty("linear_damping", UnityArticulationBody.linearDamping),
+                new JProperty("angular_damping", UnityArticulationBody.angularDamping),
+                new JProperty("joint_friction", UnityArticulationBody.jointFriction),
+                new JProperty("x_drive", new JObject(
+                    new JProperty("damping", UnityArticulationBody.xDrive.damping),
+                    new JProperty("force_limit", UnityArticulationBody.xDrive.forceLimit),
+                    new JProperty("lower_limit", UnityArticulationBody.xDrive.lowerLimit),
+                    new JProperty("upper_limit", UnityArticulationBody.xDrive.upperLimit),
+                    new JProperty("stiffness", UnityArticulationBody.xDrive.stiffness),
+                    new JProperty("target", UnityArticulationBody.xDrive.target),
+                    new JProperty("target_velocity", UnityArticulationBody.xDrive.targetVelocity)
+                )),
+                new JProperty("y_drive", new JObject(
+                    new JProperty("damping", UnityArticulationBody.yDrive.damping),
+                    new JProperty("force_limit", UnityArticulationBody.yDrive.forceLimit),
+                    new JProperty("lower_limit", UnityArticulationBody.yDrive.lowerLimit),
+                    new JProperty("upper_limit", UnityArticulationBody.yDrive.upperLimit),
+                    new JProperty("stiffness", UnityArticulationBody.yDrive.stiffness),
+                    new JProperty("target", UnityArticulationBody.yDrive.target),
+                    new JProperty("target_velocity", UnityArticulationBody.yDrive.targetVelocity)
+                )),
+                new JProperty("z_drive", new JObject(
+                    new JProperty("damping", UnityArticulationBody.zDrive.damping),
+                    new JProperty("force_limit", UnityArticulationBody.zDrive.forceLimit),
+                    new JProperty("lower_limit", UnityArticulationBody.zDrive.lowerLimit),
+                    new JProperty("upper_limit", UnityArticulationBody.zDrive.upperLimit),
+                    new JProperty("stiffness", UnityArticulationBody.zDrive.stiffness),
+                    new JProperty("target", UnityArticulationBody.zDrive.target),
+                    new JProperty("target_velocity", UnityArticulationBody.zDrive.targetVelocity)
+                ))
+            );
+
+            _json = json;
+
+            return json;
+        }
+
+
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            // Assert.Equals(json["type"].Value<string>() == Type);
+
+            _json = json;
+            Name = json.ValueOrDefault("name", Name);
+            UnityArticulationBody.mass = json.ValueOrDefault("mass", UnityArticulationBody.mass);
+            UnityArticulationBody.useGravity = json.ValueOrDefault("use_gravity", UnityArticulationBody.useGravity);
+            
+            UnityArticulationBody.parentAnchorPosition = json.ToVector3OrDefault("anchor_position", UnityArticulationBody.parentAnchorPosition);
+            UnityArticulationBody.parentAnchorRotation = json.ToQuaternionOrDefault("anchor_rotation_quaternion", UnityArticulationBody.parentAnchorRotation);
+            UnityArticulationBody.linearDamping = json.ValueOrDefault("linear_damping", UnityArticulationBody.linearDamping);
+            UnityArticulationBody.angularDamping = json.ValueOrDefault("angular_damping", UnityArticulationBody.linearDamping);
+            UnityArticulationBody.jointFriction = json.ValueOrDefault("joint_friction", UnityArticulationBody.jointFriction);
+
+            if (json.ContainsKey("x_drive")) {
+                JObject driveJSON = json["x_drive"].Value<JObject>();
+                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
+                drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
+                drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);
+                drive.upperLimit = driveJSON.ValueOrDefault("upper_limit", drive.upperLimit);
+                drive.stiffness = driveJSON.ValueOrDefault("stiffness", drive.stiffness);
+                drive.target = driveJSON.ValueOrDefault("target", drive.target);
+                drive.targetVelocity = driveJSON.ValueOrDefault("target_velocity", drive.targetVelocity);
+                UnityArticulationBody.xDrive = drive;
+            }
+
+            if (json.ContainsKey("y_drive")) {
+                JObject driveJSON = json["y_drive"].Value<JObject>();
+                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
+                drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
+                drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);
+                drive.upperLimit = driveJSON.ValueOrDefault("upper_limit", drive.upperLimit);
+                drive.stiffness = driveJSON.ValueOrDefault("stiffness", drive.stiffness);
+                drive.target = driveJSON.ValueOrDefault("target", drive.target);
+                drive.targetVelocity = driveJSON.ValueOrDefault("target_velocity", drive.targetVelocity);
+                UnityArticulationBody.yDrive = drive;
+            }
+
+            if (json.ContainsKey("z_drive")) {
+                JObject driveJSON = json["z_drive"].Value<JObject>();
+                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
+                drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
+                drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);
+                drive.upperLimit = driveJSON.ValueOrDefault("upper_limit", drive.upperLimit);
+                drive.stiffness = driveJSON.ValueOrDefault("stiffness", drive.stiffness);
+                drive.target = driveJSON.ValueOrDefault("target", drive.target);
+                drive.targetVelocity = driveJSON.ValueOrDefault("target_velocity", drive.targetVelocity);
+                UnityArticulationBody.zDrive = drive;
+            }
+
+        }
+        #endregion
+
+    }
+
+}

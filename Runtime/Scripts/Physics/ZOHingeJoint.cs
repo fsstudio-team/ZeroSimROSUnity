@@ -12,11 +12,22 @@ namespace ZO.Physics {
     /// <summary>
     /// A Zero Sim wrapper class for a Unity Hinge joint. Supports writing and reading to ZeroSim 
     /// JSON format.
+    /// 
+    /// The HingeJoint groups together 2 rigid bodies, constraining them to move like connected by a hinge.
+    ///
+    /// The HingeJoint has a motor which can be used to make the hinge spin around the joints axis. A spring 
+    /// which attempts to reach for a target angle by spinning around the joints axis. And a limit which 
+    /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
     public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface {
 
         [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
+
+        /// <summary>
+        /// The Unity hinge joint linked to this ZOSim hinge joint.
+        /// </summary>
+        /// <value></value>
         public UnityEngine.HingeJoint UnityHingeJoint {
             get {
                 return _hingeJoint;
@@ -26,7 +37,10 @@ namespace ZO.Physics {
 
 
 
-        //TODO: move the actual motor update into FixedUpdate otherwise it won't work
+        /// <summary>
+        /// Set and get the angular velocity of the hinge joint.  In degrees.
+        /// </summary>
+        /// <value>Angular velocity in degrees</value>
         public float AngularVelocityDegrees {
             set {
                 JointMotor motor = _hingeJoint.motor;
@@ -52,6 +66,10 @@ namespace ZO.Physics {
             }
         }
 
+        /// <summary>
+        /// Read only maximum torque of this hinge joint motor.
+        /// </summary>
+        /// <value></value>
         public float TorqueNewtonMeters {
             get {
                 return UnityHingeJoint.motor.force;
@@ -96,7 +114,7 @@ namespace ZO.Physics {
         // }
 
 
-#region ZOSerializationInterface
+        #region ZOSerializationInterface
         public string Type {
             get { return "joint.hinge"; }
         }
@@ -235,7 +253,7 @@ namespace ZO.Physics {
             });
 
         }
-#endregion
+        #endregion
 
     }
 
