@@ -69,6 +69,7 @@ namespace ZO.ROS.Unity.Publisher {
             ROSBridgeConnection.Publish(_jointStatesMessage, ROSTopic, Name);
         }
 
+        #region ZOSerializationInterface
 
         public override string Type {
             get { return "ros.publisher.joint_states"; }
@@ -90,7 +91,10 @@ namespace ZO.ROS.Unity.Publisher {
             ROSTopic = json["ros_topic"].Value<string>();
             UpdateRateHz = json["update_rate_hz"].Value<float>();
         }
+        #endregion // ZOSerializationInterface
 
+
+        #region ZOROSUnityInterface
         public override void OnROSBridgeConnected(object rosUnityManager) {
             Debug.Log("INFO: ZOROSJointStatesPublisher::OnROSBridgeConnected");
             Initialize();
@@ -101,7 +105,7 @@ namespace ZO.ROS.Unity.Publisher {
             Debug.Log("INFO: ZOROSJointStatesPublisher::OnROSBridgeDisconnected");
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
-
+        #endregion // ZOROSUnityInterface
 
     }
 }

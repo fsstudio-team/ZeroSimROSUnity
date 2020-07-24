@@ -63,6 +63,7 @@ namespace ZO.ROS.Unity {
             string dummy = Name;
         }
 
+
         #region ZOSerializationInterface
 
         protected JObject _json;
@@ -150,9 +151,11 @@ namespace ZO.ROS.Unity {
 
         #endregion // ZOGameObjectBase
         
+        #region ZOROSUnityInterface
         public abstract void OnROSBridgeConnected(object rosUnityManager);
 
         public abstract void OnROSBridgeDisconnected(object rosUnityManager);
+        #endregion // ZOROSUnityInterface
 
 
     }

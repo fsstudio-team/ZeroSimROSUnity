@@ -506,8 +506,8 @@ namespace ZO.ROS {
         /// client provides IDs for its subscriptions, to enable rosbridge to effectively choose the appropriate 
         /// fragmentation size and publishing rate.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="topic"></param>
+        /// <param name="id">f specified, then this specific subscription can be unsubscribed by referencing the ID.</param>
+        /// <param name="topic">the name of the topic to subscribe to</param>
         /// <param name="type">ROS message type</param>
         /// <param name="subscriptionCallback">Called when message is received.</param>
         /// <typeparam name="T">ZOROSMessageInterface</typeparam>
