@@ -776,6 +776,7 @@ GameObject:
   - component: {fileID: 376474633}
   - component: {fileID: 376474632}
   - component: {fileID: 376474635}
+  - component: {fileID: 376474636}
   m_Layer: 0
   m_Name: UR10_rigged
   m_TagString: Untagged
@@ -841,6 +842,24 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: /joint_states
   _name: ros.publisher.joint_states_UR10_rigged
+--- !u!114 &376474636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376474631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352cb33349a1da29e945266319001d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: 
+  _name: undefined_UR10_rigged
 --- !u!1 &395058793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1939,7 +1958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _articulationBody: {fileID: 1003853483}
-  _name: joint.articulated_body.fixedjoint_from_base_pivot
+  _name: shoulder_pan_joint
 --- !u!1 &1012899414
 GameObject:
   m_ObjectHideFlags: 0
