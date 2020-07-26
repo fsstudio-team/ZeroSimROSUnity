@@ -536,6 +536,42 @@ namespace ZO.ROS {
             }
         }
 
+        /// <summary>
+        /// Unsubscribe a ROS message topic.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public async void Unsubscribe(string topic) {
+            JObject unsubscribeJSON = new JObject(
+                new JProperty("op", "unsubscribe"),
+                new JProperty("topic", topic)
+            );
+            if (Serialization == SerializationType.JSON) {
+                await SendJSONStringAsync(unsubscribeJSON.ToString(Formatting.None));
+            } else if (Serialization == SerializationType.BSON) {
+                await SendBSONAsync(unsubscribeJSON);
+            }
+
+        }
+
+        /// <summary>
+        /// Unadvertise a ROS message topic.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public async void Unsubscribe(string topic, string id) {
+            JObject unsubscribeJSON = new JObject(
+                new JProperty("op", "unsubscribe"),
+                new JProperty("id", id),
+                new JProperty("topic", topic)
+            );
+            if (Serialization == SerializationType.JSON) {
+                await SendJSONStringAsync(unsubscribeJSON.ToString(Formatting.None));
+            } else if (Serialization == SerializationType.BSON) {
+                await SendBSONAsync(unsubscribeJSON);
+            }
+
+        }
 
 
 

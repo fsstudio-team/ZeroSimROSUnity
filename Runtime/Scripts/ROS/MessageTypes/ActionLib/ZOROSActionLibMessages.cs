@@ -79,4 +79,37 @@ namespace ZO.ROS.MessageTypes.ActionLib {
             this.text = text;
         }
     }
+
+
+    /// <summary>
+    /// Stores the statuses for goals that are currently being tracked by an action server
+    /// <see>http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatusArray.html</see>
+    /// </summary>
+    public class GoalStatusArrayMessage : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return GoalStatusArrayMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "actionlib_msgs/GoalStatusArray";
+
+        public HeaderMessage header {get; set;}
+        
+        public GoalStatusMessage[] status_list {get; set;}
+
+        public GoalStatusArrayMessage() {
+            this.header = new HeaderMessage();
+            this.status_list = new GoalStatusMessage[0];
+        }
+
+        public GoalStatusArrayMessage(HeaderMessage header, GoalStatusMessage[] status_list) {
+            this.header = header;
+            this.status_list = status_list;
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+
+    }
 }
