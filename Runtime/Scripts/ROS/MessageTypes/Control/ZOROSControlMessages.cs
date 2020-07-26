@@ -1,3 +1,4 @@
+using System;
 using ZO.ROS.MessageTypes.Std;
 using ZO.ROS.MessageTypes.Trajectory;
 using ZO.ROS.MessageTypes.ActionLib;
@@ -145,7 +146,7 @@ namespace ZO.ROS.MessageTypes.Control {
             this.goal = new FollowJointTrajectoryGoal();
             this.goal_id = new GoalIDMessage();
         }
-        public FollowJointTrajectoryGoal(HeaderMessage header, FollowJointTrajectoryGoal goal, GoalIDMessage goal_id) {
+        public FollowJointTrajectoryActionGoal(HeaderMessage header, FollowJointTrajectoryGoal goal, GoalIDMessage goal_id) {
             this.header = header;
             this.goal = goal;
             this.goal_id = goal_id;
@@ -155,8 +156,155 @@ namespace ZO.ROS.MessageTypes.Control {
             goal.Update();
         }
 
+
     }
 
- control_msgs/FollowJointTrajectoryActionResult.msg
- 
+    public class FollowJointTrajectoryResult : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return FollowJointTrajectoryResult.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/FollowJointTrajectoryResult";
+
+        public Int32 error_code { get; set; }
+
+        public const Int32 SUCCESSFUL = 0;
+        public const Int32 INVALID_GOAL = -1;
+        public const Int32 INVALID_JOINTS = -2;
+        public const Int32 OLD_HEADER_TIMESTAMP = -3;
+        public const Int32 PATH_TOLERANCE_VIOLATED = -4;
+        public const Int32 GOAL_TOLERANCE_VIOLATED = -5;
+
+        public FollowJointTrajectoryResult() {
+            this.error_code = SUCCESSFUL;
+        }
+
+        public FollowJointTrajectoryResult(Int32 error_code) {
+            this.error_code = error_code;
+        }
+    }
+
+    public class FollowJointTrajectoryActionResult : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return FollowJointTrajectoryActionResult.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/FollowJointTrajectoryActionResult";
+
+        public HeaderMessage header { get; set; }
+
+
+        public GoalStatusMessage status { get; set; }
+
+        public FollowJointTrajectoryResult result { get; set; }
+
+        public FollowJointTrajectoryActionResult() {
+            this.header = new HeaderMessage();
+            this.status = new GoalStatusMessage();
+            this.result = new FollowJointTrajectoryResult();
+        }
+        public FollowJointTrajectoryActionResult(HeaderMessage header, GoalStatusMessage status, FollowJointTrajectoryResult result) {
+            this.header = header;
+            this.status = status;
+            this.result = result;
+        }
+        public void Update() {
+            header.Update();
+        }
+
+    }
+
+
+    public class FollowJointTrajectoryFeedback : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return FollowJointTrajectoryFeedback.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/FollowJointTrajectoryFeedback";
+
+        public HeaderMessage header { get; set; }
+
+        public JointTrajectoryPointMessage desired { get; set; }
+        public JointTrajectoryPointMessage actual { get; set; }
+        public JointTrajectoryPointMessage error { get; set; }
+
+        public FollowJointTrajectoryFeedback() {
+            this.desired = new JointTrajectoryPointMessage();
+            this.actual = new JointTrajectoryPointMessage();
+            this.error = new JointTrajectoryPointMessage();
+        }
+
+        public FollowJointTrajectoryFeedback(JointTrajectoryPointMessage desired, JointTrajectoryPointMessage actual, JointTrajectoryPointMessage error) {
+            this.desired = desired;
+            this.actual = actual;
+            this.error = error;
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+
+    }
+
+    public class FollowJointTrajectoryActionFeedback : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return FollowJointTrajectoryActionFeedback.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/FollowJointTrajectoryActionFeedback";
+
+        public HeaderMessage header { get; set; }
+
+        public FollowJointTrajectoryFeedback feedback { get; set; }
+
+        public FollowJointTrajectoryActionFeedback() {
+            this.header = new HeaderMessage();
+            this.feedback = new FollowJointTrajectoryFeedback();
+        }
+
+        public FollowJointTrajectoryActionFeedback(HeaderMessage header, FollowJointTrajectoryFeedback feedback) {
+            this.header = header;
+            this.feedback = feedback;
+        }
+
+        public void Update() {
+            this.header.Update();
+            this.feedback.Update();
+        }
+
+    }
+
+    public class FollowJointTrajectoryAction : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return FollowJointTrajectoryAction.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/FollowJointTrajectoryAction";
+
+        public FollowJointTrajectoryActionGoal action_goal { get; set; }
+        public FollowJointTrajectoryActionResult action_result { get; set; }
+        public FollowJointTrajectoryActionFeedback action_feedback { get; set; }
+
+        public FollowJointTrajectoryAction() {
+            this.action_goal = new FollowJointTrajectoryActionGoal();
+            this.action_result = new FollowJointTrajectoryActionResult();
+            this.action_feedback = new FollowJointTrajectoryActionFeedback();
+        }
+
+        public FollowJointTrajectoryAction(FollowJointTrajectoryActionGoal action_goal, FollowJointTrajectoryActionResult action_result, FollowJointTrajectoryActionFeedback action_feedback) {
+            this.action_goal = action_goal;
+            this.action_result = action_result;
+            this.action_feedback = action_feedback;
+        }
+
+        public void Update() {
+            this.action_goal.Update();
+            this.action_result.Update();
+            this.action_feedback.Update();
+        }
+
+
+    }
+
+
 }
