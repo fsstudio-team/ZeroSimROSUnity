@@ -274,24 +274,34 @@ namespace ZO.ROS.MessageTypes.Control {
 
     }
 
-    public class FollowJointTrajectoryAction : ZOROSMessageInterface {
+    public class FollowJointTrajectoryActionMessage : ZOROSActionMessageInterface{
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return FollowJointTrajectoryAction.Type; } }
+        public string MessageType { get { return FollowJointTrajectoryActionMessage.Type; } }
 
         [Newtonsoft.Json.JsonIgnore]
         public static string Type = "control_msgs/FollowJointTrajectoryAction";
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string GoalMessageType { get { return FollowJointTrajectoryActionGoal.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string ResultMessageType { get { return FollowJointTrajectoryActionResult.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string FeedbackMessageType { get { return FollowJointTrajectoryActionFeedback.Type; } }
+
 
         public FollowJointTrajectoryActionGoal action_goal { get; set; }
         public FollowJointTrajectoryActionResult action_result { get; set; }
         public FollowJointTrajectoryActionFeedback action_feedback { get; set; }
 
-        public FollowJointTrajectoryAction() {
+        public FollowJointTrajectoryActionMessage() {
             this.action_goal = new FollowJointTrajectoryActionGoal();
             this.action_result = new FollowJointTrajectoryActionResult();
             this.action_feedback = new FollowJointTrajectoryActionFeedback();
         }
 
-        public FollowJointTrajectoryAction(FollowJointTrajectoryActionGoal action_goal, FollowJointTrajectoryActionResult action_result, FollowJointTrajectoryActionFeedback action_feedback) {
+        public FollowJointTrajectoryActionMessage(FollowJointTrajectoryActionGoal action_goal, FollowJointTrajectoryActionResult action_result, FollowJointTrajectoryActionFeedback action_feedback) {
             this.action_goal = action_goal;
             this.action_result = action_result;
             this.action_feedback = action_feedback;

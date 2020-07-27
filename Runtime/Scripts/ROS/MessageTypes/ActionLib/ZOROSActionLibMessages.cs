@@ -1,6 +1,33 @@
 using ZO.ROS.MessageTypes.Std;
 
 namespace ZO.ROS.MessageTypes.ActionLib {
+
+    public enum ActionStatusEnum {
+        NO_GOAL = -1,    // For internal server use. If status is NA, published status array will have length 0
+        PENDING,    //  The goal has yet to be processed by the action server
+        ACTIVE,     //  The goal is currently being processed by the action server
+        PREEMPTED,  //  The goal received a cancel request after it started executing and has since completed its execution (Terminal State)
+        SUCCEEDED,  //  The goal was achieved successfully by the action server (Terminal State)
+        ABORTED,    //  The goal was aborted during execution by the action server due to some failure (Terminal State)
+        REJECTED,   //  The goal was rejected by the action server without being processed, because the goal was unattainable or invalid (Terminal State)
+        PREEMPTING, //  The goal received a cancel request after it started executing and has not yet completed execution
+        RECALLING,  //  The goal received a cancel request before it started executing, but the action server has not yet confirmed that the goal is canceled
+        RECALLED,   //  The goal received a cancel request before it started executing and was successfully cancelled (Terminal State)
+        LOST,       //  An action client can determine that a goal is LOST. This should not be sent over the wire by an action server
+    }
+
+    /// <summary>
+    /// Common interface for all ROS Action message types
+    /// </summary>
+    public interface ZOROSActionMessageInterface : ZOROSMessageInterface {
+        string MessageType { get; }
+
+        string GoalMessageType { get; }
+        string ResultMessageType { get; }
+        string FeedbackMessageType { get; }
+
+    }
+
     public class GoalIDMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
         public string MessageType { get { return GoalIDMessage.Type; } }
@@ -93,9 +120,9 @@ namespace ZO.ROS.MessageTypes.ActionLib {
         [Newtonsoft.Json.JsonIgnore]
         public static string Type = "actionlib_msgs/GoalStatusArray";
 
-        public HeaderMessage header {get; set;}
-        
-        public GoalStatusMessage[] status_list {get; set;}
+        public HeaderMessage header { get; set; }
+
+        public GoalStatusMessage[] status_list { get; set; }
 
         public GoalStatusArrayMessage() {
             this.header = new HeaderMessage();

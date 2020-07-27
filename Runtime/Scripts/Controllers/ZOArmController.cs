@@ -3,20 +3,24 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes;
+using ZO.ROS.MessageTypes.Control;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.MessageTypes.Nav;
 using ZO.ROS.MessageTypes.Trajectory;
 using ZO.ROS;
 using ZO.ROS.Unity;
-using ZO.Util;
-using ZO.Physics;
-using ZO.ROS.MessageTypes.Trajectory;
+
 
 namespace ZO.Controllers {
     public class ZOArmController : ZOROSUnityGameObjectBase {
 
+        private ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> _actionServer = new ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal>();
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
+
         protected override void ZOStart() {
+            _actionServer.ROSTopic = "/arm_controller";
+            _actionServer.Name = "arm_controller";
+            _actionServer.Initialize();
             base.ZOStart();
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 Initialize();
@@ -24,6 +28,7 @@ namespace ZO.Controllers {
         }
 
         protected override void ZOOnDestroy() {
+            _actionServer.Terminate();
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
 

@@ -9,33 +9,80 @@ using ZO.ROS.MessageTypes.Std;
 using Newtonsoft.Json;
 
 namespace ZO.ROS {
-    public abstract class ZOROSActionServer<TActionGoal, TActionResult, TActionFeedback, TGoal, TResult, TFeedback> : ZOROSUnityGameObjectBase
-        where TActionGoal : ZOROSMessageInterface, new()
-        where TActionResult : ZOROSMessageInterface, new()
-        where TActionFeedback : ZOROSMessageInterface, new() {
+
+    /// <summary>
+    /// The actionlib stack provides a standardized interface for interfacing with preemptable tasks. 
+    /// Examples of this include moving the base to a target location, performing a laser scan and 
+    /// returning the resulting point cloud, detecting the handle of a door, etc.
+    /// </summary>
+    /// <typeparam name="TActionGoal"></typeparam>
+    /// <typeparam name="TActionResult"></typeparam>
+    /// <typeparam name="TActionFeedback"></typeparam>
+    public class ZOROSActionServer<TActionMessage, TGoalMessage> : ZOROSUnityInterface
+                            where TActionMessage : ZOROSActionMessageInterface, new()
+                            where TGoalMessage : ZOROSMessageInterface, new() {
+
+        public string _ROSTopic = "";
+
+        /// <summary>
+        /// The ROS Topic.  For example "/zerosim/joint_states"
+        /// </summary>
+        /// <value></value>
+        public string ROSTopic {
+            get => _ROSTopic;
+            set => _ROSTopic = value;
+        }
+
+        public string _name;
+
+        /// <summary>
+        /// Unique name of the object.  For example: "joint.hinge_from_left_wheel"
+        /// </summary>
+        /// <value></value>
+        public string Name {
+            get {
+                // if (string.IsNullOrEmpty(_name)) {
+                //     _name = Type + "_" + gameObject.name;
+                // }
+                return _name;
+            }
+
+            set => _name = value;
+        }
+
+
+
+        /// <summary>
+        /// The ROS Bridge singleton shortcut access.
+        /// </summary>
+        /// <value></value>
+        protected ZOROSBridgeConnection ROSBridgeConnection {
+            get {
+                return ZOROSBridgeConnection.Instance;
+            }
+        }
+
+        /// <summary>
+        /// The ROS Unity Manger singleton shortcut access.
+        /// </summary>
+        /// <value></value>
+        protected ZOROSUnityManager ROSUnityManager {
+            get {
+                return ZOROSUnityManager.Instance;
+            }
+        }
+
+
 
         // This is defined according to actionlib_msgs/GoalStatus
-        public enum ActionStatus {
-            NO_GOAL = -1,    // For internal server use. If status is NA, published status array will have length 0
-            PENDING,    //  The goal has yet to be processed by the action server
-            ACTIVE,     //  The goal is currently being processed by the action server
-            PREEMPTED,  //  The goal received a cancel request after it started executing and has since completed its execution (Terminal State)
-            SUCCEEDED,  //  The goal was achieved successfully by the action server (Terminal State)
-            ABORTED,    //  The goal was aborted during execution by the action server due to some failure (Terminal State)
-            REJECTED,   //  The goal was rejected by the action server without being processed, because the goal was unattainable or invalid (Terminal State)
-            PREEMPTING, //  The goal received a cancel request after it started executing and has not yet completed execution
-            RECALLING,  //  The goal received a cancel request before it started executing, but the action server has not yet confirmed that the goal is canceled
-            RECALLED,   //  The goal received a cancel request before it started executing and was successfully cancelled (Terminal State)
-            LOST,       //  An action client can determine that a goal is LOST. This should not be sent over the wire by an action server
-        }
-        private ActionStatus _actionStatus = ActionStatus.NO_GOAL;
-        public ActionStatus Status {
+        private ActionStatusEnum _actionStatus = ActionStatusEnum.NO_GOAL;
+        public ActionStatusEnum ActionStatus {
             get => _actionStatus;
 
             protected set {
                 _actionStatus = value;
                 // publish status
-                if (_actionStatus == ActionStatus.NO_GOAL) {
+                if (_actionStatus == ActionStatusEnum.NO_GOAL) {
                     ROSBridgeConnection.Publish<GoalStatusArrayMessage>(new GoalStatusArrayMessage(), ROSTopic + "/status");
                 } else {
                     ROSBridgeConnection.Publish<GoalStatusArrayMessage>(
@@ -59,31 +106,52 @@ namespace ZO.ROS {
             protected set => _actionStatusText = value;
         }
 
+        /// <summary>
+        /// Will connect to ROS bridge connect and disconnect events.
+        /// </summary>
+        public void Initialize() {
+            // auto-connect to ROS Bridge connection and disconnect events
+            ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
+        }
+
+        /// <summary>
+        /// Will disconnect to ROS bridge connect and disconnect events.
+        /// </summary>
+        public void Terminate() {
+            ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
+        }
+
+
 
         #region ZOROSUnityInterface
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public void OnROSBridgeConnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeConnected");
+            TActionMessage tmpActionMessage = new TActionMessage(); // used just to get message types
             // Advertise Action feedback
             ROSBridgeConnection.Advertise(ROSTopic + "/status", GoalStatusArrayMessage.Type);
-            ROSBridgeConnection.Advertise(ROSTopic + "/feedback", (new TActionFeedback()).MessageType);
-            ROSBridgeConnection.Advertise(ROSTopic + "/result", (new TActionResult()).MessageType);
+            ROSBridgeConnection.Advertise(ROSTopic + "/feedback", tmpActionMessage.FeedbackMessageType);
+            ROSBridgeConnection.Advertise(ROSTopic + "/result", tmpActionMessage.ResultMessageType);
 
-            // Subscribe to Action goal
-            ROSBridgeConnection.Subscribe<GoalIDMessage>(Name, ROSTopic + "/cancel", GoalIDMessage.Type, OnCancelDelegate);
-            ROSBridgeConnection.Subscribe<TActionGoal>(Name, ROSTopic + "/goal", (new TActionGoal()).MessageType, OnGoalDelegate);
+            // Subscribe to Action cancel and goal topices
+            ROSBridgeConnection.Subscribe<GoalIDMessage>(Name, ROSTopic + "/cancel", GoalIDMessage.Type, OnCancelReceived);
+            ROSBridgeConnection.Subscribe<TGoalMessage>(Name, ROSTopic + "/goal", tmpActionMessage.GoalMessageType, OnGoalReceived);
 
 
-            Status = ActionStatus.NO_GOAL;
+            ActionStatus = ActionStatusEnum.NO_GOAL;
 
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public void OnROSBridgeDisconnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeDisconnected");
 
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/status");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/feedback");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/result");
 
-            ROSBridgeConnection.Unsubscribe(ROSTopic + "/cancel");
-            ROSBridgeConnection.Unsubscribe(ROSTopic + "/goal");
+            ROSBridgeConnection.Unsubscribe(Name, ROSTopic + "/cancel");
+            ROSBridgeConnection.Unsubscribe(Name, ROSTopic + "/goal");
 
         }
         #endregion // ZOROSUnityInterface
@@ -93,27 +161,30 @@ namespace ZO.ROS {
 
         // Client Triggered Actions
         // When receive a new goal
-        protected abstract void OnGoalReceived(ZOROSMessageInterface actionGoal);
-        private Task OnGoalDelegate(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
+        // protected abstract void OnGoalReceived(ZOROSMessageInterface actionGoal);
+        private Task OnGoalReceived(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
 
-            Status = ActionStatus.PENDING;
-            OnGoalReceived(msg);
+            Debug.Log("INFO: ZOROSActionServer::OnGoalReceived");
+
+            ActionStatus = ActionStatusEnum.PENDING;
+            // OnGoalReceived(msg);
             return Task.CompletedTask;
         }
 
         // When the goal is cancelled by the client
-        protected abstract void OnGoalRecalling(GoalIDMessage goalID);
-        protected abstract void OnGoalPreempting();
-        private Task OnCancelDelegate(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
+        // protected abstract void OnGoalRecalling(GoalIDMessage goalID);
+        // protected abstract void OnGoalPreempting();
+        private Task OnCancelReceived(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
+            Debug.Log("INFO: ZOROSActionServer::OnCancelReceived");
             GoalIDMessage goalID = msg as GoalIDMessage;
-            switch (Status) {
-                case ActionStatus.PENDING:
-                    Status  = ActionStatus.RECALLING;
-                    OnGoalRecalling(goalID);
+            switch (ActionStatus) {
+                case ActionStatusEnum.PENDING:
+                    ActionStatus = ActionStatusEnum.RECALLING;
+                    // OnGoalRecalling(goalID);
                     break;
-                case ActionStatus.ACTIVE:
-                    Status = ActionStatus.PREEMPTING;
-                    OnGoalPreempting();
+                case ActionStatusEnum.ACTIVE:
+                    ActionStatus = ActionStatusEnum.PREEMPTING;
+                    // OnGoalPreempting();
                     break;
                 default:
                     Debug.LogWarning("WARNING: Goal cannot be canceled in current state: " + _actionStatus.ToString());
@@ -124,94 +195,104 @@ namespace ZO.ROS {
         }
 
         // Server Triggered Actions
-        protected abstract void OnGoalActive();
-        protected void SetAccepted(string info = "") {
+        // protected abstract void OnGoalActive();
+
+        /// <summary>
+        /// Accepts a new goal when one is available. The status of this goal is set to active upon 
+        /// acceptance, and the status of any previously active goal is set to preempted. Preempts 
+        /// received for the new goal between checking if isNewGoalAvailable or invocation of a goal 
+        /// callback and the acceptNewGoal call will not trigger a preempt callback. This means, 
+        /// isPreemptRequested should be called after accepting the goal even for callback-based 
+        /// implementations to make sure the new goal does not have a pending preempt request.
+        /// </summary>
+        /// <param name="info"></param>
+        public void AcceptNewGoal(string info = "") {
             ActionStatusText = info;
-            switch (Status) {
-                case ActionStatus.PENDING:
-                    Status = ActionStatus.ACTIVE;
-                    OnGoalActive();
+            switch (ActionStatus) {
+                case ActionStatusEnum.PENDING:
+                    ActionStatus = ActionStatusEnum.ACTIVE;
+                    // OnGoalActive();
                     break;
-                case ActionStatus.RECALLING:
-                    Status = ActionStatus.PREEMPTING;
-                    OnGoalPreempting();
+                case ActionStatusEnum.RECALLING:
+                    ActionStatus = ActionStatusEnum.PREEMPTING;
+                    // OnGoalPreempting();
                     break;
                 default:
-                    Debug.LogWarning("WARNING: Goal cannot be accepted in current state: " + Status.ToString());
+                    Debug.LogWarning("WARNING: Goal cannot be accepted in current state: " + ActionStatus.ToString());
                     break;
             }
         }
 
-        protected abstract void OnGoalRejected();
-        protected void SetRejected(string reason = "") {
+        // protected abstract void OnGoalRejected();
+        public void SetRejected(string reason = "") {
             ActionStatusText = reason;
-            switch (Status) {
-                case ActionStatus.PENDING:
-                    Status = ActionStatus.REJECTED;
-                    OnGoalRejected();
+            switch (ActionStatus) {
+                case ActionStatusEnum.PENDING:
+                    ActionStatus = ActionStatusEnum.REJECTED;
+                    // OnGoalRejected();
                     break;
-                case ActionStatus.RECALLING:
-                    Status = ActionStatus.REJECTED;
-                    OnGoalRejected();
+                case ActionStatusEnum.RECALLING:
+                    ActionStatus = ActionStatusEnum.REJECTED;
+                    // OnGoalRejected();
                     break;
                 default:
-                    Debug.LogWarning("WARNING: Goal cannot be rejected in current state: " + Status.ToString());
+                    Debug.LogWarning("WARNING: Goal cannot be rejected in current state: " + ActionStatus.ToString());
                     break;
             }
         }
 
-        protected abstract void OnGoalSucceeded();
-        protected void SetSucceeded(ZOROSMessageInterface result = null, string info = "") {
+        // protected abstract void OnGoalSucceeded();
+        public void SetSucceeded(ZOROSMessageInterface result = null, string info = "") {
             ActionStatusText = info;
-            switch (Status) {
-                case ActionStatus.ACTIVE:
-                    Status = ActionStatus.SUCCEEDED;
+            switch (ActionStatus) {
+                case ActionStatusEnum.ACTIVE:
+                    ActionStatus = ActionStatusEnum.SUCCEEDED;
                     PublishResult(result);
-                    OnGoalSucceeded();
+                    // OnGoalSucceeded();
                     break;
-                case ActionStatus.PREEMPTING:
-                    Status = ActionStatus.SUCCEEDED;
+                case ActionStatusEnum.PREEMPTING:
+                    ActionStatus = ActionStatusEnum.SUCCEEDED;
                     PublishResult(result);
-                    OnGoalSucceeded();
+                    // OnGoalSucceeded();
                     break;
                 default:
-                    Debug.LogWarning("WARNING: Goal cannot succeed in current state: " + Status.ToString());
+                    Debug.LogWarning("WARNING: Goal cannot succeed in current state: " + ActionStatus.ToString());
                     break;
             }
         }
 
-        protected abstract void OnGoalAborted();
-        protected void SetAborted(string reason = "") {
+        // protected abstract void OnGoalAborted();
+        public void SetAborted(string reason = "") {
             ActionStatusText = reason;
-            switch (Status) {
-                case ActionStatus.ACTIVE:
-                    Status = ActionStatus.ABORTED;
-                    OnGoalAborted();
+            switch (ActionStatus) {
+                case ActionStatusEnum.ACTIVE:
+                    ActionStatus = ActionStatusEnum.ABORTED;
+                    // OnGoalAborted();
                     break;
-                case ActionStatus.PREEMPTING:
-                    Status = ActionStatus.ABORTED;
-                    OnGoalAborted();
+                case ActionStatusEnum.PREEMPTING:
+                    ActionStatus = ActionStatusEnum.ABORTED;
+                    // OnGoalAborted();
                     break;
                 default:
-                    Debug.LogWarning("WARNING Goal cannot be aborted in current state: " + Status.ToString());
+                    Debug.LogWarning("WARNING Goal cannot be aborted in current state: " + ActionStatus.ToString());
                     break;
             }
         }
 
-        protected abstract void OnGoalCanceled(ZOROSMessageInterface result);
-        protected void SetCanceled(TResult result = null) {
-            switch (Status) {
-                case ActionStatus.RECALLING:
-                    Status = ActionStatus.RECALLED;
+        // protected abstract void OnGoalCanceled(ZOROSMessageInterface result);
+        public void SetCanceled(ZOROSMessageInterface result = null) {
+            switch (ActionStatus) {
+                case ActionStatusEnum.RECALLING:
+                    ActionStatus = ActionStatusEnum.RECALLED;
                     break;
-                case ActionStatus.PREEMPTING:
-                    Status = ActionStatus.PREEMPTED;
+                case ActionStatusEnum.PREEMPTING:
+                    ActionStatus = ActionStatusEnum.PREEMPTED;
                     break;
                 default:
-                    Debug.LogWarning("WARNING: Goal cannot be be canceled in current status state: " + Status.ToString());
+                    Debug.LogWarning("WARNING: Goal cannot be be canceled in current status state: " + ActionStatus.ToString());
                     return;
             }
-            OnGoalCanceled(result);
+            // OnGoalCanceled(result);
         }
 
         // protected void UpdateAndPublishStatus(ActionStatus actionStatus, string text = "") {
@@ -238,17 +319,18 @@ namespace ZO.ROS {
         //     }
         // }
 
-        protected void PublishFeedback() {
-            action.action_feedback.status.status = (byte)_actionStatus;
-            action.action_feedback.status.goal_id = action.action_goal.goal_id;
-            rosSocket.Publish(feedbackPublicationID, action.action_feedback);
+        protected void PublishFeedback<T>(T feedback) where T : ZOROSMessageInterface {
+            ROSBridgeConnection.Publish<T>(feedback, ROSTopic + "/feedback");
+            // action.action_feedback.status.status = (byte)_actionStatus;
+            // action.action_feedback.status.goal_id = action.action_goal.goal_id;
+            // rosSocket.Publish(feedbackPublicationID, action.action_feedback);
         }
 
-        protected void PublishResult(ZOROSMessageInterface result) {
-            ROSBridgeConnection.Publish()
-            action.action_feedback.status.status = (byte)_actionStatus;
-            action.action_result.status.goal_id = action.action_goal.goal_id;
-            rosSocket.Publish(resultPublicationID, action.action_result);
+        protected void PublishResult<T>(T result) where T : ZOROSMessageInterface {
+            ROSBridgeConnection.Publish<T>(result, ROSTopic + "/result");
+            // action.action_feedback.status.status = (byte)_actionStatus;
+            // action.action_result.status.goal_id = action.action_goal.goal_id;
+            // rosSocket.Publish(resultPublicationID, action.action_result);
         }
     }
 
