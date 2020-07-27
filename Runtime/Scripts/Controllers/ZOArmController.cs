@@ -18,7 +18,7 @@ namespace ZO.Controllers {
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
 
         protected override void ZOStart() {
-            _actionServer.ROSTopic = "/arm_controller";
+            _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
             _actionServer.Name = "arm_controller";
             _actionServer.Initialize();
             base.ZOStart();
@@ -38,7 +38,7 @@ namespace ZO.Controllers {
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
-            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>(Name, "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
+            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
 
         }
 

@@ -83,18 +83,22 @@ namespace ZO.ROS {
                 _actionStatus = value;
                 // publish status
                 if (_actionStatus == ActionStatusEnum.NO_GOAL) {
-                    ROSBridgeConnection.Publish<GoalStatusArrayMessage>(new GoalStatusArrayMessage(), ROSTopic + "/status");
+                    GoalStatusArrayMessage statusArrayMessage = new GoalStatusArrayMessage();
+                    statusArrayMessage.Update();
+                    ROSBridgeConnection.Publish<GoalStatusArrayMessage>(statusArrayMessage, ROSTopic + "/status");
                 } else {
-                    ROSBridgeConnection.Publish<GoalStatusArrayMessage>(
-                        new GoalStatusArrayMessage {
-                            status_list = new GoalStatusMessage[]
+                    GoalStatusArrayMessage statusArrayMessage = new GoalStatusArrayMessage {
+                        status_list = new GoalStatusMessage[]
                             {
                                 new GoalStatusMessage {
                                     status = (byte)_actionStatus,
                                     text = _actionStatusText
                                 }
                             }
-                        },
+                    };
+                    statusArrayMessage.Update();
+                    ROSBridgeConnection.Publish<GoalStatusArrayMessage>(
+                       statusArrayMessage,
                         ROSTopic + "/status"
                     );
                 }

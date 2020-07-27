@@ -78,11 +78,15 @@ namespace ZO.ROS {
     /// </code></example>
     public class ZOROSBridgeConnection {
 
+        #region Singleton
+
         // Singleton: See https://csharpindepth.com/articles/singleton
         private static readonly ZOROSBridgeConnection _instance = new ZOROSBridgeConnection();
         static ZOROSBridgeConnection() { }
         private ZOROSBridgeConnection() { }
         public static ZOROSBridgeConnection Instance { get => _instance; }
+
+        #endregion // Singleton
 
         public enum SerializationType {
             JSON,
