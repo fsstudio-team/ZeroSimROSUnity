@@ -123,14 +123,12 @@ namespace ZO.Export {
                 ZOExportOBJ.DoExport(false, tempOBJFile);
 
                 // ~~~~ Run Docker Convex Decomposition Python Script ~~~~ //
-                ProcessStartInfo runConvexDecompositionDocker = new ProcessStartInfo();
-                runConvexDecompositionDocker.FileName = _dockerExePath;
+
+                // Note: All dockerized tools will have access to /unity-project-root as a volume
                 string tempConvexMeshOBJDirectory = "Temp/collide-" + Path.GetFileNameWithoutExtension(tempOBJFile);
-                runConvexDecompositionDocker.Arguments = "run -v "
-                            + Path.GetFullPath(".") + ":/remote"
-                            + " -t zo-convex-decomposition "
-                            + " --input_obj=/remote/" + tempOBJFile
-                            + " --output_directory=/remote/" + tempConvexMeshOBJDirectory
+                string arguments = 
+                              " --input_obj=/unity-project-root/" + tempOBJFile
+                            + " --output_directory=/unity-project-root/" + tempConvexMeshOBJDirectory
                             + " --resolution=" + _resolution.ToString()
                             + " --maxhulls=" + _maxhulls.ToString()
                             + " --concavity=" + _concavity.ToString()
@@ -145,105 +143,113 @@ namespace ZO.Export {
                             + " --maxNumVerticesPerCH=" + _maxNumVerticesPerCH.ToString()
                             + " --minVolumePerCH=" + _minVolumePerCH.ToString()
                             + " --convexhullApproximation=" + (_convexHullApproximation == true ? "1" : "0");
-                UnityEngine.Debug.Log("INFO: Docker Args: " + runConvexDecompositionDocker.Arguments);
-                runConvexDecompositionDocker.UseShellExecute = false;
-                runConvexDecompositionDocker.RedirectStandardError = true;
-                runConvexDecompositionDocker.RedirectStandardOutput = true;
-                Process process = Process.Start(runConvexDecompositionDocker);
-                string output = process.StandardOutput.ReadToEnd();
-                UnityEngine.Debug.Log("INFO: Run Convex Decomposition Docker stdout: " + output);
-                string err = process.StandardError.ReadToEnd();
-                UnityEngine.Debug.Log("INFO: Run Convex Decomposition Docker stderr: " + err);
-                process.WaitForExit();
+                
+                UnityEngine.Debug.Log("INFO: Docker Args: " + arguments);
+                
+                string command = "python /zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py";
+                string commandAWithArgs = $"{command} {arguments}";
 
-                // ~~~~ Overwrite old collision meshes ~~~~ //
-                // GameObject prefab = null;
-                // if (_overwrite == true) {
-                //     Object[] assets = AssetDatabase.LoadAllAssetsAtPath(prefabPath);
+                ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, (exitCode) => {
 
-                //     foreach (var item in assets) {
-                //         if (item is Mesh) { // assign collider
-                //             if (item.name.Contains("-collision-")) {
-                //                 Object.DestroyImmediate(item, true);
-                //             }
-                //         }
-                //     }
+                    if(exitCode != 0){
+                        UnityEngine.Debug.LogError($"Docker command error exit code: {exitCode}");
+                        return;
+                    }
 
-                //     prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-                //     MeshCollider[] meshColliders = prefab.GetComponents<MeshCollider>();
-                //     foreach (var meshCollider in meshColliders) {
-                //         Object.DestroyImmediate(meshCollider, true);
-                //     }
-                //     PrefabUtility.SavePrefabAsset(prefab);
-                // }
+                    UnityEngine.Debug.Log("Docker command Success.");
 
-                // ~~~~ Create Collision Prefab Asset ~~~~ //
-                AssetDatabase.DeleteAsset(_collisionMeshBasePath);
+                    // ~~~~ Overwrite old collision meshes ~~~~ //
+                    // GameObject prefab = null;
+                    // if (_overwrite == true) {
+                    //     Object[] assets = AssetDatabase.LoadAllAssetsAtPath(prefabPath);
 
-                // ~~~~ Import the convex collision meshes ~~~~ //
-                string[] convexMeshFiles = Directory.GetFiles(tempConvexMeshOBJDirectory);
-                int index = 1;
-                foreach (string sourceConveMeshOBJPath in convexMeshFiles) {
+                    //     foreach (var item in assets) {
+                    //         if (item is Mesh) { // assign collider
+                    //             if (item.name.Contains("-collision-")) {
+                    //                 Object.DestroyImmediate(item, true);
+                    //             }
+                    //         }
+                    //     }
 
-                    // Mesh mesh = ZO.Import.ZOImportOBJ.ImportFile(conveMeshOBJFile);
-                    string meshName = _collisionMeshBasePath + index.ToString() + ".obj";
-                    string rootProjectDirectory = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/Assets"));
-                    string destinationMeshAssetPath = Path.Combine(rootProjectDirectory, meshName); 
-                    System.IO.File.Copy(sourceConveMeshOBJPath, destinationMeshAssetPath);
-
-                    // force asset database refresh
-                    UnityEditor.AssetDatabase.SaveAssets();
-                    UnityEditor.AssetDatabase.Refresh();
-                    Mesh mesh = UnityEditor.AssetDatabase.LoadAssetAtPath<Mesh>(destinationMeshAssetPath);
-
-                    UnityEngine.Debug.Log("INFO: Processing convex hull: " + meshName);
-
-                    // // scale & rotate mesh
-                    // Vector3[] meshVertices = mesh.vertices;
-                    // Vector3[] transformedVertices = new Vector3[meshVertices.Length];
-                    // Quaternion rotation = Quaternion.Euler(_rotation);
-                    // for (int i = 0; i < meshVertices.Length; i++) {
-                    //     Vector3 vertex = meshVertices[i];
-                    //     vertex = rotation * vertex;
-                    //     vertex.x = vertex.x * _scale;
-                    //     vertex.y = vertex.y * _scale;
-                    //     vertex.z = vertex.z * _scale;
-                    //     vertex = vertex + _offset;
-
-                    //     transformedVertices[i] = vertex;
+                    //     prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                    //     MeshCollider[] meshColliders = prefab.GetComponents<MeshCollider>();
+                    //     foreach (var meshCollider in meshColliders) {
+                    //         Object.DestroyImmediate(meshCollider, true);
+                    //     }
+                    //     PrefabUtility.SavePrefabAsset(prefab);
                     // }
-                    // mesh.vertices = transformedVertices;
-                    // mesh.Optimize();
-                    // mesh.RecalculateNormals();
-                    // mesh.RecalculateBounds();
 
-                    // AssetDatabase.CreateAsset(mesh, mesh.name + ".mesh");
-                    // AssetDatabase.SaveAssets();
+                    // ~~~~ Create Collision Prefab Asset ~~~~ //
+                    AssetDatabase.DeleteAsset(_collisionMeshBasePath);
 
-                    index++;
+                    // ~~~~ Import the convex collision meshes ~~~~ //
+                    string[] convexMeshFiles = Directory.GetFiles(tempConvexMeshOBJDirectory);
+                    int index = 1;
+                    foreach (string sourceConveMeshOBJPath in convexMeshFiles) {
 
-                }
+                        // Mesh mesh = ZO.Import.ZOImportOBJ.ImportFile(conveMeshOBJFile);
+                        string meshName = _collisionMeshBasePath + index.ToString() + ".obj";
+                        string rootProjectDirectory = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/Assets"));
+                        string destinationMeshAssetPath = Path.Combine(rootProjectDirectory, meshName); 
+                        System.IO.File.Copy(sourceConveMeshOBJPath, destinationMeshAssetPath);
 
-                // NOTE: reloading prefab to get its changes
-                // Object[] objects = AssetDatabase.LoadAllAssetsAtPath(prefabPath);
-                // prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-                // foreach (var item in objects) {
-                //     if (item is Mesh) { // assign collider
-                //         if (item.name.Contains("-collision-")) {
-                //             Mesh mesh = item as Mesh;
-                //             MeshCollider meshCollider = prefab.AddComponent<MeshCollider>();
-                //             meshCollider.sharedMesh = mesh;
-                //             meshCollider.convex = true;
+                        // force asset database refresh
+                        UnityEditor.AssetDatabase.SaveAssets();
+                        UnityEditor.AssetDatabase.Refresh();
+                        Mesh mesh = UnityEditor.AssetDatabase.LoadAssetAtPath<Mesh>(destinationMeshAssetPath);
 
-                //         }
-                //     }
-                // }
+                        UnityEngine.Debug.Log("INFO: Processing convex hull: " + meshName);
+
+                        // // scale & rotate mesh
+                        // Vector3[] meshVertices = mesh.vertices;
+                        // Vector3[] transformedVertices = new Vector3[meshVertices.Length];
+                        // Quaternion rotation = Quaternion.Euler(_rotation);
+                        // for (int i = 0; i < meshVertices.Length; i++) {
+                        //     Vector3 vertex = meshVertices[i];
+                        //     vertex = rotation * vertex;
+                        //     vertex.x = vertex.x * _scale;
+                        //     vertex.y = vertex.y * _scale;
+                        //     vertex.z = vertex.z * _scale;
+                        //     vertex = vertex + _offset;
+
+                        //     transformedVertices[i] = vertex;
+                        // }
+                        // mesh.vertices = transformedVertices;
+                        // mesh.Optimize();
+                        // mesh.RecalculateNormals();
+                        // mesh.RecalculateBounds();
+
+                        // AssetDatabase.CreateAsset(mesh, mesh.name + ".mesh");
+                        // AssetDatabase.SaveAssets();
+
+                        index++;
+
+                    }
+
+                    // NOTE: reloading prefab to get its changes
+                    // Object[] objects = AssetDatabase.LoadAllAssetsAtPath(prefabPath);
+                    // prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                    // foreach (var item in objects) {
+                    //     if (item is Mesh) { // assign collider
+                    //         if (item.name.Contains("-collision-")) {
+                    //             Mesh mesh = item as Mesh;
+                    //             MeshCollider meshCollider = prefab.AddComponent<MeshCollider>();
+                    //             meshCollider.sharedMesh = mesh;
+                    //             meshCollider.convex = true;
+
+                    //         }
+                    //     }
+                    // }
 
 
-                // // ~~~~ Finally Save It Back to the original prefab ~~~~ //
-                // PrefabUtility.SavePrefabAsset(prefab);
+                    // // ~~~~ Finally Save It Back to the original prefab ~~~~ //
+                    // PrefabUtility.SavePrefabAsset(prefab);
 
-                Close();
+                    Close();
+
+                });
+
+                
             }
             EditorGUI.EndDisabledGroup();
 

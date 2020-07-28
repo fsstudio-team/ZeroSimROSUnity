@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MS.Shell.Editor;
 using UnityEngine;
@@ -55,6 +56,30 @@ public class ZODockerManager
         };
 
         isRunning = false;
+    }
+
+    public static void DockerRun(string service, string command, Action<int> callback){
+         // docker-compose -f ./docker/docker-compose.yml run --rm 
+         // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
+         var options = new EditorShell.Options(){
+            workDirectory = "../../docker/",
+            environmentVars = new Dictionary<string, string>(){
+                //{"PATH", "usr/bin"}
+            }
+        };
+        // Run command in a new container, and delete after execution with --rm
+        string dockerCommand = $"docker-compose run --rm {service} {command}";
+
+        // Execute docker command
+        var task = EditorShell.Execute(dockerCommand, options);
+        DockerLog($"Executing command on {service}...", forceDisplay: true);
+        task.onLog += (EditorShell.LogType logType, string log) => {
+            DockerLog(log);
+        };
+        task.onExit += (exitCode) => {
+            DockerLog($"Docker compose run exit: {service} {command}", forceDisplay: true);
+            callback(exitCode);
+        };
     }
     
     private string GetCommandPath(string command){

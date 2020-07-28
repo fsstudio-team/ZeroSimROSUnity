@@ -42,7 +42,6 @@ public class ZODockerManagerWindow : EditorWindow {
         }
 
         ZODockerManager.showLogs = EditorGUILayout.Toggle("Show docker-compose logs", ZODockerManager.showLogs);
-
         
     }
 
