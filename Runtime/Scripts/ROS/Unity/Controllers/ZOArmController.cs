@@ -8,7 +8,7 @@ using ZO.ROS.MessageTypes.Trajectory;
 using ZO.ROS.MessageTypes.ControllerManager;
 using ZO.ROS;
 using ZO.ROS.Unity;
-using ZO.ROS.Unity.Service; 
+using ZO.ROS.Unity.Service;
 
 
 namespace ZO.ROS.Controllers {
@@ -34,7 +34,7 @@ namespace ZO.ROS.Controllers {
         }
 
         protected override void ZOOnDestroy() {
-            
+
             Terminate();
         }
         #endregion // ZOGameObjectBase
@@ -107,17 +107,24 @@ namespace ZO.ROS.Controllers {
             _actionServer.Initialize();
 
 
+
             // advertise
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
             ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
 
+            ControllerState = ControllerStateEnum.Running;
+
+
         }
 
         private void Terminate() {
             _actionServer.Terminate();
             ROSBridgeConnection?.Unsubscribe("arm_controller", "/arm_controller/command");
+
+            ControllerState = ControllerStateEnum.Initialized;
+
         }
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {

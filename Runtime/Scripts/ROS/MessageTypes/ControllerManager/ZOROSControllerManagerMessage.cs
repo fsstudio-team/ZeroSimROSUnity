@@ -303,5 +303,94 @@ namespace ZO.ROS.MessageTypes.ControllerManager {
         }
     }
 
+    /// <summary>
+    /// The ReloadControllerLibraries service will reload all controllers that are available in
+    /// the system as plugins
+    ///
+    /// 
+    /// Reloading libraries only works if there are no controllers loaded. If there
+    /// are still some controllers loaded, the reloading will fail.
+    /// If this bool is set to true, all loaded controllers will get
+    /// killed automatically, and the reloading can succeed.
+    /// <see>http://docs.ros.org/api/controller_manager_msgs/html/srv/ReloadControllerLibraries.html</see>
+    /// </summary>
+    public class ReloadControllerLibrariesServiceRequest : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return ReloadControllerLibrariesServiceRequest.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "controller_manager_msgs/ReloadControllerLibraries";
+
+        public bool force_kill { get; set; }
+
+        public ReloadControllerLibrariesServiceRequest() {
+            this.force_kill = true;
+        }
+
+        public ReloadControllerLibrariesServiceRequest(bool ok) {
+            this.force_kill = ok;
+        }
+    }
+
+
+    /// <summary>
+    /// The ReloadControllerLibraries service will reload all controllers that are available in
+    /// the system as plugins
+    ///
+    /// 
+    /// Reloading libraries only works if there are no controllers loaded. If there
+    /// are still some controllers loaded, the reloading will fail.
+    /// If this bool is set to true, all loaded controllers will get
+    /// killed automatically, and the reloading can succeed.
+    /// <see>http://docs.ros.org/api/controller_manager_msgs/html/srv/ReloadControllerLibraries.html</see>
+    /// </summary>
+    public class ReloadControllerLibrariesServiceResponse : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return ReloadControllerLibrariesServiceResponse.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "controller_manager_msgs/ReloadControllerLibraries";
+
+        public bool ok { get; set; }
+
+        public ReloadControllerLibrariesServiceResponse() {
+            this.ok = true;
+        }
+
+        public ReloadControllerLibrariesServiceResponse(bool ok) {
+            this.ok = ok;
+        }
+    }
+
+
+    /// <summary>
+    /// The ListControllers service returns a list of controller types that are known
+    /// to the controller manager plugin mechanism.
+    /// 
+    /// <see>http://docs.ros.org/api/controller_manager_msgs/html/srv/ListControllerTypes.html</see>
+    /// </summary>
+    public class ListControllerTypesServiceResponse : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return ListControllerTypesServiceResponse.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "controller_manager_msgs/ListControllerTypes";
+
+        public string[] types { get; set; }
+        public string[] base_classes { get; set; }
+
+        public ListControllerTypesServiceResponse() {
+            this.types = new string[0];
+            this.base_classes = new string[0];
+        }
+
+        public ListControllerTypesServiceResponse(string[] types, string[] base_classes) {
+            this.types = types;
+            this.base_classes = base_classes;
+        }
+    }
 
 }

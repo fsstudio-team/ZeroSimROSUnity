@@ -1880,7 +1880,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: controller_manager
-  _name: ur10_controller_manager
+  _name: ur10_test
 --- !u!4 &931968166
 Transform:
   m_ObjectHideFlags: 0

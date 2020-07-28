@@ -46,19 +46,27 @@ namespace ZO.ROS.Unity.Service {
 
 
         public string ListControllersServiceTopic {
-            get => "/controller_manager/list_controllers";
+            get => Name + "/controller_manager/list_controllers";
         }
 
         public string LoadControllerServiceTopic {
-            get => "/controller_manager/load_controller";
+            get => Name + "/controller_manager/load_controller";
         }
 
         public string UnloadControllerServiceTopic {
-            get => "controller_manager/unload_controller";
+            get => Name + "/controller_manager/unload_controller";
+        }
+
+        public string ReloadControllerServiceTopic {
+            get => Name + "/controller_manager/reload_controller_libraries";
         }
 
         public string SwitchControllerServiceTopic {
-            get => "controller_manager/switch_controller";
+            get => Name + "/controller_manager/switch_controller";
+        }
+
+        public string ListControllerTypesServiceTopic {
+            get => Name + "/controller_manager/list_controller_types";
         }
 
         private void Reset() {
@@ -109,19 +117,42 @@ namespace ZO.ROS.Unity.Service {
             ROSBridgeConnection.AdvertiseService<EmptyServiceRequest>(ListControllersServiceTopic,
                 ListControllersResponse.Type,
                 (rosBridge, msg, id) => {
-                    Debug.Log("INFO: ZOControllerManagerService::ListControllersService");
 
                     // build a list of all the registered controllers
                     List<ControllerStateMessage> controllerStateMessages = new List<ControllerStateMessage>();
                     foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
                         controllerStateMessages.Add(entry.Value.ControllerStateMessage);
                     }
+                    Debug.Log("INFO: ZOControllerManagerService::ListControllersService: " + string.Join(",", controllerStateMessages.ToString()));
+
                     ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllerStateMessages.ToArray()), ListControllersServiceTopic, true, id);
+
 
 
                     return Task.CompletedTask;
 
                 });
+
+            // advertise list types controllers
+            ROSBridgeConnection.AdvertiseService<EmptyServiceRequest>(ListControllerTypesServiceTopic,
+                ListControllerTypesServiceResponse.Type,
+                (rosBridge, msg, id) => {
+                    Debug.Log("INFO: ZOControllerManagerService::ListControllerTypesService");
+
+                    // build a list of all the registered controllers
+                    List<string> types = new List<string>();
+                    List<string> base_classes = new List<string>();
+                    foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
+                        types.Add(entry.Value.ControllerType);
+                        base_classes.Add("JointPositionController"); //HACKHACK: hardwirds
+                    }
+                    ROSBridgeConnection.ServiceResponse<ListControllerTypesServiceResponse>(new ListControllerTypesServiceResponse(types.ToArray(), base_classes.ToArray()), ListControllerTypesServiceTopic, true, id);
+
+
+                    return Task.CompletedTask;
+
+                });
+
 
             // advertise load controllers
             ROSBridgeConnection.AdvertiseService<LoadControllerServiceRequest>(LoadControllerServiceTopic,
@@ -236,6 +267,23 @@ namespace ZO.ROS.Unity.Service {
 
                 });
 
+            // reload
+            ROSBridgeConnection.AdvertiseService<ReloadControllerLibrariesServiceRequest>(ReloadControllerServiceTopic,
+                ReloadControllerLibrariesServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    ReloadControllerLibrariesServiceRequest unloadControllerServiceRequest = msg as ReloadControllerLibrariesServiceRequest;
+
+                    Debug.Log("INFO: ZOControllerManagerService::ReloadControllerServiceRequest");
+
+                    foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
+                        entry.Value.Load();
+                        entry.Value.Unload();
+                    }
+
+
+                    return Task.CompletedTask;
+
+                });
 
         }
 
@@ -245,6 +293,8 @@ namespace ZO.ROS.Unity.Service {
             ROSBridgeConnection.UnAdvertiseService(LoadControllerServiceTopic);
             ROSBridgeConnection.UnAdvertiseService(SwitchControllerServiceTopic);
             ROSBridgeConnection.UnAdvertiseService(UnloadControllerServiceTopic);
+            ROSBridgeConnection.UnAdvertiseService(ListControllerTypesServiceTopic);
+            ROSBridgeConnection.UnAdvertiseService(ReloadControllerServiceTopic);
         }
 
 
