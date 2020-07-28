@@ -21,7 +21,6 @@ namespace ZO.ROS.Controllers {
 
         protected override void ZOAwake() {
             Name = "arm_controller";
-
         }
         protected override void ZOStart() {
             base.ZOStart();
@@ -35,7 +34,7 @@ namespace ZO.ROS.Controllers {
         }
 
         protected override void ZOOnDestroy() {
-            _actionServer.Terminate();
+            
             Terminate();
         }
         #endregion // ZOGameObjectBase
@@ -86,7 +85,13 @@ namespace ZO.ROS.Controllers {
         }
 
         public void Load() {
+            Debug.Log("INFO: ZOArmController::Load");
             Initialize();
+        }
+
+        public void Unload() {
+            Debug.Log("INFO: ZOArmController::Unload");
+            Terminate();
         }
 
         #endregion // ZOROSControllerInterface
@@ -94,11 +99,13 @@ namespace ZO.ROS.Controllers {
 
 
         private void Initialize() {
+            Debug.Log("INFO: ZOArmController::Initialize");
 
             // start up the follow joint trajectory action server
             _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
             _actionServer.Name = "arm_controller";
             _actionServer.Initialize();
+
 
             // advertise
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
@@ -109,6 +116,7 @@ namespace ZO.ROS.Controllers {
         }
 
         private void Terminate() {
+            _actionServer.Terminate();
             ROSBridgeConnection?.Unsubscribe("arm_controller", "/arm_controller/command");
         }
 

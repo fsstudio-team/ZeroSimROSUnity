@@ -20,6 +20,7 @@ namespace ZO.ROS.Controllers {
         ControllerStateMessage ControllerStateMessage { get; }
 
         void Load();
+        void Unload();
 
     }
 }

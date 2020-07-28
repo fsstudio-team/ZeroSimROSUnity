@@ -114,24 +114,11 @@ namespace ZO.ROS {
         /// Will connect to ROS bridge connect and disconnect events.
         /// </summary>
         public void Initialize() {
+            Debug.Log("INFO: ZOROSActionServer::Initialize");
+
             // auto-connect to ROS Bridge connection and disconnect events
-            ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
-        }
-
-        /// <summary>
-        /// Will disconnect to ROS bridge connect and disconnect events.
-        /// </summary>
-        public void Terminate() {
-            ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
-        }
-
-
-
-        #region ZOROSUnityInterface
-        public void OnROSBridgeConnected(object rosUnityManager) {
-            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeConnected");
+            // ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
+            // ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
             TActionMessage tmpActionMessage = new TActionMessage(); // used just to get message types
             // Advertise Action feedback
             ROSBridgeConnection.Advertise(ROSTopic + "/status", GoalStatusArrayMessage.Type);
@@ -147,9 +134,13 @@ namespace ZO.ROS {
 
         }
 
-        public void OnROSBridgeDisconnected(object rosUnityManager) {
-            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeDisconnected");
-
+        /// <summary>
+        /// Will disconnect to ROS bridge connect and disconnect events.
+        /// </summary>
+        public void Terminate() {
+            Debug.Log("INFO: ZOROSActionServer::Terminate");
+            // ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
+            // ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/status");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/feedback");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/result");
@@ -157,6 +148,17 @@ namespace ZO.ROS {
             ROSBridgeConnection.Unsubscribe(Name, ROSTopic + "/cancel");
             ROSBridgeConnection.Unsubscribe(Name, ROSTopic + "/goal");
 
+        }
+
+
+
+        #region ZOROSUnityInterface
+        public void OnROSBridgeConnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeConnected");
+        }
+
+        public void OnROSBridgeDisconnected(object rosUnityManager) {
+            Debug.Log("INFO: ZOROSActionServer::OnROSBridgeDisconnected");
         }
         #endregion // ZOROSUnityInterface
 

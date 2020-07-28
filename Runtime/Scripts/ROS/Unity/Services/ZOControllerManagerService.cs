@@ -46,9 +46,19 @@ namespace ZO.ROS.Unity.Service {
 
 
         public string ListControllersServiceTopic {
-            get {
-                return "/controller_manager/list_controllers";
-            }
+            get => "/controller_manager/list_controllers";
+        }
+
+        public string LoadControllerServiceTopic {
+            get => "/controller_manager/load_controller";
+        }
+
+        public string UnloadControllerServiceTopic {
+            get => "controller_manager/unload_controller";
+        }
+
+        public string SwitchControllerServiceTopic {
+            get => "controller_manager/switch_controller";
         }
 
         private void Reset() {
@@ -80,7 +90,9 @@ namespace ZO.ROS.Unity.Service {
             }
         }
         protected override void ZOOnDestroy() {
-            ROSBridgeConnection?.UnAdvertiseService(ListControllersServiceTopic);
+            base.ZOOnDestroy();
+            // ROSBridgeConnection?.UnAdvertiseService(ListControllersServiceTopic);
+            Terminate();
         }
 
 
@@ -92,22 +104,147 @@ namespace ZO.ROS.Unity.Service {
 
         private void Initialize() {
             Debug.Log("INFO: ZOControllerManagerService::Initialize");
-            // advertise
-            ROSBridgeConnection.AdvertiseService<EmptyServiceRequest>(ListControllersServiceTopic, ListControllersResponse.Type, (rosBridge, msg, id) => {
-                Debug.Log("INFO: ZOControllerManagerService::ListControllersService");
 
-                // build a list of all the registered controllers
-                List<ControllerStateMessage> controllerStateMessages = new List<ControllerStateMessage>();
-                foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
-                    controllerStateMessages.Add(entry.Value.ControllerStateMessage);
-                }
-                ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllerStateMessages.ToArray()), ListControllersServiceTopic, true, id);
+            // advertise list controllers
+            ROSBridgeConnection.AdvertiseService<EmptyServiceRequest>(ListControllersServiceTopic,
+                ListControllersResponse.Type,
+                (rosBridge, msg, id) => {
+                    Debug.Log("INFO: ZOControllerManagerService::ListControllersService");
+
+                    // build a list of all the registered controllers
+                    List<ControllerStateMessage> controllerStateMessages = new List<ControllerStateMessage>();
+                    foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
+                        controllerStateMessages.Add(entry.Value.ControllerStateMessage);
+                    }
+                    ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllerStateMessages.ToArray()), ListControllersServiceTopic, true, id);
 
 
-                return Task.CompletedTask;
+                    return Task.CompletedTask;
 
-            });
+                });
 
+            // advertise load controllers
+            ROSBridgeConnection.AdvertiseService<LoadControllerServiceRequest>(LoadControllerServiceTopic,
+                LoadControllerServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    LoadControllerServiceRequest loadControllerServiceRequest = msg as LoadControllerServiceRequest;
+
+                    Debug.Log("INFO: ZOControllerManagerService::LoadControllerServiceRequest: "
+                                + loadControllerServiceRequest.name);
+
+
+                    // check if controller is registered
+                    if (_controllers.ContainsKey(loadControllerServiceRequest.name)) {
+
+                        // initialize the actual controller
+                        _controllers[loadControllerServiceRequest.name].Load();
+
+                        // respond back we loaded the controller succesfully
+                        ROSBridgeConnection.ServiceResponse<LoadControllerServiceResponse>(new LoadControllerServiceResponse(true), LoadControllerServiceTopic, true, id);
+
+                    } else {
+                        Debug.LogWarning("WARNING: could not load controller: " + loadControllerServiceRequest.name);
+                        // controller is not registered so respond back an error
+                        ROSBridgeConnection.ServiceResponse<LoadControllerServiceResponse>(new LoadControllerServiceResponse(false), LoadControllerServiceTopic, false, id);
+
+                    }
+
+
+                    return Task.CompletedTask;
+
+                });
+
+            // advertise switch controllers
+            ROSBridgeConnection.AdvertiseService<SwitchControllerServiceRequest>(SwitchControllerServiceTopic,
+                SwitchControllerServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    SwitchControllerServiceRequest switchControllerServiceRequest = msg as SwitchControllerServiceRequest;
+
+
+                    bool success = true;
+                    foreach (string controller in switchControllerServiceRequest.stop_controllers) {
+
+                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: " + controller);
+
+                        // check if controller is registered
+                        if (_controllers.ContainsKey(controller)) {
+
+                            // initialize the actual controller
+                            _controllers[controller].Load();
+
+                        } else {
+                            Debug.LogWarning("WARNING: could not unload controller: " + controller);
+                            success = false;
+                        }
+
+                    }
+
+                    foreach (string controller in switchControllerServiceRequest.start_controllers) {
+
+                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: " + controller);
+
+                        // check if controller is registered
+                        if (_controllers.ContainsKey(controller)) {
+
+                            // initialize the actual controller
+                            _controllers[controller].Load();
+
+                        } else {
+                            Debug.LogWarning("WARNING: could not unload controller: " + controller);
+                            success = false;
+                        }
+
+                    }
+
+                    // controller is not registered so respond back an error
+                    ROSBridgeConnection.ServiceResponse<SwitchControllerServiceResponse>(new SwitchControllerServiceResponse(success), SwitchControllerServiceTopic, success, id);
+
+
+
+                    return Task.CompletedTask;
+
+                });
+
+            // advertise unload service
+            ROSBridgeConnection.AdvertiseService<UnloadControllerServiceRequest>(UnloadControllerServiceTopic,
+                UnloadControllerServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    UnloadControllerServiceRequest unloadControllerServiceRequest = msg as UnloadControllerServiceRequest;
+
+                    Debug.Log("INFO: ZOControllerManagerService::UnloadControllerServiceRequest: "
+                                + unloadControllerServiceRequest.name);
+
+
+                    // check if controller is registered
+                    if (_controllers.ContainsKey(unloadControllerServiceRequest.name)) {
+
+                        // initialize the actual controller
+                        _controllers[unloadControllerServiceRequest.name].Unload();
+
+                        // respond back we loaded the controller succesfully
+                        ROSBridgeConnection.ServiceResponse<UnloadControllerServiceResponse>(new UnloadControllerServiceResponse(true), UnloadControllerServiceTopic, true, id);
+
+                    } else {
+                        Debug.LogWarning("WARNING: could not unload controller: " + unloadControllerServiceRequest.name);
+                        // controller is not registered so respond back an error
+                        ROSBridgeConnection.ServiceResponse<UnloadControllerServiceResponse>(new UnloadControllerServiceResponse(false), UnloadControllerServiceTopic, false, id);
+
+                    }
+
+
+                    return Task.CompletedTask;
+
+                });
+
+
+        }
+
+        private void Terminate() {
+            Debug.Log("INFO: ZOControllerManagerService::Terminate");
+            ROSBridgeConnection.UnAdvertiseService(ListControllersServiceTopic);
+            ROSBridgeConnection.UnAdvertiseService(LoadControllerServiceTopic);
+            ROSBridgeConnection.UnAdvertiseService(SwitchControllerServiceTopic);
+            ROSBridgeConnection.UnAdvertiseService(UnloadControllerServiceTopic);
         }
 
 
@@ -119,7 +256,7 @@ namespace ZO.ROS.Unity.Service {
 
         public override void OnROSBridgeDisconnected(object rosUnityManager) {
             Debug.Log("INFO: ZOControllerManagerService::OnROSBridgeDisconnected");
-            ROSBridgeConnection.UnAdvertiseService(ListControllersServiceTopic);
+            Terminate();
         }
 
         #endregion
