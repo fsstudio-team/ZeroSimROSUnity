@@ -11,7 +11,7 @@ using ZO.Util;
 using ZO.Physics;
 
 
-namespace ZO.Controllers {
+namespace ZO.ROS.Controllers {
 
     /// <summary>
     /// Overview:     
@@ -30,6 +30,7 @@ namespace ZO.Controllers {
     /// <reference>
     /// See: https://github.com/ros-controls/ros_controllers/blob/indigo-devel/diff_drive_controller/include/diff_drive_controller/diff_drive_controller.h
     /// </reference>
+    /// TODO: Make this a ZOROSUnityGameObjectBase and a controller interface
     public class ZODifferentialDriveController : ZOGameObjectBase, ZOSerializationInterface {
 
         public String _name;

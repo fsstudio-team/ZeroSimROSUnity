@@ -4,24 +4,31 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Control;
-using ZO.ROS.MessageTypes.Geometry;
-using ZO.ROS.MessageTypes.Nav;
 using ZO.ROS.MessageTypes.Trajectory;
+using ZO.ROS.MessageTypes.ControllerManager;
 using ZO.ROS;
 using ZO.ROS.Unity;
+using ZO.ROS.Unity.Service; 
 
 
-namespace ZO.Controllers {
-    public class ZOArmController : ZOROSUnityGameObjectBase {
+namespace ZO.ROS.Controllers {
+    public class ZOArmController : ZOROSUnityGameObjectBase, ZOROSControllerInterface {
 
         private ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> _actionServer = new ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal>();
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
 
+        #region ZOGameObjectBase
+
+        protected override void ZOAwake() {
+            Name = "arm_controller";
+
+        }
         protected override void ZOStart() {
-            _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
-            _actionServer.Name = "arm_controller";
-            _actionServer.Initialize();
             base.ZOStart();
+
+            // register with controller manager
+            ZOControllerManagerService.Instance.RegisterController(this);
+
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 Initialize();
             }
@@ -29,17 +36,80 @@ namespace ZO.Controllers {
 
         protected override void ZOOnDestroy() {
             _actionServer.Terminate();
-            ROSBridgeConnection?.UnAdvertise(ROSTopic);
+            Terminate();
         }
+        #endregion // ZOGameObjectBase
+
+        #region ZOROSControllerInterface
+
+        public string ControllerName {
+            get { return "arm_controller"; }
+        }
+        public string ControllerType {
+            get { return "position_controllers/JointTrajectoryController"; }
+        }
+
+        public string HardwareInterface {
+            get { return "hardware_interface::PositionJointInterface"; }
+        }
+
+        ControllerStateEnum _state;
+        public ControllerStateEnum ControllerState {
+            get => _state;
+            private set => _state = value;
+        }
+
+        public ControllerStateMessage ControllerStateMessage {
+            get {
+
+                ControllerStateMessage controllerStateMessage = new ControllerStateMessage {
+                    name = ControllerName,
+                    state = ControllerState.ToString().ToLower(),
+                    type = ControllerType,
+                    claimed_resources = new HardwareInterfaceResourcesMessage[1] {
+                            new HardwareInterfaceResourcesMessage {
+                                hardware_interface = HardwareInterface,
+                                resources = new string[6] {
+                                        "elbow_joint",
+                                        "shoulder_lift_joint",
+                                        "shoulder_pan_joint",
+                                        "wrist_1_joint",
+                                        "wrist_2_joint",
+                                        "wrist_3_joint"
+                                }
+                            }
+                        }
+                };
+
+                return controllerStateMessage;
+            }
+        }
+
+        public void Load() {
+            Initialize();
+        }
+
+        #endregion // ZOROSControllerInterface
+
 
 
         private void Initialize() {
+
+            // start up the follow joint trajectory action server
+            _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
+            _actionServer.Name = "arm_controller";
+            _actionServer.Initialize();
+
             // advertise
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
             ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
 
+        }
+
+        private void Terminate() {
+            ROSBridgeConnection?.Unsubscribe("arm_controller", "/arm_controller/command");
         }
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
@@ -74,13 +144,13 @@ namespace ZO.Controllers {
         #region ZOROSUnityInterface
         public override void OnROSBridgeConnected(object rosUnityManager) {
             Debug.Log("INFO: ZOArmController::OnROSBridgeConnected");
-            Initialize();
+            // Initialize();
 
         }
 
         public override void OnROSBridgeDisconnected(object rosUnityManager) {
             Debug.Log("INFO: ZOArmController::OnROSBridgeDisconnected");
-            ROSBridgeConnection?.UnAdvertise(ROSTopic);
+            Terminate();
         }
 
         #endregion // ZOROSUnityInterface

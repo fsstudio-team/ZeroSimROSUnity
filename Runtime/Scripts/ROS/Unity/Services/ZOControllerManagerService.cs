@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Std;
 using ZO.ROS.MessageTypes.ControllerManager;
+using ZO.ROS.Controllers;
 
 namespace ZO.ROS.Unity.Service {
 
@@ -21,6 +23,12 @@ namespace ZO.ROS.Unity.Service {
     /// <see>http://wiki.ros.org/controller_manager</see>
     /// </summary>
     public class ZOControllerManagerService : ZOROSUnityGameObjectBase {
+
+
+        private Dictionary<string, ZOROSControllerInterface> _controllers = new Dictionary<string, ZOROSControllerInterface>();
+        public void RegisterController(ZOROSControllerInterface controller) {
+            _controllers.Add(controller.ControllerName, controller);
+        }
 
         #region Singleton
 
@@ -88,30 +96,12 @@ namespace ZO.ROS.Unity.Service {
             ROSBridgeConnection.AdvertiseService<EmptyServiceRequest>(ListControllersServiceTopic, ListControllersResponse.Type, (rosBridge, msg, id) => {
                 Debug.Log("INFO: ZOControllerManagerService::ListControllersService");
 
-                // report back
-                // KILLME THIS IS JUST A TEST DUMMY CONTROLLER
-                ControllerStateMessage[] controllers = new ControllerStateMessage[1] {
-                    new ControllerStateMessage {
-                        name = "arm_controller",
-                        state = "running",
-                        type = "position_controllers/JointTrajectoryController",
-                        claimed_resources = new HardwareInterfaceResourcesMessage[1] {
-                            new HardwareInterfaceResourcesMessage {
-                                hardware_interface = "hardware_interface::JointStateInterface",
-                                resources = new string[6] {
-                                        "elbow_joint",
-                                        "shoulder_lift_joint",
-                                        "shoulder_pan_joint",
-                                        "wrist_1_joint",
-                                        "wrist_2_joint",
-                                        "wrist_3_joint"
-                                }
-                            }
-                        }
-                    }
-                };
-
-                ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllers), ListControllersServiceTopic, true, id);
+                // build a list of all the registered controllers
+                List<ControllerStateMessage> controllerStateMessages = new List<ControllerStateMessage>();
+                foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
+                    controllerStateMessages.Add(entry.Value.ControllerStateMessage);
+                }
+                ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllerStateMessages.ToArray()), ListControllersServiceTopic, true, id);
 
 
                 return Task.CompletedTask;
