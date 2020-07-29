@@ -11,6 +11,11 @@ namespace ZO.ROS.Unity.Publisher {
 
         private JointStateMessage _jointStatesMessage = new JointStateMessage();
 
+        private void Reset() {
+            UpdateRateHz = 25.0f;
+            ROSTopic = "/joint_states";    
+        }
+
         protected override void ZOStart() {
             base.ZOStart();
             if (ZOROSBridgeConnection.Instance.IsConnected) {

@@ -1,4 +1,6 @@
+using System.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
@@ -6,7 +8,7 @@ using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Control;
 using ZO.ROS.MessageTypes.Trajectory;
 using ZO.ROS.MessageTypes.ControllerManager;
-using ZO.ROS;
+using ZO.Physics;
 using ZO.ROS.Unity;
 using ZO.ROS.Unity.Service;
 
@@ -24,6 +26,10 @@ namespace ZO.ROS.Controllers {
         }
         protected override void ZOStart() {
             base.ZOStart();
+
+            // preload joints because they cannot be updated outside the main unity thread
+            ZOJointInterface[] dummy_joints = Joints;
+            string[] dummyJointNames = JointNames;
 
             // register with controller manager
             ZOControllerManagerService.Instance.RegisterController(this);
@@ -58,27 +64,61 @@ namespace ZO.ROS.Controllers {
             private set => _state = value;
         }
 
+        private ZOJointInterface[] _joints = null;
+
+        /// <summary>
+        /// Get all the joints that are children of this arm controller.  
+        /// Joints must implement the ZOJointInterface
+        /// </summary>
+        /// <value></value>
+        public ZOJointInterface[] Joints {
+            get {
+                if (_joints == null) {
+                    _joints = this.transform.GetComponentsInChildren<ZOJointInterface>();
+                }
+                return _joints;
+            }
+        }
+
+        private string[] _jointNames;
+        /// <summary>
+        /// Get an array of Joint names.
+        /// </summary>
+        /// <value></value>
+        public string[] JointNames {
+            get {
+                if (_jointNames == null) {
+                    _jointNames = new string[Joints.Length];
+                    for (int i = 0; i < Joints.Length; i++) {
+                        _jointNames[i] = Joints[i].Name;
+                    }
+                }
+                return _jointNames;
+
+            }
+        }
+
+
+
         public ControllerStateMessage ControllerStateMessage {
             get {
 
-                ControllerStateMessage controllerStateMessage = new ControllerStateMessage {
-                    name = ControllerName,
-                    state = ControllerState.ToString().ToLower(),
-                    type = ControllerType,
-                    claimed_resources = new HardwareInterfaceResourcesMessage[1] {
-                            new HardwareInterfaceResourcesMessage {
-                                hardware_interface = HardwareInterface,
-                                resources = new string[6] {
-                                        "elbow_joint",
-                                        "shoulder_lift_joint",
-                                        "shoulder_pan_joint",
-                                        "wrist_1_joint",
-                                        "wrist_2_joint",
-                                        "wrist_3_joint"
-                                }
-                            }
-                        }
-                };
+                HardwareInterfaceResourcesMessage[] claimed_resources = new HardwareInterfaceResourcesMessage[1];
+                claimed_resources[0] = new HardwareInterfaceResourcesMessage(HardwareInterface, JointNames);
+                ControllerStateMessage controllerStateMessage = new ControllerStateMessage(ControllerName, ControllerState.ToString().ToLower(), ControllerType, claimed_resources);
+                
+                
+                // {
+                //     name = ControllerName,
+                //     state = ControllerState.ToString().ToLower(),
+                //     type = ControllerType,
+                //     claimed_resources = new HardwareInterfaceResourcesMessage[1] {
+                //             new HardwareInterfaceResourcesMessage {
+                //                 hardware_interface = HardwareInterface,
+                //                 resources = JointNames
+                //             }
+                //         }
+                // };
 
                 return controllerStateMessage;
             }

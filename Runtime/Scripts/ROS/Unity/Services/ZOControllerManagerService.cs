@@ -123,7 +123,7 @@ namespace ZO.ROS.Unity.Service {
                     foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
                         controllerStateMessages.Add(entry.Value.ControllerStateMessage);
                     }
-                    Debug.Log("INFO: ZOControllerManagerService::ListControllersService: " + string.Join(",", controllerStateMessages.ToString()));
+                    // Debug.Log("INFO: ZOControllerManagerService::ListControllersService: " + string.Join(",", controllerStateMessages.ToString()));
 
                     ROSBridgeConnection.ServiceResponse<ListControllersResponse>(new ListControllersResponse(controllerStateMessages.ToArray()), ListControllersServiceTopic, true, id);
 
