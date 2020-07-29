@@ -1,71 +1,74 @@
 <?xml version="1.0"?>
-<robot  name="SimpleRobotArm" >
- <link  name="base" >
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.0" />
-   <geometry >
-    <box  size="0.2 0.2 0.1" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.1" />
-   <geometry >
-    <sphere  radius="0.025" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.4" />
-   <geometry >
-    <sphere  radius="0.0249999985" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.700000048" />
-   <geometry >
-    <sphere  radius="0.0249999985" />
-   </geometry>
-  </visual>
- </link>
- <joint  type="revolute"  name="joint.hinge_from_base" >
-  <parent  link="base" />
-  <child  link="shoulder" />
-  <origin  rpy="-0.0 0.0 -0.0"  xyz="0.0 -0.0 0.1" />
-  <axis  xyz="0.0 -1.0 0.0" />
- </joint>
- <link  name="shoulder" >
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.0" />
-   <geometry >
-    <cylinder  length="0.2"  radius="0.035" />
-   </geometry>
-  </visual>
- </link>
- <joint  type="revolute"  name="joint.hinge_from_shoulder" >
-  <parent  link="shoulder" />
-  <child  link="elbow" />
-  <origin  rpy="-0.0 0.0 -0.0"  xyz="0.0 -0.0 0.30000000000000004" />
-  <axis  xyz="0.0 -1.0 0.0" />
- </joint>
- <link  name="elbow" >
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.0" />
-   <geometry >
-    <cylinder  length="0.2"  radius="0.035" />
-   </geometry>
-  </visual>
- </link>
- <joint  type="revolute"  name="joint.hinge_from_elbow" >
-  <parent  link="elbow" />
-  <child  link="hand" />
-  <origin  rpy="-0.0 0.0 -0.0"  xyz="0.0 -0.0 0.300000048" />
-  <axis  xyz="0.0 -1.0 0.0" />
- </joint>
- <link  name="hand" >
-  <visual >
-   <origin  rpy="0.0 0.0 0.0"  xyz="0.0 -0.0 0.0" />
-   <geometry >
-    <box  size="0.05 0.05 0.1" />
-   </geometry>
-  </visual>
- </link>
+<robot name="SimpleRobotArm">
+    <link name="base">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.2 0.2 0.1" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.1" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.025" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.4" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.0249999985" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.700000048" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.0249999985" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="joint.hinge_from_base" type="continuous">
+        <parent link="base" />
+        <child link="shoulder" />
+        <origin xyz="0.0 -0.0 0.1" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -1.0 0.0" />
+        <limit velocity="100" effort="100" />
+    </joint>
+    <link name="shoulder">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <cylinder radius="0.035" length="0.2" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="joint.hinge_from_shoulder" type="continuous">
+        <parent link="shoulder" />
+        <child link="elbow" />
+        <origin xyz="0.0 -0.0 0.30000000000000004" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -1.0 0.0" />
+        <limit velocity="100" effort="100" />
+    </joint>
+    <link name="elbow">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <cylinder radius="0.035" length="0.2" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="joint.hinge_from_elbow" type="continuous">
+        <parent link="elbow" />
+        <child link="hand" />
+        <origin xyz="0.0 -0.0 0.300000048" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -1.0 0.0" />
+        <limit velocity="100" effort="100" />
+    </joint>
+    <link name="hand">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.05 0.05 0.1" />
+            </geometry>
+        </visual>
+    </link>
 </robot>
