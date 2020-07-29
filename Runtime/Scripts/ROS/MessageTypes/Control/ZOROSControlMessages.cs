@@ -274,7 +274,7 @@ namespace ZO.ROS.MessageTypes.Control {
 
     }
 
-    public class FollowJointTrajectoryActionMessage : ZOROSActionMessageInterface{
+    public class FollowJointTrajectoryActionMessage : ZOROSActionMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
         public string MessageType { get { return FollowJointTrajectoryActionMessage.Type; } }
 
@@ -316,5 +316,42 @@ namespace ZO.ROS.MessageTypes.Control {
 
     }
 
+    /// <summary>
+    /// The joint states used by Joint controllers such as the Arm Controller.
+    /// <see>http://docs.ros.org/api/control_msgs/html/msg/JointTrajectoryControllerState.html</see>
+    /// </summary>
+    public class JointTrajectoryControllerStateMessage : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return JointTrajectoryControllerStateMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "control_msgs/JointTrajectoryControllerState";
+
+        public HeaderMessage header { get; set; }
+        public string[] joint_names { get; set; }
+        public JointTrajectoryPointMessage desired { get; set; }
+        public JointTrajectoryPointMessage actual { get; set; }
+        public JointTrajectoryPointMessage error { get; set; }
+
+        public JointTrajectoryControllerStateMessage() {
+            this.header = new HeaderMessage();
+            this.joint_names = new string[0];
+            this.desired = new JointTrajectoryPointMessage();
+            this.actual = new JointTrajectoryPointMessage();
+            this.error = new JointTrajectoryPointMessage();
+        }
+
+        public JointTrajectoryControllerStateMessage(HeaderMessage header, string[] joint_names, JointTrajectoryPointMessage desired, JointTrajectoryPointMessage actual, JointTrajectoryPointMessage error) {
+            this.header = header;
+            this.joint_names = joint_names;
+            this.desired = desired;
+            this.actual = actual;
+            this.error = error;
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+    }
 
 }

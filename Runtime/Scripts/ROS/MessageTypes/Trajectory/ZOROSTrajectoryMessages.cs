@@ -41,7 +41,8 @@ namespace ZO.ROS.MessageTypes.Trajectory {
     }
 
     /// <summary>
-    /// Used for things like "arm_control".
+    /// A joint control message.
+    /// Used for controllers such as `/arm_control/control` topic.
     /// </summary>
     public class JointTrajectoryMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]

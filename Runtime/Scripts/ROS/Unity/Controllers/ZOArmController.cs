@@ -18,6 +18,7 @@ namespace ZO.ROS.Controllers {
 
         private ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> _actionServer = new ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal>();
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
+        private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
 
         #region ZOGameObjectBase
 
@@ -28,8 +29,18 @@ namespace ZO.ROS.Controllers {
             base.ZOStart();
 
             // preload joints because they cannot be updated outside the main unity thread
-            ZOJointInterface[] dummy_joints = Joints;
-            string[] dummyJointNames = JointNames;
+            ZOJointInterface[] joints = Joints;
+            string[] jointNames = JointNames;
+
+            // initialize the joint state message
+            _trajectoryControllerStateMessage.joint_names = jointNames;
+            _trajectoryControllerStateMessage.desired.positions = new double[joints.Length];
+            _trajectoryControllerStateMessage.desired.velocities = new double[joints.Length];
+            _trajectoryControllerStateMessage.desired.accelerations = new double[joints.Length];
+            _trajectoryControllerStateMessage.actual.positions = new double[joints.Length];
+            _trajectoryControllerStateMessage.actual.velocities = new double[joints.Length];
+            _trajectoryControllerStateMessage.error.positions = new double[joints.Length];
+            _trajectoryControllerStateMessage.error.velocities = new double[joints.Length];
 
             // register with controller manager
             ZOControllerManagerService.Instance.RegisterController(this);
@@ -37,6 +48,23 @@ namespace ZO.ROS.Controllers {
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 Initialize();
             }
+        }
+
+        protected override void ZOFixedUpdateHzSynchronized() {
+            // update the joint states
+            _trajectoryControllerStateMessage.Update();
+            int i = 0;
+            foreach(ZOJointInterface joint in Joints) {
+                _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
+                _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
+
+                _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
+
+            }
+
+            ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ZOControllerManagerService.Instance.Name + "/arm_controller/state");
+
         }
 
         protected override void ZOOnDestroy() {
@@ -106,19 +134,6 @@ namespace ZO.ROS.Controllers {
                 HardwareInterfaceResourcesMessage[] claimed_resources = new HardwareInterfaceResourcesMessage[1];
                 claimed_resources[0] = new HardwareInterfaceResourcesMessage(HardwareInterface, JointNames);
                 ControllerStateMessage controllerStateMessage = new ControllerStateMessage(ControllerName, ControllerState.ToString().ToLower(), ControllerType, claimed_resources);
-                
-                
-                // {
-                //     name = ControllerName,
-                //     state = ControllerState.ToString().ToLower(),
-                //     type = ControllerType,
-                //     claimed_resources = new HardwareInterfaceResourcesMessage[1] {
-                //             new HardwareInterfaceResourcesMessage {
-                //                 hardware_interface = HardwareInterface,
-                //                 resources = JointNames
-                //             }
-                //         }
-                // };
 
                 return controllerStateMessage;
             }
@@ -152,7 +167,10 @@ namespace ZO.ROS.Controllers {
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
-            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
+            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", ZOControllerManagerService.Instance.Name + "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
+
+            // advertise joint state
+            ROSBridgeConnection.Advertise(ZOControllerManagerService.Instance.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
 
             ControllerState = ControllerStateEnum.Running;
 
@@ -161,15 +179,17 @@ namespace ZO.ROS.Controllers {
 
         private void Terminate() {
             _actionServer.Terminate();
-            ROSBridgeConnection?.Unsubscribe("arm_controller", "/arm_controller/command");
+            ROSBridgeConnection?.Unsubscribe("arm_controller", ZOControllerManagerService.Instance.Name + "/arm_controller/command");
+            ROSBridgeConnection?.UnAdvertise(ZOControllerManagerService.Instance.Name + "/arm_controller/state");
 
-            ControllerState = ControllerStateEnum.Initialized;
+            ControllerState = ControllerStateEnum.Stopped;
 
         }
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _commandMessage = (JointTrajectoryMessage)msg;
             Debug.Log("INFO:  Command message received.");
+            _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
             // Debug.Log("INFO: Twist Message Received: linear " + _twistMessage.linear.ToString() + " angular: " + _twistMessage.angular.ToString());
 
             return Task.CompletedTask;
