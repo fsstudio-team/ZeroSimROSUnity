@@ -13,7 +13,20 @@
   ],
   "components": [
     {
-      "name": "UR10_rigged"
+      "name": "UR10_rigged",
+      "controllers": [
+        {
+          "name": "ros.publisher.joint_states_UR10_rigged",
+          "type": "ros.publisher.joint_states",
+          "ros_topic": "/joint_states",
+          "update_rate_hz": 10.0
+        },
+        {
+          "name": "undefined_UR10_rigged",
+          "type": "controller.arm_controller",
+          "update_rate_hz": 10.0
+        }
+      ]
     }
   ],
   "occurrences": [
@@ -106,7 +119,7 @@
           "parent_name": "base",
           "joints": [
             {
-              "name": "joint.articulated_body.fixedjoint_from_base_pivot",
+              "name": "shoulder_pan_joint",
               "type": "joint.articulated_body.revolutejoint",
               "mass": 1.0,
               "use_gravity": true,
@@ -118,8 +131,8 @@
               "anchor_rotation_quaternion": [
                 0.0,
                 0.0,
-                0.7071068,
-                0.7071068
+                0.707106769,
+                0.707106769
               ],
               "linear_damping": 0.05,
               "angular_damping": 0.05,

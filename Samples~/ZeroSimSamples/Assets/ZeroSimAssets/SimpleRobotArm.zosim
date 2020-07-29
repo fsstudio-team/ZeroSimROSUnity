@@ -1,0 +1,649 @@
+{
+  "document_name": "SimpleRobotArm",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "SimpleRobotArm",
+      "controllers": [
+        {
+          "name": "SimpleRobotArm",
+          "type": "controller.arm_controller",
+          "update_rate_hz": 25.0
+        }
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "base",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "name": "joint.hinge_from_base",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0,
+            0.1,
+            0.0
+          ],
+          "world_anchor": [
+            0.0,
+            0.1,
+            0.0
+          ],
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            0.0,
+            -0.149999976,
+            0.0
+          ],
+          "world_connected_anchor": [
+            0.0,
+            -0.149999976,
+            0.0
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 0.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "shoulder",
+          "parent_occurrence": "base"
+        }
+      ],
+      "visuals": [
+        {
+          "type": "primitive.cube",
+          "dimensions": [
+            0.2,
+            0.1,
+            0.2
+          ],
+          "has_collisions": false,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "name": "Cube",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.2,
+            0.1,
+            0.2
+          ]
+        },
+        {
+          "type": "primitive.sphere",
+          "dimensions": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "has_collisions": true,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "name": "Sphere",
+          "translation": [
+            0.0,
+            0.1,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.05,
+            0.05,
+            0.05
+          ]
+        },
+        {
+          "type": "primitive.sphere",
+          "dimensions": [
+            0.049999997,
+            0.049999997,
+            0.049999997
+          ],
+          "has_collisions": true,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "name": "Sphere",
+          "translation": [
+            0.0,
+            0.4,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.049999997,
+            0.049999997,
+            0.049999997
+          ]
+        },
+        {
+          "type": "primitive.sphere",
+          "dimensions": [
+            0.049999997,
+            0.049999997,
+            0.049999997
+          ],
+          "has_collisions": true,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "name": "Sphere",
+          "translation": [
+            0.0,
+            0.700000048,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.049999997,
+            0.049999997,
+            0.049999997
+          ]
+        }
+      ],
+      "collisions": [
+        {
+          "type": "primitive.cube",
+          "dimensions": [
+            0.199999988,
+            0.099999994,
+            0.199999988
+          ],
+          "has_collisions": true,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "name": "Cube",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            0.199999988,
+            0.099999994,
+            0.199999988
+          ]
+        }
+      ],
+      "children": [
+        {
+          "name": "shoulder",
+          "translation": [
+            0.0,
+            0.25,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "base",
+          "rigidbody": {
+            "mass": 1.0,
+            "drag": 0.0,
+            "angular_drag": 0.05,
+            "use_gravity": true,
+            "is_kinematic": false
+          },
+          "joints": [
+            {
+              "name": "joint.hinge_from_shoulder",
+              "type": "joint.hinge",
+              "anchor": [
+                0.0,
+                0.15,
+                0.0
+              ],
+              "world_anchor": [
+                0.0,
+                0.4,
+                0.0
+              ],
+              "axis": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "world_axis": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "connected_anchor": [
+                0.0,
+                -0.150000036,
+                0.0
+              ],
+              "world_connected_anchor": [
+                0.0,
+                0.0999999642,
+                0.0
+              ],
+              "use_spring": false,
+              "spring": {
+                "spring": 0.0,
+                "damper": 0.0,
+                "target_position": 0.0
+              },
+              "use_motor": false,
+              "motor": {
+                "target_velocity": 0.0,
+                "force": 0.0,
+                "free_spin": false
+              },
+              "use_limits": false,
+              "limits": {
+                "min": 0.0,
+                "max": 0.0,
+                "bounciness": 0.0,
+                "bounce_min_velocity": 0.2,
+                "contact_distance": 0.0
+              },
+              "connected_occurrence": "elbow",
+              "parent_occurrence": "shoulder"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "primitive.cylinder",
+              "dimensions": [
+                0.07,
+                0.1,
+                0.07
+              ],
+              "has_collisions": false,
+              "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "name": "Cylinder",
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                0.07,
+                0.1,
+                0.07
+              ]
+            }
+          ],
+          "collisions": [
+            {
+              "type": "primitive.cylinder",
+              "dimensions": [
+                0.07,
+                0.1,
+                0.07
+              ],
+              "has_collisions": false,
+              "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "name": "Cylinder",
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                0.07,
+                0.1,
+                0.07
+              ]
+            }
+          ],
+          "children": [
+            {
+              "name": "elbow",
+              "translation": [
+                0.0,
+                0.3,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "shoulder",
+              "rigidbody": {
+                "mass": 1.0,
+                "drag": 0.0,
+                "angular_drag": 0.05,
+                "use_gravity": true,
+                "is_kinematic": false
+              },
+              "joints": [
+                {
+                  "name": "joint.hinge_from_elbow",
+                  "type": "joint.hinge",
+                  "anchor": [
+                    0.0,
+                    0.15,
+                    0.0
+                  ],
+                  "world_anchor": [
+                    0.0,
+                    0.700000048,
+                    0.0
+                  ],
+                  "axis": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "world_axis": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "connected_anchor": [
+                    0.0,
+                    -0.0999999642,
+                    0.0
+                  ],
+                  "world_connected_anchor": [
+                    0.0,
+                    0.450000048,
+                    0.0
+                  ],
+                  "use_spring": false,
+                  "spring": {
+                    "spring": 0.0,
+                    "damper": 0.0,
+                    "target_position": 0.0
+                  },
+                  "use_motor": false,
+                  "motor": {
+                    "target_velocity": 0.0,
+                    "force": 0.0,
+                    "free_spin": false
+                  },
+                  "use_limits": false,
+                  "limits": {
+                    "min": 0.0,
+                    "max": 0.0,
+                    "bounciness": 0.0,
+                    "bounce_min_velocity": 0.2,
+                    "contact_distance": 0.0
+                  },
+                  "connected_occurrence": "hand",
+                  "parent_occurrence": "elbow"
+                }
+              ],
+              "visuals": [
+                {
+                  "type": "primitive.cylinder",
+                  "dimensions": [
+                    0.07,
+                    0.1,
+                    0.07
+                  ],
+                  "has_collisions": false,
+                  "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "name": "Cylinder",
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    0.07,
+                    0.1,
+                    0.07
+                  ]
+                }
+              ],
+              "collisions": [
+                {
+                  "type": "primitive.cylinder",
+                  "dimensions": [
+                    0.07,
+                    0.1,
+                    0.07
+                  ],
+                  "has_collisions": false,
+                  "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "name": "Cylinder",
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    0.07,
+                    0.1,
+                    0.07
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "name": "hand",
+                  "translation": [
+                    0.0,
+                    0.25,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "elbow",
+                  "rigidbody": {
+                    "mass": 1.0,
+                    "drag": 0.0,
+                    "angular_drag": 0.05,
+                    "use_gravity": true,
+                    "is_kinematic": false
+                  },
+                  "visuals": [
+                    {
+                      "type": "primitive.cube",
+                      "dimensions": [
+                        0.05,
+                        0.1,
+                        0.05
+                      ],
+                      "has_collisions": true,
+                      "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "name": "Cube",
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        0.05,
+                        0.1,
+                        0.05
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

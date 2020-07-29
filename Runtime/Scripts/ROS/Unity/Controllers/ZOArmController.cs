@@ -137,11 +137,15 @@ namespace ZO.ROS.Controllers {
 
 
         #region ZOSerializationInterface
+
+        public string Type {
+            get => "controller.arm_controller";
+        }
+
         public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
                 new JProperty("update_rate_hz", UpdateRateHz)
             );
             JSON = json;
@@ -150,7 +154,6 @@ namespace ZO.ROS.Controllers {
 
         public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
             UpdateRateHz = json["update_rate_hz"].Value<float>();
         }
 
