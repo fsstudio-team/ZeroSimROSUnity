@@ -58,7 +58,25 @@ public class ZODockerManager
         isRunning = false;
     }
 
-    public static void DockerRun(string service, string command, Action<int> callback){
+    private static string BuildVolumesString(string[] volumes){
+
+            if(volumes == null) return string.Empty;
+
+            System.Text.StringBuilder builder = new System.Text.StringBuilder();
+            
+            foreach(var v in volumes){
+                builder.Append(" -v ");
+                builder.AppendLine(v);
+            }
+
+            return builder.ToString();
+    }
+
+    public static void DockerRun(string service, 
+                                 string command, 
+                                 string[] additionalVolumes = null, 
+                                 Action<int> callback = null) {
+
          // docker-compose -f ./docker/docker-compose.yml run --rm 
          // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
          var options = new EditorShell.Options(){
@@ -67,8 +85,11 @@ public class ZODockerManager
                 //{"PATH", "usr/bin"}
             }
         };
+
+        string volumes = BuildVolumesString(additionalVolumes);
+
         // Run command in a new container, and delete after execution with --rm
-        string dockerCommand = $"docker-compose run --rm {service} {command}";
+        string dockerCommand = $"docker-compose run {volumes} --rm {service} {command}";
 
         // Execute docker command
         var task = EditorShell.Execute(dockerCommand, options);

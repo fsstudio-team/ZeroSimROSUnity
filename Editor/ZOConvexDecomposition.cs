@@ -149,7 +149,7 @@ namespace ZO.Export {
                 string command = "python /zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py";
                 string commandAWithArgs = $"{command} {arguments}";
 
-                ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, (exitCode) => {
+                ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, null, (exitCode) => {
 
                     if(exitCode != 0){
                         UnityEngine.Debug.LogError($"Docker command error exit code: {exitCode}");
