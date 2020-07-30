@@ -28,20 +28,20 @@ namespace ZO.Physics {
         /// For a linear/prismatic it would be the distance from center in meters.
         /// </summary>
         /// <value></value>
-        float Position { get; }
+        float Position { get; set; }
 
         /// <summary>
         /// The velocity of the joint (rad/s or m/s)
         /// </summary>
         /// <value></value>
-        float Velocity { get; }
+        float Velocity { get; set; }
 
 
         /// <summary>
         /// The effort that is applied to the joint (Nm or N)
         /// </summary>
         /// <value></value>
-        float Effort { get; }
+        float Effort { get; set; }
 
     }
 }

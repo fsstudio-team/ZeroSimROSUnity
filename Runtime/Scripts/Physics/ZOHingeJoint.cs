@@ -43,6 +43,14 @@ namespace ZO.Physics {
         /// <value></value>
         public float Position {
             get { return UnityHingeJoint.angle * Mathf.Deg2Rad; }
+            set {
+                JointSpring spring = UnityHingeJoint.spring;
+                UnityHingeJoint.spring = spring;
+                spring.targetPosition = value * Mathf.Rad2Deg;
+                UnityHingeJoint.spring = spring;
+                UnityHingeJoint.useSpring = true;
+                UnityHingeJoint.useMotor = false;
+            }
         }
 
         /// <summary>
@@ -70,6 +78,9 @@ namespace ZO.Physics {
         /// <value></value>
         public float Effort {
             get { return UnityHingeJoint.motor.force; }
+            set { 
+                // TODO
+            }
         }
 
 

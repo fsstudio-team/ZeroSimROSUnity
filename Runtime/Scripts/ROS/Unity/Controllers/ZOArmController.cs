@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Control;
@@ -54,13 +55,15 @@ namespace ZO.ROS.Controllers {
             // update the joint states
             _trajectoryControllerStateMessage.Update();
             int i = 0;
-            foreach(ZOJointInterface joint in Joints) {
+            foreach (ZOJointInterface joint in Joints) {
                 _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
                 _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
 
                 _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
                 // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
+                joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
+                i++;
             }
 
             ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ZOControllerManagerService.Instance.Name + "/arm_controller/state");
@@ -188,9 +191,8 @@ namespace ZO.ROS.Controllers {
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _commandMessage = (JointTrajectoryMessage)msg;
-            Debug.Log("INFO:  Command message received.");
             _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
-            // Debug.Log("INFO: Twist Message Received: linear " + _twistMessage.linear.ToString() + " angular: " + _twistMessage.angular.ToString());
+            // Debug.Log("INFO: command message: " + JsonConvert.SerializeObject(_commandMessage));
 
             return Task.CompletedTask;
         }

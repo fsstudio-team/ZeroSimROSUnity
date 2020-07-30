@@ -97,6 +97,10 @@ namespace ZO.Physics {
             get {
                 return UnityArticulationBody.jointPosition[0];
             } 
+
+            set {
+                // TODO
+            }
         }
 
         /// <summary>
@@ -106,6 +110,10 @@ namespace ZO.Physics {
         public float Velocity { 
             get {
                 return UnityArticulationBody.jointVelocity[0];
+            }
+
+            set {
+                // TODO
             }
         }
 
@@ -117,6 +125,10 @@ namespace ZO.Physics {
         public float Effort { 
             get {
                 return UnityArticulationBody.jointForce[0];
+            }
+
+            set {
+                // TODO
             }
         }
 
