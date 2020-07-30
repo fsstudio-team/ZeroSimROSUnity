@@ -176,11 +176,17 @@ namespace ZO.Physics {
             // Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
             Vector3 worldAxis = this.transform.rotation * (UnityArticulationBody.anchorRotation * Vector3.right);  // BUGBUG: always assuming "right" axis?
 
+            // get the parent occurrence name if it exists
+            string parentOccurrenceName = "";
+            if (this.transform.parent && this.transform.parent.GetComponent<ZOSimOccurrence>()) {
+                parentOccurrenceName = this.transform.parent.GetComponent<ZOSimOccurrence>().Name;
+            }
+
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
-                new JProperty("owner_occurrence", this.Name),
-                new JProperty("parent_occurrence", this.GetComponentInParent<ZOSimOccurrence>().Name),
+                new JProperty("owner_occurrence", this.GetComponent<ZOSimOccurrence>().Name),
+                new JProperty("parent_occurrence", parentOccurrenceName),
                 new JProperty("mass", UnityArticulationBody.mass),
                 new JProperty("use_gravity", UnityArticulationBody.useGravity),
                 new JProperty("world_axis", ZOSimDocumentRoot.ToJSON(worldAxis)),

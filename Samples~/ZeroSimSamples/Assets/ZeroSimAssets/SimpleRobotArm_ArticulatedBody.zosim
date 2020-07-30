@@ -58,8 +58,8 @@
         {
           "name": "joint.articulated_body.fixedjoint_from_base",
           "type": "joint.articulated_body.fixedjoint",
-          "owner_occurrence": "joint.articulated_body.fixedjoint_from_base",
-          "parent_occurrence": "base",
+          "owner_occurrence": "base",
+          "parent_occurrence": "",
           "mass": 1.0,
           "use_gravity": true,
           "world_axis": [
@@ -69,7 +69,7 @@
           ],
           "world_anchor": [
             0.0,
-            0.822,
+            0.0,
             0.0
           ],
           "anchor_position": [
@@ -314,20 +314,20 @@
           "parent_name": "base",
           "joints": [
             {
-              "name": "joint.articulated_body.fixedjoint_from_shoulder",
+              "name": "joint.articulated_body.revolutejoint_from_shoulder",
               "type": "joint.articulated_body.revolutejoint",
-              "owner_occurrence": "joint.articulated_body.fixedjoint_from_shoulder",
-              "parent_occurrence": "shoulder",
+              "owner_occurrence": "shoulder",
+              "parent_occurrence": "base",
               "mass": 1.0,
               "use_gravity": true,
               "world_axis": [
-                5.96046448E-08,
-                0.99999994,
+                1.0,
+                0.0,
                 0.0
               ],
               "world_anchor": [
                 0.0,
-                0.922000051,
+                0.099999994,
                 0.0
               ],
               "anchor_position": [
@@ -338,19 +338,19 @@
               "anchor_rotation_quaternion": [
                 0.0,
                 0.0,
-                0.707106769,
-                0.707106769
+                0.0,
+                1.0
               ],
               "parent_anchor_position": [
                 0.0,
-                0.100000024,
+                0.099999994,
                 0.0
               ],
               "parent_anchor_rotation_quaternion": [
                 0.0,
                 0.0,
-                0.707106769,
-                0.707106769
+                0.0,
+                1.0
               ],
               "linear_damping": 0.05,
               "angular_damping": 0.05,
@@ -476,20 +476,20 @@
               "parent_name": "shoulder",
               "joints": [
                 {
-                  "name": "joint.articulated_body.fixedjoint_from_elbow",
+                  "name": "joint.articulated_body.revolutejoint_from_elbow",
                   "type": "joint.articulated_body.revolutejoint",
-                  "owner_occurrence": "joint.articulated_body.fixedjoint_from_elbow",
-                  "parent_occurrence": "elbow",
+                  "owner_occurrence": "elbow",
+                  "parent_occurrence": "shoulder",
                   "mass": 1.0,
                   "use_gravity": true,
                   "world_axis": [
-                    5.96046448E-08,
-                    0.99999994,
+                    1.0,
+                    0.0,
                     0.0
                   ],
                   "world_anchor": [
                     0.0,
-                    1.222,
+                    0.4,
                     0.0
                   ],
                   "anchor_position": [
@@ -500,19 +500,19 @@
                   "anchor_rotation_quaternion": [
                     0.0,
                     0.0,
-                    0.707106769,
-                    0.707106769
+                    0.0,
+                    1.0
                   ],
                   "parent_anchor_position": [
                     0.0,
-                    0.149999976,
+                    0.15,
                     0.0
                   ],
                   "parent_anchor_rotation_quaternion": [
                     0.0,
                     0.0,
-                    0.707106769,
-                    0.707106769
+                    0.0,
+                    1.0
                   ],
                   "linear_damping": 0.05,
                   "angular_damping": 0.05,
@@ -640,8 +640,8 @@
                     {
                       "name": "joint.articulated_body.fixedjoint_from_hand",
                       "type": "joint.articulated_body.revolutejoint",
-                      "owner_occurrence": "joint.articulated_body.fixedjoint_from_hand",
-                      "parent_occurrence": "hand",
+                      "owner_occurrence": "hand",
+                      "parent_occurrence": "elbow",
                       "mass": 1.0,
                       "use_gravity": true,
                       "world_axis": [
@@ -651,7 +651,7 @@
                       ],
                       "world_anchor": [
                         0.0,
-                        1.52200007,
+                        0.700000048,
                         0.0
                       ],
                       "anchor_position": [
