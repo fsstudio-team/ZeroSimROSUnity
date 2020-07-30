@@ -6,6 +6,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using ZO.ROS.Unity.Publisher;
+using ZO.ROS.Controllers;
 
 namespace ZO {
 
@@ -152,9 +153,9 @@ namespace ZO {
         // Start is called before the first frame update
         void Start() {
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
 
-            #else // UNITY_EDITOR
+#else // UNITY_EDITOR
             // load the asset bundle if it is not loaded
             if (_assetBundle == null) {
                 // Load default asset bundles
@@ -172,7 +173,7 @@ namespace ZO {
                 }
 
             }
-            #endif
+#endif
 
             // BUGBUG: ??? necessary ??? _json = Serialize();
         }
@@ -247,10 +248,11 @@ namespace ZO {
         /// <param name="occurrenceName">the name of the occurrence</param>
         /// <returns>ZOSimOccurrence</returns>
         public ZOSimOccurrence GetOccurrence(string occurrenceName) {
-            Transform t = transform.Find(occurrenceName);
-            if (t != null) {
-                ZOSimOccurrence simOccurrence = t.GetComponent<ZOSimOccurrence>();
-                return simOccurrence;
+            ZOSimOccurrence[] children = this.transform.GetComponentsInChildren<ZOSimOccurrence>(true);
+            foreach(ZOSimOccurrence child in children) {
+                if (child.Name == occurrenceName) {
+                    return child;
+                }
             }
             return null;
         }
@@ -405,6 +407,24 @@ namespace ZO {
                             }
                             jointStatesPublisher.Deserialize(this, controllerJSON);
                         }
+
+                        if (controllerJSON["type"].Value<string>() == "controller.arm_controller") {
+                            // check if already a component and if not create it
+                            ZOArmController[] armControllers = this.GetComponents<ZOArmController>();
+                            ZOArmController armController = null;
+                            foreach (ZOArmController arm in armControllers) {
+                                if (arm.Name == controllerJSON["name"].Value<string>()) {
+                                    armController = arm;
+                                    break;
+                                }
+                            }
+                            if (armController == null) {
+                                // doesn't exist so create it
+                                armController = this.gameObject.AddComponent<ZOArmController>();
+                            }
+                            armController.Deserialize(this, controllerJSON);
+                        }
+
                     }
                 }
             }

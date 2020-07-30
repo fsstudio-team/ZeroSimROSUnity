@@ -297,7 +297,12 @@ namespace ZO.Physics {
             documentRoot.OnPostDeserializationNotification((docRoot) => {
                 if (JSON.ContainsKey("connected_occurrence")) {
                     ZOSimOccurrence connectedOccurrence = docRoot.GetOccurrence(JSON["connected_occurrence"].Value<string>());
-                    UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
+                    if (connectedOccurrence) {
+                        UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
+                    } else {
+                        Debug.LogWarning("WARNING: ZOHingeJoint failed to find connected occurrence: " + JSON["connected_occurrence"].Value<string>());
+                    }
+                    
                 }
             });
 
