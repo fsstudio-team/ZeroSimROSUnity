@@ -30,19 +30,6 @@ namespace ZO.ROS.Unity.Service {
             _controllers.Add(controller.ControllerName, controller);
         }
 
-        // #region Singleton
-
-        // private static ZOControllerManagerService _instance;
-
-        // /// <summary>
-        // /// Singleton access to this ROS Unity Manager.
-        // /// </summary>
-        // public static ZOControllerManagerService Instance {
-        //     get => _instance;
-        // }
-
-
-        // #endregion // Singleton
 
 
         public string ListControllersServiceTopic {
@@ -81,14 +68,6 @@ namespace ZO.ROS.Unity.Service {
         protected override void ZOAwake() {
             base.ZOAwake();
 
-            // build singleton instance if it doesn't exist
-            // if (_instance == null) {
-            //     _instance = this;
-            //     // DontDestroyOnLoad(this.gameObject);
-            // } else if (_instance != this) {
-            //     Debug.LogError("ERROR: Cannot have two ZOControllerManagerService's!!!");
-            //     Destroy(this.gameObject);
-            // }
         }
 
         protected override void ZOStart() {
@@ -99,7 +78,6 @@ namespace ZO.ROS.Unity.Service {
         }
         protected override void ZOOnDestroy() {
             base.ZOOnDestroy();
-            // ROSBridgeConnection?.UnAdvertiseService(ListControllersServiceTopic);
             Terminate();
         }
 
@@ -310,6 +288,32 @@ namespace ZO.ROS.Unity.Service {
         }
 
         #endregion
+
+        #region ZOSerializationInterface
+
+        public string Type {
+            get => "controller.controller_manager";
+        }
+
+        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("ros_topic", ROSTopic),
+                new JProperty("update_rate_hz", UpdateRateHz)
+            );
+            JSON = json;
+            return json;
+        }
+
+        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            Name = json["name"].Value<string>();
+            UpdateRateHz = json["update_rate_hz"].Value<float>();
+            ROSTopic = json["ros_topic"].Value<string>();
+        }
+
+        #endregion // ZOSerializationInterface
+
     }
 
 }

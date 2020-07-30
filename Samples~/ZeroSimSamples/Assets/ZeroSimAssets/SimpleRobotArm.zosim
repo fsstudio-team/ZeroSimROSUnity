@@ -25,6 +25,12 @@
           "type": "ros.publisher.joint_states",
           "ros_topic": "/joint_states",
           "update_rate_hz": 25.0
+        },
+        {
+          "name": "simple_arm_test",
+          "type": "controller.controller_manager",
+          "ros_topic": "controller_manager",
+          "update_rate_hz": 0.0
         }
       ]
     }
@@ -66,7 +72,7 @@
           ],
           "world_anchor": [
             0.0,
-            0.916,
+            0.922000051,
             0.0
           ],
           "axis": [
@@ -86,7 +92,7 @@
           ],
           "world_connected_anchor": [
             0.0,
-            0.666,
+            0.672000051,
             0.0
           ],
           "use_spring": false,
@@ -315,7 +321,7 @@
               ],
               "world_anchor": [
                 0.0,
-                1.216,
+                1.222,
                 0.0
               ],
               "axis": [
@@ -335,7 +341,7 @@
               ],
               "world_connected_anchor": [
                 0.0,
-                0.915999949,
+                0.922,
                 0.0
               ],
               "use_spring": false,
@@ -468,7 +474,7 @@
                   ],
                   "world_anchor": [
                     0.0,
-                    1.516,
+                    1.52200007,
                     0.0
                   ],
                   "axis": [
@@ -488,7 +494,7 @@
                   ],
                   "world_connected_anchor": [
                     0.0,
-                    1.266,
+                    1.27200007,
                     0.0
                   ],
                   "use_spring": false,

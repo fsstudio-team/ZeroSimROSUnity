@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using ZO.ROS.Unity.Publisher;
 using ZO.ROS.Controllers;
+using ZO.ROS.Unity.Service;
 
 namespace ZO {
 
@@ -40,8 +41,6 @@ namespace ZO {
             get { return _zoSimDocumentFilePath; }
             set { _zoSimDocumentFilePath = value; }
         }
-
-        public string _namespace;
         
         private JObject _json;
         /// <summary>
@@ -399,6 +398,24 @@ namespace ZO {
                 // if we have a root component JSON do any required deserialization
                 if (rootComponentJSON.ContainsKey("controllers")) {
                     foreach (JObject controllerJSON in rootComponentJSON["controllers"].Value<JArray>()) {
+
+                        if (controllerJSON["type"].Value<string>() == "controller.controller_manager") {
+                            // check if already a component and if not create it
+                            ZOControllerManagerService[] controller_managers = this.GetComponents<ZOControllerManagerService>();
+                            ZOControllerManagerService controller_manager = null;
+                            foreach (ZOControllerManagerService cm in controller_managers) {
+                                if (cm.Name == controllerJSON["name"].Value<string>()) {
+                                    controller_manager = cm;
+                                    break;
+                                }
+                            }
+                            if (controller_manager == null) {
+                                // doesn't exist so create it
+                                controller_manager = this.gameObject.AddComponent<ZOControllerManagerService>();
+                            }
+                            controller_manager.Deserialize(this, controllerJSON);
+                        }
+
                         // TODO: implement some sort of factory for these things...
                         if (controllerJSON["type"].Value<string>() == "ros.publisher.joint_states") {
                             // check if already a component and if not create it
