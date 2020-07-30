@@ -10,17 +10,24 @@ using ZO.ROS.Controllers;
 
 namespace ZO {
 
-    [ExecuteAlways]
     /// <summary>
-    /// A ZOSim root document. This is the "document root" and first component in a ZoSim definition.
+    /// A ZOSim root document. This is the "document root" and "root" GameObject component in the  
+    /// Unity object hierarchy. 
+    /// 
     /// For example the Unity structure could be:
+    /// ```
     /// ZOSimDocumentRoot:
     ///     ZOSimOccurrence:
     ///     ZOSimOccurrence:
     ///         ZOSimOccurrence:
     ///         ZOSimOccurrence:
     ///             ZOSimOccurrence:
+    /// ```
+    /// 
+    /// It is primarily responsible for serialization of the Unity structure to ZoSim JSON document and 
+    /// deserialization from ZoSim JSON document to a Unity structure.
     /// </summary>
+    [ExecuteAlways]
     public class ZOSimDocumentRoot : MonoBehaviour {
 
 
@@ -33,8 +40,10 @@ namespace ZO {
             get { return _zoSimDocumentFilePath; }
             set { _zoSimDocumentFilePath = value; }
         }
-        private JObject _json;
 
+        public string _namespace;
+        
+        private JObject _json;
         /// <summary>
         /// The ZOSim JSON for this document root.
         /// </summary>

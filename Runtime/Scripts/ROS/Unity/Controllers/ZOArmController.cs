@@ -21,6 +21,22 @@ namespace ZO.ROS.Controllers {
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
         private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
 
+
+        private ZOControllerManagerService _controllerManager = null;
+        private ZOControllerManagerService ControllerManager {
+            get {
+                if (_controllerManager == null) {
+                    ZOControllerManagerService[] controllerManagers = this.GetComponents<ZOControllerManagerService>();
+                    if (controllerManagers.Length != 1) {  // there can only be one PER robot
+                        Debug.LogError("ERROR: can only have one ZOControllerManagerService per ZODocumentRoot: " + controllerManagers.Length.ToString());
+                        return null;
+                    }
+                    _controllerManager = controllerManagers[0];
+                }
+                return _controllerManager;
+            }
+        }
+
         #region ZOGameObjectBase
 
         protected override void ZOAwake() {
@@ -44,7 +60,7 @@ namespace ZO.ROS.Controllers {
             _trajectoryControllerStateMessage.error.velocities = new double[joints.Length];
 
             // register with controller manager
-            ZOControllerManagerService.Instance.RegisterController(this);
+            ControllerManager.RegisterController(this);
 
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 Initialize();
@@ -66,7 +82,7 @@ namespace ZO.ROS.Controllers {
                 i++;
             }
 
-            ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ZOControllerManagerService.Instance.Name + "/arm_controller/state");
+            ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
 
         }
 
@@ -170,10 +186,10 @@ namespace ZO.ROS.Controllers {
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
-            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", ZOControllerManagerService.Instance.Name + "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
+            ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", ControllerManager.Name + "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
 
             // advertise joint state
-            ROSBridgeConnection.Advertise(ZOControllerManagerService.Instance.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
+            ROSBridgeConnection.Advertise(ControllerManager.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
 
             ControllerState = ControllerStateEnum.Running;
 
@@ -182,8 +198,8 @@ namespace ZO.ROS.Controllers {
 
         private void Terminate() {
             _actionServer.Terminate();
-            ROSBridgeConnection?.Unsubscribe("arm_controller", ZOControllerManagerService.Instance.Name + "/arm_controller/command");
-            ROSBridgeConnection?.UnAdvertise(ZOControllerManagerService.Instance.Name + "/arm_controller/state");
+            ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager.Name + "/arm_controller/command");
+            ROSBridgeConnection?.UnAdvertise(ControllerManager.Name + "/arm_controller/state");
 
             ControllerState = ControllerStateEnum.Stopped;
 

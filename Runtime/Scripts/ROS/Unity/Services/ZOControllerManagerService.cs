@@ -30,19 +30,19 @@ namespace ZO.ROS.Unity.Service {
             _controllers.Add(controller.ControllerName, controller);
         }
 
-        #region Singleton
+        // #region Singleton
 
-        private static ZOControllerManagerService _instance;
+        // private static ZOControllerManagerService _instance;
 
-        /// <summary>
-        /// Singleton access to this ROS Unity Manager.
-        /// </summary>
-        public static ZOControllerManagerService Instance {
-            get => _instance;
-        }
+        // /// <summary>
+        // /// Singleton access to this ROS Unity Manager.
+        // /// </summary>
+        // public static ZOControllerManagerService Instance {
+        //     get => _instance;
+        // }
 
 
-        #endregion // Singleton
+        // #endregion // Singleton
 
 
         public string ListControllersServiceTopic {
@@ -82,13 +82,13 @@ namespace ZO.ROS.Unity.Service {
             base.ZOAwake();
 
             // build singleton instance if it doesn't exist
-            if (_instance == null) {
-                _instance = this;
-                // DontDestroyOnLoad(this.gameObject);
-            } else if (_instance != this) {
-                Debug.LogError("ERROR: Cannot have two ZOControllerManagerService's!!!");
-                Destroy(this.gameObject);
-            }
+            // if (_instance == null) {
+            //     _instance = this;
+            //     // DontDestroyOnLoad(this.gameObject);
+            // } else if (_instance != this) {
+            //     Debug.LogError("ERROR: Cannot have two ZOControllerManagerService's!!!");
+            //     Destroy(this.gameObject);
+            // }
         }
 
         protected override void ZOStart() {
