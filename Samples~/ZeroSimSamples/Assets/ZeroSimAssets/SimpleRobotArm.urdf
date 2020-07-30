@@ -26,12 +26,12 @@
             </geometry>
         </visual>
     </link>
-    <joint name="joint.hinge_from_base" type="continuous">
+    <joint type="continuous" name="joint.hinge_from_base">
         <parent link="base" />
         <child link="shoulder" />
-        <origin xyz="0.0 -0.0 0.1" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.916" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -1.0 0.0" />
-        <limit velocity="100" effort="100" />
+        <limit effort="0.0" velocity="100.0" />
     </joint>
     <link name="shoulder">
         <visual >
@@ -41,12 +41,12 @@
             </geometry>
         </visual>
     </link>
-    <joint name="joint.hinge_from_shoulder" type="continuous">
+    <joint type="continuous" name="joint.hinge_from_shoulder">
         <parent link="shoulder" />
         <child link="elbow" />
-        <origin xyz="0.0 -0.0 0.30000000000000004" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.29999999999999993" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -1.0 0.0" />
-        <limit velocity="100" effort="100" />
+        <limit effort="0.0" velocity="100.0" />
     </joint>
     <link name="elbow">
         <visual >
@@ -56,12 +56,12 @@
             </geometry>
         </visual>
     </link>
-    <joint name="joint.hinge_from_elbow" type="continuous">
+    <joint type="continuous" name="joint.hinge_from_elbow">
         <parent link="elbow" />
         <child link="hand" />
-        <origin xyz="0.0 -0.0 0.300000048" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.30000000000000004" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -1.0 0.0" />
-        <limit velocity="100" effort="100" />
+        <limit effort="0.0" velocity="100.0" />
     </joint>
     <link name="hand">
         <visual >
