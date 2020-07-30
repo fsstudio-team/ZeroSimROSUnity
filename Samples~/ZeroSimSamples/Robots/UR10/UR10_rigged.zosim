@@ -22,9 +22,15 @@
           "update_rate_hz": 10.0
         },
         {
-          "name": "undefined_UR10_rigged",
+          "name": "UR10_Arm",
           "type": "controller.arm_controller",
-          "update_rate_hz": 10.0
+          "update_rate_hz": 25.0
+        },
+        {
+          "name": "ur_10_test",
+          "type": "controller.controller_manager",
+          "ros_topic": "controller_manager",
+          "update_rate_hz": 25.0
         }
       ]
     }
@@ -52,8 +58,20 @@
         {
           "name": "joint.articulated_body.fixedjoint_from_base_to_base_pivot",
           "type": "joint.articulated_body.fixedjoint",
+          "owner_occurrence": "joint.articulated_body.fixedjoint_from_base_to_base_pivot",
+          "parent_occurrence": "base",
           "mass": 1.0,
           "use_gravity": true,
+          "world_axis": [
+            -1.1920929E-07,
+            1.00000012,
+            0.0
+          ],
+          "world_anchor": [
+            0.0,
+            0.765,
+            0.0
+          ],
           "anchor_position": [
             0.0,
             0.0,
@@ -65,9 +83,22 @@
             0.7071068,
             0.7071068
           ],
+          "parent_anchor_position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parent_anchor_rotation_quaternion": [
+            0.0,
+            0.0,
+            0.7071068,
+            0.7071068
+          ],
           "linear_damping": 0.05,
           "angular_damping": 0.05,
           "joint_friction": 0.05,
+          "is_immovable": true,
+          "is_root": true,
           "x_drive": {
             "damping": 0.0,
             "force_limit": 3.40282347E+38,
@@ -121,8 +152,20 @@
             {
               "name": "shoulder_pan_joint",
               "type": "joint.articulated_body.revolutejoint",
+              "owner_occurrence": "shoulder_pan_joint",
+              "parent_occurrence": "base_pivot",
               "mass": 1.0,
               "use_gravity": true,
+              "world_axis": [
+                5.96046448E-08,
+                0.99999994,
+                0.0
+              ],
+              "world_anchor": [
+                0.0,
+                0.765,
+                0.0
+              ],
               "anchor_position": [
                 0.0,
                 0.0,
@@ -134,9 +177,22 @@
                 0.707106769,
                 0.707106769
               ],
+              "parent_anchor_position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "parent_anchor_rotation_quaternion": [
+                0.0,
+                0.0,
+                0.707106769,
+                0.707106769
+              ],
               "linear_damping": 0.05,
               "angular_damping": 0.05,
               "joint_friction": 0.05,
+              "is_immovable": false,
+              "is_root": false,
               "x_drive": {
                 "damping": 100.0,
                 "force_limit": 3.40282347E+38,

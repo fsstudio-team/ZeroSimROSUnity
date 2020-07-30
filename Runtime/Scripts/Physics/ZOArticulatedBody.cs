@@ -93,10 +93,13 @@ namespace ZO.Physics {
         /// For a linear/prismatic it would be the distance from center in meters.
         /// </summary>
         /// <value></value>
-        public float Position { 
+        public float Position {
             get {
+                if (UnityArticulationBody.jointType == ArticulationJointType.FixedJoint) {
+                    return 0; // fixed joints don't have a joint position
+                }
                 return UnityArticulationBody.jointPosition[0];
-            } 
+            }
 
             set {
                 // TODO
@@ -107,8 +110,12 @@ namespace ZO.Physics {
         /// The velocity of the joint (rad/s or m/s)
         /// </summary>
         /// <value></value>
-        public float Velocity { 
+        public float Velocity {
             get {
+                if (UnityArticulationBody.jointType == ArticulationJointType.FixedJoint) {
+                    return 0; // fixed joints don't have a joint position
+                }
+
                 return UnityArticulationBody.jointVelocity[0];
             }
 
@@ -122,8 +129,12 @@ namespace ZO.Physics {
         /// The effort that is applied to the joint (Nm or N)
         /// </summary>
         /// <value></value>
-        public float Effort { 
+        public float Effort {
             get {
+                if (UnityArticulationBody.jointType == ArticulationJointType.FixedJoint) {
+                    return 0; // fixed joints don't have a joint position
+                }
+
                 return UnityArticulationBody.jointForce[0];
             }
 
@@ -161,16 +172,32 @@ namespace ZO.Physics {
 
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             // calculate the world anchor position
+            Vector3 worldAnchor = this.transform.TransformPoint(UnityArticulationBody.anchorPosition);
+            // Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
+            Vector3 worldAxis = this.transform.rotation * (UnityArticulationBody.anchorRotation * Vector3.right);  // BUGBUG: always assuming "right" axis?
+
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
+                new JProperty("owner_occurrence", this.Name),
+                new JProperty("parent_occurrence", this.GetComponentInParent<ZOSimOccurrence>().Name),
                 new JProperty("mass", UnityArticulationBody.mass),
                 new JProperty("use_gravity", UnityArticulationBody.useGravity),
-                new JProperty("anchor_position", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorPosition)),
-                new JProperty("anchor_rotation_quaternion", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorRotation)),
+                new JProperty("world_axis", ZOSimDocumentRoot.ToJSON(worldAxis)),
+                new JProperty("world_anchor", ZOSimDocumentRoot.ToJSON(worldAnchor)),
+                new JProperty("anchor_position", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.anchorPosition)),
+                new JProperty("anchor_rotation_quaternion", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.anchorRotation)),
+
+                new JProperty("parent_anchor_position", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorPosition)),
+                new JProperty("parent_anchor_rotation_quaternion", ZOSimDocumentRoot.ToJSON(UnityArticulationBody.parentAnchorRotation)),
+
                 new JProperty("linear_damping", UnityArticulationBody.linearDamping),
                 new JProperty("angular_damping", UnityArticulationBody.angularDamping),
                 new JProperty("joint_friction", UnityArticulationBody.jointFriction),
+
+                new JProperty("is_immovable", UnityArticulationBody.immovable),
+                new JProperty("is_root", UnityArticulationBody.isRoot),
+
                 new JProperty("x_drive", new JObject(
                     new JProperty("damping", UnityArticulationBody.xDrive.damping),
                     new JProperty("force_limit", UnityArticulationBody.xDrive.forceLimit),
@@ -213,7 +240,8 @@ namespace ZO.Physics {
             Name = json.ValueOrDefault("name", Name);
             UnityArticulationBody.mass = json.ValueOrDefault("mass", UnityArticulationBody.mass);
             UnityArticulationBody.useGravity = json.ValueOrDefault("use_gravity", UnityArticulationBody.useGravity);
-            
+            UnityArticulationBody.immovable = json.ValueOrDefault("is_immovable", UnityArticulationBody.immovable);
+
             UnityArticulationBody.parentAnchorPosition = json.ToVector3OrDefault("anchor_position", UnityArticulationBody.parentAnchorPosition);
             UnityArticulationBody.parentAnchorRotation = json.ToQuaternionOrDefault("anchor_rotation_quaternion", UnityArticulationBody.parentAnchorRotation);
             UnityArticulationBody.linearDamping = json.ValueOrDefault("linear_damping", UnityArticulationBody.linearDamping);
@@ -222,7 +250,7 @@ namespace ZO.Physics {
 
             if (json.ContainsKey("x_drive")) {
                 JObject driveJSON = json["x_drive"].Value<JObject>();
-                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                ArticulationDrive drive = UnityArticulationBody.xDrive;
                 drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
                 drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
                 drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);
@@ -235,7 +263,7 @@ namespace ZO.Physics {
 
             if (json.ContainsKey("y_drive")) {
                 JObject driveJSON = json["y_drive"].Value<JObject>();
-                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                ArticulationDrive drive = UnityArticulationBody.xDrive;
                 drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
                 drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
                 drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);
@@ -248,7 +276,7 @@ namespace ZO.Physics {
 
             if (json.ContainsKey("z_drive")) {
                 JObject driveJSON = json["z_drive"].Value<JObject>();
-                ArticulationDrive drive= UnityArticulationBody.xDrive;
+                ArticulationDrive drive = UnityArticulationBody.xDrive;
                 drive.damping = driveJSON.ValueOrDefault("damping", drive.damping);
                 drive.forceLimit = driveJSON.ValueOrDefault("force_limit", drive.forceLimit);
                 drive.lowerLimit = driveJSON.ValueOrDefault("lower_limit", drive.lowerLimit);

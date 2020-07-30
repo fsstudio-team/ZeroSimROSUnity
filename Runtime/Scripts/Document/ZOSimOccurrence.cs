@@ -630,6 +630,8 @@ namespace ZO {
                 } else if (subtypes[0] == "sensor") {
                     JObject rosJSON = simType.Serialize(documentRoot, this);
                     sensors.Add(rosJSON);
+                } else if (subtypes[0] == "occurrence") {
+                    // DO NOTHING
                 } else {
                     Debug.LogWarning("WARNING: Do not understand how to serialize the JSON of type: " + simType.Type);
                 }

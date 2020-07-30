@@ -68,21 +68,24 @@ namespace ZO.ROS.Controllers {
         }
 
         protected override void ZOFixedUpdateHzSynchronized() {
-            // update the joint states
-            _trajectoryControllerStateMessage.Update();
-            int i = 0;
-            foreach (ZOJointInterface joint in Joints) {
-                _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
-                _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
+            if (this.ControllerState == ControllerStateEnum.Running) {
+                // update the joint states
+                _trajectoryControllerStateMessage.Update();
+                int i = 0;
+                foreach (ZOJointInterface joint in Joints) {
+                    _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
+                    _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
 
-                _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
-                // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
+                    _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                    // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
-                joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
-                i++;
+                    joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
+                    i++;
+                }
+
+                ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
+
             }
-
-            ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
 
         }
 
@@ -197,12 +200,11 @@ namespace ZO.ROS.Controllers {
         }
 
         private void Terminate() {
-            _actionServer.Terminate();
-            ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager.Name + "/arm_controller/command");
-            ROSBridgeConnection?.UnAdvertise(ControllerManager.Name + "/arm_controller/state");
-
             ControllerState = ControllerStateEnum.Stopped;
 
+            _actionServer.Terminate();
+            ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager?.Name + "/arm_controller/command");
+            ROSBridgeConnection?.UnAdvertise(ControllerManager?.Name + "/arm_controller/state");
         }
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {

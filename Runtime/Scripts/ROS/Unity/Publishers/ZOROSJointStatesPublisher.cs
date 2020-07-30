@@ -13,7 +13,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private void Reset() {
             UpdateRateHz = 25.0f;
-            ROSTopic = "/joint_states";    
+            ROSTopic = "/joint_states";
         }
 
         protected override void ZOStart() {
@@ -46,7 +46,7 @@ namespace ZO.ROS.Unity.Publisher {
 
             // remove any fixed joints as it makes no sense to have state
             List<ZOJointInterface> joints = new List<ZOJointInterface>();
-            foreach( ZOJointInterface joint in jointsArray) {
+            foreach (ZOJointInterface joint in jointsArray) {
                 string[] typeHierarchy = joint.Type.Split('.');
                 if (typeHierarchy.Contains("fixedjoint")) {
                     // skip
@@ -70,8 +70,10 @@ namespace ZO.ROS.Unity.Publisher {
                 _jointStatesMessage.effort[i] = joint.Effort;
                 i++;
             }
+            if (ROSBridgeConnection.IsConnected) {
+                ROSBridgeConnection.Publish(_jointStatesMessage, ROSTopic, Name);
+            }
 
-            ROSBridgeConnection.Publish(_jointStatesMessage, ROSTopic, Name);
         }
 
         #region ZOSerializationInterface
