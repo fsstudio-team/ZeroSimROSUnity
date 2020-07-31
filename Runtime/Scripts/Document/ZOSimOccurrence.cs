@@ -152,13 +152,13 @@ namespace ZO {
             // load the joints
             // TODO: change this to be some sort of factory 
             if (json.ContainsKey("joints")) {
-                foreach (JObject joint in json["joints"].Value<JArray>()) {
-                    if (joint["type"].Value<string>() == "joint.hinge") {
+                foreach (JObject jointJSON in json["joints"].Value<JArray>()) {
+                    if (jointJSON["type"].Value<string>() == "joint.hinge") {
                         ZOHingeJoint hingeJoint = null;
                         // check if joint exists 
                         ZOHingeJoint[] existingHingeJoints = this.GetComponents<ZOHingeJoint>();
                         foreach (ZOHingeJoint hj in existingHingeJoints) {
-                            if (hj.Name == joint["name"].Value<string>()) {
+                            if (hj.Name == jointJSON["name"].Value<string>()) {
                                 hingeJoint = hj;
                             }
                         }
@@ -168,7 +168,17 @@ namespace ZO {
                             hingeJoint.CreateRequirements();
                         }
 
-                        hingeJoint.Deserialize(documentRoot, joint);
+                        hingeJoint.Deserialize(documentRoot, jointJSON);
+                    }
+
+                    // handle articulated body joints
+                    if (jointJSON["type"].Value<string>().Contains("joint.articulated_body")) {
+                        ZOArticulatedBody articulatedBody = this.GetComponent<ZOArticulatedBody>(); // remember that there can only ever be one articulated body joint per gameobject
+                        if (articulatedBody == null) {
+                            articulatedBody = this.gameObject.AddComponent<ZOArticulatedBody>();
+                            articulatedBody.CreateRequirements();
+                        }
+                        articulatedBody.Deserialize(documentRoot, jointJSON);
                     }
                 }
             }
@@ -780,6 +790,12 @@ namespace ZO {
 
         }
 
+        /// <summary>
+        /// Serialize a geometric primitive such as box, sphere, capsule and cylinder.
+        /// NOTE:  Meshes are handled seperately.
+        /// </summary>
+        /// <param name="go"></param>
+        /// <returns></returns>
         private static JObject SerializeGeometricPrimitive(GameObject go) {
             JObject primitiveJSON = null;
             // build 3d primitive if exists
@@ -852,6 +868,13 @@ namespace ZO {
 
         }
 
+
+        /// <summary>
+        /// Deserialize a geometric primitive such as box, sphere, capsule and cylinder.
+        /// NOTE:  Meshes are handled seperately.
+        /// </summary>
+        /// <param name="go"></param>
+        /// <returns></returns>
         private static void DeserializeGeometricPrimitive(GameObject go, JObject primitiveJSON) {
             Collider collider = null;
             // get mesh filter. if it doesn't exist create it.

@@ -974,7 +974,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: controller_manager
-  _name: ur_10_test
+  _name: ur_10_control
 --- !u!1 &394589922
 GameObject:
   m_ObjectHideFlags: 0
@@ -1960,6 +1960,8 @@ GameObject:
   m_Component:
   - component: {fileID: 802314320}
   - component: {fileID: 802314321}
+  - component: {fileID: 802314323}
+  - component: {fileID: 802314322}
   m_Layer: 0
   m_Name: shoulder
   m_TagString: Untagged
@@ -1999,6 +2001,70 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _documentRoot: {fileID: 376474633}
+--- !u!171741748 &802314322
+ArticulationBody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802314319}
+  m_Enabled: 1
+  m_Mass: 1
+  m_ParentAnchorPosition: {x: 0, y: 0.12800002, z: 0}
+  m_ParentAnchorRotation: {x: -0.70710677, y: -0.7071067, z: 0.000000059604645, w: 0.000000029802322}
+  m_AnchorPosition: {x: 0, y: 0, z: 0}
+  m_AnchorRotation: {x: 0.49999997, y: -0.49999997, z: -0.49999997, w: -0.49999997}
+  m_ComputeParentAnchor: 1
+  m_ArticulationJointType: 2
+  m_LinearX: 2
+  m_LinearY: 2
+  m_LinearZ: 2
+  m_SwingY: 2
+  m_SwingZ: 2
+  m_Twist: 2
+  m_XDrive:
+    lowerLimit: 0
+    upperLimit: 0
+    stiffness: 0
+    damping: 0
+    forceLimit: 3.4028235e+38
+    target: 0
+    targetVelocity: 0
+  m_YDrive:
+    lowerLimit: 0
+    upperLimit: 0
+    stiffness: 0
+    damping: 0
+    forceLimit: 3.4028235e+38
+    target: 0
+    targetVelocity: 0
+  m_ZDrive:
+    lowerLimit: 0
+    upperLimit: 0
+    stiffness: 0
+    damping: 0
+    forceLimit: 3.4028235e+38
+    target: 0
+    targetVelocity: 0
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0.05
+  m_JointFriction: 0.05
+  m_Immovable: 0
+  m_UseGravity: 1
+--- !u!114 &802314323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802314319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b7107a97f156642952ca4da37c2a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _articulationBody: {fileID: 802314322}
+  _name: joint.articulated_body.fixedjoint_from_shoulder
 --- !u!1 &817823434
 GameObject:
   m_ObjectHideFlags: 0
@@ -2632,7 +2698,7 @@ ArticulationBody:
     damping: 100
     forceLimit: 3.4028235e+38
     target: 0
-    targetVelocity: 0
+    targetVelocity: 45
   m_YDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -4431,7 +4497,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1817670070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4575,6 +4641,50 @@ Transform:
   - {fileID: 900957781}
   m_Father: {fileID: 1135139377}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1877912706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1877912711}
+  - component: {fileID: 1877912710}
+  m_Layer: 0
+  m_Name: SimpleRobotArm_ArticulatedBody
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1877912710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877912706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Assets/ZeroSimAssets/SimpleRobotArm_ArticulatedBody.zosim
+--- !u!4 &1877912711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877912706}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1878838924
 GameObject:

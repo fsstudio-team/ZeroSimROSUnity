@@ -60,6 +60,10 @@ namespace ZO.Physics {
             CreateRequirements();
         }
 
+        /// <summary>
+        /// Creates requirements for the articulated body, including the actual Unity `ArticulationBody`
+        /// and the name of the joint.
+        /// </summary>
         public void CreateRequirements() {
 
             // create if it doesn't exist
@@ -76,7 +80,11 @@ namespace ZO.Physics {
                     _name = _name + "_from_" + occurrence.Name;
                 }
 
-                ZOSimOccurrence connected_occurrence = UnityArticulationBody.transform.GetChild(0).gameObject.GetComponent<ZOSimOccurrence>();
+                ZOSimOccurrence connected_occurrence = null;
+                if (UnityArticulationBody.transform.childCount > 0) {
+                    // BUGBUG: this first child may not actually be the connected child?
+                    connected_occurrence = UnityArticulationBody.transform.GetChild(0).gameObject.GetComponent<ZOSimOccurrence>();
+                }
 
                 if (connected_occurrence) {
                     _name = _name + "_to_" + connected_occurrence.Name;
@@ -248,9 +256,20 @@ namespace ZO.Physics {
 
             _json = json;
             Name = json.ValueOrDefault("name", Name);
+
+            string type = json["type"].Value<string>();
+            if (type == "joint.articulated_body.fixedjoint") {
+                UnityArticulationBody.jointType = ArticulationJointType.FixedJoint;
+            } else if (type == "joint.articulated_body.revolutejoint") {
+                UnityArticulationBody.jointType = ArticulationJointType.RevoluteJoint;
+            } else {
+                // TODO: implement other joint types
+                throw new NotImplementedException("ERROR: Joint type not yet supported!  TODO!!!");
+            }
+
             UnityArticulationBody.mass = json.ValueOrDefault("mass", UnityArticulationBody.mass);
             UnityArticulationBody.useGravity = json.ValueOrDefault("use_gravity", UnityArticulationBody.useGravity);
-            UnityArticulationBody.immovable = json.ValueOrDefault("is_immovable", UnityArticulationBody.immovable);
+            // UnityArticulationBody.immovable = json.ValueOrDefault("is_immovable", UnityArticulationBody.immovable);
 
             UnityArticulationBody.parentAnchorPosition = json.ToVector3OrDefault("anchor_position", UnityArticulationBody.parentAnchorPosition);
             UnityArticulationBody.parentAnchorRotation = json.ToQuaternionOrDefault("anchor_rotation_quaternion", UnityArticulationBody.parentAnchorRotation);

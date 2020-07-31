@@ -364,7 +364,7 @@
                 "upper_limit": 0.0,
                 "stiffness": 100.0,
                 "target": 0.0,
-                "target_velocity": 0.0
+                "target_velocity": 45.0
               },
               "y_drive": {
                 "damping": 0.0,
@@ -526,7 +526,7 @@
                     "upper_limit": 0.0,
                     "stiffness": 100.0,
                     "target": 0.0,
-                    "target_velocity": 0.0
+                    "target_velocity": 45.0
                   },
                   "y_drive": {
                     "damping": 0.0,
@@ -688,7 +688,7 @@
                         "upper_limit": 0.0,
                         "stiffness": 100.0,
                         "target": 0.0,
-                        "target_velocity": 0.0
+                        "target_velocity": 45.0
                       },
                       "y_drive": {
                         "damping": 0.0,
