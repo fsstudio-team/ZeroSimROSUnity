@@ -66,7 +66,7 @@ public class ZODockerManager
             
             foreach(var v in volumes){
                 builder.Append(" -v ");
-                builder.AppendLine(v);
+                builder.Append(v);
             }
 
             return builder.ToString();
@@ -89,7 +89,8 @@ public class ZODockerManager
         string volumes = BuildVolumesString(additionalVolumes);
 
         // Run command in a new container, and delete after execution with --rm
-        string dockerCommand = $"docker-compose run {volumes} --rm {service} {command}";
+        string dockerCommand = $"docker-compose run --rm{volumes} {service} {command}";
+        Debug.Log(dockerCommand);
 
         // Execute docker command
         var task = EditorShell.Execute(dockerCommand, options);
@@ -98,7 +99,7 @@ public class ZODockerManager
             DockerLog(log);
         };
         task.onExit += (exitCode) => {
-            DockerLog($"Docker compose run exit: {service} {command}", forceDisplay: true);
+            DockerLog($"Docker compose run exit: {service} ## {command}", forceDisplay: true);
             callback(exitCode);
         };
     }

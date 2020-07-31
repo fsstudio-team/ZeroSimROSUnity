@@ -16,6 +16,7 @@ namespace ZO.Import {
         bool _generateCollisionMeshes;
         string _stepFileDirectory = string.Empty;
         string _stepFilename = string.Empty;
+        string _outputDirectory = string.Empty;
 
         [MenuItem("Zero Sim/Import step file")]
         public static void OpenEditorWindow() {
@@ -35,27 +36,30 @@ namespace ZO.Import {
         public void ImportStepFile(){
             
             string arguments = 
-                              $" --input_step_file=/input/{_stepFilename}"
-                            + $" --output_directory /unity-project-root/Assets/"
+                              $" --input_step_file /input/{_stepFilename}"
+                            + $" --output_directory /output/"
                             + $" --mesh_scale {_meshScale.x} {_meshScale.y} {_meshScale.z}" 
                             + $" --transform_scale {_transformScale.x} {_transformScale.y} {_transformScale.z}" 
-                            + " --linear_deflection=" + _linearDeflection.ToString()
-                            + " --angular_deflection=" + _angularDeflection.ToString()
+                            + $" --linear_deflection={_linearDeflection.ToString()}"
+                            + $" --angular_deflection={_angularDeflection.ToString()}"
                             + (_generateCollisionMeshes ? " --generate_collision_meshes" : "");
 
-            string command = "python /zo-asset-tools/zo_step_to_zosim/zo_step_to_zosim.py";
-            string commandAWithArgs = $"{command} {arguments}";
+            string command = "conda run -n zosim_tools python /zo-asset-tools/zo_step_to_zosim/zo_step_to_zosim.py";
+            string commandAWithArgs = $"{command}{arguments}";
 
-            string[] additionalVolumes = { $"{_stepFileDirectory}:/input/" };
+            string[] additionalVolumes = { 
+                $"{_stepFileDirectory}:/input/", 
+                $"{_outputDirectory}:/output/" 
+            };
 
-            ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, null, (exitCode) => {
+            ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, additionalVolumes, (exitCode) => {
 
                 if(exitCode != 0){
                     UnityEngine.Debug.LogError($"Docker command error exit code: {exitCode}");
                     return;
                 }
 
-                UnityEngine.Debug.LogError($"Docker command exit code: {exitCode}");
+                UnityEngine.Debug.Log($"Docker command exit code: {exitCode}");
             });
         }
 
@@ -73,8 +77,16 @@ namespace ZO.Import {
                 _stepFilename = System.IO.Path.GetFileName(path);
                 _stepFileDirectory = System.IO.Path.GetDirectoryName(path);
             }
+            EditorGUILayout.LabelField("Step file", _stepFilename);
 
-            EditorGUILayout.LabelField("Step file: ", _stepFilename);
+            if(GUILayout.Button("Select output directory")){
+                _outputDirectory = EditorUtility.OpenFolderPanel("Select output directory", "", "");
+            }
+            EditorGUILayout.LabelField("Output dir", _outputDirectory);
+            
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
             if(GUILayout.Button("Import step file")){
                 ImportStepFile();
