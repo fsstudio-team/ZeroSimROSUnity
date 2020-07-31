@@ -30,31 +30,31 @@
         <visual >
             <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry >
-                <cylinder length="0.2" radius="0.035" />
+                <cylinder radius="0.035" length="0.2" />
             </geometry>
         </visual>
     </link>
-    <joint type="continuous" name="joint.articulated_body.revolutejoint_from_shoulder">
+    <joint name="joint.articulated_body.revolutejoint_from_shoulder" type="continuous">
         <parent link="base" />
         <child link="shoulder" />
-        <origin xyz="0.0 -0.0 0.099999994" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.0999999642" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -1.0 0.0" />
-        <limit effort="3.40282347e+38" velocity="0.0" />
+        <limit velocity="100.0" effort="3.40282347e+38" />
     </joint>
     <link name="elbow">
         <visual >
             <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry >
-                <cylinder length="0.2" radius="0.035" />
+                <cylinder radius="0.035" length="0.2" />
             </geometry>
         </visual>
     </link>
-    <joint type="continuous" name="joint.articulated_body.revolutejoint_from_elbow">
+    <joint name="joint.articulated_body.revolutejoint_from_elbow" type="continuous">
         <parent link="shoulder" />
         <child link="elbow" />
-        <origin xyz="0.0 -0.0 0.30000000600000004" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.3000000718" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -1.0 0.0" />
-        <limit effort="3.40282347e+38" velocity="0.0" />
+        <limit velocity="100.0" effort="3.40282347e+38" />
     </joint>
     <link name="hand">
         <visual >
@@ -64,11 +64,11 @@
             </geometry>
         </visual>
     </link>
-    <joint type="continuous" name="joint.articulated_body.fixedjoint_from_hand">
+    <joint name="joint.articulated_body.fixedjoint_from_hand" type="continuous">
         <parent link="elbow" />
         <child link="hand" />
-        <origin xyz="0.0 -0.0 0.300000048" rpy="-0.0 0.0 -0.0" />
+        <origin xyz="0.0 -0.0 0.29999996399999995" rpy="-0.0 0.0 -0.0" />
         <axis xyz="0.0 -5.96046448e-08 0.99999994" />
-        <limit effort="3.40282347e+38" velocity="0.0" />
+        <limit velocity="100.0" effort="3.40282347e+38" />
     </joint>
 </robot>

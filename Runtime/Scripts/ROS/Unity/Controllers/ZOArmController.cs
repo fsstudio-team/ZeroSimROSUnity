@@ -123,8 +123,10 @@ namespace ZO.ROS.Controllers {
         /// <value></value>
         public ZOJointInterface[] Joints {
             get {
-                if (_joints == null) {
-                    _joints = this.transform.GetComponentsInChildren<ZOJointInterface>();
+                if (_joints == null) {     
+                    // Get all the joints but filter out fixed joints               
+                    _joints = Array.FindAll(this.transform.GetComponentsInChildren<ZOJointInterface>(), 
+                                joint => joint.Type != "joint.articulated_body.fixedjoint");
                 }
                 return _joints;
             }

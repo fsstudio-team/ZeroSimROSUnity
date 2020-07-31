@@ -102,7 +102,9 @@ namespace ZO.Physics {
             }
 
             set {
-                // TODO
+                ArticulationDrive drive = UnityArticulationBody.xDrive;
+                drive.target = value * Mathf.Rad2Deg; // remember to convert from radians to degrees
+                UnityArticulationBody.xDrive = drive;
             }
         }
 
