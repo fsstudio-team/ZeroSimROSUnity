@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot name="SimpleRobotArm_ArticulatedBody">
+    <link name="base">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.2 0.2 0.1" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.1" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.025" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.4" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.0249999985" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0 -0.0 0.700000048" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <sphere radius="0.0249999985" />
+            </geometry>
+        </visual>
+    </link>
+    <link name="shoulder">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <cylinder length="0.2" radius="0.035" />
+            </geometry>
+        </visual>
+    </link>
+    <joint type="continuous" name="joint.articulated_body.revolutejoint_from_shoulder">
+        <parent link="base" />
+        <child link="shoulder" />
+        <origin xyz="0.0 -0.0 0.099999994" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -1.0 0.0" />
+        <limit effort="3.40282347e+38" velocity="0.0" />
+    </joint>
+    <link name="elbow">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <cylinder length="0.2" radius="0.035" />
+            </geometry>
+        </visual>
+    </link>
+    <joint type="continuous" name="joint.articulated_body.revolutejoint_from_elbow">
+        <parent link="shoulder" />
+        <child link="elbow" />
+        <origin xyz="0.0 -0.0 0.30000000600000004" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -1.0 0.0" />
+        <limit effort="3.40282347e+38" velocity="0.0" />
+    </joint>
+    <link name="hand">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.05 0.05 0.1" />
+            </geometry>
+        </visual>
+    </link>
+    <joint type="continuous" name="joint.articulated_body.fixedjoint_from_hand">
+        <parent link="elbow" />
+        <child link="hand" />
+        <origin xyz="0.0 -0.0 0.300000048" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -5.96046448e-08 0.99999994" />
+        <limit effort="3.40282347e+38" velocity="0.0" />
+    </joint>
+</robot>

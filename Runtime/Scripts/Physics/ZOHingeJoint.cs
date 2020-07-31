@@ -191,10 +191,17 @@ namespace ZO.Physics {
 
 
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            // calculate the world anchor position
+            // calculate the world anchor positions relative to the document root transform
+            // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?
             Vector3 worldAnchor = this.transform.TransformPoint(UnityHingeJoint.anchor);
+            worldAnchor = documentRoot.transform.InverseTransformPoint(worldAnchor);
+            
             Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
+            worldConnectedAnchor = documentRoot.transform.InverseTransformPoint(worldConnectedAnchor);
+
             Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
+            worldAxis = documentRoot.transform.InverseTransformDirection(worldAxis);
+
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
