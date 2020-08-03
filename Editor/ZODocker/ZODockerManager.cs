@@ -12,11 +12,13 @@ public class ZODockerManager
     public static bool showLogs = true;
     public static bool isRunning = false;
 
+    //private static readonly string composeWorkingDirectory = "../../docker/prod";
+    private static readonly string composeWorkingDirectory = "../../docker/dev";
+
     public static void DockerComposeUp(){
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
-            //encoding = System.Text.Encoding.GetEncoding("GBK"),
+            workDirectory = composeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){
                 //{"PATH", "usr/bin"}
             }
@@ -38,8 +40,7 @@ public class ZODockerManager
     public static void DockerComposeDown(){
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
-            //encoding = System.Text.Encoding.GetEncoding("GBK"),
+            workDirectory = composeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){
                 //{"PATH", "usr/bin"}
             }
@@ -79,8 +80,7 @@ public class ZODockerManager
 
          // docker-compose -f ./docker/docker-compose.yml run --rm 
          // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
-         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
+         var options = new EditorShell.Options(){workDirectory = composeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){
                 //{"PATH", "usr/bin"}
             }
