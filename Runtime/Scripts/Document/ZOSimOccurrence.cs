@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEditor;
 using Newtonsoft.Json.Linq;
 using ZO.Physics;
@@ -15,15 +16,22 @@ using ZO.ROS.Unity.Publisher;
 
 namespace ZO {
 
-    // BUGBUG: is this necessary? [ExecuteAlways]
     /// <summary>
-    /// A ZOSimOccurence is similar to a Unity GameObject but contains "meta" info specific
-    /// to ZoSim.
+    /// A `ZOSimOccurence` is similar to a Unity GameObject but contains additional "meta" info specific
+    /// to ZoSim.  It is responsible for serialization/deserialization of ZoSim JSON.  
+    /// Every Unity GameObject that needs to serialize or interact with Zero Sim should
+    /// have a `ZOSimOccurrence` as a component. 
     /// </summary>
     public class ZOSimOccurrence : MonoBehaviour, ZOSerializationInterface {
 
         [ZO.Util.ZOReadOnly] [SerializeField] public ZOSimDocumentRoot _documentRoot;
 
+
+        /// <summary>
+        /// Every ZoSim configuration has a `ZOSimDocumentRoot` as the root component.
+        /// This property returns the ZoSim document root of this configuration.
+        /// </summary>
+        /// <value></value>
         public ZOSimDocumentRoot DocumentRoot {
             set { _documentRoot = value; }
             get {
@@ -37,6 +45,9 @@ namespace ZO {
                         parent = parent.transform.parent; // keep traversing up
                     }
                 }
+                
+                Assert.IsNotNull(_documentRoot, "ERROR: a ZOSimOccurrence needs a ZOSimDocumentRoot at the root of the hierarchy.");
+
                 return _documentRoot;
             }
         }
@@ -48,6 +59,11 @@ namespace ZO {
             }
         }
 
+        /// <summary>
+        /// Finds an occurrence in this configuragtion 
+        /// </summary>
+        /// <param name="occurrenceName"></param>
+        /// <returns></returns>
         public ZOSimOccurrence GetOccurrence(string occurrenceName) {
             Transform t = transform.Find(occurrenceName);
             if (t != null) {

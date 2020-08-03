@@ -1133,7 +1133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Robots/UR10/UR10_rigged.zosim
+  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Assets/ZeroSimAssets/UR10_rigged.zosim
 --- !u!4 &376474634
 Transform:
   m_ObjectHideFlags: 0
@@ -6052,7 +6052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd2f2e3616277d4579d5a38545164e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _documentRoot: {fileID: 0}
+  _documentRoot: {fileID: 376474633}
 --- !u!1 &1924658464
 GameObject:
   m_ObjectHideFlags: 0
