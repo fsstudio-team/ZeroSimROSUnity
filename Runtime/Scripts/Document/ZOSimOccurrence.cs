@@ -45,7 +45,7 @@ namespace ZO {
                         parent = parent.transform.parent; // keep traversing up
                     }
                 }
-                
+
                 Assert.IsNotNull(_documentRoot, "ERROR: a ZOSimOccurrence needs a ZOSimDocumentRoot at the root of the hierarchy.");
 
                 return _documentRoot;
@@ -697,18 +697,32 @@ namespace ZO {
                             visuals.Add(primitiveJSON);
                         } else {
                             // not a geometric primitive type but likely a mesh so lets try to find the mesh in the AssetBundle
+                            // or if in Editor the filesystem
                             UnityEngine.Object[] assetObjects = DocumentRoot.FindAssetsByName(visualsChild.name);
                             if (assetObjects.Length > 0) {
-                                JObject meshPrimitiveJSON = new JObject(
-                                    new JProperty("type", "primitive.mesh"),
-                                    new JProperty("name", visualsChild.name),
-                                    new JProperty("has_collisions", false), // BUGBUG: in theory we could have collisions but we hardwire to not
-                                    new JProperty("translation", visualsChild.localPosition.ToJSON()),
-                                    new JProperty("rotation_quaternion", visualsChild.localRotation.ToJSON()),
-                                    new JProperty("scale", visualsChild.localScale.ToJSON())
-                                );
+                                // BUGBUG:  So kindof assuming some structure for meshes where there is a gameObject Parent --> Child with MeshFilter
+                                MeshFilter meshFilter = visualsChild.GetComponentInChildren<MeshFilter>();
+                                if (meshFilter) {
+                                    JObject meshPrimitiveJSON = new JObject(
+                                        new JProperty("type", "primitive.mesh"),
+                                        new JProperty("name", visualsChild.name),
+                                        new JProperty("has_collisions", false), // BUGBUG: in theory we could have collisions but we hardwire to not
+                                        new JProperty("translation", visualsChild.localPosition.ToJSON()),
+                                        new JProperty("rotation_quaternion", visualsChild.localRotation.ToJSON()),
+                                        new JProperty("scale", visualsChild.localScale.ToJSON()),
+                                        new JProperty("bounding_box", new JObject(
+                                            new JProperty("center", meshFilter.sharedMesh.bounds.center.ToJSON()),
+                                            new JProperty("extents", meshFilter.sharedMesh.bounds.extents.ToJSON())
+                                        ))
+                                    );
 
-                                visuals.Add(meshPrimitiveJSON);
+                                    visuals.Add(meshPrimitiveJSON);
+
+                                } else {
+                                    Debug.LogWarning("WARNING: Trying to serialize visual mesh asset but does not have a mesh: " + visualsChild.name);
+                                }
+
+                                
                             } else {
                                 Debug.LogWarning("WARNING: asset: " + visualsChild.name + "does not exist in bundle: " + DocumentRoot.AssetBundle.name + " try to add the asset to the asset bundle");
                             }
@@ -753,7 +767,13 @@ namespace ZO {
 
                                         new JProperty("translation", collisionChild.localPosition.ToJSON()),
                                         new JProperty("rotation_quaternion", collisionChild.localRotation.ToJSON()),
-                                        new JProperty("scale", collisionChild.localScale.ToJSON())
+                                        new JProperty("scale", collisionChild.localScale.ToJSON()),
+
+                                        new JProperty("bounding_box", new JObject(
+                                            new JProperty("center", collider.sharedMesh.bounds.center.ToJSON()),
+                                            new JProperty("extents", collider.sharedMesh.bounds.extents.ToJSON())
+                                        ))
+
                                     );
 
                                     if (collider.sharedMaterial != null) {
