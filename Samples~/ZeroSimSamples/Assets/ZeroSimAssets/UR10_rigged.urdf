@@ -1,127 +1,127 @@
 <?xml version="1.0"?>
-<robot  name="UR10_rigged" >
- <link  name="base" />
- <link  name="base_pivot" >
-  <visual >
-   <origin  xyz="0.0 -0.0 0.0"  rpy="0.0 0.0 0.0" />
-   <geometry >
-    <box  size="0.08355 0.075 0.019" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="shoulder_pan_joint"  type="continuous" >
-  <parent  link="base" />
-  <child  link="base_pivot" />
-  <origin  xyz="0.0 -0.0 0.0"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="0.0 -5.96046448e-08 0.99999994" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="shoulder_pan" >
-  <visual >
-   <origin  xyz="0.0 -0.0 0.0"  rpy="0.0 0.0 0.0" />
-   <geometry >
-    <box  size="0.08861007 0.07516342 0.0805922151" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="shoulder_lift_joint"  type="continuous" >
-  <parent  link="base_pivot" />
-  <child  link="shoulder_pan" />
-  <origin  xyz="-0.09 -0.0 0.128000021"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="-0.9999999 -1.1920929e-07 0.0" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="shoulder_lift" >
-  <visual >
-   <origin  xyz="-0.176000059 -0.0 0.0"  rpy="0.0 0.0 0.0" />
-   <geometry >
-    <box  size="0.08861007 0.07516342 0.0805922151" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  xyz="-0.101840138 0.0100000193 0.546400547"  rpy="-1.1071487177940864 0.7297276562269754 2.0344439357957067" />
-   <geometry >
-    <box  size="0.06345073 0.0599891022 0.06847392" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  xyz="-0.176 -0.0 0.0789999962"  rpy="0.0 0.0 0.0" />
-   <geometry >
-    <box  size="0.075 0.075 0.2303" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="elbow_joint"  type="continuous" >
-  <parent  link="shoulder_pan" />
-  <child  link="shoulder_lift" />
-  <origin  xyz="-0.010000000000000009 -0.0 0.610000014"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="-0.99999994 -5.96046448e-08 0.0" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="elbow" >
-  <visual >
-   <origin  xyz="0.6379001 -0.0100000128 0.0138502754"  rpy="-1.5707963267948966 0.0 3.141592653589793" />
-   <geometry >
-    <box  size="0.0499491356 0.0454888642 0.05938407" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  xyz="0.378976136 -0.0142755527 -0.0314135626"  rpy="-2.0344439357957067 0.7297276562269754 -2.034443935795707" />
-   <geometry >
-    <box  size="0.058 0.225649983 0.058" />
-   </geometry>
-  </visual>
-  <visual >
-   <origin  xyz="0.0846814141 0.00389776751 -0.0563208163"  rpy="-1.5707963267948966 0.0 1.5707963267948966" />
-   <geometry >
-    <box  size="0.0600000024 0.06388664 0.063175" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="wrist_1_joint"  type="continuous" >
-  <parent  link="shoulder_lift" />
-  <child  link="elbow" />
-  <origin  xyz="-0.009960235999999997 0.0100000147 0.576400515"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="0.99999994 -5.96046448e-08 0.0" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="wrist-1" >
-  <visual >
-   <origin  xyz="-0.06750013 -0.0 -0.0481998"  rpy="3.141592566167011 8.74227694680485e-08 -8.742276236262114e-08" />
-   <geometry >
-    <box  size="0.0499491356 0.0454888642 0.05938407" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="wrist_2_joint"  type="continuous" >
-  <parent  link="elbow" />
-  <child  link="wrist-1" />
-  <origin  xyz="0.0042696450000000025 -0.010000012837354851 -0.002100229999999925"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="-0.99999994 -5.96046448e-08 0.0" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="wrist-2" >
-  <visual >
-   <origin  xyz="-0.06750023 -0.0 -0.0481996536"  rpy="-3.141592566167003 8.742276191853193e-08 -8.74227694680485e-08" />
-   <geometry >
-    <box  size="0.0499491356 0.0454888642 0.05938407" />
-   </geometry>
-  </visual>
- </link>
- <joint  name="wrist_3_joint"  type="continuous" >
-  <parent  link="wrist-1" />
-  <child  link="wrist-2" />
-  <origin  xyz="-0.12019977700000001 -2.79396775e-09 0.11249995999999984"  rpy="-0.0 0.0 -0.0" />
-  <axis  xyz="-0.99999994 -5.96046448e-08 0.0" />
-  <limit  effort="3.40282347e+38"  velocity="100000.0" />
- </joint>
- <link  name="wrist-3" />
- <link  name="tool-flange-occurrence" >
-  <visual >
-   <origin  xyz="0.0 -0.0 0.0"  rpy="0.0 0.0 0.0" />
-   <geometry >
-    <box  size="0.04505 0.04499998 0.01525" />
-   </geometry>
-  </visual>
- </link>
+<robot name="UR10_rigged">
+    <link name="base" />
+    <link name="base_pivot">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.08355 0.075 0.019" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="shoulder_pan_joint" type="continuous">
+        <parent link="base" />
+        <child link="base_pivot" />
+        <origin xyz="0.0 -0.0 0.0" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.0 -5.96046448e-08 0.99999994" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="shoulder_pan">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.08861007 0.07516342 0.0805922151" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="shoulder_lift_joint" type="continuous">
+        <parent link="base_pivot" />
+        <child link="shoulder_pan" />
+        <origin xyz="-0.09 -0.0 0.128000021" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="-0.9999999 -1.1920929e-07 0.0" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="shoulder_lift">
+        <visual >
+            <origin xyz="-0.176000059 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.08861007 0.07516342 0.0805922151" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="-0.101840138 0.0100000193 0.546400547" rpy="-1.1071487177940864 0.7297276562269754 2.0344439357957067" />
+            <geometry >
+                <box size="0.06345073 0.0599891022 0.06847392" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="-0.176 -0.0 0.0789999962" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.075 0.075 0.2303" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="elbow_joint" type="continuous">
+        <parent link="shoulder_pan" />
+        <child link="shoulder_lift" />
+        <origin xyz="-0.010000000000000009 -0.0 0.610000014" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="-0.99999994 -5.96046448e-08 0.0" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="elbow">
+        <visual >
+            <origin xyz="0.6379001 -0.0100000128 0.0138502754" rpy="-1.5707963267948966 0.0 3.141592653589793" />
+            <geometry >
+                <box size="0.0499491356 0.0454888642 0.05938407" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.378976136 -0.0142755527 -0.0314135626" rpy="-2.0344439357957067 0.7297276562269754 -2.034443935795707" />
+            <geometry >
+                <box size="0.058 0.225649983 0.058" />
+            </geometry>
+        </visual>
+        <visual >
+            <origin xyz="0.0846814141 0.00389776751 -0.0563208163" rpy="-1.5707963267948966 0.0 1.5707963267948966" />
+            <geometry >
+                <box size="0.0600000024 0.06388664 0.063175" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="wrist_1_joint" type="continuous">
+        <parent link="shoulder_lift" />
+        <child link="elbow" />
+        <origin xyz="-0.009960235999999997 0.0100000147 0.576400515" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="0.99999994 -5.96046448e-08 0.0" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="wrist-1">
+        <visual >
+            <origin xyz="-0.06750013 -0.0 -0.0481998" rpy="3.141592566167011 8.74227694680485e-08 -8.742276236262114e-08" />
+            <geometry >
+                <box size="0.0499491356 0.0454888642 0.05938407" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="wrist_2_joint" type="continuous">
+        <parent link="elbow" />
+        <child link="wrist-1" />
+        <origin xyz="0.0042696450000000025 -0.010000012837354851 -0.002100229999999925" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="-0.99999994 -5.96046448e-08 0.0" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="wrist-2">
+        <visual >
+            <origin xyz="-0.06750023 -0.0 -0.0481996536" rpy="-3.141592566167003 8.742276191853193e-08 -8.74227694680485e-08" />
+            <geometry >
+                <box size="0.0499491356 0.0454888642 0.05938407" />
+            </geometry>
+        </visual>
+    </link>
+    <joint name="wrist_3_joint" type="continuous">
+        <parent link="wrist-1" />
+        <child link="wrist-2" />
+        <origin xyz="-0.12019977700000001 -2.79396775e-09 0.11249995999999984" rpy="-0.0 0.0 -0.0" />
+        <axis xyz="-0.99999994 -5.96046448e-08 0.0" />
+        <limit effort="3.40282347e+38" velocity="100000.0" />
+    </joint>
+    <link name="wrist-3" />
+    <link name="tool-flange-occurrence">
+        <visual >
+            <origin xyz="0.0 -0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry >
+                <box size="0.04505 0.04499998 0.01525" />
+            </geometry>
+        </visual>
+    </link>
 </robot>
