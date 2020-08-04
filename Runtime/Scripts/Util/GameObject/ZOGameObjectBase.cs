@@ -65,6 +65,11 @@ namespace ZO.Util {
         protected virtual void ZOStart() { }
 
         /// <summary>
+        /// Awake function for Zero Sim Objects
+        /// </summary>
+        protected virtual void ZOAwake() {}
+
+        /// <summary>
         /// Destruction function for Zero Sim Objects
         /// </summary>
         protected virtual void ZOOnDestroy() { }
@@ -92,6 +97,10 @@ namespace ZO.Util {
             NextUpdateTime = _nextUpdateTimeOffset;
             NextFixedUpdateTime = _nextUpdateTimeOffset;
             _nextUpdateTimeOffset += 0.13f;
+        }
+
+        private void Awake() {
+            ZOAwake();    
         }
 
         private void OnDestroy() {

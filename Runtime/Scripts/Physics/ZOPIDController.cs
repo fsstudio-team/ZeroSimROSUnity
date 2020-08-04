@@ -120,10 +120,6 @@ namespace ZO.Physics {
             }
         }
 
-        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            // TODO:
-            throw new System.NotImplementedException("TODO");
-        }
 
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             JObject gripControllerJSON = new JObject(

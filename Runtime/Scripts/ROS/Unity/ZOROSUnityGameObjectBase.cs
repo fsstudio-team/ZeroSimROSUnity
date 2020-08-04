@@ -63,6 +63,7 @@ namespace ZO.ROS.Unity {
             string dummy = Name;
         }
 
+
         #region ZOSerializationInterface
 
         protected JObject _json;
@@ -83,14 +84,6 @@ namespace ZO.ROS.Unity {
             get { return "undefined"; }
         }
 
-        /// <summary>
-        /// OBSOLETE!!!!
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="json"></param>
-        public virtual void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("Derived class should implement");
-        }
 
         /// <summary>
         /// Dummy Serialize. Will throw exception if not implemented.`
@@ -158,9 +151,11 @@ namespace ZO.ROS.Unity {
 
         #endregion // ZOGameObjectBase
         
+        #region ZOROSUnityInterface
         public abstract void OnROSBridgeConnected(object rosUnityManager);
 
         public abstract void OnROSBridgeDisconnected(object rosUnityManager);
+        #endregion // ZOROSUnityInterface
 
 
     }

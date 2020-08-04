@@ -218,7 +218,7 @@ namespace ZO.ROS.Unity {
                     Debug.Log("INFO: Disconnected to ROS Bridge");
 
                     // inform listeners we have disconnected
-                    _disconnectEvent.Invoke(this);
+                    _disconnectEvent?.Invoke(this);
 
                     // Unadvertise broadcast tf 
                     rosBridge.UnAdvertise("/tf");

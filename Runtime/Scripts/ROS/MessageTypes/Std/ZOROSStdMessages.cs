@@ -4,7 +4,11 @@ namespace ZO.ROS.MessageTypes.Std {
     public class TimeMessage : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        string ZOROSMessageInterface.MessageType { get { return "std_msgs/Time"; } }
+        public string MessageType { get { return TimeMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Time";
+
         public uint secs { get; set; }
         public uint nsecs { get; set; }
 
@@ -34,7 +38,12 @@ namespace ZO.ROS.MessageTypes.Std {
     public class HeaderMessage : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        string ZOROSMessageInterface.MessageType { get { return "std_msgs/Header"; } }
+        public string MessageType { get { return HeaderMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Header";
+
+
 
         //  Standard metadata for higher-level stamped data types.
         //  This is generally used to communicate timestamped data 
@@ -83,7 +92,12 @@ namespace ZO.ROS.MessageTypes.Std {
     public class Int32Message : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        string ZOROSMessageInterface.MessageType { get { return "std_msgs/Int32"; } }
+        public string MessageType { get { return Int32Message.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Int32";
+
+
         public Int32 data { get; set; }
 
         public Int32Message() {
@@ -99,7 +113,12 @@ namespace ZO.ROS.MessageTypes.Std {
     /// Generic string message.
     /// </summary>
     public class StringMessage : ZOROSMessageInterface {
-        string ZOROSMessageInterface.MessageType { get { return "std_msgs/String"; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return StringMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/String";
 
         public string data { get; set; }
 
@@ -116,7 +135,13 @@ namespace ZO.ROS.MessageTypes.Std {
     /// Generic bool setting service request message.
     /// </summary>
     public class SetBoolServiceRequest : ZOROSMessageInterface {
-        string ZOROSMessageInterface.MessageType { get { return "std_srvs/SetBool"; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return SetBoolServiceRequest.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/SetBool";
+
 
         public bool data { get; set; }
 
@@ -133,7 +158,13 @@ namespace ZO.ROS.MessageTypes.Std {
     /// Generic bool setting service response message.
     /// </summary>
     public class SetBoolServiceResponse : ZOROSMessageInterface {
-        string ZOROSMessageInterface.MessageType { get { return "std_srvs/SetBool"; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return SetBoolServiceResponse.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/SetBool";
+
 
         public bool success { get; set; }
         public string message { get; set; }
@@ -150,13 +181,47 @@ namespace ZO.ROS.MessageTypes.Std {
     }
 
     public class EmptyServiceRequest : ZOROSMessageInterface {
-        string ZOROSMessageInterface.MessageType { get { return "std_srvs/Empty"; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return EmptyServiceRequest.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Empty";
+
 
     }
-    
-    public class EmptyServiceRespone : ZOROSMessageInterface {
-        string ZOROSMessageInterface.MessageType { get { return "std_srvs/Empty"; } }
 
+    public class EmptyServiceRespone : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return EmptyServiceRespone.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Empty";
+
+    }
+
+    public class DurationMessage : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return DurationMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "std_msgs/Duration";
+
+
+        public uint secs { get; set; }
+        public uint nsecs { get; set; }
+
+        public DurationMessage() {
+            secs = 0;
+            nsecs = 0;
+        }
+
+        public DurationMessage(uint secs, uint nsecs) {
+            this.secs = secs;
+            this.nsecs = nsecs;
+        }
     }
 
 }

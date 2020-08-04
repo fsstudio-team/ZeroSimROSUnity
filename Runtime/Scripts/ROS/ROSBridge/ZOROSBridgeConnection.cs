@@ -78,11 +78,15 @@ namespace ZO.ROS {
     /// </code></example>
     public class ZOROSBridgeConnection {
 
+        #region Singleton
+
         // Singleton: See https://csharpindepth.com/articles/singleton
         private static readonly ZOROSBridgeConnection _instance = new ZOROSBridgeConnection();
         static ZOROSBridgeConnection() { }
         private ZOROSBridgeConnection() { }
         public static ZOROSBridgeConnection Instance { get => _instance; }
+
+        #endregion // Singleton
 
         public enum SerializationType {
             JSON,
@@ -506,8 +510,8 @@ namespace ZO.ROS {
         /// client provides IDs for its subscriptions, to enable rosbridge to effectively choose the appropriate 
         /// fragmentation size and publishing rate.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="topic"></param>
+        /// <param name="id">f specified, then this specific subscription can be unsubscribed by referencing the ID.</param>
+        /// <param name="topic">the name of the topic to subscribe to</param>
         /// <param name="type">ROS message type</param>
         /// <param name="subscriptionCallback">Called when message is received.</param>
         /// <typeparam name="T">ZOROSMessageInterface</typeparam>
@@ -534,6 +538,25 @@ namespace ZO.ROS {
 
                 await SendBSONAsync(memoryStream);
             }
+        }
+
+        /// <summary>
+        /// Unsubscribe a ROS message topic.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public async void Unsubscribe(string id, string topic) {
+            JObject unsubscribeJSON = new JObject(
+                new JProperty("op", "unsubscribe"),
+                new JProperty("id", id),
+                new JProperty("topic", topic)
+            );
+            if (Serialization == SerializationType.JSON) {
+                await SendJSONStringAsync(unsubscribeJSON.ToString(Formatting.None));
+            } else if (Serialization == SerializationType.BSON) {
+                await SendBSONAsync(unsubscribeJSON);
+            }
+
         }
 
 
@@ -849,10 +872,9 @@ namespace ZO.ROS {
             }
 
             try {
-
                 await _tcpClient.GetStream()?.WriteAsync(byteArray, 0, byteArray.Length);
             } catch (Exception e) {
-                Debug.LogError("ERROR: ZOROSBridgeConnection::SendBSONAsync: " + e.ToString());
+                Debug.LogWarning("WARNING: ZOROSBridgeConnection::SendBSONAsync: " + e.ToString());
             }
         }
         public async Task SendBSONAsync(MemoryStream memoryStream) {

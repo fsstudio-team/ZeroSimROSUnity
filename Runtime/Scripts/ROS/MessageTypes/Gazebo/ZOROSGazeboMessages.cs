@@ -1,4 +1,3 @@
-using ZO.ROS.MessageTypes.Std;
 using ZO.ROS.MessageTypes.Geometry;
 
 namespace ZO.ROS.MessageTypes.Gazebo {

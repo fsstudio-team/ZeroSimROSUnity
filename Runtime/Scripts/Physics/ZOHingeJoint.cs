@@ -12,11 +12,22 @@ namespace ZO.Physics {
     /// <summary>
     /// A Zero Sim wrapper class for a Unity Hinge joint. Supports writing and reading to ZeroSim 
     /// JSON format.
+    /// 
+    /// The HingeJoint groups together 2 rigid bodies, constraining them to move like connected by a hinge.
+    ///
+    /// The HingeJoint has a motor which can be used to make the hinge spin around the joints axis. A spring 
+    /// which attempts to reach for a target angle by spinning around the joints axis. And a limit which 
+    /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface {
+    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface, ZOJointInterface {
 
         [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
+
+        /// <summary>
+        /// The Unity hinge joint linked to this ZOSim hinge joint.
+        /// </summary>
+        /// <value></value>
         public UnityEngine.HingeJoint UnityHingeJoint {
             get {
                 return _hingeJoint;
@@ -24,46 +35,80 @@ namespace ZO.Physics {
         }
 
 
+        #region ZOJointInterface
 
-
-        //TODO: move the actual motor update into FixedUpdate otherwise it won't work
-        public float AngularVelocityDegrees {
+        /// <summary>
+        /// The hinge angle in radians.  
+        /// </summary>
+        /// <value></value>
+        public float Position {
+            get { return UnityHingeJoint.angle * Mathf.Deg2Rad; }
             set {
-                JointMotor motor = _hingeJoint.motor;
-                motor.targetVelocity = value;
-                motor.freeSpin = false;
-                _hingeJoint.motor = motor;
-                _hingeJoint.useMotor = true;
-                _hingeJoint.useSpring = false;
-            }
-
-            get {
-                return UnityHingeJoint.velocity;
+                JointSpring spring = UnityHingeJoint.spring;
+                UnityHingeJoint.spring = spring;
+                spring.targetPosition = value * Mathf.Rad2Deg;
+                UnityHingeJoint.spring = spring;
+                UnityHingeJoint.useSpring = true;
+                UnityHingeJoint.useMotor = false;
             }
         }
 
         /// <summary>
-        /// The current angle in degrees of the hinge joint relative to it's start position.
+        /// The velocity of the hinge in rad/s
         /// </summary>
         /// <value></value>
-        public float AngleDegrees {
-            get {
-                return UnityHingeJoint.angle;
+        public float Velocity {
+            get { return UnityHingeJoint.velocity * Mathf.Deg2Rad; }
+
+            set {
+                JointMotor motor = UnityHingeJoint.motor;
+                motor.targetVelocity = value * Mathf.Rad2Deg;
+                motor.freeSpin = false;
+                UnityHingeJoint.motor = motor;
+                UnityHingeJoint.useMotor = true;
+                UnityHingeJoint.useSpring = false;
+            }
+
+        }
+
+
+        /// <summary>
+        /// The effor that is applied to the hinge Nm
+        /// </summary>
+        /// <value></value>
+        public float Effort {
+            get { return UnityHingeJoint.motor.force; }
+            set { 
+                // TODO
             }
         }
 
-        public float TorqueNewtonMeters {
-            get {
-                return UnityHingeJoint.motor.force;
-            }
-        }
+
+        #endregion
+
+
+        /// <summary>
+        /// Read only maximum torque of this hinge joint motor.
+        /// </summary>
+        /// <value></value>
+        // public float TorqueNewtonMeters {
+        //     get {
+        //         return UnityHingeJoint.motor.force;
+        //     }
+        // }
 
 
 
+        /// <summary>
+        /// Reset is a MonoBehavior method that gets called on creation of this component.
+        /// </summary>
         private void Reset() {
             CreateRequirements();
         }
 
+        /// <summary>
+        /// Creates the requirements for the ZOHingeJoint including the Unity `HingeJoint`
+        /// </summary>
         public void CreateRequirements() {
             // when creating this a ZOHingeJoint we need to create an actual Unity Hinge Joint.
             if (UnityHingeJoint == null) { // create Unity Hinge Joint
@@ -96,7 +141,7 @@ namespace ZO.Physics {
         // }
 
 
-#region ZOSerializationInterface
+        #region ZOSerializationInterface
         public string Type {
             get { return "joint.hinge"; }
         }
@@ -123,11 +168,24 @@ namespace ZO.Physics {
         }
 
 
+        /// <summary>
+        /// Serializes the ZOHingeJoint to ZOSim JSON.
+        /// </summary>
+        /// <param name="documentRoot"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            // calculate the world anchor position
+            // calculate the world anchor positions relative to the document root transform
+            // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?
             Vector3 worldAnchor = this.transform.TransformPoint(UnityHingeJoint.anchor);
+            worldAnchor = documentRoot.transform.InverseTransformPoint(worldAnchor);
+            
             Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
+            worldConnectedAnchor = documentRoot.transform.InverseTransformPoint(worldConnectedAnchor);
+
             Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
+            worldAxis = documentRoot.transform.InverseTransformDirection(worldAxis);
+
             JObject json = new JObject(
                 new JProperty("name", Name),
                 new JProperty("type", Type),
@@ -181,10 +239,6 @@ namespace ZO.Physics {
             return json;
         }
 
-        public void ImportZeroSim(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("TODO!");
-            // TODO:
-        }
 
         public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
             // Assert.Equals(json["type"].Value<string>() == Type);
@@ -234,12 +288,17 @@ namespace ZO.Physics {
             documentRoot.OnPostDeserializationNotification((docRoot) => {
                 if (JSON.ContainsKey("connected_occurrence")) {
                     ZOSimOccurrence connectedOccurrence = docRoot.GetOccurrence(JSON["connected_occurrence"].Value<string>());
-                    UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
+                    if (connectedOccurrence) {
+                        UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
+                    } else {
+                        Debug.LogWarning("WARNING: ZOHingeJoint failed to find connected occurrence: " + JSON["connected_occurrence"].Value<string>());
+                    }
+                    
                 }
             });
 
         }
-#endregion
+        #endregion
 
     }
 
