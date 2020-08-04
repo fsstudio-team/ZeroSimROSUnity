@@ -202,11 +202,12 @@ namespace ZO.ROS.Controllers {
         }
 
         private void Terminate() {
+            ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager?.Name + "/arm_controller/command");
+            ROSBridgeConnection?.UnAdvertise(ControllerManager?.Name + "/arm_controller/state");
+
             ControllerState = ControllerStateEnum.Stopped;
 
             _actionServer.Terminate();
-            ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager?.Name + "/arm_controller/command");
-            ROSBridgeConnection?.UnAdvertise(ControllerManager?.Name + "/arm_controller/state");
         }
 
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {

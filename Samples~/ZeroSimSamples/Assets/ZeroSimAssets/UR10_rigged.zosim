@@ -54,86 +54,151 @@
         1.0,
         1.0
       ],
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
       "joints": [
         {
-          "name": "joint.articulated_body.fixedjoint_from_base_to_base_pivot",
-          "type": "joint.articulated_body.fixedjoint",
-          "owner_occurrence": "base",
-          "parent_occurrence": "",
-          "mass": 1.0,
-          "use_gravity": true,
-          "world_axis": [
-            -1.1920929E-07,
-            1.00000012,
+          "type": "fixed"
+        },
+        {
+          "name": "shoulder_pan_joint",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0,
+            0.0365,
             0.0
           ],
           "world_anchor": [
             0.0,
-            0.0,
+            0.0364999771,
             0.0
           ],
-          "anchor_position": [
+          "axis": [
             0.0,
-            0.0,
+            1.0,
             0.0
           ],
-          "anchor_rotation_quaternion": [
+          "world_axis": [
             0.0,
-            0.0,
-            0.7071068,
-            0.7071068
-          ],
-          "parent_anchor_position": [
-            0.0,
-            0.0,
+            1.0,
             0.0
           ],
-          "parent_anchor_rotation_quaternion": [
+          "connected_anchor": [
             0.0,
-            0.0,
-            0.7071068,
-            0.7071068
+            -0.0915000439,
+            0.0
           ],
-          "linear_damping": 0.05,
-          "angular_damping": 0.05,
-          "joint_friction": 0.05,
-          "is_immovable": true,
-          "is_root": true,
-          "x_drive": {
-            "damping": 0.0,
-            "force_limit": 3.40282347E+38,
-            "lower_limit": 0.0,
-            "upper_limit": 0.0,
-            "stiffness": 0.0,
-            "target": 0.0,
-            "target_velocity": 0.0
+          "world_connected_anchor": [
+            0.0,
+            -0.0915000439,
+            0.0
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 100.0,
+            "damper": 50.0,
+            "target_position": 0.0
           },
-          "y_drive": {
-            "damping": 0.0,
-            "force_limit": 3.40282347E+38,
-            "lower_limit": 0.0,
-            "upper_limit": 0.0,
-            "stiffness": 0.0,
-            "target": 0.0,
-            "target_velocity": 0.0
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 10.0,
+            "free_spin": false
           },
-          "z_drive": {
-            "damping": 0.0,
-            "force_limit": 3.40282347E+38,
-            "lower_limit": 0.0,
-            "upper_limit": 0.0,
-            "stiffness": 0.0,
-            "target": 0.0,
-            "target_velocity": 0.0
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "shoulder_base",
+          "parent_occurrence": "base"
+        }
+      ],
+      "visuals": [
+        {
+          "type": "primitive.mesh",
+          "name": "base_visual_",
+          "has_collisions": false,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              0.0,
+              0.019,
+              0.00845000148
+            ],
+            "extents": [
+              0.075,
+              0.019,
+              0.08355
+            ]
+          }
+        }
+      ],
+      "collisions": [
+        {
+          "type": "primitive.mesh",
+          "name": "base_collision_0",
+          "has_collisions": true,
+          "is_convex": true,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              0.0004019998,
+              0.0188959986,
+              0.009451501
+            ],
+            "extents": [
+              0.0755780041,
+              0.019887,
+              0.0835435
+            ]
           }
         }
       ],
       "children": [
         {
-          "name": "base_pivot",
+          "name": "shoulder_base",
           "translation": [
             0.0,
-            0.0,
+            0.128000021,
             0.0
           ],
           "rotation_quaternion": [
@@ -148,84 +213,75 @@
             1.0
           ],
           "parent_name": "base",
+          "rigidbody": {
+            "mass": 1.0,
+            "drag": 0.0,
+            "angular_drag": 0.05,
+            "use_gravity": false,
+            "is_kinematic": false
+          },
           "joints": [
             {
-              "name": "shoulder_pan_joint",
-              "type": "joint.articulated_body.revolutejoint",
-              "owner_occurrence": "base_pivot",
-              "parent_occurrence": "base",
-              "mass": 1.0,
-              "use_gravity": true,
-              "world_axis": [
-                5.96046448E-08,
-                0.99999994,
-                0.0
+              "name": "shoulder_lift_joint",
+              "type": "joint.hinge",
+              "anchor": [
+                0.0,
+                0.0,
+                -0.0855
               ],
               "world_anchor": [
                 0.0,
-                0.0,
-                0.0
+                0.128000021,
+                -0.0855
               ],
-              "anchor_position": [
+              "axis": [
                 0.0,
                 0.0,
-                0.0
+                -1.0
               ],
-              "anchor_rotation_quaternion": [
+              "world_axis": [
                 0.0,
                 0.0,
-                0.707106769,
-                0.707106769
+                -1.0
               ],
-              "parent_anchor_position": [
+              "connected_anchor": [
                 0.0,
                 0.0,
-                0.0
+                -0.0855
               ],
-              "parent_anchor_rotation_quaternion": [
+              "world_connected_anchor": [
                 0.0,
-                0.0,
-                0.707106769,
-                0.707106769
+                0.128000021,
+                -0.0855
               ],
-              "linear_damping": 0.05,
-              "angular_damping": 0.05,
-              "joint_friction": 0.05,
-              "is_immovable": false,
-              "is_root": false,
-              "x_drive": {
-                "damping": 100.0,
-                "force_limit": 3.40282347E+38,
-                "lower_limit": 0.0,
-                "upper_limit": 0.0,
-                "stiffness": 100000.0,
-                "target": 0.0,
-                "target_velocity": 45.0
+              "use_spring": false,
+              "spring": {
+                "spring": 100.0,
+                "damper": 50.0,
+                "target_position": 0.0
               },
-              "y_drive": {
-                "damping": 0.0,
-                "force_limit": 3.40282347E+38,
-                "lower_limit": 0.0,
-                "upper_limit": 0.0,
-                "stiffness": 0.0,
-                "target": 0.0,
-                "target_velocity": 0.0
+              "use_motor": false,
+              "motor": {
+                "target_velocity": 0.0,
+                "force": 10.0,
+                "free_spin": false
               },
-              "z_drive": {
-                "damping": 0.0,
-                "force_limit": 3.40282347E+38,
-                "lower_limit": 0.0,
-                "upper_limit": 0.0,
-                "stiffness": 0.0,
-                "target": 0.0,
-                "target_velocity": 0.0
-              }
+              "use_limits": false,
+              "limits": {
+                "min": 0.0,
+                "max": 0.0,
+                "bounciness": 0.0,
+                "bounce_min_velocity": 0.2,
+                "contact_distance": 0.0
+              },
+              "connected_occurrence": "shoulder",
+              "parent_occurrence": "shoulder_base"
             }
           ],
           "visuals": [
             {
               "type": "primitive.mesh",
-              "name": "base_visual_",
+              "name": "size-4-joint_visual_",
               "has_collisions": false,
               "translation": [
                 0.0,
@@ -245,14 +301,14 @@
               ],
               "bounding_box": {
                 "center": [
-                  0.0,
-                  0.019,
-                  0.00845000148
+                  -1.80751085E-05,
+                  0.005407788,
+                  0.00138993561
                 ],
                 "extents": [
-                  0.075,
-                  0.019,
-                  0.08355
+                  0.07516342,
+                  0.0805922151,
+                  0.08861007
                 ]
               }
             }
@@ -260,7 +316,7 @@
           "collisions": [
             {
               "type": "primitive.mesh",
-              "name": "base_collision_0",
+              "name": "size-4-joint_collision_0",
               "has_collisions": true,
               "is_convex": true,
               "translation": [
@@ -281,24 +337,24 @@
               ],
               "bounding_box": {
                 "center": [
-                  0.0004019998,
-                  0.0188959986,
-                  0.009451501
+                  0.0006005019,
+                  0.0049864985,
+                  0.001389999
                 ],
                 "extents": [
-                  0.0755780041,
-                  0.019887,
-                  0.0835435
+                  0.0759515,
+                  0.0815774947,
+                  0.0900170058
                 ]
               }
             }
           ],
           "children": [
             {
-              "name": "shoulder_pan",
+              "name": "shoulder",
               "translation": [
                 0.0,
-                0.128000021,
+                0.0,
                 0.0
               ],
               "rotation_quaternion": [
@@ -312,79 +368,70 @@
                 1.0,
                 1.0
               ],
-              "parent_name": "base_pivot",
+              "parent_name": "shoulder_base",
+              "rigidbody": {
+                "mass": 1.0,
+                "drag": 0.0,
+                "angular_drag": 0.05,
+                "use_gravity": false,
+                "is_kinematic": false
+              },
               "joints": [
                 {
-                  "name": "shoulder_lift_joint",
-                  "type": "joint.articulated_body.revolutejoint",
-                  "owner_occurrence": "shoulder_pan",
-                  "parent_occurrence": "base_pivot",
-                  "mass": 1.0,
-                  "use_gravity": true,
-                  "world_axis": [
-                    1.1920929E-07,
+                  "name": "elbow_joint",
+                  "type": "joint.hinge",
+                  "anchor": [
                     0.0,
-                    -0.9999999
+                    0.62,
+                    -0.108
                   ],
                   "world_anchor": [
                     0.0,
-                    0.128000021,
-                    -0.09
+                    0.748,
+                    -0.108
                   ],
-                  "anchor_position": [
+                  "axis": [
                     0.0,
                     0.0,
-                    -0.09
+                    1.0
                   ],
-                  "anchor_rotation_quaternion": [
-                    0.49999997,
-                    -0.49999997,
-                    -0.49999997,
-                    -0.49999997
-                  ],
-                  "parent_anchor_position": [
+                  "world_axis": [
                     0.0,
-                    0.128000021,
-                    -0.09
+                    0.0,
+                    1.0
                   ],
-                  "parent_anchor_rotation_quaternion": [
-                    0.49999997,
-                    -0.49999997,
-                    -0.49999997,
-                    -0.49999997
+                  "connected_anchor": [
+                    0.0100000147,
+                    0.07359958,
+                    -0.006159745
                   ],
-                  "linear_damping": 0.05,
-                  "angular_damping": 0.05,
-                  "joint_friction": 0.05,
-                  "is_immovable": false,
-                  "is_root": false,
-                  "x_drive": {
-                    "damping": 100.0,
-                    "force_limit": 3.40282347E+38,
-                    "lower_limit": 0.0,
-                    "upper_limit": 0.0,
-                    "stiffness": 100000.0,
-                    "target": 0.0,
-                    "target_velocity": 45.0
+                  "world_connected_anchor": [
+                    0.0100000147,
+                    0.2015996,
+                    -0.006159745
+                  ],
+                  "use_spring": false,
+                  "spring": {
+                    "spring": 100.0,
+                    "damper": 50.0,
+                    "target_position": 0.0
                   },
-                  "y_drive": {
-                    "damping": 0.0,
-                    "force_limit": 3.40282347E+38,
-                    "lower_limit": 0.0,
-                    "upper_limit": 0.0,
-                    "stiffness": 0.0,
-                    "target": 0.0,
-                    "target_velocity": 0.0
+                  "use_motor": false,
+                  "motor": {
+                    "target_velocity": 0.0,
+                    "force": 10.0,
+                    "free_spin": false
                   },
-                  "z_drive": {
-                    "damping": 0.0,
-                    "force_limit": 3.40282347E+38,
-                    "lower_limit": 0.0,
-                    "upper_limit": 0.0,
-                    "stiffness": 0.0,
-                    "target": 0.0,
-                    "target_velocity": 0.0
-                  }
+                  "use_limits": false,
+                  "limits": {
+                    "min": 0.0,
+                    "max": 0.0,
+                    "bounciness": 0.0,
+                    "bounce_min_velocity": 0.2,
+                    "contact_distance": 0.0
+                  },
+                  "connected_occurrence": "elbow",
+                  "parent_occurrence": "shoulder"
                 }
               ],
               "visuals": [
@@ -395,7 +442,7 @@
                   "translation": [
                     0.0,
                     0.0,
-                    0.0
+                    -0.176000059
                   ],
                   "rotation_quaternion": [
                     0.0,
@@ -420,6 +467,72 @@
                       0.08861007
                     ]
                   }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-3-joint_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    -0.0100000193,
+                    0.546400547,
+                    -0.101840138
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    7.10542736E-15,
+                    7.10542736E-15,
+                    -0.7071068
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.0100024287,
+                      0.0745239258,
+                      0.0628492758
+                    ],
+                    "extents": [
+                      0.0599891022,
+                      0.06847392,
+                      0.06345073
+                    ]
+                  }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0789999962,
+                    -0.176
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.23709999,
+                      0.0
+                    ],
+                    "extents": [
+                      0.075,
+                      0.2303,
+                      0.075
+                    ]
+                  }
                 }
               ],
               "collisions": [
@@ -431,7 +544,7 @@
                   "translation": [
                     0.0,
                     0.0,
-                    0.0
+                    -0.176000059
                   ],
                   "rotation_quaternion": [
                     0.0,
@@ -456,15 +569,117 @@
                       0.0900170058
                     ]
                   }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "size-3-joint_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    -0.0100000193,
+                    0.546400547,
+                    -0.101840138
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    7.10542736E-15,
+                    7.10542736E-15,
+                    -0.7071068
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.00979349948,
+                      0.0757665038,
+                      0.061346
+                    ],
+                    "extents": [
+                      0.0608645,
+                      0.0683185,
+                      0.063034
+                    ]
+                  }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0789999962,
+                    -0.176
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.00176400132,
+                      0.242911488,
+                      0.001766501
+                    ],
+                    "extents": [
+                      0.059913002,
+                      0.2263605,
+                      0.0599154979
+                    ]
+                  }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "upper-arm_collision_1",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0789999962,
+                    -0.176
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.000105500221,
+                      0.0139475,
+                      -0.000105500221
+                    ],
+                    "extents": [
+                      0.0767515,
+                      0.009018499,
+                      0.0767515
+                    ]
+                  }
                 }
               ],
               "children": [
                 {
-                  "name": "shoulder_lift",
+                  "name": "elbow",
                   "translation": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -0.0100000147,
+                    0.5464004,
+                    -0.101840258
                   ],
                   "rotation_quaternion": [
                     0.0,
@@ -477,96 +692,87 @@
                     1.0,
                     1.0
                   ],
-                  "parent_name": "shoulder_pan",
+                  "parent_name": "shoulder",
+                  "rigidbody": {
+                    "mass": 1.0,
+                    "drag": 0.0,
+                    "angular_drag": 0.05,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                  },
                   "joints": [
                     {
-                      "name": "elbow_joint",
-                      "type": "joint.articulated_body.revolutejoint",
-                      "owner_occurrence": "shoulder_lift",
-                      "parent_occurrence": "shoulder_pan",
-                      "mass": 1.0,
-                      "use_gravity": true,
-                      "world_axis": [
-                        5.96046448E-08,
+                      "name": "wrist_1_joint",
+                      "type": "joint.hinge",
+                      "anchor": [
                         0.0,
-                        -0.99999994
+                        0.638,
+                        -0.01
                       ],
                       "world_anchor": [
-                        0.0,
-                        0.738000035,
-                        -0.1
+                        -0.0100000147,
+                        1.31240046,
+                        -0.111840256
                       ],
-                      "anchor_position": [
+                      "axis": [
                         0.0,
-                        0.61,
-                        -0.1
+                        0.0,
+                        -2.0
                       ],
-                      "anchor_rotation_quaternion": [
+                      "world_axis": [
                         0.0,
-                        0.707106769,
                         0.0,
-                        0.707106769
+                        -2.0
                       ],
-                      "parent_anchor_position": [
-                        0.0,
-                        0.61,
-                        -0.1
+                      "connected_anchor": [
+                        -0.0100000128,
+                        0.0001001358,
+                        0.00385033339
                       ],
-                      "parent_anchor_rotation_quaternion": [
-                        0.0,
-                        0.707106769,
-                        0.0,
-                        0.707106769
+                      "world_connected_anchor": [
+                        -0.0200000275,
+                        0.6745006,
+                        -0.0979899243
                       ],
-                      "linear_damping": 0.05,
-                      "angular_damping": 0.05,
-                      "joint_friction": 0.05,
-                      "is_immovable": false,
-                      "is_root": false,
-                      "x_drive": {
-                        "damping": 100.0,
-                        "force_limit": 3.40282347E+38,
-                        "lower_limit": 0.0,
-                        "upper_limit": 0.0,
-                        "stiffness": 100000.0,
-                        "target": 0.0,
-                        "target_velocity": 45.0
+                      "use_spring": false,
+                      "spring": {
+                        "spring": 100.0,
+                        "damper": 50.0,
+                        "target_position": 0.0
                       },
-                      "y_drive": {
-                        "damping": 0.0,
-                        "force_limit": 3.40282347E+38,
-                        "lower_limit": 0.0,
-                        "upper_limit": 0.0,
-                        "stiffness": 0.0,
-                        "target": 0.0,
-                        "target_velocity": 0.0
+                      "use_motor": false,
+                      "motor": {
+                        "target_velocity": 0.0,
+                        "force": 10.0,
+                        "free_spin": false
                       },
-                      "z_drive": {
-                        "damping": 0.0,
-                        "force_limit": 3.40282347E+38,
-                        "lower_limit": 0.0,
-                        "upper_limit": 0.0,
-                        "stiffness": 0.0,
-                        "target": 0.0,
-                        "target_velocity": 0.0
-                      }
+                      "use_limits": false,
+                      "limits": {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "bounciness": 0.0,
+                        "bounce_min_velocity": 0.2,
+                        "contact_distance": 0.0
+                      },
+                      "connected_occurrence": "wrist-1",
+                      "parent_occurrence": "elbow"
                     }
                   ],
                   "visuals": [
                     {
                       "type": "primitive.mesh",
-                      "name": "size-4-joint_visual_",
+                      "name": "size-2-joint_visual_",
                       "has_collisions": false,
                       "translation": [
-                        0.0,
-                        0.0,
-                        -0.176000059
+                        0.0100000128,
+                        0.0138502754,
+                        0.6379001
                       ],
                       "rotation_quaternion": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
+                        -1.0,
+                        -1.065814E-14,
+                        -1.05879106E-22,
+                        0.0
                       ],
                       "scale": [
                         -1.0,
@@ -575,31 +781,31 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          -1.80751085E-05,
-                          0.005407788,
-                          0.00138993561
+                          -0.000140544027,
+                          0.06518407,
+                          0.004050866
                         ],
                         "extents": [
-                          0.07516342,
-                          0.0805922151,
-                          0.08861007
+                          0.0454888642,
+                          0.05938407,
+                          0.0499491356
                         ]
                       }
                     },
                     {
                       "type": "primitive.mesh",
-                      "name": "size-3-joint_visual_",
+                      "name": "lower-arm_visual_",
                       "has_collisions": false,
                       "translation": [
-                        -0.0100000193,
-                        0.546400547,
-                        -0.101840138
+                        0.0142755527,
+                        -0.0314135626,
+                        0.378976136
                       ],
                       "rotation_quaternion": [
-                        0.7071068,
-                        7.10542736E-15,
-                        7.10542736E-15,
-                        -0.7071068
+                        -0.7071068,
+                        -3.55271368E-15,
+                        -0.7071068,
+                        7.10542736E-15
                       ],
                       "scale": [
                         -1.0,
@@ -608,31 +814,31 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          -0.0100024287,
-                          0.0745239258,
-                          0.0628492758
+                          0.0207261965,
+                          0.0222361814,
+                          -0.00427554
                         ],
                         "extents": [
-                          0.0599891022,
-                          0.06847392,
-                          0.06345073
+                          0.225649983,
+                          0.058,
+                          0.058
                         ]
                       }
                     },
                     {
                       "type": "primitive.mesh",
-                      "name": "upper-arm_visual_",
+                      "name": "size-3-elbow_visual_",
                       "has_collisions": false,
                       "translation": [
-                        0.0,
-                        0.0789999962,
-                        -0.176
+                        -0.00389776751,
+                        -0.0563208163,
+                        0.0846814141
                       ],
                       "rotation_quaternion": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
+                        -0.5,
+                        -0.5,
+                        0.5,
+                        0.5
                       ],
                       "scale": [
                         -1.0,
@@ -641,14 +847,14 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          0.0,
-                          0.23709999,
-                          0.0
+                          0.00151552632,
+                          0.01525671,
+                          -0.013897771
                         ],
                         "extents": [
-                          0.075,
-                          0.2303,
-                          0.075
+                          0.06388664,
+                          0.063175,
+                          0.0600000024
                         ]
                       }
                     }
@@ -656,19 +862,19 @@
                   "collisions": [
                     {
                       "type": "primitive.mesh",
-                      "name": "size-4-joint_collision_0",
+                      "name": "size-2-joint_collision_0",
                       "has_collisions": true,
                       "is_convex": true,
                       "translation": [
-                        0.0,
-                        0.0,
-                        -0.176000059
+                        0.0100000128,
+                        0.0138502754,
+                        0.6379001
                       ],
                       "rotation_quaternion": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
+                        -1.0,
+                        -1.065814E-14,
+                        -1.05879106E-22,
+                        0.0
                       ],
                       "scale": [
                         -1.0,
@@ -677,32 +883,32 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          0.0006005019,
-                          0.0049864985,
-                          0.001389999
+                          0.00010349974,
+                          0.06519,
+                          0.004059501
                         ],
                         "extents": [
-                          0.0759515,
-                          0.0815774947,
-                          0.0900170058
+                          0.0461875,
+                          0.0603210032,
+                          0.0509005
                         ]
                       }
                     },
                     {
                       "type": "primitive.mesh",
-                      "name": "size-3-joint_collision_0",
+                      "name": "lower-arm_collision_0",
                       "has_collisions": true,
                       "is_convex": true,
                       "translation": [
-                        -0.0100000193,
-                        0.546400547,
-                        -0.101840138
+                        0.0142755527,
+                        -0.0314135626,
+                        0.378976136
                       ],
                       "rotation_quaternion": [
-                        0.7071068,
-                        7.10542736E-15,
-                        7.10542736E-15,
-                        -0.7071068
+                        -0.7071068,
+                        -3.55271368E-15,
+                        -0.7071068,
+                        7.10542736E-15
                       ],
                       "scale": [
                         -1.0,
@@ -711,32 +917,32 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          -0.00979349948,
-                          0.0757665038,
-                          0.061346
+                          0.0151594952,
+                          0.022678,
+                          -0.00383399986
                         ],
                         "extents": [
-                          0.0608645,
-                          0.0683185,
-                          0.063034
+                          0.22170651,
+                          0.047078,
+                          0.047078
                         ]
                       }
                     },
                     {
                       "type": "primitive.mesh",
-                      "name": "upper-arm_collision_0",
+                      "name": "lower-arm_collision_1",
                       "has_collisions": true,
                       "is_convex": true,
                       "translation": [
-                        0.0,
-                        0.0789999962,
-                        -0.176
+                        0.0142755527,
+                        -0.0314135626,
+                        0.378976136
                       ],
                       "rotation_quaternion": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
+                        -0.7071068,
+                        -3.55271368E-15,
+                        -0.7071068,
+                        7.10542736E-15
                       ],
                       "scale": [
                         -1.0,
@@ -745,32 +951,32 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          -0.00176400132,
-                          0.242911488,
-                          0.001766501
+                          0.239883,
+                          0.022677999,
+                          -0.00383400172
                         ],
                         "extents": [
-                          0.059913002,
-                          0.2263605,
-                          0.0599154979
+                          0.008116998,
+                          0.0600649975,
+                          0.060065
                         ]
                       }
                     },
                     {
                       "type": "primitive.mesh",
-                      "name": "upper-arm_collision_1",
+                      "name": "size-3-elbow_collision_0",
                       "has_collisions": true,
                       "is_convex": true,
                       "translation": [
-                        0.0,
-                        0.0789999962,
-                        -0.176
+                        -0.00389776751,
+                        -0.0563208163,
+                        0.0846814141
                       ],
                       "rotation_quaternion": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
+                        -0.5,
+                        -0.5,
+                        0.5,
+                        0.5
                       ],
                       "scale": [
                         -1.0,
@@ -779,25 +985,25 @@
                       ],
                       "bounding_box": {
                         "center": [
-                          0.000105500221,
-                          0.0139475,
-                          -0.000105500221
+                          0.00151449814,
+                          0.0149545,
+                          -0.0140675008
                         ],
                         "extents": [
-                          0.0767515,
-                          0.009018499,
-                          0.0767515
+                          0.0648995042,
+                          0.0638865,
+                          0.0608325
                         ]
                       }
                     }
                   ],
                   "children": [
                     {
-                      "name": "elbow",
+                      "name": "wrist-1",
                       "translation": [
-                        -0.0100000147,
-                        0.5464004,
-                        -0.101840258
+                        0.0100000128,
+                        0.6378999,
+                        -0.0138503313
                       ],
                       "rotation_quaternion": [
                         0.0,
@@ -810,79 +1016,70 @@
                         1.0,
                         1.0
                       ],
-                      "parent_name": "shoulder_lift",
+                      "parent_name": "elbow",
+                      "rigidbody": {
+                        "mass": 1.0,
+                        "drag": 0.0,
+                        "angular_drag": 0.05,
+                        "use_gravity": false,
+                        "is_kinematic": false
+                      },
                       "joints": [
                         {
-                          "name": "wrist_1_joint",
-                          "type": "joint.articulated_body.revolutejoint",
-                          "owner_occurrence": "elbow",
-                          "parent_occurrence": "shoulder_lift",
-                          "mass": 1.0,
-                          "use_gravity": true,
-                          "world_axis": [
-                            5.96046448E-08,
+                          "name": "wrist_2_joint",
+                          "type": "joint.hinge",
+                          "anchor": [
                             0.0,
-                            0.99999994
+                            0.062,
+                            -0.05
                           ],
                           "world_anchor": [
-                            -0.0100000147,
-                            1.31440055,
-                            -0.109960236
+                            -1.86264515E-09,
+                            1.37430036,
+                            -0.165690586
                           ],
-                          "anchor_position": [
+                          "axis": [
                             0.0,
-                            0.64,
-                            -0.008119978
+                            1.0,
+                            0.0
                           ],
-                          "anchor_rotation_quaternion": [
+                          "world_axis": [
                             0.0,
-                            0.707106769,
-                            0.0,
-                            -0.707106769
+                            1.0,
+                            0.0
                           ],
-                          "parent_anchor_position": [
-                            -0.0100000147,
-                            1.18640053,
-                            -0.109960236
-                          ],
-                          "parent_anchor_rotation_quaternion": [
+                          "connected_anchor": [
                             0.0,
-                            0.707106769,
-                            0.0,
-                            -0.707106769
+                            -0.005500078,
+                            -0.00180022418
                           ],
-                          "linear_damping": 0.05,
-                          "angular_damping": 0.05,
-                          "joint_friction": 0.05,
-                          "is_immovable": false,
-                          "is_root": false,
-                          "x_drive": {
-                            "damping": 100.0,
-                            "force_limit": 3.40282347E+38,
-                            "lower_limit": 0.0,
-                            "upper_limit": 0.0,
-                            "stiffness": 100000.0,
-                            "target": 0.0,
-                            "target_velocity": 45.0
+                          "world_connected_anchor": [
+                            -1.86264515E-09,
+                            1.30680025,
+                            -0.117490813
+                          ],
+                          "use_spring": false,
+                          "spring": {
+                            "spring": 100.0,
+                            "damper": 50.0,
+                            "target_position": 0.0
                           },
-                          "y_drive": {
-                            "damping": 0.0,
-                            "force_limit": 3.40282347E+38,
-                            "lower_limit": 0.0,
-                            "upper_limit": 0.0,
-                            "stiffness": 0.0,
-                            "target": 0.0,
-                            "target_velocity": 0.0
+                          "use_motor": false,
+                          "motor": {
+                            "target_velocity": 0.0,
+                            "force": 10.0,
+                            "free_spin": false
                           },
-                          "z_drive": {
-                            "damping": 0.0,
-                            "force_limit": 3.40282347E+38,
-                            "lower_limit": 0.0,
-                            "upper_limit": 0.0,
-                            "stiffness": 0.0,
-                            "target": 0.0,
-                            "target_velocity": 0.0
-                          }
+                          "use_limits": false,
+                          "limits": {
+                            "min": 0.0,
+                            "max": 0.0,
+                            "bounciness": 0.0,
+                            "bounce_min_velocity": 0.2,
+                            "contact_distance": 0.0
+                          },
+                          "connected_occurrence": "wrist-2",
+                          "parent_occurrence": "wrist-1"
                         }
                       ],
                       "visuals": [
@@ -891,15 +1088,15 @@
                           "name": "size-2-joint_visual_",
                           "has_collisions": false,
                           "translation": [
-                            0.0100000128,
-                            0.0138502754,
-                            0.6379001
+                            0.0,
+                            -0.0481998,
+                            -0.06750013
                           ],
                           "rotation_quaternion": [
-                            -1.0,
-                            -1.065814E-14,
-                            -1.05879106E-22,
-                            0.0
+                            3.09086161E-08,
+                            0.7071068,
+                            0.7071068,
+                            -3.09086232E-08
                           ],
                           "scale": [
                             -1.0,
@@ -918,72 +1115,6 @@
                               0.0499491356
                             ]
                           }
-                        },
-                        {
-                          "type": "primitive.mesh",
-                          "name": "lower-arm_visual_",
-                          "has_collisions": false,
-                          "translation": [
-                            0.0142755527,
-                            -0.0314135626,
-                            0.378976136
-                          ],
-                          "rotation_quaternion": [
-                            -0.7071068,
-                            -3.55271368E-15,
-                            -0.7071068,
-                            7.10542736E-15
-                          ],
-                          "scale": [
-                            -1.0,
-                            1.0,
-                            1.0
-                          ],
-                          "bounding_box": {
-                            "center": [
-                              0.0207261965,
-                              0.0222361814,
-                              -0.00427554
-                            ],
-                            "extents": [
-                              0.225649983,
-                              0.058,
-                              0.058
-                            ]
-                          }
-                        },
-                        {
-                          "type": "primitive.mesh",
-                          "name": "size-3-elbow_visual_",
-                          "has_collisions": false,
-                          "translation": [
-                            -0.00389776751,
-                            -0.0563208163,
-                            0.0846814141
-                          ],
-                          "rotation_quaternion": [
-                            -0.5,
-                            -0.5,
-                            0.5,
-                            0.5
-                          ],
-                          "scale": [
-                            -1.0,
-                            1.0,
-                            1.0
-                          ],
-                          "bounding_box": {
-                            "center": [
-                              0.00151552632,
-                              0.01525671,
-                              -0.013897771
-                            ],
-                            "extents": [
-                              0.06388664,
-                              0.063175,
-                              0.0600000024
-                            ]
-                          }
                         }
                       ],
                       "collisions": [
@@ -993,15 +1124,15 @@
                           "has_collisions": true,
                           "is_convex": true,
                           "translation": [
-                            0.0100000128,
-                            0.0138502754,
-                            0.6379001
+                            0.0,
+                            -0.0481998,
+                            -0.06750013
                           ],
                           "rotation_quaternion": [
-                            -1.0,
-                            -1.065814E-14,
-                            -1.05879106E-22,
-                            0.0
+                            3.09086161E-08,
+                            0.7071068,
+                            0.7071068,
+                            -3.09086232E-08
                           ],
                           "scale": [
                             -1.0,
@@ -1020,117 +1151,15 @@
                               0.0509005
                             ]
                           }
-                        },
-                        {
-                          "type": "primitive.mesh",
-                          "name": "lower-arm_collision_0",
-                          "has_collisions": true,
-                          "is_convex": true,
-                          "translation": [
-                            0.0142755527,
-                            -0.0314135626,
-                            0.378976136
-                          ],
-                          "rotation_quaternion": [
-                            -0.7071068,
-                            -3.55271368E-15,
-                            -0.7071068,
-                            7.10542736E-15
-                          ],
-                          "scale": [
-                            -1.0,
-                            1.0,
-                            1.0
-                          ],
-                          "bounding_box": {
-                            "center": [
-                              0.0151594952,
-                              0.022678,
-                              -0.00383399986
-                            ],
-                            "extents": [
-                              0.22170651,
-                              0.047078,
-                              0.047078
-                            ]
-                          }
-                        },
-                        {
-                          "type": "primitive.mesh",
-                          "name": "lower-arm_collision_1",
-                          "has_collisions": true,
-                          "is_convex": true,
-                          "translation": [
-                            0.0142755527,
-                            -0.0314135626,
-                            0.378976136
-                          ],
-                          "rotation_quaternion": [
-                            -0.7071068,
-                            -3.55271368E-15,
-                            -0.7071068,
-                            7.10542736E-15
-                          ],
-                          "scale": [
-                            -1.0,
-                            1.0,
-                            1.0
-                          ],
-                          "bounding_box": {
-                            "center": [
-                              0.239883,
-                              0.022677999,
-                              -0.00383400172
-                            ],
-                            "extents": [
-                              0.008116998,
-                              0.0600649975,
-                              0.060065
-                            ]
-                          }
-                        },
-                        {
-                          "type": "primitive.mesh",
-                          "name": "size-3-elbow_collision_0",
-                          "has_collisions": true,
-                          "is_convex": true,
-                          "translation": [
-                            -0.00389776751,
-                            -0.0563208163,
-                            0.0846814141
-                          ],
-                          "rotation_quaternion": [
-                            -0.5,
-                            -0.5,
-                            0.5,
-                            0.5
-                          ],
-                          "scale": [
-                            -1.0,
-                            1.0,
-                            1.0
-                          ],
-                          "bounding_box": {
-                            "center": [
-                              0.00151449814,
-                              0.0149545,
-                              -0.0140675008
-                            ],
-                            "extents": [
-                              0.0648995042,
-                              0.0638865,
-                              0.0608325
-                            ]
-                          }
                         }
                       ],
                       "children": [
                         {
-                          "name": "wrist-1",
+                          "name": "wrist-2",
                           "translation": [
-                            0.0100000128,
-                            0.6378999,
-                            -0.0138503313
+                            0.0,
+                            0.0675001144,
+                            -0.0481997728
                           ],
                           "rotation_quaternion": [
                             0.0,
@@ -1143,79 +1172,70 @@
                             1.0,
                             1.0
                           ],
-                          "parent_name": "elbow",
+                          "parent_name": "wrist-1",
+                          "rigidbody": {
+                            "mass": 1.0,
+                            "drag": 0.0,
+                            "angular_drag": 0.05,
+                            "use_gravity": false,
+                            "is_kinematic": false
+                          },
                           "joints": [
                             {
-                              "name": "wrist_2_joint",
-                              "type": "joint.articulated_body.revolutejoint",
-                              "owner_occurrence": "wrist-1",
-                              "parent_occurrence": "elbow",
-                              "mass": 1.0,
-                              "use_gravity": true,
-                              "world_axis": [
-                                5.96046448E-08,
+                              "name": "wrist_3_joint",
+                              "type": "joint.hinge",
+                              "anchor": [
                                 0.0,
-                                -0.99999994
+                                0.05,
+                                -0.062
                               ],
                               "world_anchor": [
                                 -1.86264515E-09,
-                                1.31230032,
-                                -0.105690591
+                                1.42980039,
+                                -0.225890368
                               ],
-                              "anchor_position": [
+                              "axis": [
                                 0.0,
                                 0.0,
-                                0.01
+                                -1.0
                               ],
-                              "anchor_rotation_quaternion": [
+                              "world_axis": [
                                 0.0,
-                                0.707106769,
                                 0.0,
-                                0.707106769
+                                -1.0
                               ],
-                              "parent_anchor_position": [
-                                0.0100000128,
-                                0.6378999,
-                                -0.00385033339
+                              "connected_anchor": [
+                                4.656613E-09,
+                                0.005500227,
+                                -0.00180029962
                               ],
-                              "parent_anchor_rotation_quaternion": [
-                                0.0,
-                                0.707106769,
-                                0.0,
-                                0.707106769
+                              "world_connected_anchor": [
+                                2.79396772E-09,
+                                1.38530052,
+                                -0.16569066
                               ],
-                              "linear_damping": 0.05,
-                              "angular_damping": 0.05,
-                              "joint_friction": 0.05,
-                              "is_immovable": false,
-                              "is_root": false,
-                              "x_drive": {
-                                "damping": 100.0,
-                                "force_limit": 3.40282347E+38,
-                                "lower_limit": 0.0,
-                                "upper_limit": 0.0,
-                                "stiffness": 100000.0,
-                                "target": 0.0,
-                                "target_velocity": 45.0
+                              "use_spring": false,
+                              "spring": {
+                                "spring": 100.0,
+                                "damper": 50.0,
+                                "target_position": 0.0
                               },
-                              "y_drive": {
-                                "damping": 0.0,
-                                "force_limit": 3.40282347E+38,
-                                "lower_limit": 0.0,
-                                "upper_limit": 0.0,
-                                "stiffness": 0.0,
-                                "target": 0.0,
-                                "target_velocity": 0.0
+                              "use_motor": false,
+                              "motor": {
+                                "target_velocity": 0.0,
+                                "force": 10.0,
+                                "free_spin": false
                               },
-                              "z_drive": {
-                                "damping": 0.0,
-                                "force_limit": 3.40282347E+38,
-                                "lower_limit": 0.0,
-                                "upper_limit": 0.0,
-                                "stiffness": 0.0,
-                                "target": 0.0,
-                                "target_velocity": 0.0
-                              }
+                              "use_limits": false,
+                              "limits": {
+                                "min": 0.0,
+                                "max": 0.0,
+                                "bounciness": 0.0,
+                                "bounce_min_velocity": 0.2,
+                                "contact_distance": 0.0
+                              },
+                              "connected_occurrence": "wrist-3",
+                              "parent_occurrence": "wrist-2"
                             }
                           ],
                           "visuals": [
@@ -1225,13 +1245,13 @@
                               "has_collisions": false,
                               "translation": [
                                 0.0,
-                                -0.0481998,
-                                -0.06750013
+                                -0.0481996536,
+                                -0.06750023
                               ],
                               "rotation_quaternion": [
-                                3.09086161E-08,
-                                0.7071068,
-                                0.7071068,
+                                -3.09086161E-08,
+                                -0.7071068,
+                                -0.7071068,
                                 -3.09086232E-08
                               ],
                               "scale": [
@@ -1261,13 +1281,13 @@
                               "is_convex": true,
                               "translation": [
                                 0.0,
-                                -0.0481998,
-                                -0.06750013
+                                -0.0481996536,
+                                -0.06750023
                               ],
                               "rotation_quaternion": [
-                                3.09086161E-08,
-                                0.7071068,
-                                0.7071068,
+                                -3.09086161E-08,
+                                -0.7071068,
+                                -0.7071068,
                                 -3.09086232E-08
                               ],
                               "scale": [
@@ -1291,280 +1311,120 @@
                           ],
                           "children": [
                             {
-                              "name": "wrist-2",
+                              "name": "wrist-3",
                               "translation": [
-                                0.0,
-                                0.0675001144,
-                                -0.0481997728
+                                -4.656613E-09,
+                                0.0481996536,
+                                -0.06750023
                               ],
                               "rotation_quaternion": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
+                                0.7071068,
+                                4.11768148E-31,
+                                -1.04056579E-15,
+                                0.7071068
                               ],
                               "scale": [
                                 1.0,
                                 1.0,
                                 1.0
                               ],
-                              "parent_name": "wrist-1",
-                              "joints": [
-                                {
-                                  "name": "wrist_3_joint",
-                                  "type": "joint.articulated_body.revolutejoint",
-                                  "owner_occurrence": "wrist-2",
-                                  "parent_occurrence": "wrist-1",
-                                  "mass": 1.0,
-                                  "use_gravity": true,
-                                  "world_axis": [
-                                    5.96046448E-08,
-                                    0.0,
-                                    -0.99999994
-                                  ],
-                                  "world_anchor": [
-                                    9.313226E-10,
-                                    1.42480028,
-                                    -0.225890368
-                                  ],
-                                  "anchor_position": [
-                                    2.61351474E-09,
-                                    0.045,
-                                    -0.062
-                                  ],
-                                  "anchor_rotation_quaternion": [
-                                    0.0,
-                                    0.707106769,
-                                    0.0,
-                                    0.707106769
-                                  ],
-                                  "parent_anchor_position": [
-                                    2.79396772E-09,
-                                    0.112499952,
-                                    -0.110199779
-                                  ],
-                                  "parent_anchor_rotation_quaternion": [
-                                    0.0,
-                                    0.707106769,
-                                    0.0,
-                                    0.707106769
-                                  ],
-                                  "linear_damping": 0.05,
-                                  "angular_damping": 0.05,
-                                  "joint_friction": 0.05,
-                                  "is_immovable": false,
-                                  "is_root": false,
-                                  "x_drive": {
-                                    "damping": 100.0,
-                                    "force_limit": 3.40282347E+38,
-                                    "lower_limit": 0.0,
-                                    "upper_limit": 0.0,
-                                    "stiffness": 100000.0,
-                                    "target": 0.0,
-                                    "target_velocity": 45.0
-                                  },
-                                  "y_drive": {
-                                    "damping": 0.0,
-                                    "force_limit": 3.40282347E+38,
-                                    "lower_limit": 0.0,
-                                    "upper_limit": 0.0,
-                                    "stiffness": 0.0,
-                                    "target": 0.0,
-                                    "target_velocity": 0.0
-                                  },
-                                  "z_drive": {
-                                    "damping": 0.0,
-                                    "force_limit": 3.40282347E+38,
-                                    "lower_limit": 0.0,
-                                    "upper_limit": 0.0,
-                                    "stiffness": 0.0,
-                                    "target": 0.0,
-                                    "target_velocity": 0.0
-                                  }
-                                }
-                              ],
-                              "visuals": [
-                                {
-                                  "type": "primitive.mesh",
-                                  "name": "size-2-joint_visual_",
-                                  "has_collisions": false,
-                                  "translation": [
-                                    0.0,
-                                    -0.0481996536,
-                                    -0.06750023
-                                  ],
-                                  "rotation_quaternion": [
-                                    -3.09086161E-08,
-                                    -0.7071068,
-                                    -0.7071068,
-                                    -3.09086232E-08
-                                  ],
-                                  "scale": [
-                                    -1.0,
-                                    1.0,
-                                    1.0
-                                  ],
-                                  "bounding_box": {
-                                    "center": [
-                                      -0.000140544027,
-                                      0.06518407,
-                                      0.004050866
-                                    ],
-                                    "extents": [
-                                      0.0454888642,
-                                      0.05938407,
-                                      0.0499491356
-                                    ]
-                                  }
-                                }
-                              ],
-                              "collisions": [
-                                {
-                                  "type": "primitive.mesh",
-                                  "name": "size-2-joint_collision_0",
-                                  "has_collisions": true,
-                                  "is_convex": true,
-                                  "translation": [
-                                    0.0,
-                                    -0.0481996536,
-                                    -0.06750023
-                                  ],
-                                  "rotation_quaternion": [
-                                    -3.09086161E-08,
-                                    -0.7071068,
-                                    -0.7071068,
-                                    -3.09086232E-08
-                                  ],
-                                  "scale": [
-                                    -1.0,
-                                    1.0,
-                                    1.0
-                                  ],
-                                  "bounding_box": {
-                                    "center": [
-                                      0.00010349974,
-                                      0.06519,
-                                      0.004059501
-                                    ],
-                                    "extents": [
-                                      0.0461875,
-                                      0.0603210032,
-                                      0.0509005
-                                    ]
-                                  }
-                                }
-                              ],
+                              "parent_name": "wrist-2",
+                              "rigidbody": {
+                                "mass": 1.0,
+                                "drag": 0.0,
+                                "angular_drag": 0.05,
+                                "use_gravity": false,
+                                "is_kinematic": false
+                              },
                               "children": [
                                 {
-                                  "name": "wrist-3",
+                                  "name": "tool-flange-occurrence",
                                   "translation": [
-                                    -4.656613E-09,
-                                    0.0481996536,
-                                    -0.06750023
+                                    0.06721886,
+                                    -0.0228736382,
+                                    -0.0263507366
                                   ],
                                   "rotation_quaternion": [
-                                    0.7071068,
-                                    4.11768148E-31,
-                                    -1.04056579E-15,
-                                    0.7071068
+                                    0.0,
+                                    0.0,
+                                    -1.77635642E-15,
+                                    1.0
                                   ],
                                   "scale": [
                                     1.0,
                                     1.0,
                                     1.0
                                   ],
-                                  "parent_name": "wrist-2",
-                                  "children": [
+                                  "parent_name": "wrist-3",
+                                  "visuals": [
                                     {
-                                      "name": "tool-flange-occurrence",
+                                      "type": "primitive.mesh",
+                                      "name": "tool-flange_visual_",
+                                      "has_collisions": false,
                                       "translation": [
-                                        0.06721886,
-                                        -0.0228736382,
-                                        -0.0263507366
+                                        0.0,
+                                        0.0,
+                                        0.0
                                       ],
                                       "rotation_quaternion": [
                                         0.0,
                                         0.0,
-                                        -1.77635642E-15,
+                                        0.0,
                                         1.0
                                       ],
                                       "scale": [
-                                        1.0,
+                                        -1.0,
                                         1.0,
                                         1.0
                                       ],
-                                      "parent_name": "wrist-3",
-                                      "visuals": [
-                                        {
-                                          "type": "primitive.mesh",
-                                          "name": "tool-flange_visual_",
-                                          "has_collisions": false,
-                                          "translation": [
-                                            0.0,
-                                            0.0,
-                                            0.0
-                                          ],
-                                          "rotation_quaternion": [
-                                            0.0,
-                                            0.0,
-                                            0.0,
-                                            1.0
-                                          ],
-                                          "scale": [
-                                            -1.0,
-                                            1.0,
-                                            1.0
-                                          ],
-                                          "bounding_box": {
-                                            "center": [
-                                              0.06721881,
-                                              0.01342369,
-                                              0.0264006
-                                            ],
-                                            "extents": [
-                                              0.04499998,
-                                              0.01525,
-                                              0.04505
-                                            ]
-                                          }
-                                        }
+                                      "bounding_box": {
+                                        "center": [
+                                          0.06721881,
+                                          0.01342369,
+                                          0.0264006
+                                        ],
+                                        "extents": [
+                                          0.04499998,
+                                          0.01525,
+                                          0.04505
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  "collisions": [
+                                    {
+                                      "type": "primitive.mesh",
+                                      "name": "tool-flange_collision_0",
+                                      "has_collisions": true,
+                                      "is_convex": true,
+                                      "translation": [
+                                        0.0,
+                                        0.0,
+                                        0.0
                                       ],
-                                      "collisions": [
-                                        {
-                                          "type": "primitive.mesh",
-                                          "name": "tool-flange_collision_0",
-                                          "has_collisions": true,
-                                          "is_convex": true,
-                                          "translation": [
-                                            0.0,
-                                            0.0,
-                                            0.0
-                                          ],
-                                          "rotation_quaternion": [
-                                            0.0,
-                                            0.0,
-                                            0.0,
-                                            1.0
-                                          ],
-                                          "scale": [
-                                            -1.0,
-                                            1.0,
-                                            1.0
-                                          ],
-                                          "bounding_box": {
-                                            "center": [
-                                              0.067123,
-                                              0.0129924994,
-                                              0.0257775
-                                            ],
-                                            "extents": [
-                                              0.044354,
-                                              0.0154195,
-                                              0.0450275
-                                            ]
-                                          }
-                                        }
-                                      ]
+                                      "rotation_quaternion": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                      ],
+                                      "scale": [
+                                        -1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "bounding_box": {
+                                        "center": [
+                                          0.067123,
+                                          0.0129924994,
+                                          0.0257775
+                                        ],
+                                        "extents": [
+                                          0.044354,
+                                          0.0154195,
+                                          0.0450275
+                                        ]
+                                      }
                                     }
                                   ]
                                 }

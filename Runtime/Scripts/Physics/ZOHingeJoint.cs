@@ -86,34 +86,6 @@ namespace ZO.Physics {
 
         #endregion
 
-        /// <summary>
-        /// Set and get the angular velocity of the hinge joint.  In degrees.
-        /// </summary>
-        /// <value>Angular velocity in degrees</value>
-        // public float AngularVelocityDegrees {
-        //     set {
-        //         JointMotor motor = _hingeJoint.motor;
-        //         motor.targetVelocity = value;
-        //         motor.freeSpin = false;
-        //         _hingeJoint.motor = motor;
-        //         _hingeJoint.useMotor = true;
-        //         _hingeJoint.useSpring = false;
-        //     }
-
-        //     get {
-        //         return UnityHingeJoint.velocity;
-        //     }
-        // }
-
-        /// <summary>
-        /// The current angle in degrees of the hinge joint relative to it's start position.
-        /// </summary>
-        /// <value></value>
-        // public float AngleDegrees {
-        //     get {
-        //         return UnityHingeJoint.angle;
-        //     }
-        // }
 
         /// <summary>
         /// Read only maximum torque of this hinge joint motor.
@@ -127,10 +99,16 @@ namespace ZO.Physics {
 
 
 
+        /// <summary>
+        /// Reset is a MonoBehavior method that gets called on creation of this component.
+        /// </summary>
         private void Reset() {
             CreateRequirements();
         }
 
+        /// <summary>
+        /// Creates the requirements for the ZOHingeJoint including the Unity `HingeJoint`
+        /// </summary>
         public void CreateRequirements() {
             // when creating this a ZOHingeJoint we need to create an actual Unity Hinge Joint.
             if (UnityHingeJoint == null) { // create Unity Hinge Joint
@@ -190,6 +168,12 @@ namespace ZO.Physics {
         }
 
 
+        /// <summary>
+        /// Serializes the ZOHingeJoint to ZOSim JSON.
+        /// </summary>
+        /// <param name="documentRoot"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
             // calculate the world anchor positions relative to the document root transform
             // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?

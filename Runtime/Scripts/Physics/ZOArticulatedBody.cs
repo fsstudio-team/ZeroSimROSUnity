@@ -110,6 +110,8 @@ namespace ZO.Physics {
             }
 
             set {
+                // TODO: check if running on Unity main thread.  See: https://stackoverflow.com/questions/26452609/find-out-if-im-on-the-unity-thread
+                // Either error out or do some deferred running system thing? See: https://answers.unity.com/questions/542115/is-there-any-way-to-use-coroutines-with-anonymous.html
                 ArticulationDrive drive = UnityArticulationBody.xDrive;
                 drive.target = value * Mathf.Rad2Deg; // remember to convert from radians to degrees
                 UnityArticulationBody.xDrive = drive;
