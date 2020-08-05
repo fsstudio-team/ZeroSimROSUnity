@@ -6,7 +6,10 @@ namespace ZO.ROS.MessageTypes.Geometry {
 
     public class Vector3Message : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Vector3"; } }
+        public string MessageType { get { return Vector3Message.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Vector3";
+
         public double x { get; set; }
         public double y { get; set; }
         public double z { get; set; }
@@ -69,8 +72,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Quaternion.html
     /// </summary>
     public class QuaternionMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Quaternion"; } }
+        public string MessageType { get { return QuaternionMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Quaternion";
+
 
         public double x { get; set; }
         public double y { get; set; }
@@ -136,7 +143,9 @@ namespace ZO.ROS.MessageTypes.Geometry {
     public class TwistMessage : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Twist"; } }
+        public string MessageType { get { return TwistMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Twist";
 
         public Vector3Message linear { get; set; }
         public Vector3Message angular { get; set; }
@@ -169,8 +178,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/TwistWithCovariance.html
     /// </summary>
     public class TwistWithCovarianceMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/TwistWithCovariance"; } }
+        public string MessageType { get { return TwistWithCovarianceMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/TwistWithCovariance";
+
 
         //  This expresses velocity in free space with uncertainty.
         public TwistMessage twist { get; set; }
@@ -197,8 +210,11 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Transform.html
     /// </summary>
     public class TransformMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Transform"; } }
+        public string MessageType { get { return TransformMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Transform";
 
         public Vector3Message translation { get; set; }
         public QuaternionMessage rotation { get; set; }
@@ -240,7 +256,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
     }
 
     /// <summary>
-    /// # This expresses a transform from coordinate frame header.frame_id
+    /// This expresses a transform from coordinate frame header.frame_id
     /// to the coordinate frame child_frame_id
     ///
     /// This message is mostly used by the 
@@ -249,8 +265,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/TransformStamped.html
     /// </summary>
     public class TransformStampedMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/TransformStamped"; } }
+        public string MessageType { get { return TransformStampedMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/TransformStamped";
+
 
         public string child_frame_id { get; set; }
         public HeaderMessage header { get; set; }
@@ -296,8 +316,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Point.html
     /// </summary>
     public class PointMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Point"; } }
+        public string MessageType { get { return PointMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Point";
+
 
         public double x { get; set; }
         public double y { get; set; }
@@ -368,8 +392,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Pose.html
     /// </summary>
     public class PoseMessage : ZOROSMessageInterface {
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/Pose"; } }
+        public string MessageType { get { return PoseMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/Pose";
+
 
         //  A representation of pose in free space, composed of position and orientation. 
         public PointMessage position { get; set; }
@@ -423,9 +451,10 @@ namespace ZO.ROS.MessageTypes.Geometry {
     /// </summary>
     public class PoseWithCovarianceMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "geometry_msgs/PoseWithCovariance"; } }
+        public string MessageType { get { return PoseWithCovarianceMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/PoseWithCovariance";
 
-        public const string RosMessageName = "geometry_msgs/PoseWithCovariance";
 
         //  This represents a pose in free space with uncertainty.
         public PoseMessage pose { get; set; }

@@ -27,6 +27,10 @@ namespace ZO.Import {
             set { _zeroSimProjectFile = value; }
         }
 
+        /// <summary>
+        /// The name of the ZoSim document without the .zosim extension.
+        /// </summary>
+        /// <value></value>
         private string DocumentName {
             get; set;
         }
@@ -36,9 +40,24 @@ namespace ZO.Import {
             get; set;
         }
 
-        // ExportDirectoryPath + document name
+
+        /// <summary>
+        /// User selected ExportDirectoryPath + ZoSim document name.
+        /// NOTE:  This is absolute file system path. Use RelativeRootExportDirectory for the Unity relative path.
+        /// </summary>
+        /// <value></value>
         private string RootExportDirectory {
             get { return Path.Combine(ExportDirectoryPath, DocumentName); }
+        }
+
+        /// <summary>
+        /// User selected ExportDirectoryPath + ZoSim document name relative to the Unity "/Assets" directory.
+        /// </summary>
+        /// <value></value>
+        private string RelativeRootExportDirectory {
+            get {
+                return MakeRelativePath(Application.dataPath, RootExportDirectory);
+            }
         }
 
         // RootExportDirectory + "visual_meshes"
@@ -51,10 +70,19 @@ namespace ZO.Import {
             get { return Path.Combine(RootExportDirectory, "collision_meshes"); }
         }
 
+
+        /// <summary>
+        /// The directory that is importing from.
+        /// </summary>
+        /// <value></value>
         private string ImportDirectory {
             get { return Path.GetDirectoryName(ZeroSimProjectFile); }
         }
 
+        /// <summary>
+        /// The ZeroSim JSON
+        /// </summary>
+        /// <value></value>
         private JObject ZeroSimJSON {
             get; set;
         }
@@ -93,6 +121,7 @@ namespace ZO.Import {
             }
             Debug.Log("INFO: Zero Sim Import Project File: " + ZeroSimProjectFile);
 
+            // Parse the ZoSim JSON
             ZeroSimJSON = JObject.Parse(File.ReadAllText(ZeroSimProjectFile));
             DocumentName = ZeroSimJSON["document_name"].Value<string>();
 
@@ -119,13 +148,14 @@ namespace ZO.Import {
             // save out scales to JSON 
             ZeroSimJSON["position_transform_scale"] = new JArray(_positionTransformScale.x, _positionTransformScale.y, _positionTransformScale.z);
             ZeroSimJSON["mesh_transform_scale"] = new JArray(_meshTransformScale.x, _meshTransformScale.y, _meshTransformScale.z);
+            ZeroSimJSON["asset_bundle"] = DocumentName.ToLower();
 
             // create the root game object that contains the ZOSimDocumentRoot
             GameObject rootGameObject = new GameObject(ZeroSimJSON["document_name"].Value<string>());
 
             // add the document root component
             _documentRoot = rootGameObject.AddComponent<ZO.ZOSimDocumentRoot>();
-            string zosimSaveToFilePath = Path.Combine(ExportDirectoryPath, DocumentName + ".zosim");
+            string zosimSaveToFilePath = Path.Combine(RootExportDirectory, DocumentName + ".zosim");
             string zosimSaveToFilePathUnityRelative = MakeRelativePath(Application.dataPath, zosimSaveToFilePath);
 
             // deserialize the ZoSim JSON file
@@ -137,22 +167,37 @@ namespace ZO.Import {
             // turn off self collisions
             rootGameObject.AddComponent<ZO.Util.ZOTurnOffSelfCollision>();
 
+            // NOTE:  occurrence handling is happening now in the occurrence.  
+            // We may want to do some asset handling of occurrence stuff though here when an occurrence has assets.
             // foreach (JObject occurrence in ZeroSimJSON["occurrences"]) {
             //     OnOccurrence(occurrence, rootGameObject, ZeroSimJSON);
             // }
 
 
             // save prefab 
-            string prefabFilePath = ExportDirectoryPath + "/" + ZeroSimJSON["document_name"].Value<string>() + ".prefab";
+            string prefabFilePath = Path.Combine(RelativeRootExportDirectory, DocumentName + ".prefab");
             prefabFilePath = AssetDatabase.GenerateUniqueAssetPath(prefabFilePath);
 
             Debug.Log("INFO: Saving Prefab: " + prefabFilePath);
 
             PrefabUtility.SaveAsPrefabAsset(rootGameObject, prefabFilePath);
 
-
             // Save ZoSim file            
             File.WriteAllText(zosimSaveToFilePath, ZeroSimJSON.ToString());
+
+            // force Unity to load the assets
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+
+
+            // Add the directory we exported to (ExportDirectory + DocumentName) as an asset bundle
+            AssetImporter assetImporter = AssetImporter.GetAtPath(RelativeRootExportDirectory);
+            assetImporter.SetAssetBundleNameAndVariant(DocumentName, "");
+
+            // build the asset bundle
+            Debug.Log("INFO: Building asset bundles...");
+            BuildPipeline.BuildAssetBundles("AssetBundles", BuildAssetBundleOptions.None, BuildTarget.StandaloneLinux64);
+
 
             ZeroSimProjectFile = null; // need to reset
 

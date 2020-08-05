@@ -146,7 +146,10 @@ namespace ZO.ROS.MessageTypes.Sensor {
     /// </summary>
     public class JointStateMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "sensor_msgs/JointState"; } }
+        public string MessageType { get { return JointStateMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type { get { return "sensor_msgs/JointState"; } }
 
         public HeaderMessage header { get; set; }
         public string[] name { get; set; }

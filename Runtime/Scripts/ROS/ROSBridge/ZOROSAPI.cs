@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 namespace ZO.ROS {
 
     /// <summary>
-    /// 
     /// rosapi provides service calls for getting meta-information related to ROS like 
     /// topic lists as well as interacting with the Parameter Server.
     /// </summary>
