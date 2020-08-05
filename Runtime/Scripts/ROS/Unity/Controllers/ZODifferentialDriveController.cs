@@ -215,8 +215,8 @@ void GazeboRosDiffDrive::publishWheelTF()
             float rightVelocity = (LinearVelocity - AngularVelocity * _wheelSeperation / 2.0f) / _wheelRadius;
 
             // BUGBUG: if this seems to fast the do a deg2rad on it?
-            _rightWheelMotor.Velocity = rightVelocity;
-            _leftWheelMotor.Velocity = leftVelocity;
+            _rightWheelMotor.Velocity = rightVelocity * Mathf.Deg2Rad;
+            _leftWheelMotor.Velocity = leftVelocity * Mathf.Deg2Rad;
         }
 
         private float _odomHeading = 0;

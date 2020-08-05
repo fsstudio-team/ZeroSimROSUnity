@@ -31,7 +31,7 @@ namespace ZO.Editor {
             ZODifferentialDriveController diffDrive = (ZODifferentialDriveController)target;
 
             // get the hinge joints on this object
-            ZOHingeJoint[] hingeJoints = diffDrive.GetComponents<ZOHingeJoint>();
+            ZOHingeJoint[] hingeJoints = diffDrive.GetComponentsInChildren<ZOHingeJoint>();
             _motorChoiceNames = new string[hingeJoints.Length];
 
             // check if we already have set the hinge joints

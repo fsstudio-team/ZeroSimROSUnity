@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,21 +118,11 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &14 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7790923371992564898, guid: f46c135214725cdb2885ac935c86e08e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7790923371992564908}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dac283a4db64dc89a3a961f136dcc59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &155950647
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,6 +171,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -205,6 +196,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &155950650
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -227,6 +219,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &223200936 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7790923371113811716, guid: f46c135214725cdb2885ac935c86e08e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7790923371992564908}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &310625171
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,6 +286,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -312,6 +311,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &310625175
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -381,6 +381,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -405,6 +406,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &320649896
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -535,59 +537,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e021f5f19ac66f578dc0cb3ac939b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _namespace: /zerosim
   Hostname: localhost
   Port: 9090
   _serializationType: 1
-  _connectEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 14}
-        m_MethodName: OnROSBridgeConnected
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7748928720128262022}
-        m_MethodName: OnROSBridgeConnected
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  _disconnectEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 14}
-        m_MethodName: OnROSBridgeDisconnected
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7748928720128262022}
-        m_MethodName: OnROSBridgeDisconnected
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
   _rootMapTransformPublisher: {fileID: 679584924}
 --- !u!4 &679584923
 Transform:
@@ -620,7 +573,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: 
-  _ROSId: 
+  _name: 
   _frameId: map
   _childFrameId: 
 --- !u!1 &1189395066
@@ -670,6 +623,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -694,6 +648,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1189395069
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -812,8 +767,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0e3af0b8141964b85373790012f3b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1189395070}
-  distance: 0.2
+  target: {fileID: 223200936}
+  distance: 1.5
   xSpeed: 60
   ySpeed: 60
   yMinLimit: -20
@@ -882,6 +837,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -906,6 +862,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1719666804
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1138,18 +1095,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6192547391499243942, guid: 17be92f99b8fb14eaa65adc226ac3fd4, type: 3}
---- !u!114 &7748928720128262022 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 546996154910833450, guid: f46c135214725cdb2885ac935c86e08e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7790923371992564908}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eab68bc499af59ddb04d723f31065f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7790923371992564908
 PrefabInstance:
   m_ObjectHideFlags: 0

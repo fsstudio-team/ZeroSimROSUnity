@@ -168,7 +168,7 @@ Camera:
     m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
+  m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
@@ -184,12 +184,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546996154910833428}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7de0e78cad1cc57a3b409bbb96c7af6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 0
+  _updateRateHz: 20
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
@@ -544,6 +544,7 @@ GameObject:
   - component: {fileID: 7790923370650357424}
   - component: {fileID: 7790923370650357430}
   - component: {fileID: 3985559980598505274}
+  - component: {fileID: 7666202049540210714}
   m_Layer: 0
   m_Name: turtlebot3_waffle_simplified_v3_rigged
   m_TagString: Untagged
@@ -562,8 +563,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.0502, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 7790923372350402273}
-  - {fileID: 7790923372033375997}
   - {fileID: 7790923371113811716}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -592,7 +591,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _zoSimDocumentFilePath: 
+  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Robots/turtlebot3_waffle_simplified_v3/turtlebot3_waffle.zosim
+--- !u!114 &7666202049540210714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790923370650357429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30dd28dd015d2676095dc80c2226e3ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _name: turtlebot_diff_drive_controller
+  _connectedBody: {fileID: 536230834755942086}
+  _rightWheelMotor: {fileID: 7695181406791717198}
+  _leftWheelMotor: {fileID: 12451525680765440}
+  _wheelRadius: 0.033
+  _wheelSeperation: 0.287
+  _ROSTopicSubscription: /cmd_vel
 --- !u!1 &7790923370672000775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,6 +1563,10 @@ GameObject:
   - component: {fileID: 7790923371113811717}
   - component: {fileID: 7790923372300617358}
   - component: {fileID: 536230834755942086}
+  - component: {fileID: 7695181406791717198}
+  - component: {fileID: 4241044037577918920}
+  - component: {fileID: 12451525680765440}
+  - component: {fileID: 8491759256346210500}
   m_Layer: 0
   m_Name: main_chassis
   m_TagString: Untagged
@@ -1566,8 +1592,10 @@ Transform:
   - {fileID: 7790923370925296723}
   - {fileID: 546996154910833451}
   - {fileID: 7790923372351469824}
+  - {fileID: 7790923372350402273}
+  - {fileID: 7790923372033375997}
   m_Father: {fileID: 7790923370650357424}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &7790923371113811717
 Rigidbody:
@@ -1618,6 +1646,104 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _documentRoot: {fileID: 3985559980598505274}
+--- !u!114 &7695181406791717198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790923371113811723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56f9311082fd720b2b050874db2664ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hingeJoint: {fileID: 4241044037577918920}
+  _name: right_wheel
+--- !u!59 &4241044037577918920
+HingeJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790923371113811723}
+  m_ConnectedBody: {fileID: 7790923372350402300}
+  m_Anchor: {x: 0.135, y: 0.0175, z: 0.065}
+  m_Axis: {x: 1, y: 0, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: 0.065, y: 0.135, z: 0.017499998}
+  m_UseSpring: 0
+  m_Spring:
+    spring: 0
+    damper: 0
+    targetPosition: 0
+  m_UseMotor: 0
+  m_Motor:
+    targetVelocity: 0
+    force: 0.5
+    freeSpin: 0
+  m_UseLimits: 0
+  m_Limits:
+    min: 0
+    max: 0
+    bounciness: 0
+    bounceMinVelocity: 0.2
+    contactDistance: 0
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!114 &12451525680765440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790923371113811723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56f9311082fd720b2b050874db2664ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hingeJoint: {fileID: 8491759256346210500}
+  _name: left_wheel
+--- !u!59 &8491759256346210500
+HingeJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790923371113811723}
+  m_ConnectedBody: {fileID: 7790923372033375992}
+  m_Anchor: {x: -0.135, y: 0.0175, z: 0.065}
+  m_Axis: {x: 1, y: 0, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: 0.065, y: -0.135, z: 0.017499998}
+  m_UseSpring: 0
+  m_Spring:
+    spring: 0
+    damper: 0
+    targetPosition: 0
+  m_UseMotor: 0
+  m_Motor:
+    targetVelocity: 0
+    force: 0.5
+    freeSpin: 0
+  m_UseLimits: 0
+  m_Limits:
+    min: 0
+    max: 0
+    bounciness: 0
+    bounceMinVelocity: 0.2
+    contactDistance: 0
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &7790923371123098391
 GameObject:
   m_ObjectHideFlags: 0
@@ -4151,11 +4277,9 @@ GameObject:
   - component: {fileID: 7790923372033375997}
   - component: {fileID: 7790923372033375998}
   - component: {fileID: 7790923372033375992}
-  - component: {fileID: 546996153563359839}
-  - component: {fileID: 546996153563359838}
   - component: {fileID: 6737148055129991543}
   m_Layer: 0
-  m_Name: wheel-1-1
+  m_Name: wheel-left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4174,8 +4298,8 @@ Transform:
   m_Children:
   - {fileID: 7790923371897437149}
   - {fileID: 7790923372406886140}
-  m_Father: {fileID: 7790923370650357424}
-  m_RootOrder: 1
+  m_Father: {fileID: 7790923371113811716}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7790923372033375998
 MonoBehaviour:
@@ -4206,55 +4330,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!59 &546996153563359839
-HingeJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790923372033375996}
-  m_ConnectedBody: {fileID: 7790923371113811717}
-  m_Anchor: {x: 0.0645, y: -0.134, z: 0.018}
-  m_Axis: {x: 0, y: 1, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.134, y: 0.018000007, z: 0.0645}
-  m_UseSpring: 0
-  m_Spring:
-    spring: 0
-    damper: 0
-    targetPosition: 0
-  m_UseMotor: 0
-  m_Motor:
-    targetVelocity: 0
-    force: 1
-    freeSpin: 0
-  m_UseLimits: 0
-  m_Limits:
-    min: 0
-    max: 0
-    bounciness: 0
-    bounceMinVelocity: 0.2
-    contactDistance: 0
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 10
---- !u!114 &546996153563359838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790923372033375996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f9311082fd720b2b050874db2664ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hingeJoint: {fileID: 546996153563359839}
-  _name: joint.hinge_from_wheel-1-1
 --- !u!114 &6737148055129991543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5151,11 +5226,9 @@ GameObject:
   - component: {fileID: 7790923372350402273}
   - component: {fileID: 7790923372350402274}
   - component: {fileID: 7790923372350402300}
-  - component: {fileID: 546996155436771407}
-  - component: {fileID: 546996155436771402}
   - component: {fileID: 3674650953681922228}
   m_Layer: 0
-  m_Name: wheel-2-1
+  m_Name: wheel-right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5174,8 +5247,8 @@ Transform:
   m_Children:
   - {fileID: 7790923371788451734}
   - {fileID: 7790923370780110348}
-  m_Father: {fileID: 7790923370650357424}
-  m_RootOrder: 0
+  m_Father: {fileID: 7790923371113811716}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7790923372350402274
 MonoBehaviour:
@@ -5206,55 +5279,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!59 &546996155436771407
-HingeJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790923372350402272}
-  m_ConnectedBody: {fileID: 7790923371113811717}
-  m_Anchor: {x: 0.0645, y: 0.134, z: 0.018}
-  m_Axis: {x: 0, y: 1, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.134, y: 0.018, z: 0.0645}
-  m_UseSpring: 0
-  m_Spring:
-    spring: 0
-    damper: 0
-    targetPosition: 0
-  m_UseMotor: 0
-  m_Motor:
-    targetVelocity: 0
-    force: 1
-    freeSpin: 0
-  m_UseLimits: 0
-  m_Limits:
-    min: 0
-    max: 0
-    bounciness: 0
-    bounceMinVelocity: 0.2
-    contactDistance: 0
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 10
---- !u!114 &546996155436771402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790923372350402272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f9311082fd720b2b050874db2664ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hingeJoint: {fileID: 546996155436771407}
-  _name: joint.hinge_from_wheel-2-1
 --- !u!114 &3674650953681922228
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -37,7 +37,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private void Initialize() {
             // advertise
-            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType, Name);
+            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType);
 
             // hookup to the sensor update delegate
             _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishRGBImageDelegate;
