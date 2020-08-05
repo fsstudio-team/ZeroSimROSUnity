@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MS.Shell.Editor;
 using UnityEngine;
 
@@ -15,13 +16,37 @@ public class ZODockerManager
     //private static readonly string composeWorkingDirectory = "../../docker/prod";
     private static readonly string composeWorkingDirectory = "../../docker/dev";
 
+    public static Task<bool> IsZODockerRunning(){
+        var options = new EditorShell.Options(){
+            workDirectory = composeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
+        };
+
+        // Create a task and return it so clients can use async/await
+        // Use TaskCompletionSource so that we can manually fulfill the task when 
+        // the shell script executes the onExit callback
+        TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
+
+        string command = "docker container inspect -f '{{.State.Running}}' zosim";
+        // Execute docker command
+        var shellTask = EditorShell.Execute(command, options);
+        DockerLog($"Checking if docker running...");
+        shellTask.onLog += (EditorShell.LogType logType, string log) => {
+            DockerLog(log);
+        };
+        shellTask.onExit += (exitCode) => {
+            isRunning = exitCode == 0;
+            taskCompletionSource.SetResult(isRunning);
+        };
+
+        return taskCompletionSource.Task;
+    }
+
     public static void DockerComposeUp(){
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
             workDirectory = composeWorkingDirectory,
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+            environmentVars = new Dictionary<string, string>(){ }
         };
         string command = "docker-compose up";
         // Execute docker command
@@ -41,9 +66,7 @@ public class ZODockerManager
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
             workDirectory = composeWorkingDirectory,
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+            environmentVars = new Dictionary<string, string>(){ }
         };
         string command = "docker-compose down";
         // Execute docker command
@@ -78,12 +101,10 @@ public class ZODockerManager
                                  string[] additionalVolumes = null, 
                                  Action<int> callback = null) {
 
-         // docker-compose -f ./docker/docker-compose.yml run --rm 
-         // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
-         var options = new EditorShell.Options(){workDirectory = composeWorkingDirectory,
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+        // docker-compose -f ./docker/docker-compose.yml run --rm 
+        // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
+        var options = new EditorShell.Options(){workDirectory = composeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
         };
 
         string volumes = BuildVolumesString(additionalVolumes);

@@ -29,6 +29,12 @@ public class ZODockerManagerWindow : EditorWindow {
         _window.ShowUtility();
     }
 
+    async void Awake()
+    {
+        bool isDockerRunning = await ZODockerManager.IsZODockerRunning();
+        UnityEngine.Debug.Log($"Docker running on awake: {isDockerRunning}");
+    }
+
     private void OnGUI() {
         
         EditorGUILayout.LabelField("Docker running", ZODockerManager.isRunning.ToString());
