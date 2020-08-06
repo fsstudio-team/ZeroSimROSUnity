@@ -39,6 +39,11 @@ public class ZODockerManagerWindow : EditorWindow {
         
         EditorGUILayout.LabelField("Docker running", ZODockerManager.isRunning.ToString());
 
+        if(!ZODockerManager.isRunning && GUILayout.Button("Select docker-compose.yml working directory")){
+            ZODockerManager.composeWorkingDirectory = EditorUtility.OpenFolderPanel("Select docker-compose.yml directory", "", "");
+        }
+        EditorGUILayout.LabelField("Docker-compose directory", ZODockerManager.composeWorkingDirectory);
+
         if (!ZODockerManager.isRunning && GUILayout.Button("Start Docker service")){
             ZODockerManager.DockerComposeUp();
         }

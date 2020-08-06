@@ -12,9 +12,7 @@ public class ZODockerManager
     public static string dockerLogColor = "#207020";
     public static bool showLogs = true;
     public static bool isRunning = false;
-
-    //private static readonly string composeWorkingDirectory = "../../docker/prod";
-    private static readonly string composeWorkingDirectory = "../../docker/dev";
+    public static string composeWorkingDirectory = "../../docker/dev"; // default Compose file for development
 
     public static Task<bool> IsZODockerRunning(){
         var options = new EditorShell.Options(){
