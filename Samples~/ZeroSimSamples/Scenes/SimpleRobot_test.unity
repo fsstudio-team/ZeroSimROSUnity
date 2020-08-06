@@ -380,7 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _zoSimDocumentFilePath: Assets/ZOSim/Assets/ZeroSimAssets/ZOSimSimpleBot.zosim
+  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Assets/ZeroSimAssets/ZOSimSimpleBot.zosim
 --- !u!4 &294307844
 Transform:
   m_ObjectHideFlags: 0
@@ -389,7 +389,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 294307842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: -0.2708001, z: -10}
+  m_LocalPosition: {x: 0, y: 0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -710,7 +710,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 1, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.146, y: -0.013999999, z: 0.066}
+  m_ConnectedAnchor: {x: 0.146, y: -0.014000002, z: 0.066}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1090,17 +1090,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dac283a4db64dc89a3a961f136dcc59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 10
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _name: base_link_controller.differential_drive
-  _connectedBody: {fileID: 785401901}
-  _rightWheelMotor: {fileID: 785401906}
-  _leftWheelMotor: {fileID: 785401904}
-  _wheelRadius: 0.033
-  _wheelSeperation: 0.287
-  _ROSTopicSubscription: /cmd_vel
 --- !u!114 &785401901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,7 +1133,7 @@ HingeJoint:
   m_Anchor: {x: -0.146, y: -0.014, z: 0.066}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000014110947, y: -1.0000006, z: 0}
+  m_ConnectedAnchor: {x: -0.000000042332843, y: -1.0000006, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1193,7 +1182,7 @@ HingeJoint:
   m_Anchor: {x: 0.146, y: -0.014, z: 0.066}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000014110947, y: 1.0000006, z: 0}
+  m_ConnectedAnchor: {x: -0.000000014110951, y: 1.0000006, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1707,6 +1696,7 @@ GameObject:
   - component: {fileID: 1451162233}
   - component: {fileID: 1451162235}
   - component: {fileID: 1451162236}
+  - component: {fileID: 1451162237}
   m_Layer: 0
   m_Name: ZOSimSimpleBot
   m_TagString: Untagged
@@ -1726,7 +1716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _zoSimDocumentFilePath: Assets/ZOSim/Assets/ZeroSimAssets/ZOSimSimpleBot.zosim
+  _zoSimDocumentFilePath: Assets/ZeroSimSamples/Assets/ZeroSimAssets/ZOSimSimpleBot.zosim
 --- !u!4 &1451162234
 Transform:
   m_ObjectHideFlags: 0
@@ -1774,6 +1764,29 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: /zerosim/joint_states
   _name: ros.publisher.joint_states_ZOSimSimpleBot
+--- !u!114 &1451162237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451162232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30dd28dd015d2676095dc80c2226e3ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 30
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _name: ZOSimSimpleBot_controller.differential_drive
+  _connectedBody: {fileID: 785401901}
+  _rightWheelMotor: {fileID: 785401906}
+  _leftWheelMotor: {fileID: 785401904}
+  _wheelRadius: 0.033
+  _wheelSeperation: 0.273
+  _ROSTopicSubscription: /cmd_vel
 --- !u!1 &1503137396
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,7 +2400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de0e78cad1cc57a3b409bbb96c7af6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 0
+  _updateRateHz: 20
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
@@ -2405,7 +2418,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2143639007}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}

@@ -451,6 +451,23 @@ namespace ZO {
                             armController.Deserialize(this, controllerJSON);
                         }
 
+                        if (controllerJSON["type"].Value<string>() == "controller.differential_drive") {
+                            // check if already a component and if not create it
+                            ZODifferentialDriveController[] diffControllers = this.GetComponents<ZODifferentialDriveController>();
+                            ZODifferentialDriveController diffController = null;
+                            foreach (ZODifferentialDriveController arm in diffControllers) {
+                                if (arm.Name == controllerJSON["name"].Value<string>()) {
+                                    diffController = arm;
+                                    break;
+                                }
+                            }
+                            if (diffController == null) {
+                                // doesn't exist so create it
+                                diffController = this.gameObject.AddComponent<ZODifferentialDriveController>();
+                            }
+                            diffController.Deserialize(this, controllerJSON);
+                        }
+
                     }
                 }
             }
