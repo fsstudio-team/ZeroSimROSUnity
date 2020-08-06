@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "com.unity.burst": "1.2.3",
-    "com.ms.shell": "git@github.com:gpiffaretti/UnityShell.git"
+    "com.ms.shell": "ssh://git@github.com:gpiffaretti/UnityShell.git"
   },
   "samples": [
     {
