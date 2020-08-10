@@ -3,14 +3,16 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.ROS.MessageTypes.Geometry;
+using ZO.ROS.Unity.Publisher;
 using ZO.Sensors;
 
 namespace ZO.ROS.Unity.Publisher {
 
     /// <summary>
     /// Publish /sensor/LaserScan message.
-    /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
     /// </summary>
+    [RequireComponent(typeof(ZOROSTransformPublisher))]
+    [RequireComponent(typeof(ZOLIDAR2D))]
     public class ZOROSLaserScanPublisher : ZOROSUnityGameObjectBase {
 
         public ZOLIDAR2D _lidar2DSensor;
@@ -22,6 +24,21 @@ namespace ZO.ROS.Unity.Publisher {
         public ZOLIDAR2D LIDAR2DSensor {
             get => _lidar2DSensor;
             set => _lidar2DSensor = value;
+        }
+
+
+        private ZOROSTransformPublisher _transformPublisher = null;
+        public ZOROSTransformPublisher TransformPublisher {
+            get {
+                if (_transformPublisher == null) {
+                    _transformPublisher = GetComponent<ZOROSTransformPublisher>();
+                }
+
+                if (_transformPublisher == null) {
+                    Debug.LogError("ERROR: ZOROSLaserScanPublisher is missing corresponding ZOROSTransformPublisher");
+                }
+                return _transformPublisher;
+            }
         }
 
         private LaserScanMessage _rosLaserScanMessage = new LaserScanMessage();
@@ -74,7 +91,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string name, float[] ranges) {
             _rosLaserScanMessage.header.Update();
-            _rosLaserScanMessage.header.frame_id = lidar.Name;
+            _rosLaserScanMessage.header.frame_id = TransformPublisher.ChildFrameID;
             _rosLaserScanMessage.angle_min = lidar.MinAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_max = lidar.MaxAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_increment = lidar.AngleIncrementDegrees * Mathf.Deg2Rad;

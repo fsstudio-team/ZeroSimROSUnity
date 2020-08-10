@@ -1671,7 +1671,7 @@ HingeJoint:
   m_Anchor: {x: 0.135, y: 0.0175, z: 0.065}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.06499958, y: 0.13500023, z: 0.017499924}
+  m_ConnectedAnchor: {x: 0.06500022, y: 0.13499981, z: 0.017499924}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1720,7 +1720,7 @@ HingeJoint:
   m_Anchor: {x: -0.135, y: 0.0175, z: 0.065}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.06499958, y: -0.13500023, z: 0.017499924}
+  m_ConnectedAnchor: {x: 0.064999774, y: -0.13499951, z: 0.017499924}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -5366,7 +5366,7 @@ MonoBehaviour:
   _angleIncrementDegrees: 1
   _minRangeDistanceMeters: 0.1
   _maxRangeDistanceMeters: 20
-  _name: 
+  _name: scan
 --- !u!114 &7790923372351469825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5384,7 +5384,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: scan
-  _name: 
+  _name: scan
   _lidar2DSensor: {fileID: 7790923372351469826}
 --- !u!1 &7790923372374189091
 GameObject:
