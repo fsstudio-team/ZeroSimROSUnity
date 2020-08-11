@@ -33,6 +33,13 @@ namespace ZO.ROS.MessageTypes.Std {
             nsecs = (uint)((msecs / 1000 - secs) * 1e+9);
         }
 
+        /// <summary>
+        /// Sets the timestamp to Now
+        /// </summary>
+        public void Update() {
+            this.Now();
+        }
+
     }
 
     public class HeaderMessage : ZOROSMessageInterface {
