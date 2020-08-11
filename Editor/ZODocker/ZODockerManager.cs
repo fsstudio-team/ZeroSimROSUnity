@@ -25,7 +25,7 @@ public class ZODockerManager
         // the shell script executes the onExit callback
         TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
 
-        string command = "docker container inspect -f '{{.State.Running}}' zosim";
+        string command = "if [ $(docker inspect -f '{{.State.Running}}' zosim) = \"true\" ]; then exit 0; else exit 1; fi";
         // Execute docker command
         var shellTask = EditorShell.Execute(command, options);
         DockerLog($"Checking if docker running...");
@@ -33,6 +33,7 @@ public class ZODockerManager
             DockerLog(log);
         };
         shellTask.onExit += (exitCode) => {
+            Debug.Log("Check if docker running exit code: " + exitCode);
             isRunning = exitCode == 0;
             taskCompletionSource.SetResult(isRunning);
         };
@@ -54,10 +55,14 @@ public class ZODockerManager
             DockerLog(log);
         };
         task.onExit += (exitCode) => {
+            if(exitCode == 0){
+                isRunning = true;
+            }
+            
             DockerLog($"Docker compose up exit: {exitCode}", forceDisplay: true);
         };
 
-        isRunning = true;
+        
     }
 
     public static void DockerComposeDown(){

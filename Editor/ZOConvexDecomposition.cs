@@ -145,8 +145,8 @@ namespace ZO.Export {
                             + " --convexhullApproximation=" + (_convexHullApproximation == true ? "1" : "0");
                 
                 UnityEngine.Debug.Log("INFO: Docker Args: " + arguments);
-                
-                string command = "python /zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py";
+
+                string command = "conda run -n zosim_tools python /zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py";
                 string commandAWithArgs = $"{command} {arguments}";
 
                 ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, null, (exitCode) => {
