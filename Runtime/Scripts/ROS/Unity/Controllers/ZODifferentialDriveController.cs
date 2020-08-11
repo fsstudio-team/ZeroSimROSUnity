@@ -178,6 +178,7 @@ namespace ZO.ROS.Controllers {
 
                 // BUGBUG: not super clear on this being a child of map?
                 _odometryMessage.header.frame_id = "map";
+                _odometryMessage.child_frame_id = "odom";
 
                 ZOROSBridgeConnection.Instance.Publish<OdometryMessage>(_odometryMessage, "/odom");
             }
@@ -306,7 +307,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         }
 
         /// <summary>
-        /// ROS specific functionality
+        /// ROS control twist message topic.
         /// To test: `rosrun turtlebot3 turtlebot3_teleop_key`
         /// </summary>
         public string _ROSTopicSubscription = "/cmd_vel";

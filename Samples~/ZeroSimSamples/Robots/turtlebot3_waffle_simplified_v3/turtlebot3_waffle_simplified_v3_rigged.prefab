@@ -157,7 +157,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1631,8 +1631,8 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: 
   _name: ros.transform_publisher_main_chassis
-  _frameId: map
-  _childFrameId: base_link
+  _frameId: odom
+  _childFrameId: base_footprint
 --- !u!114 &536230834755942086
 MonoBehaviour:
   m_ObjectHideFlags: 0

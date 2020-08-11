@@ -13,7 +13,7 @@ namespace ZO.ROS.MessageTypes.ROSGraph {
         public string MessageType { get { return ClockMessage.Type; } }
 
         [Newtonsoft.Json.JsonIgnore]
-        public static string Type = "rosgraph_msgs/Clock.msg";
+        public static string Type = "rosgraph_msgs/Clock";
 
         public TimeMessage clock { get; set; }
 
