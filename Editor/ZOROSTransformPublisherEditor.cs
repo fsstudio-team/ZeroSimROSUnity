@@ -10,14 +10,16 @@ namespace ZO.Editor {
     [CustomEditor(typeof(ZO.ROS.Publisher.ZOROSTransformPublisher))]
     public class ZOROSTransformPublisherEditor : UnityEditor.Editor {
 
-        // int _hingeChoiceIndex = 0;
-        string[] _hingeJointChoices;
+        /// <summary>
+        /// Hides unused ROSTopic.  See: https://answers.unity.com/questions/316286/how-to-remove-script-field-in-inspector.html
+        /// </summary>
+        /// <value></value>
+        private static readonly string[] _dontIncludeMe = new string[] { "_ROSTopic" };
         public override void OnInspectorGUI() {
 
-            DrawDefaultInspector();
+            DrawPropertiesExcluding(serializedObject, _dontIncludeMe);
+            serializedObject.ApplyModifiedProperties();
 
-            
-            
         }
     }
 
