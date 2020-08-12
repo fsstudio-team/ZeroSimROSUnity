@@ -42,21 +42,7 @@ namespace ZO.ROS.Unity.Publisher {
         }
 
         private LaserScanMessage _rosLaserScanMessage = new LaserScanMessage();
-        TransformStampedMessage _transformMessage = new TransformStampedMessage();
 
-        protected override void ZOUpdateHzSynchronized() {
-            if (ROSUnityManager) {
-                // update transform
-                //TransformStampedMessage tfStamped = new TransformStampedMessage();
-                // _transformMessage.header.Update();
-                // _transformMessage.header.frame_id = "map";
-                // _transformMessage.child_frame_id = _lidar2DSensor.LidarID;
-                // _transformMessage.UnityTransform = _lidar2DSensor.transform;
-
-                // ROSUnityManager.BroadcastTransform(_transformMessage);
-            }
-
-        }
 
         protected override void ZOStart() {
             base.ZOStart();
@@ -91,7 +77,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string name, float[] ranges) {
             _rosLaserScanMessage.header.Update();
-            _rosLaserScanMessage.header.frame_id = TransformPublisher.ChildFrameID;
+            _rosLaserScanMessage.header.frame_id = "base_footprint";//TransformPublisher.ChildFrameID;
             _rosLaserScanMessage.angle_min = lidar.MinAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_max = lidar.MaxAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_increment = lidar.AngleIncrementDegrees * Mathf.Deg2Rad;

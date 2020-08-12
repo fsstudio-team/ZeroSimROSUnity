@@ -44,6 +44,11 @@ namespace ZO.ROS.Controllers {
         }
 
         public ZOSimOccurrence _connectedBody;
+
+        /// <summary>
+        /// The main rigid body of the controller. Would usually be the "main chassis" of a robot.
+        /// </summary>
+        /// <value></value>
         public Rigidbody ConnectedRigidBody {
             get { return _connectedBody.GetComponent<Rigidbody>(); }
         }
@@ -141,6 +146,14 @@ namespace ZO.ROS.Controllers {
             // publish odometry
             if (ZOROSBridgeConnection.Instance.IsConnected) {
 
+                // Publish odom on TF as well
+                _transformMessage.header.Update();
+                _transformMessage.header.frame_id = ZOROSUnityManager.Instance.WorldFrameId; // connect to the world
+                _transformMessage.child_frame_id = "odom_combined";
+                _transformMessage.UnityLocalTransform = ConnectedRigidBody.transform;
+                ZOROSUnityManager.Instance.BroadcastTransform(_transformMessage);
+
+
                 // NOTE: Just echoing back the true odometry.  
                 // TODO: calculat the odometry see: CalculateOdometryOpenLoop
                 _odometryMessage.Update(); // update times stamps
@@ -165,6 +178,7 @@ namespace ZO.ROS.Controllers {
                 _odometryMessage.pose.covariance[0] = 1e-3;
                 _odometryMessage.pose.covariance[7] = 1e-3;
                 _odometryMessage.pose.covariance[14] = 1e6;
+
                 _odometryMessage.pose.covariance[21] = 1e6;
                 _odometryMessage.pose.covariance[28] = 1e6;
                 _odometryMessage.pose.covariance[35] = 1e3;
@@ -177,7 +191,7 @@ namespace ZO.ROS.Controllers {
                 _odometryMessage.twist.covariance[35] = 1e3;
 
                 // BUGBUG: not super clear on this being a child of map?
-                _odometryMessage.header.frame_id = "map";
+                _odometryMessage.header.frame_id = ZOROSUnityManager.Instance.WorldFrameId;
                 _odometryMessage.child_frame_id = "odom";
 
                 ZOROSBridgeConnection.Instance.Publish<OdometryMessage>(_odometryMessage, "/odom");
@@ -314,6 +328,11 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         private TwistMessage _twistMessage = new TwistMessage();
         private OdometryMessage _odometryMessage = new OdometryMessage();
 
+        /// <summary>
+        /// The "odom" transform published on TF.
+        /// </summary>
+        private TransformStampedMessage _transformMessage = new TransformStampedMessage();
+
 
         public void OnROSBridgeConnected(object rosUnityManager) {
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeConnected");
@@ -330,6 +349,13 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeDisconnected");
         }
 
+
+        /// <summary>
+        /// Handles subscribed to `TwistMessage` which controls the differential control steering and drive. 
+        /// </summary>
+        /// <param name="rosBridgeConnection"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public Task OnROSTwistMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _twistMessage = (TwistMessage)msg;
             // Debug.Log("INFO: Twist Message Received: linear " + _twistMessage.linear.ToString() + " angular: " + _twistMessage.angular.ToString());
@@ -382,9 +408,6 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             });
 
         }
-
-
-
     }
 
 }

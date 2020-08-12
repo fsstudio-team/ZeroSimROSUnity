@@ -108,7 +108,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546996154910833428}
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0.132, z: 0}
+  m_LocalPosition: {x: 0, y: 0.15, z: 0.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 546996154871178127}
@@ -1582,7 +1582,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7790923371113811723}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7790923371269412718}
@@ -1631,7 +1631,7 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: 
   _name: ros.transform_publisher_main_chassis
-  _frameId: odom
+  _frameId: map
   _childFrameId: base_footprint
 --- !u!114 &536230834755942086
 MonoBehaviour:
@@ -1671,7 +1671,7 @@ HingeJoint:
   m_Anchor: {x: 0.135, y: 0.0175, z: 0.065}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.06500022, y: 0.13499981, z: 0.017499924}
+  m_ConnectedAnchor: {x: 0.06500022, y: 0.13499981, z: 0.017499905}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1680,7 +1680,7 @@ HingeJoint:
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0.5
+    force: 0.6
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -1720,7 +1720,7 @@ HingeJoint:
   m_Anchor: {x: -0.135, y: 0.0175, z: 0.065}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.064999774, y: -0.13499951, z: 0.017499924}
+  m_ConnectedAnchor: {x: 0.064999774, y: -0.13499951, z: 0.017499905}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1729,7 +1729,7 @@ HingeJoint:
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0.5
+    force: 0.6
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -5343,7 +5343,7 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: 
   _name: 
-  _frameId: base_link
+  _frameId: base_footprint
   _childFrameId: scan
 --- !u!114 &7790923372351469826
 MonoBehaviour:
@@ -5365,7 +5365,7 @@ MonoBehaviour:
   _maxAngleDegrees: 360
   _angleIncrementDegrees: 1
   _minRangeDistanceMeters: 0.1
-  _maxRangeDistanceMeters: 20
+  _maxRangeDistanceMeters: 3.5
   _name: scan
 --- !u!114 &7790923372351469825
 MonoBehaviour:

@@ -93,6 +93,15 @@ namespace ZO.ROS.Unity {
 
 
         #region Tranform Publishing
+
+        public string _worldFrameId = "map";
+        /// <summary>
+        /// The name of the world frame.  Usually "map" or "world".
+        /// </summary>
+        /// <value></value>
+        public string WorldFrameId {
+            get => _worldFrameId;
+        }
         private TFMessage _transformBroadcast = new TFMessage();
         private List<TransformStampedMessage> _transformsToBroadcast = new List<TransformStampedMessage>();
 
@@ -103,7 +112,7 @@ namespace ZO.ROS.Unity {
             private set {
                 _rootMapTransformPublisher = value;
                 _rootMapTransformPublisher.FrameID = "";
-                _rootMapTransformPublisher.ChildFrameID = "map";
+                _rootMapTransformPublisher.ChildFrameID = WorldFrameId;
                 _rootMapTransformPublisher.UpdateRateHz = 1.0f;
                 _rootMapTransformPublisher.ROSTopic = "";
                 // _rootMapTransformPublisher.ROSId = "";

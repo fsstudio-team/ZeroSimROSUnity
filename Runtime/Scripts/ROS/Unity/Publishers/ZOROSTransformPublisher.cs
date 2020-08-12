@@ -8,10 +8,20 @@ namespace ZO.ROS.Unity.Publisher {
     public class ZOROSTransformPublisher : ZOROSUnityGameObjectBase {
         public string _frameId = "";
         public string _childFrameId = "";
+
+        /// <summary>
+        /// The name of *THIS* frame.
+        /// </summary>
+        /// <value></value>
         public string ChildFrameID {
             get => _childFrameId;
             set => _childFrameId = value;
         }
+
+        /// <summary>
+        /// The name of the parent frame.
+        /// </summary>
+        /// <value></value>
         public string FrameID {
             get => _frameId;
             set => _frameId = value;
