@@ -5365,7 +5365,7 @@ MonoBehaviour:
   _maxAngleDegrees: 360
   _angleIncrementDegrees: 1
   _minRangeDistanceMeters: 0.1
-  _maxRangeDistanceMeters: 3.5
+  _maxRangeDistanceMeters: 10
   _name: scan
 --- !u!114 &7790923372351469825
 MonoBehaviour:

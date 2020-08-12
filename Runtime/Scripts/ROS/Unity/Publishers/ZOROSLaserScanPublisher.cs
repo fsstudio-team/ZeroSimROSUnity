@@ -3,10 +3,11 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.ROS.MessageTypes.Geometry;
-using ZO.ROS.Unity.Publisher;
+using ZO.ROS.Publisher;
 using ZO.Sensors;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
 
     /// <summary>
     /// Publish /sensor/LaserScan message.

@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.MessageTypes.ROSGraph;
-using ZO.ROS.Unity.Publisher;
+using ZO.ROS.Publisher;
 
 namespace ZO.ROS.Unity {
 

@@ -3,8 +3,9 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.Sensors;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
 
     /// <summary>
     /// Publish /sensor/Image message.

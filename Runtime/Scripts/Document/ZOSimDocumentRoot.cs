@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using ZO.ROS.Unity.Publisher;
+using ZO.ROS.Publisher;
 using ZO.ROS.Controllers;
 using ZO.ROS.Unity.Service;
 

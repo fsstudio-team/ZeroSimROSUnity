@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Geometry;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
     public class ZOROSTransformPublisher : ZOROSUnityGameObjectBase {
         public string _frameId = "";
         public string _childFrameId = "";

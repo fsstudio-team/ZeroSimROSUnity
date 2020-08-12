@@ -5,8 +5,9 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.Physics;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
     public class ZOROSJointStatesPublisher : ZOROSUnityGameObjectBase {
 
         private JointStateMessage _jointStatesMessage = new JointStateMessage();
