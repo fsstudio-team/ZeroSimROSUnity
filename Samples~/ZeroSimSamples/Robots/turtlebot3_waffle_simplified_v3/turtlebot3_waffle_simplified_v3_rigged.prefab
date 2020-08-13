@@ -5358,7 +5358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _updateRateHz: 10
-  _debug: 1
+  _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _minAngleDegrees: 0

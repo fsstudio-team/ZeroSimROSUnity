@@ -14,7 +14,7 @@ namespace ZO.Editor {
         /// Hides unused ROSTopic.  See: https://answers.unity.com/questions/316286/how-to-remove-script-field-in-inspector.html
         /// </summary>
         /// <value></value>
-        private static readonly string[] _dontIncludeMe = new string[] { "_ROSTopic" };
+        private static readonly string[] _dontIncludeMe = new string[] { "_ROSTopic", "_debug", "_name" };
         public override void OnInspectorGUI() {
 
             DrawPropertiesExcluding(serializedObject, _dontIncludeMe);
