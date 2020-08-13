@@ -8,7 +8,8 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
-using ZO.ROS.Unity.Publisher;
+using ZO.ROS.MessageTypes.ROSGraph;
+using ZO.ROS.Publisher;
 
 namespace ZO.ROS.Unity {
 
@@ -26,6 +27,17 @@ namespace ZO.ROS.Unity {
         public string Namespace {
             get => _namespace;
         }
+
+        #region ROSBridgeConnection
+
+        /// <summary>
+        /// The singleton ROS Bridge Connection
+        /// </summary>
+        /// <value></value>
+        public ZOROSBridgeConnection ROSBridgeConnection {
+            get { return ZOROSBridgeConnection.Instance; }
+        }
+
 
         /// <summary>
         /// IP or hostname of the ROS Bridge
@@ -77,18 +89,39 @@ namespace ZO.ROS.Unity {
                 _disconnectEvent -= value;
             }
         }
+        #endregion // ROSBridgeConnection
 
+
+        #region Tranform Publishing
+
+        public string _worldFrameId = "map";
         /// <summary>
-        /// The singleton ROS Bridge Connection
+        /// The name of the world frame.  Usually "map" or "world".
         /// </summary>
         /// <value></value>
-        public ZOROSBridgeConnection ROSBridgeConnection {
-            get { return ZOROSBridgeConnection.Instance; }
+        public string WorldFrameId {
+            get => _worldFrameId;
         }
-
         private TFMessage _transformBroadcast = new TFMessage();
         private List<TransformStampedMessage> _transformsToBroadcast = new List<TransformStampedMessage>();
 
+        // publish 
+        [SerializeField] public ZOROSTransformPublisher _rootMapTransformPublisher;
+        public ZOROSTransformPublisher RootMapTransform {
+            get => _rootMapTransformPublisher;
+            private set {
+                _rootMapTransformPublisher = value;
+                _rootMapTransformPublisher.FrameID = "";
+                _rootMapTransformPublisher.ChildFrameID = WorldFrameId;
+                _rootMapTransformPublisher.UpdateRateHz = 1.0f;
+                _rootMapTransformPublisher.ROSTopic = "";
+                // _rootMapTransformPublisher.ROSId = "";
+            }
+        }
+        #endregion // Transform Publishing
+
+
+        #region Singleton
         private static ZOROSUnityManager _instance;
 
         /// <summary>
@@ -97,7 +130,11 @@ namespace ZO.ROS.Unity {
         public static ZOROSUnityManager Instance {
             get => _instance;
         }
+            
+        #endregion
 
+
+        #region AssetBundle Management
 
         private AssetBundle _defaultZeroSimAssets = null;
         /// <summary>
@@ -119,21 +156,21 @@ namespace ZO.ROS.Unity {
                 return _defaultZeroSimAssets;
             }
         }
+        #endregion
 
+        #region Simulation Clock
 
-        // publish 
-        [SerializeField] public ZOROSTransformPublisher _rootMapTransformPublisher;
-        public ZOROSTransformPublisher RootMapTransform {
-            get => _rootMapTransformPublisher;
-            private set {
-                _rootMapTransformPublisher = value;
-                _rootMapTransformPublisher.FrameID = "";
-                _rootMapTransformPublisher.ChildFrameID = "map";
-                _rootMapTransformPublisher.UpdateRateHz = 1.0f;
-                _rootMapTransformPublisher.ROSTopic = "";
-                // _rootMapTransformPublisher.ROSId = "";
-            }
+        ClockMessage _clockMessage = new ClockMessage();
+        
+        /// <summary>
+        /// sim
+        /// </summary>
+        /// <value></value>
+        public ClockMessage Clock {
+            get => _clockMessage;
         }
+        #endregion // Simulation Clock
+
 
         private void Awake() {
             if (_instance == null) {
@@ -191,6 +228,9 @@ namespace ZO.ROS.Unity {
                     // advertise the transform broadcast
                     rosBridge.Advertise("/tf", _transformBroadcast.MessageType);
 
+                    // advertise the simulation clock
+                    rosBridge.Advertise("/clock", Clock.MessageType);
+
                     // advertise SpawnModel service
                     // rosBridge.AdvertiseService<SpawnModelServiceRequest>("gazebo/spawn_urdf_model", "gazebo_msgs/SpawnModel", (bridge, msg, id) => {
                     //     Debug.Log("INFO: got gazebo/spawn_urdf_model");
@@ -223,6 +263,9 @@ namespace ZO.ROS.Unity {
                     // Unadvertise broadcast tf 
                     rosBridge.UnAdvertise("/tf");
 
+                    // Unadvertise simulation clock
+                    rosBridge.UnAdvertise("/clock");
+
                     return Task.CompletedTask;
                 };
 
@@ -237,7 +280,7 @@ namespace ZO.ROS.Unity {
 
         private void OnDestroy() {
             ROSBridgeConnection.UnAdvertise("/tf");
-            ROSBridgeConnection.UnAdvertiseService(_namespace + "/spawn_zosim_model");
+            // ROSBridgeConnection.UnAdvertiseService(_namespace + "/spawn_zosim_model");
             ROSBridgeConnection.Stop();
             if (_defaultZeroSimAssets != null) {
                 _defaultZeroSimAssets.Unload(true);
@@ -251,9 +294,14 @@ namespace ZO.ROS.Unity {
             // publish map transform
             if (ROSBridgeConnection.IsConnected) {
 
+                // transform broadcast
                 _transformBroadcast.transforms = _transformsToBroadcast.ToArray();
                 ROSBridgeConnection.Publish<TFMessage>(_transformBroadcast, "/tf");
                 _transformsToBroadcast.Clear();
+
+                // simulation clock
+                Clock.Update();
+                ROSBridgeConnection.Publish<ClockMessage>(Clock, "/clock");
             }
 
         }

@@ -3,14 +3,17 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.ROS.MessageTypes.Geometry;
+using ZO.ROS.Publisher;
 using ZO.Sensors;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
 
     /// <summary>
     /// Publish /sensor/LaserScan message.
-    /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
     /// </summary>
+    [RequireComponent(typeof(ZOROSTransformPublisher))]
+    [RequireComponent(typeof(ZOLIDAR2D))]
     public class ZOROSLaserScanPublisher : ZOROSUnityGameObjectBase {
 
         public ZOLIDAR2D _lidar2DSensor;
@@ -24,22 +27,23 @@ namespace ZO.ROS.Unity.Publisher {
             set => _lidar2DSensor = value;
         }
 
-        private LaserScanMessage _rosLaserScanMessage = new LaserScanMessage();
-        TransformStampedMessage _transformMessage = new TransformStampedMessage();
 
-        protected override void ZOUpdateHzSynchronized() {
-            if (ROSUnityManager) {
-                // update transform
-                //TransformStampedMessage tfStamped = new TransformStampedMessage();
-                // _transformMessage.header.Update();
-                // _transformMessage.header.frame_id = "map";
-                // _transformMessage.child_frame_id = _lidar2DSensor.LidarID;
-                // _transformMessage.UnityTransform = _lidar2DSensor.transform;
+        private ZOROSTransformPublisher _transformPublisher = null;
+        public ZOROSTransformPublisher TransformPublisher {
+            get {
+                if (_transformPublisher == null) {
+                    _transformPublisher = GetComponent<ZOROSTransformPublisher>();
+                }
 
-                // ROSUnityManager.BroadcastTransform(_transformMessage);
+                if (_transformPublisher == null) {
+                    Debug.LogError("ERROR: ZOROSLaserScanPublisher is missing corresponding ZOROSTransformPublisher");
+                }
+                return _transformPublisher;
             }
-
         }
+
+        private LaserScanMessage _rosLaserScanMessage = new LaserScanMessage();
+
 
         protected override void ZOStart() {
             base.ZOStart();
@@ -74,7 +78,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string name, float[] ranges) {
             _rosLaserScanMessage.header.Update();
-            _rosLaserScanMessage.header.frame_id = lidar.Name;
+            _rosLaserScanMessage.header.frame_id = "base_footprint";//TransformPublisher.ChildFrameID;
             _rosLaserScanMessage.angle_min = lidar.MinAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_max = lidar.MaxAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_increment = lidar.AngleIncrementDegrees * Mathf.Deg2Rad;

@@ -1,0 +1,3729 @@
+{
+  "document_name": "turtlebot3_waffle_simplified_v3_rigged",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "turtlebot3_waffle_simplified_v3_rigged"
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "wheel-2-1",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        -0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 0.25,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "name": "joint.hinge_from_wheel-2-1",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0645,
+            0.134,
+            0.018
+          ],
+          "world_anchor": [
+            0.134,
+            0.018,
+            0.0645
+          ],
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "world_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            0.134,
+            0.018,
+            0.0645
+          ],
+          "world_connected_anchor": [
+            0.018,
+            0.0645,
+            0.134
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 1.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "main_chassis",
+          "parent_occurrence": "wheel-2-1"
+        }
+      ],
+      "children": [
+        {
+          "name": "p30-isp-a001-3d-1",
+          "translation": [
+            0.06463738,
+            0.143764,
+            0.0179824233
+          ],
+          "rotation_quaternion": [
+            -0.69394964,
+            0.1357717,
+            0.1357717,
+            0.69394964
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "wheel-2-1",
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "p30-isp-a001-3d_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  0.0,
+                  0.0,
+                  -0.000249999575
+                ],
+                "extents": [
+                  0.03061945,
+                  0.03061945,
+                  0.00875
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "pr16-a01-tire-2-1",
+          "translation": [
+            0.07632049,
+            0.14321585,
+            0.0466965958
+          ],
+          "rotation_quaternion": [
+            0.394691378,
+            -0.394691378,
+            -0.5867016,
+            0.5867016
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "wheel-2-1",
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "pr16-a01-tire-2_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  0.0,
+                  -0.030999979,
+                  0.0
+                ],
+                "extents": [
+                  0.0091,
+                  0.0329999775,
+                  0.03299998
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wheel-1-1",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        -0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 0.25,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "joints": [
+        {
+          "name": "joint.hinge_from_wheel-1-1",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0645,
+            -0.134,
+            0.018
+          ],
+          "world_anchor": [
+            -0.134,
+            0.0180000067,
+            0.0645
+          ],
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "world_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            -0.134,
+            0.0180000067,
+            0.0645
+          ],
+          "world_connected_anchor": [
+            0.0180000067,
+            0.0645,
+            -0.134
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 0.0,
+            "damper": 0.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 1.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "main_chassis",
+          "parent_occurrence": "wheel-1-1"
+        }
+      ],
+      "children": [
+        {
+          "name": "p30-isp-a001-3d-2",
+          "translation": [
+            0.06465588,
+            -0.144235983,
+            0.0178576335
+          ],
+          "rotation_quaternion": [
+            0.621881068,
+            0.336547136,
+            -0.336547136,
+            0.621881068
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "wheel-1-1",
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "p30-isp-a001-3d_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  0.0,
+                  0.0,
+                  -0.000249999575
+                ],
+                "extents": [
+                  0.03061945,
+                  0.03061945,
+                  0.00875
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "pr16-a01-tire-2-2",
+          "translation": [
+            0.03870365,
+            -0.143687829,
+            0.000902375556
+          ],
+          "rotation_quaternion": [
+            -0.201761559,
+            -0.201761559,
+            0.67771107,
+            0.67771107
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "wheel-1-1",
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "pr16-a01-tire-2_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  0.0,
+                  -0.030999979,
+                  0.0
+                ],
+                "extents": [
+                  0.0091,
+                  0.0329999775,
+                  0.03299998
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "main_chassis",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 14.999999,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": true,
+        "is_kinematic": false
+      },
+      "ros": [
+        {
+          "name": "ros.transform_publisher_main_chassis",
+          "type": "ros.publisher.transform",
+          "ros_topic": "",
+          "update_rate_hz": 10.0,
+          "frame_id": "map",
+          "child_frame_id": "base_link"
+        }
+      ],
+      "children": [
+        {
+          "name": "second-floor-1-1",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "main_chassis",
+          "children": [
+            {
+              "name": "support-hex-m3-0xl45-ff-1",
+              "translation": [
+                -0.08734417,
+                -0.128309265,
+                0.0363571979
+              ],
+              "rotation_quaternion": [
+                1.10625944E-16,
+                0.7071068,
+                0.7071068,
+                1.15074865E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-2",
+              "translation": [
+                -0.127362624,
+                0.07569074,
+                0.0340324268
+              ],
+              "rotation_quaternion": [
+                1.30252108E-16,
+                0.7071068,
+                0.7071068,
+                1.34701029E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-3",
+              "translation": [
+                -0.127344161,
+                -0.07630926,
+                0.0363571979
+              ],
+              "rotation_quaternion": [
+                1.10625944E-16,
+                0.7071068,
+                0.7071068,
+                1.15074865E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-4",
+              "translation": [
+                0.08863738,
+                0.127800643,
+                0.0362324268
+              ],
+              "rotation_quaternion": [
+                2.283829E-16,
+                0.7071068,
+                0.7071068,
+                2.328318E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-5",
+              "translation": [
+                0.128655836,
+                -0.07619935,
+                0.0339076556
+              ],
+              "rotation_quaternion": [
+                -9.544871E-17,
+                0.7071068,
+                0.7071068,
+                -9.099979E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-6",
+              "translation": [
+                0.128637388,
+                0.07580065,
+                0.0362324268
+              ],
+              "rotation_quaternion": [
+                2.283829E-16,
+                0.7071068,
+                0.7071068,
+                2.328318E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-7",
+              "translation": [
+                -0.05136262,
+                0.127727374,
+                0.0340324268
+              ],
+              "rotation_quaternion": [
+                2.921679E-16,
+                0.7071068,
+                0.7071068,
+                2.9661683E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-8",
+              "translation": [
+                0.0766558349,
+                -0.128199354,
+                0.0361076556
+              ],
+              "rotation_quaternion": [
+                2.03850192E-16,
+                0.7071068,
+                0.7071068,
+                2.08299113E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl45-ff-9",
+              "translation": [
+                -0.08736262,
+                0.127690732,
+                0.0340324268
+              ],
+              "rotation_quaternion": [
+                1.30252108E-16,
+                0.7071068,
+                0.7071068,
+                1.34701029E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl45-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0225,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0225,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "connected-plates-bottom-1-1",
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "second-floor-1-1",
+              "children": [
+                {
+                  "name": "p-bp-a001-3d-1",
+                  "translation": [
+                    -0.0633441657,
+                    -0.06430926,
+                    0.0388571955
+                  ],
+                  "rotation_quaternion": [
+                    -1.73953343E-16,
+                    0.7071068,
+                    0.7071068,
+                    -1.69504409E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-2",
+                  "translation": [
+                    0.06465583,
+                    -0.06419935,
+                    0.0386076532
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    4.43876631E-17,
+                    4.88365845E-17,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-3",
+                  "translation": [
+                    0.06463738,
+                    0.06376401,
+                    0.0387324244
+                  ],
+                  "rotation_quaternion": [
+                    -2.671776E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.62728656E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-4",
+                  "translation": [
+                    -0.06336262,
+                    0.06372737,
+                    0.0387324244
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    3.94811222E-17,
+                    4.39300436E-17,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-5",
+                  "translation": [
+                    -0.0633441657,
+                    -0.06427263,
+                    0.0388571955
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    1.40065183E-16,
+                    1.445141E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-6",
+                  "translation": [
+                    0.06463738,
+                    0.06380065,
+                    0.0387324244
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    -1.0794386E-16,
+                    -1.0794386E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-7",
+                  "translation": [
+                    -0.06336262,
+                    0.06369074,
+                    0.0387324244
+                  ],
+                  "rotation_quaternion": [
+                    -1.66593527E-16,
+                    0.7071068,
+                    0.7071068,
+                    -1.621446E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-8",
+                  "translation": [
+                    0.06465583,
+                    -0.0642359853,
+                    0.0386076532
+                  ],
+                  "rotation_quaternion": [
+                    -2.671776E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.62728656E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "third-fl-1-1",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "main_chassis",
+          "children": [
+            {
+              "name": "third-floor-1-1",
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "third-fl-1-1",
+              "children": [
+                {
+                  "name": "pr30-ibb-01-3d-1-1",
+                  "translation": [
+                    0.039160192,
+                    -0.0251675416,
+                    0.0831325352
+                  ],
+                  "rotation_quaternion": [
+                    0.7065942,
+                    -0.026918808,
+                    -0.026918808,
+                    0.7065942
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "third-floor-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "pr30-ibb-01-3d-1_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          0.0138096195,
+                          0.005,
+                          0.0
+                        ],
+                        "extents": [
+                          0.01890962,
+                          0.005,
+                          0.0051
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "sensor-realsense-1-1",
+                  "translation": [
+                    0.140637383,
+                    -0.000239040179,
+                    0.09542367
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    0.7071068,
+                    -1.66394236E-16,
+                    1.66394236E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "third-floor-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "sensor-realsense-1_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          0.0,
+                          0.00395,
+                          0.0
+                        ],
+                        "extents": [
+                          0.065,
+                          0.00395,
+                          0.0097
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "connected-plates-top-1-1",
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "third-floor-1-1",
+                  "children": [
+                    {
+                      "name": "p-bp-a001-3d-1-1",
+                      "translation": [
+                        0.06463738,
+                        -0.0642359853,
+                        0.08253243
+                      ],
+                      "rotation_quaternion": [
+                        0.5,
+                        -0.5,
+                        -0.5,
+                        0.5
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-2",
+                      "translation": [
+                        0.06463738,
+                        0.06376401,
+                        0.0837324262
+                      ],
+                      "rotation_quaternion": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-3",
+                      "translation": [
+                        -0.06336262,
+                        -0.000272625563,
+                        0.08313242
+                      ],
+                      "rotation_quaternion": [
+                        0.7071068,
+                        1.619158E-16,
+                        1.619158E-16,
+                        0.7071068
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-4",
+                      "translation": [
+                        0.06463738,
+                        -0.000235988875,
+                        0.08313242
+                      ],
+                      "rotation_quaternion": [
+                        -2.69859668E-16,
+                        0.7071068,
+                        0.7071068,
+                        -2.69859668E-16
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-5",
+                      "translation": [
+                        0.06463738,
+                        -0.000199352187,
+                        0.08313242
+                      ],
+                      "rotation_quaternion": [
+                        0.7071068,
+                        2.45326973E-16,
+                        2.45326973E-16,
+                        0.7071068
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-6",
+                      "translation": [
+                        -0.06336262,
+                        -0.00030926225,
+                        0.08313242
+                      ],
+                      "rotation_quaternion": [
+                        -2.69859668E-16,
+                        0.7071068,
+                        0.7071068,
+                        -2.69859668E-16
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-7",
+                      "translation": [
+                        -0.06336262,
+                        -0.06430926,
+                        0.08253243
+                      ],
+                      "rotation_quaternion": [
+                        0.5,
+                        -0.5,
+                        -0.5,
+                        0.5
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "p-bp-a001-3d-1-8",
+                      "translation": [
+                        -0.06336262,
+                        0.06369074,
+                        0.0837324262
+                      ],
+                      "rotation_quaternion": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "connected-plates-top-1-1",
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "p-bp-a001-3d-1_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0320000052,
+                              -0.0045,
+                              0.0
+                            ],
+                            "extents": [
+                              0.0367735028,
+                              0.0045,
+                              0.06877351
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "first-floor-1-1",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "main_chassis",
+          "children": [
+            {
+              "name": "support-hex-m3-0xl35-ff-1",
+              "translation": [
+                -0.0393626168,
+                0.127727374,
+                0.00123242568
+              ],
+              "rotation_quaternion": [
+                -4.4158855E-17,
+                0.7071068,
+                0.7071068,
+                -4.4158855E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-2",
+              "translation": [
+                -0.127344161,
+                -0.0883092657,
+                -0.0008428035
+              ],
+              "rotation_quaternion": [
+                -9.322425E-17,
+                0.7071068,
+                0.7071068,
+                -9.322425E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-3",
+              "translation": [
+                -0.127362624,
+                0.08769074,
+                0.00123242568
+              ],
+              "rotation_quaternion": [
+                -1.20210214E-16,
+                0.7071068,
+                0.7071068,
+                -1.20210214E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "m-pr07-a01-bracket-2-1-3",
+              "translation": [
+                0.0766558349,
+                -0.0191993527,
+                0.00360765471
+              ],
+              "rotation_quaternion": [
+                -0.5,
+                -0.5,
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "m-pr07-a01-bracket-2-1_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.0075,
+                      0.0,
+                      -0.012
+                    ],
+                    "extents": [
+                      0.0075,
+                      0.006,
+                      0.012
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "m-pr07-a01-bracket-2-1-4",
+              "translation": [
+                0.122655831,
+                -0.007199352,
+                0.00360765471
+              ],
+              "rotation_quaternion": [
+                -0.5,
+                -0.5,
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "m-pr07-a01-bracket-2-1_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.0075,
+                      0.0,
+                      -0.012
+                    ],
+                    "extents": [
+                      0.0075,
+                      0.006,
+                      0.012
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "xm430-1",
+              "translation": [
+                0.06465583,
+                -0.116235986,
+                0.017857654
+              ],
+              "rotation_quaternion": [
+                0.5,
+                0.5,
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "xm430_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      -0.012,
+                      0.00319999922
+                    ],
+                    "extents": [
+                      0.01425,
+                      0.02325,
+                      0.0202
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "xm430-2",
+              "translation": [
+                0.06463738,
+                0.115764014,
+                0.0179824252
+              ],
+              "rotation_quaternion": [
+                -0.5,
+                -0.5,
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "xm430_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      -0.012,
+                      0.00319999922
+                    ],
+                    "extents": [
+                      0.01425,
+                      0.02325,
+                      0.0202
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-4",
+              "translation": [
+                0.128637388,
+                0.0878006443,
+                -0.000967574364
+              ],
+              "rotation_quaternion": [
+                -3.92523141E-17,
+                0.7071068,
+                0.7071068,
+                -3.92523141E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-5",
+              "translation": [
+                -0.03934417,
+                -0.128272623,
+                -0.0008428035
+              ],
+              "rotation_quaternion": [
+                -3.92523141E-17,
+                0.7071068,
+                0.7071068,
+                -3.92523141E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-6",
+              "translation": [
+                0.128655836,
+                -0.0881993547,
+                0.00110765477
+              ],
+              "rotation_quaternion": [
+                -1.98714843E-16,
+                0.7071068,
+                0.7071068,
+                -1.98714843E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-7",
+              "translation": [
+                -0.127362624,
+                0.05169074,
+                0.00123242568
+              ],
+              "rotation_quaternion": [
+                -1.20210214E-16,
+                0.7071068,
+                0.7071068,
+                -1.20210214E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-8",
+              "translation": [
+                -0.07534417,
+                -0.128309265,
+                -0.0008428035
+              ],
+              "rotation_quaternion": [
+                -9.322425E-17,
+                0.7071068,
+                0.7071068,
+                -9.322425E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-9",
+              "translation": [
+                0.128655836,
+                -0.0521993525,
+                0.00110765477
+              ],
+              "rotation_quaternion": [
+                -4.17055829E-17,
+                0.7071068,
+                0.7071068,
+                -4.17055829E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-10",
+              "translation": [
+                -0.0753626153,
+                0.127690732,
+                0.00123242568
+              ],
+              "rotation_quaternion": [
+                -1.20210214E-16,
+                0.7071068,
+                0.7071068,
+                -1.20210214E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-11",
+              "translation": [
+                0.128637388,
+                0.05180065,
+                -0.000967574364
+              ],
+              "rotation_quaternion": [
+                -3.92523141E-17,
+                0.7071068,
+                0.7071068,
+                -3.92523141E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "m-pr07-a01-bracket-2-1-6",
+              "translation": [
+                0.07663738,
+                0.0188006479,
+                0.00153242564
+              ],
+              "rotation_quaternion": [
+                0.5,
+                -0.5,
+                0.5,
+                0.5
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "m-pr07-a01-bracket-2-1_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.0075,
+                      0.0,
+                      -0.012
+                    ],
+                    "extents": [
+                      0.0075,
+                      0.006,
+                      0.012
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "support-hex-m3-0xl35-ff-12",
+              "translation": [
+                -0.127344161,
+                -0.0523092635,
+                -0.0008428035
+              ],
+              "rotation_quaternion": [
+                8.586444E-17,
+                0.7071068,
+                0.7071068,
+                8.586444E-17
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "support-hex-m3-0xl35-ff_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0175,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0025,
+                      0.0175,
+                      0.00288675
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "connected-plates-bottom-1-1-1",
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "first-floor-1-1",
+              "children": [
+                {
+                  "name": "p-bp-a001-3d-9",
+                  "translation": [
+                    -0.06336262,
+                    0.06369074,
+                    0.00373242563
+                  ],
+                  "rotation_quaternion": [
+                    -2.674064E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.674064E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-10",
+                  "translation": [
+                    0.06463738,
+                    0.06380065,
+                    0.00373242563
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    2.87032546E-16,
+                    2.87032546E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-11",
+                  "translation": [
+                    0.06465583,
+                    -0.06419935,
+                    0.00360765471
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    1.98714843E-16,
+                    1.98714843E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-12",
+                  "translation": [
+                    -0.0633441657,
+                    -0.06427263,
+                    0.00385719654
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    2.87032546E-16,
+                    2.87032546E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-13",
+                  "translation": [
+                    -0.06336262,
+                    0.06372737,
+                    0.00373242563
+                  ],
+                  "rotation_quaternion": [
+                    0.7071068,
+                    2.1098119E-16,
+                    2.1098119E-16,
+                    0.7071068
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-14",
+                  "translation": [
+                    0.06465583,
+                    -0.0642359853,
+                    0.00360765471
+                  ],
+                  "rotation_quaternion": [
+                    -2.674064E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.674064E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-15",
+                  "translation": [
+                    0.06463738,
+                    0.06376401,
+                    0.00373242563
+                  ],
+                  "rotation_quaternion": [
+                    -2.674064E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.674064E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "p-bp-a001-3d-16",
+                  "translation": [
+                    -0.0633441657,
+                    -0.06430926,
+                    0.00385719654
+                  ],
+                  "rotation_quaternion": [
+                    -2.84579274E-16,
+                    0.7071068,
+                    0.7071068,
+                    -2.84579274E-16
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "connected-plates-bottom-1-1-1",
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "p-bp-a001-3d_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.0320000052,
+                          -0.0045,
+                          0.0
+                        ],
+                        "extents": [
+                          0.0367735028,
+                          0.0045,
+                          0.06877351
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ball-caster-2-1",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "main_chassis",
+          "children": [
+            {
+              "name": "pr21-caster-cvr-3x5-rev6-1",
+              "translation": [
+                -0.112362616,
+                0.06369074,
+                -0.006767574
+              ],
+              "rotation_quaternion": [
+                3.06658723E-16,
+                -0.7071068,
+                0.7071068,
+                -3.06658723E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "ball-caster-2-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "pr21-caster-cvr-3x5-rev6_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.00258326018,
+                      0.0
+                    ],
+                    "extents": [
+                      0.015,
+                      0.00408326,
+                      0.009
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "steelball-3-8inch-1",
+              "translation": [
+                -0.112362616,
+                0.06369074,
+                -0.010630074
+              ],
+              "rotation_quaternion": [
+                -0.002233677,
+                0.0745769963,
+                0.04571173,
+                0.9961645
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "ball-caster-2-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "steelball-3-8inch_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0047625,
+                      0.0047625,
+                      0.00476127
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ball-caster-1-1",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "main_chassis",
+          "children": [
+            {
+              "name": "steelball-3-8inch-2",
+              "translation": [
+                -0.112344168,
+                -0.06430926,
+                -0.0105053037
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "ball-caster-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "steelball-3-8inch_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "extents": [
+                      0.0047625,
+                      0.0047625,
+                      0.00476127
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "pr21-caster-cvr-3x5-rev6-2",
+              "translation": [
+                -0.112344168,
+                -0.06430926,
+                -0.00664280355
+              ],
+              "rotation_quaternion": [
+                2.96845635E-16,
+                -0.7071068,
+                0.7071068,
+                -2.96845635E-16
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "ball-caster-1-1",
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "pr21-caster-cvr-3x5-rev6_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0,
+                      0.00258326018,
+                      0.0
+                    ],
+                    "extents": [
+                      0.015,
+                      0.00408326,
+                      0.009
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ using ZO.Util.Extensions;
 using ZO.ROS.Controllers;
 using ZO.Sensors;
 using ZO.ROS.Unity;
-using ZO.ROS.Unity.Publisher;
+using ZO.ROS.Publisher;
 
 namespace ZO {
 

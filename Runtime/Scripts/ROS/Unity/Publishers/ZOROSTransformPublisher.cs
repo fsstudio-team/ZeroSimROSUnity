@@ -3,15 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Geometry;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
     public class ZOROSTransformPublisher : ZOROSUnityGameObjectBase {
         public string _frameId = "";
         public string _childFrameId = "";
+
+        /// <summary>
+        /// The name of *THIS* frame.
+        /// </summary>
+        /// <value></value>
         public string ChildFrameID {
             get => _childFrameId;
             set => _childFrameId = value;
         }
+
+        /// <summary>
+        /// The name of the parent frame.
+        /// </summary>
+        /// <value></value>
         public string FrameID {
             get => _frameId;
             set => _frameId = value;

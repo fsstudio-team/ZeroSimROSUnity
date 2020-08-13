@@ -3,8 +3,9 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.Sensors;
+using ZO.ROS.Unity;
 
-namespace ZO.ROS.Unity.Publisher {
+namespace ZO.ROS.Publisher {
 
     /// <summary>
     /// Publish /sensor/Image message.
@@ -37,7 +38,7 @@ namespace ZO.ROS.Unity.Publisher {
 
         private void Initialize() {
             // advertise
-            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType, Name);
+            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType);
 
             // hookup to the sensor update delegate
             _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishRGBImageDelegate;
