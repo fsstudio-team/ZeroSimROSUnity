@@ -41,9 +41,6 @@ namespace ZO.ROS {
         /// <value></value>
         public string Name {
             get {
-                // if (string.IsNullOrEmpty(_name)) {
-                //     _name = Type + "_" + gameObject.name;
-                // }
                 return _name;
             }
 
@@ -57,9 +54,7 @@ namespace ZO.ROS {
         /// </summary>
         /// <value></value>
         protected ZOROSBridgeConnection ROSBridgeConnection {
-            get {
-                return ZOROSBridgeConnection.Instance;
-            }
+            get { return ZOROSBridgeConnection.Instance; }
         }
 
         /// <summary>
@@ -67,9 +62,7 @@ namespace ZO.ROS {
         /// </summary>
         /// <value></value>
         protected ZOROSUnityManager ROSUnityManager {
-            get {
-                return ZOROSUnityManager.Instance;
-            }
+            get { return ZOROSUnityManager.Instance; }
         }
 
 
@@ -79,6 +72,8 @@ namespace ZO.ROS {
         public ActionStatusEnum ActionStatus {
             get => _actionStatus;
 
+
+            /// when the action state is set the status is published on the status topic
             protected set {
                 _actionStatus = value;
                 // publish status
@@ -115,10 +110,6 @@ namespace ZO.ROS {
         /// </summary>
         public void Initialize() {
             Debug.Log("INFO: ZOROSActionServer::Initialize");
-
-            // auto-connect to ROS Bridge connection and disconnect events
-            // ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
-            // ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
             TActionMessage tmpActionMessage = new TActionMessage(); // used just to get message types
             // Advertise Action feedback
             ROSBridgeConnection.Advertise(ROSTopic + "/status", GoalStatusArrayMessage.Type);
@@ -139,8 +130,6 @@ namespace ZO.ROS {
         /// </summary>
         public void Terminate() {
             Debug.Log("INFO: ZOROSActionServer::Terminate");
-            // ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
-            // ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/status");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/feedback");
             ROSBridgeConnection.UnAdvertise(ROSTopic + "/result");

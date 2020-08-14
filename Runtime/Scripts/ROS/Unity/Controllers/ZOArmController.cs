@@ -17,6 +17,12 @@ using ZO.ROS.Unity.Service;
 namespace ZO.ROS.Controllers {
     public class ZOArmController : ZOROSUnityGameObjectBase, ZOROSControllerInterface {
 
+        /// <summary>
+        /// Arm controller action server.
+        /// </summary>
+        /// <typeparam name="FollowJointTrajectoryActionMessage"></typeparam>
+        /// <typeparam name="FollowJointTrajectoryActionGoal"></typeparam>
+        /// <returns></returns>
         private ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> _actionServer = new ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal>();
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
         private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
