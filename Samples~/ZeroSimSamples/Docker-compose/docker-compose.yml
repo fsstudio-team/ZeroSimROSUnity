@@ -16,8 +16,8 @@ services:
 
     zosim_tools:
         image: docker.pkg.github.com/fsstudio-team/zerosimros/zosim-tools:latest
-        volumes: # include unity project directory as volume, and export tools source code as volumes for development
-            - ../../../../../../unity/zero-sim-unity/:/unity-project-root/
+        volumes: # include unity project directory as volume
+            - ../../../../../../:/unity-project-root/
         environment:
             PYTHONUNBUFFERED: 1
         networks:

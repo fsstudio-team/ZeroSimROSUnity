@@ -13,6 +13,8 @@ class ZOSettings : ScriptableObject
     [SerializeField]
     private string _dockerComposeWorkingDirectory;
 
+    // PROPERTIES
+    public string ComposeWorkingDirectory { get{ return _dockerComposeWorkingDirectory; } }
 
     internal static ZOSettings GetOrCreateSettings()
     {

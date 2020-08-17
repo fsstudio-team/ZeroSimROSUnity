@@ -17,6 +17,8 @@ public class ZODockerManagerWindow : EditorWindow {
     private float _dockerPollTimespan = 2.0f;
     private double _lastPollTimestamp = 0;
 
+    private ZOSettings _ZOSettings;
+
     [MenuItem("Zero Sim/Docker Manager")]
     public static void OpenDockerManager() {
         
@@ -59,10 +61,9 @@ public class ZODockerManagerWindow : EditorWindow {
     private void OnGUIDocker(){
         EditorGUILayout.LabelField("Docker running", ZODockerManager.isRunning.ToString());
 
-        if(!ZODockerManager.isRunning && GUILayout.Button("Select docker-compose.yml working directory")){
-            ZODockerManager.composeWorkingDirectory = EditorUtility.OpenFolderPanel("Select docker-compose.yml directory", "", "");
-        }
-        EditorGUILayout.LabelField("Docker-compose directory", ZODockerManager.composeWorkingDirectory);
+        _ZOSettings = ZOSettings.GetOrCreateSettings();
+        
+        EditorGUILayout.LabelField("Docker-compose directory", _ZOSettings.ComposeWorkingDirectory);
 
         if (!ZODockerManager.isRunning && GUILayout.Button("Start Docker service")){
             ZODockerManager.DockerComposeUp();

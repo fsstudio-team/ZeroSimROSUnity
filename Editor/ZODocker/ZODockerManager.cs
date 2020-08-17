@@ -78,8 +78,10 @@ public class ZODockerManager
     }
 
     public static Task<bool> IsZODockerRunning(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
         var options = new EditorShell.Options(){
-            workDirectory = composeWorkingDirectory,
+            workDirectory = settings.ComposeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){ }
         };
 
@@ -105,9 +107,11 @@ public class ZODockerManager
     }
 
     public static void DockerComposeUp(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = composeWorkingDirectory,
+            workDirectory = settings.ComposeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){ }
         };
         string command = "docker-compose up";
@@ -131,9 +135,11 @@ public class ZODockerManager
     }
 
     public static void DockerComposeDown(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = composeWorkingDirectory,
+            workDirectory = settings.ComposeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){ }
         };
         string command = "docker-compose down";
@@ -168,10 +174,12 @@ public class ZODockerManager
                                  string command, 
                                  string[] additionalVolumes = null, 
                                  Action<int> callback = null) {
+        
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
 
         // docker-compose -f ./docker/docker-compose.yml run --rm 
         // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
-        var options = new EditorShell.Options(){workDirectory = composeWorkingDirectory,
+        var options = new EditorShell.Options(){workDirectory = settings.ComposeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){ }
         };
 
