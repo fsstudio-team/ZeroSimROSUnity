@@ -6,7 +6,7 @@ namespace ZO.ROS.Unity {
     public interface ZOROSUnityInterface {
 
         string ROSTopic { get; }
-        void OnROSBridgeConnected(object rosUnityManager);
-        void OnROSBridgeDisconnected(object rosUnityManager);
+        void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager);
+        void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager);
     }
 }

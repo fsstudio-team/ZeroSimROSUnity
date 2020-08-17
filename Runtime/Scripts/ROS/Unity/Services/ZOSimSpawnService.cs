@@ -134,12 +134,12 @@ namespace ZO.ROS.Unity.Service {
         // }
 
 
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOSimSpawnService::OnROSBridgeConnected");
             Initialize();
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOSimSpawnService::OnROSBridgeDisconnected");
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }

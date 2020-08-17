@@ -59,7 +59,7 @@ namespace ZO.ROS.Unity {
         /// Event handler delegate definition that is used for ROS Bridge connect & disconnect events.
         /// </summary>
         /// <returns></returns>
-        public delegate void ROSBridgeConnectionChangeHandler(object sender);
+        public delegate void ROSBridgeConnectionChangeHandler(ZOROSUnityManager sender);
         public event ROSBridgeConnectionChangeHandler _connectEvent;
         // public ZOROSBridgeConnectEvent _connectEvent = new ZOROSBridgeConnectEvent();
 

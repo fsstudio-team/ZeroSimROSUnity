@@ -142,11 +142,11 @@ namespace ZO.ROS {
 
 
         #region ZOROSUnityInterface
-        public void OnROSBridgeConnected(object rosUnityManager) {
+        public void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSActionServer::OnROSBridgeConnected");
         }
 
-        public void OnROSBridgeDisconnected(object rosUnityManager) {
+        public void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSActionServer::OnROSBridgeDisconnected");
         }
         #endregion // ZOROSUnityInterface

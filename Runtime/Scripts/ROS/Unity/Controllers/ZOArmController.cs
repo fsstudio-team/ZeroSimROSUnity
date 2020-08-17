@@ -18,16 +18,30 @@ namespace ZO.ROS.Controllers {
     public class ZOArmController : ZOROSUnityGameObjectBase, ZOROSControllerInterface {
 
         /// <summary>
-        /// Arm controller action server.
+        /// Arm controller action server as used by MoveIt
         /// </summary>
         /// <typeparam name="FollowJointTrajectoryActionMessage"></typeparam>
         /// <typeparam name="FollowJointTrajectoryActionGoal"></typeparam>
         /// <returns></returns>
         private ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> _actionServer = new ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal>();
+
+        /// <summary>
+        /// Simple single joint control message as used by RQT joint controller.
+        /// </summary>
+        /// <returns></returns>
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
+
+        /// <summary>
+        /// Joint state publisher message.
+        /// </summary>
+        /// <returns></returns>
         private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
 
 
+        /// <summary>
+        /// Controller manager manages all ROS controllers on a single robot such as this arm controller.  
+        /// Important: this is per robot and not global.
+        /// </summary>
         private ZOControllerManagerService _controllerManager = null;
         private ZOControllerManagerService ControllerManager {
             get {
@@ -46,8 +60,9 @@ namespace ZO.ROS.Controllers {
         #region ZOGameObjectBase
 
         protected override void ZOAwake() {
-            Name = "arm_controller";
+            Name = gameObject.name +  "_arm_controller";
         }
+
         protected override void ZOStart() {
             base.ZOStart();
 
@@ -115,11 +130,17 @@ namespace ZO.ROS.Controllers {
         }
 
         ControllerStateEnum _state;
+        /// <summary>
+        /// Returns controller state of Stopped, Initialize, or Running
+        /// </summary>
+        /// <value></value>
         public ControllerStateEnum ControllerState {
             get => _state;
             private set => _state = value;
         }
 
+
+        // joints cache lazy loaded by Joints property
         private ZOJointInterface[] _joints = null;
 
         /// <summary>
@@ -142,7 +163,7 @@ namespace ZO.ROS.Controllers {
         /// <summary>
         /// Get an array of Joint names.
         /// </summary>
-        /// <value></value>
+        /// /// <value></value>
         public string[] JointNames {
             get {
                 if (_jointNames == null) {
@@ -169,11 +190,17 @@ namespace ZO.ROS.Controllers {
             }
         }
 
+        /// <summary>
+        /// Implements ROS Controller Load
+        /// </summary>
         public void Load() {
             Debug.Log("INFO: ZOArmController::Load");
             Initialize();
         }
 
+        /// <summary>
+        /// Implements ROS Controller Unload
+        /// </summary>
         public void Unload() {
             Debug.Log("INFO: ZOArmController::Unload");
             Terminate();
@@ -249,13 +276,13 @@ namespace ZO.ROS.Controllers {
         #endregion // ZOSerializationInterface
 
         #region ZOROSUnityInterface
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOArmController::OnROSBridgeConnected");
             // Initialize();
 
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOArmController::OnROSBridgeDisconnected");
             Terminate();
         }

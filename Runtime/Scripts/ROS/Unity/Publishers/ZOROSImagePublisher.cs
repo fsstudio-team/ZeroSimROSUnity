@@ -45,13 +45,13 @@ namespace ZO.ROS.Publisher {
 
         }
 
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOImagePublisher::OnROSBridgeConnected");
             Initialize();
 
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOImagePublisher::OnROSBridgeDisconnected");
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }

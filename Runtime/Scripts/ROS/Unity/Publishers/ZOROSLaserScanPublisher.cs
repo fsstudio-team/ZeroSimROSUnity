@@ -66,12 +66,12 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
 
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSLaserScanPublisher::OnROSBridgeConnected");
             Initialize();
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSLaserScanPublisher::OnROSBridgeDisconnected");
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }

@@ -103,13 +103,13 @@ namespace ZO.ROS.Publisher {
 
 
         #region ZOROSUnityInterface
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSJointStatesPublisher::OnROSBridgeConnected");
             Initialize();
 
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSJointStatesPublisher::OnROSBridgeDisconnected");
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }

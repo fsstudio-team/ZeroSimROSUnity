@@ -152,9 +152,9 @@ namespace ZO.ROS.Unity {
         #endregion // ZOGameObjectBase
         
         #region ZOROSUnityInterface
-        public abstract void OnROSBridgeConnected(object rosUnityManager);
+        public abstract void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager);
 
-        public abstract void OnROSBridgeDisconnected(object rosUnityManager);
+        public abstract void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager);
         #endregion // ZOROSUnityInterface
 
 

@@ -76,12 +76,12 @@ namespace ZO.ROS.Publisher {
             UpdateRateHz = json["update_rate_hz"].Value<float>();
         }
 
-        public override void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSTransformPublisher::OnROSBridgeConnected");
 
         }
 
-        public override void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSTransformPublisher::OnROSBridgeDisconnected");
         }
 
