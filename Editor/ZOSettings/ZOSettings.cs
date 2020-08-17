@@ -31,8 +31,10 @@ class ZOSettings : ScriptableObject
                 settings._dockerComposeWorkingDirectory = "../../docker/dev";
             }
             else {
+                Debug.Log("Search for docker compose files");
                 foreach(var dockerComposeAsset in dockerComposeAssets){ // find the first .yml and use that one (need to iterate through results because folders also appear in this array)
-                    string filePath = AssetDatabase.GUIDToAssetPath(dockerComposeAssets[0]);
+                    string filePath = AssetDatabase.GUIDToAssetPath(dockerComposeAsset);
+                    Debug.Log(filePath);
                     if(filePath.EndsWith(".yml")){
                         string directory = System.IO.Path.GetDirectoryName(filePath);
                         settings._dockerComposeWorkingDirectory = directory;
