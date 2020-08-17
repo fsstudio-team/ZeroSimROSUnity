@@ -53,8 +53,7 @@ public class ZODockerManager
 
     public static Task<bool> IsZODockerInstalled(){
         var options = new EditorShell.Options(){
-            workDirectory = composeWorkingDirectory,
-            environmentVars = new Dictionary<string, string>(){ }
+            workDirectory = Application.dataPath
         };
 
         // Create a task and return it so clients can use async/await
