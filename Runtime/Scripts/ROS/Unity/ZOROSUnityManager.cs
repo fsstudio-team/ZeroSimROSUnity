@@ -64,7 +64,7 @@ namespace ZO.ROS.Unity {
         // public ZOROSBridgeConnectEvent _connectEvent = new ZOROSBridgeConnectEvent();
 
         /// <summary>
-        /// Unity event that is called when connected to ROS bridge.
+        /// Event that is called when connected to ROS bridge.
         /// </summary>
         /// <value></value>
         public event ROSBridgeConnectionChangeHandler ROSBridgeConnectEvent {
@@ -78,7 +78,7 @@ namespace ZO.ROS.Unity {
 
         public event ROSBridgeConnectionChangeHandler _disconnectEvent;
         /// <summary>
-        /// Unity event called when disconnected from ROS Bridge
+        /// Event called when disconnected from ROS Bridge
         /// </summary>
         /// <returns></returns>
         public event ROSBridgeConnectionChangeHandler ROSBridgeDisconnectEvent {
@@ -222,7 +222,7 @@ namespace ZO.ROS.Unity {
 
 
                 ROSBridgeConnection.Serialization = _serializationType;
-                ROSBridgeConnection.OnConnectedToROSBridge = (rosBridge) => {
+                ROSBridgeConnection.ROSBridgeConnectEvent += delegate(ZOROSBridgeConnection rosBridge) {
                     Debug.Log("INFO: Connected to ROS Bridge");
 
                     // advertise the transform broadcast
@@ -252,9 +252,9 @@ namespace ZO.ROS.Unity {
                     }
 
 
-                    return Task.CompletedTask;
+                    // return Task.CompletedTask;
                 };
-                ROSBridgeConnection.OnDisconnectedFromROSBridge = (rosBridge) => {
+                ROSBridgeConnection.ROSBridgeDisconnectEvent += delegate (ZOROSBridgeConnection rosBridge) {
                     Debug.Log("INFO: Disconnected to ROS Bridge");
 
                     // inform listeners we have disconnected
@@ -266,7 +266,7 @@ namespace ZO.ROS.Unity {
                     // Unadvertise simulation clock
                     rosBridge.UnAdvertise("/clock");
 
-                    return Task.CompletedTask;
+                    // return Task.CompletedTask;
                 };
 
                 // run async task.  if cannot connect wait for a couple of seconds and try again

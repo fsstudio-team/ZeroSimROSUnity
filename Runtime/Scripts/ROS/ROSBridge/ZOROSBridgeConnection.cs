@@ -98,20 +98,33 @@ namespace ZO.ROS {
         public SerializationType Serialization { get; set; }
         private TcpClient _tcpClient;
 
+        public delegate void ROSBridgeConnectionChangeHandler(ZOROSBridgeConnection sender);
+        private event ROSBridgeConnectionChangeHandler _connectEvent;
         /// <summary>
-        /// Delegate called when ROS Bridge is connected.
+        /// Event that is called when connected to ROS bridge.
         /// </summary>
-        /// <param>This ZOROSBridgeConnection</param> 
         /// <value></value>
-        public Func<ZOROSBridgeConnection, Task> OnConnectedToROSBridge { get; set; }
-
+        public event ROSBridgeConnectionChangeHandler ROSBridgeConnectEvent {
+            add {
+                _connectEvent += value;
+            }
+            remove {
+                _connectEvent -= value;
+            }
+        }
+        public event ROSBridgeConnectionChangeHandler _disconnectEvent;
         /// <summary>
-        /// Delegate called when ROS Bridge is disconnected.
+        /// Event called when disconnected from ROS Bridge
         /// </summary>
-        /// <param>This ZOROSBridgeConnection</param> 
-        /// <value></value>
-        public Func<ZOROSBridgeConnection, Task> OnDisconnectedFromROSBridge { get; set; }
-
+        /// <returns></returns>
+        public event ROSBridgeConnectionChangeHandler ROSBridgeDisconnectEvent {
+            add {
+                _disconnectEvent += value;
+            }
+            remove {
+                _disconnectEvent -= value;
+            }
+        }
 
 
         /// <summary>
@@ -410,13 +423,11 @@ namespace ZO.ROS {
             Debug.Log("INFO: ZOROSBridgeConnection::ConnectAsync connected...");
 
             // inform listeners of connection
-            if (OnConnectedToROSBridge != null) {
-                try {
-                    await OnConnectedToROSBridge(this);
-                } catch (Exception e) {
-                    Debug.LogError("ERROR: ConnectAsync::OnConnectedToROSBridge: " + e.ToString());
+            try {
+               _connectEvent.Invoke(this);
+            } catch (Exception e) {
+                Debug.LogError("ERROR: ConnectAsync::OnConnectedToROSBridge: " + e.ToString());
 
-                }
             }
 
             await ClientReadAsync();
@@ -431,9 +442,7 @@ namespace ZO.ROS {
             Debug.Log("INFO: ZOROSBridgeConnection::Stop Requested");
 
             // inform everyone we are disconnecting
-            if (OnDisconnectedFromROSBridge != null) {
-                await OnDisconnectedFromROSBridge(this);
-            }
+            _disconnectEvent?.Invoke(this);
 
             if (_isConnected == true && _tcpClient != null) {
                 _tcpClient.GetStream().Close();

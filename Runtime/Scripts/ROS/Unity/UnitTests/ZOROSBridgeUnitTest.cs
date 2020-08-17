@@ -21,7 +21,7 @@ public class ZOROSBridgeUnitTest : MonoBehaviour {
         /// # run a ROS Bridge Connection TCP server for BSON encoding:
         /// roslaunch rosbridge_server rosbridge_tcp.launch bson_only_mode:=true
         ZOROSBridgeConnection.Instance.Serialization = ZOROSBridgeConnection.SerializationType.BSON;
-        ZOROSBridgeConnection.Instance.OnConnectedToROSBridge = (rosbridge) => {
+        ZOROSBridgeConnection.Instance.ROSBridgeConnectEvent += delegate(ZOROSBridgeConnection rosbridge) {
             Debug.Log("INFO: Connected to ROS Bridge");
 
             // test advertising
@@ -52,6 +52,7 @@ public class ZOROSBridgeUnitTest : MonoBehaviour {
                 bridge.ServiceResponse<SetBoolServiceResponse>(new SetBoolServiceResponse(true, "hello world"), "unity/test_service", true, id);
 
                 return Task.CompletedTask;
+
             });
 
 
@@ -63,19 +64,16 @@ public class ZOROSBridgeUnitTest : MonoBehaviour {
                     Debug.Log("INFO: Received unity_test_1 rosapi/GetParamNames response name: " + name);
                 }
 
-
                 return Task.CompletedTask;
             });
 
 
 
-            return Task.CompletedTask;
         };
-        ZOROSBridgeConnection.Instance.OnDisconnectedFromROSBridge = (controller) => {
+        ZOROSBridgeConnection.Instance.ROSBridgeDisconnectEvent += delegate(ZOROSBridgeConnection controller) {
             Debug.Log("INFO: Disconnected to ROS Bridge");
             ZOROSBridgeConnection.Instance.UnAdvertiseService("unity/test_service");
             controller.UnAdvertise("cmd_vel_zero");
-            return Task.CompletedTask;
         };
 
         // connect to ROS Bridge asynchronously. 

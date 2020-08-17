@@ -21,7 +21,7 @@ public class ZOROSAPIUnitTest : MonoBehaviour {
         /// # run a ROS Bridge Connection TCP server for BSON encoding:
         /// roslaunch rosbridge_server rosbridge_tcp.launch bson_only_mode:=true
         ZOROSBridgeConnection.Instance.Serialization = ZOROSBridgeConnection.SerializationType.BSON;
-        ZOROSBridgeConnection.Instance.OnConnectedToROSBridge = (rosbridge) => {
+        ZOROSBridgeConnection.Instance.ROSBridgeConnectEvent += delegate(ZOROSBridgeConnection rosbridge) {
             Debug.Log("INFO: Connected to ROS Bridge");
 
             // test advertising
@@ -60,11 +60,9 @@ public class ZOROSAPIUnitTest : MonoBehaviour {
                 return Task.CompletedTask;
             });
 
-            return Task.CompletedTask;
         };
-        ZOROSBridgeConnection.Instance.OnDisconnectedFromROSBridge = (controller) => {
+        ZOROSBridgeConnection.Instance.ROSBridgeDisconnectEvent += delegate(ZOROSBridgeConnection controller) {
             Debug.Log("INFO: Disconnected to ROS Bridge");
-            return Task.CompletedTask;
         };
 
         // connect to ROS Bridge asynchronously. 
