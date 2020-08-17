@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Threading.Tasks;
 using ZO.Util;
 using ZO.ROS.Unity;
@@ -66,6 +67,18 @@ namespace ZO.ROS {
         }
 
 
+        /// <summary>
+        /// On goal action received delegate.
+        /// </summary>
+        /// <value></value>
+        public Func<ZOROSActionServer<TActionMessage, TGoalMessage>, TGoalMessage, Task> OnGoalReceived {
+            get; set;
+        }
+
+        public Func<ZOROSActionServer<TActionMessage, TGoalMessage>, Task> OnCancelReceived {
+            get; set;
+        }
+
 
         // This is defined according to actionlib_msgs/GoalStatus
         private ActionStatusEnum _actionStatus = ActionStatusEnum.NO_GOAL;
@@ -117,8 +130,8 @@ namespace ZO.ROS {
             ROSBridgeConnection.Advertise(ROSTopic + "/result", tmpActionMessage.ResultMessageType);
 
             // Subscribe to Action cancel and goal topices
-            ROSBridgeConnection.Subscribe<GoalIDMessage>(Name, ROSTopic + "/cancel", GoalIDMessage.Type, OnCancelReceived);
-            ROSBridgeConnection.Subscribe<TGoalMessage>(Name, ROSTopic + "/goal", tmpActionMessage.GoalMessageType, OnGoalReceived);
+            ROSBridgeConnection.Subscribe<GoalIDMessage>(Name, ROSTopic + "/cancel", GoalIDMessage.Type, _OnCancelReceived);
+            ROSBridgeConnection.Subscribe<TGoalMessage>(Name, ROSTopic + "/goal", tmpActionMessage.GoalMessageType, _OnGoalReceived);
 
 
             ActionStatus = ActionStatusEnum.NO_GOAL;
@@ -154,32 +167,27 @@ namespace ZO.ROS {
 
 
 
-        // Client Triggered Actions
-        // When receive a new goal
-        // protected abstract void OnGoalReceived(ZOROSMessageInterface actionGoal);
-        private Task OnGoalReceived(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
+        private Task _OnGoalReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
 
             Debug.Log("INFO: ZOROSActionServer::OnGoalReceived");
 
             ActionStatus = ActionStatusEnum.PENDING;
-            // OnGoalReceived(msg);
+            OnGoalReceived?.Invoke(this, (TGoalMessage)msg);
+
             return Task.CompletedTask;
         }
 
-        // When the goal is cancelled by the client
-        // protected abstract void OnGoalRecalling(GoalIDMessage goalID);
-        // protected abstract void OnGoalPreempting();
-        private Task OnCancelReceived(ZOROSBridgeConnection oROSBridgeConnection, ZOROSMessageInterface msg) {
+        private Task _OnCancelReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             Debug.Log("INFO: ZOROSActionServer::OnCancelReceived");
             GoalIDMessage goalID = msg as GoalIDMessage;
             switch (ActionStatus) {
                 case ActionStatusEnum.PENDING:
                     ActionStatus = ActionStatusEnum.RECALLING;
-                    // OnGoalRecalling(goalID);
+                    OnCancelReceived?.Invoke(this);
                     break;
                 case ActionStatusEnum.ACTIVE:
                     ActionStatus = ActionStatusEnum.PREEMPTING;
-                    // OnGoalPreempting();
+                    OnCancelReceived?.Invoke(this);
                     break;
                 default:
                     Debug.LogWarning("WARNING: Goal cannot be canceled in current state: " + _actionStatus.ToString());

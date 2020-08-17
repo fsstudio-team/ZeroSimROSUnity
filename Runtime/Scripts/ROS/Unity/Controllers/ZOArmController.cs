@@ -216,6 +216,7 @@ namespace ZO.ROS.Controllers {
             // start up the follow joint trajectory action server
             _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
             _actionServer.Name = "arm_controller";
+            _actionServer.OnGoalReceived = OnGoalReceived;
             _actionServer.Initialize();
 
 
@@ -243,6 +244,8 @@ namespace ZO.ROS.Controllers {
             _actionServer.Terminate();
         }
 
+        #region Control Message/Action Handlers
+
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _commandMessage = (JointTrajectoryMessage)msg;
             _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
@@ -250,6 +253,15 @@ namespace ZO.ROS.Controllers {
 
             return Task.CompletedTask;
         }
+
+        Task OnGoalReceived(ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> actionServer, FollowJointTrajectoryActionGoal goalMessage) {
+
+            Debug.Log("INFO: ZOArmController::OnGoalReceived");
+
+            return Task.CompletedTask;
+        }
+
+        #endregion
 
 
         #region ZOSerializationInterface
