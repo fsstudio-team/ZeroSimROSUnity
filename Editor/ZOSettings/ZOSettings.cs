@@ -23,8 +23,18 @@ class ZOSettings : ScriptableObject
         {
             settings = ScriptableObject.CreateInstance<ZOSettings>();
 
-            // default values for settings
-            settings._dockerComposeWorkingDirectory = "../../docker/dev";
+            // DEFAULT VALUES FOR SETTINGS
+            // Search for a docker-compose.yml file
+            string[] dockerComposeAssets = AssetDatabase.FindAssets("docker-compose");
+            if(dockerComposeAssets.Length == 0){
+                // if not found, assume we're in development and set the default dir for development
+                settings._dockerComposeWorkingDirectory = "../../docker/dev";
+            }
+            else{
+                string filePath = AssetDatabase.GUIDToAssetPath(dockerComposeAssets[0]);
+                string directory = System.IO.Path.GetDirectoryName(filePath);
+                settings._dockerComposeWorkingDirectory = directory;
+            }
 
             // create directory if not exists
             System.IO.Directory.CreateDirectory(_settingsPath);
