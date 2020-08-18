@@ -196,6 +196,18 @@ namespace ZO {
                         }
                         articulatedBody.Deserialize(documentRoot, jointJSON);
                     }
+
+
+                    // handle fixed joints
+                    if (jointJSON["type"].Value<string>().Contains("joint.fixed")) {
+                        ZOFixedJoint fixedJoint = this.GetComponent<ZOFixedJoint>(); // remember that there can only ever be one articulated body joint per gameobject
+                        if (fixedJoint == null) {
+                            fixedJoint = this.gameObject.AddComponent<ZOFixedJoint>();
+                            fixedJoint.CreateRequirements();
+                        }
+                        fixedJoint.Deserialize(documentRoot, jointJSON);
+                    }
+
                 }
             }
 
@@ -624,19 +636,6 @@ namespace ZO {
             JArray ros = new JArray();
             JArray sensors = new JArray();
 
-            // FixedJoint
-            // TODO: make a ZOFixedJoint 
-            foreach (FixedJoint fixedJoint in GetComponents<FixedJoint>()) {
-                JObject fixedJointJSON = new JObject(
-                    new JProperty("type", "fixed")
-                );
-                if (fixedJoint.connectedBody != null) {
-                    fixedJointJSON["connected_occurrence"] = fixedJoint.connectedBody.gameObject.name;
-                }
-
-                joints.Add(fixedJointJSON);
-
-            }
 
             // serialize the rest of objects that implement the ZOSerializationInterface
             ZOSerializationInterface[] simTypes = GetComponents<ZOSerializationInterface>();

@@ -37,7 +37,7 @@
   ],
   "occurrences": [
     {
-      "name": "base",
+      "name": "base_link",
       "translation": [
         0.0,
         0.0,
@@ -62,9 +62,6 @@
         "is_kinematic": false
       },
       "joints": [
-        {
-          "type": "fixed"
-        },
         {
           "name": "shoulder_pan_joint",
           "type": "joint.hinge",
@@ -100,8 +97,8 @@
           ],
           "use_spring": false,
           "spring": {
-            "spring": 100.0,
-            "damper": 50.0,
+            "spring": 500.0,
+            "damper": 400.0,
             "target_position": 0.0
           },
           "use_motor": false,
@@ -118,8 +115,33 @@
             "bounce_min_velocity": 0.2,
             "contact_distance": 0.0
           },
-          "connected_occurrence": "shoulder_base",
-          "parent_occurrence": "base"
+          "connected_occurrence": "shoulder_link",
+          "parent_occurrence": "base_link"
+        },
+        {
+          "name": "joint.fixed_from_base_link",
+          "type": "joint.fixed",
+          "anchor": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "world_anchor": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "connected_anchor": [
+            0.0,
+            0.765,
+            0.0
+          ],
+          "world_connected_anchor": [
+            0.0,
+            0.765,
+            0.0
+          ],
+          "parent_occurrence": "base_link"
         }
       ],
       "visuals": [
@@ -195,7 +217,7 @@
       ],
       "children": [
         {
-          "name": "shoulder_base",
+          "name": "shoulder_link",
           "translation": [
             0.0,
             0.128000021,
@@ -212,7 +234,7 @@
             1.0,
             1.0
           ],
-          "parent_name": "base",
+          "parent_name": "base_link",
           "rigidbody": {
             "mass": 1.0,
             "drag": 0.0,
@@ -256,8 +278,8 @@
               ],
               "use_spring": false,
               "spring": {
-                "spring": 100.0,
-                "damper": 50.0,
+                "spring": 500.0,
+                "damper": 400.0,
                 "target_position": 0.0
               },
               "use_motor": false,
@@ -274,8 +296,8 @@
                 "bounce_min_velocity": 0.2,
                 "contact_distance": 0.0
               },
-              "connected_occurrence": "shoulder",
-              "parent_occurrence": "shoulder_base"
+              "connected_occurrence": "upper_arm_link",
+              "parent_occurrence": "shoulder_link"
             }
           ],
           "visuals": [
@@ -351,7 +373,7 @@
           ],
           "children": [
             {
-              "name": "shoulder",
+              "name": "upper_arm_link",
               "translation": [
                 0.0,
                 0.0,
@@ -368,7 +390,7 @@
                 1.0,
                 1.0
               ],
-              "parent_name": "shoulder_base",
+              "parent_name": "shoulder_link",
               "rigidbody": {
                 "mass": 1.0,
                 "drag": 0.0,
@@ -412,8 +434,8 @@
                   ],
                   "use_spring": false,
                   "spring": {
-                    "spring": 100.0,
-                    "damper": 50.0,
+                    "spring": 500.0,
+                    "damper": 400.0,
                     "target_position": 0.0
                   },
                   "use_motor": false,
@@ -430,8 +452,8 @@
                     "bounce_min_velocity": 0.2,
                     "contact_distance": 0.0
                   },
-                  "connected_occurrence": "elbow",
-                  "parent_occurrence": "shoulder"
+                  "connected_occurrence": "forearm_link",
+                  "parent_occurrence": "upper_arm_link"
                 }
               ],
               "visuals": [
@@ -675,7 +697,7 @@
               ],
               "children": [
                 {
-                  "name": "elbow",
+                  "name": "forearm_link",
                   "translation": [
                     -0.0100000147,
                     0.5464004,
@@ -692,7 +714,7 @@
                     1.0,
                     1.0
                   ],
-                  "parent_name": "shoulder",
+                  "parent_name": "upper_arm_link",
                   "rigidbody": {
                     "mass": 1.0,
                     "drag": 0.0,
@@ -736,8 +758,8 @@
                       ],
                       "use_spring": false,
                       "spring": {
-                        "spring": 100.0,
-                        "damper": 50.0,
+                        "spring": 500.0,
+                        "damper": 400.0,
                         "target_position": 0.0
                       },
                       "use_motor": false,
@@ -754,8 +776,8 @@
                         "bounce_min_velocity": 0.2,
                         "contact_distance": 0.0
                       },
-                      "connected_occurrence": "wrist-1",
-                      "parent_occurrence": "elbow"
+                      "connected_occurrence": "wrist_1_link",
+                      "parent_occurrence": "forearm_link"
                     }
                   ],
                   "visuals": [
@@ -999,7 +1021,7 @@
                   ],
                   "children": [
                     {
-                      "name": "wrist-1",
+                      "name": "wrist_1_link",
                       "translation": [
                         0.0100000128,
                         0.6378999,
@@ -1016,7 +1038,7 @@
                         1.0,
                         1.0
                       ],
-                      "parent_name": "elbow",
+                      "parent_name": "forearm_link",
                       "rigidbody": {
                         "mass": 1.0,
                         "drag": 0.0,
@@ -1060,8 +1082,8 @@
                           ],
                           "use_spring": false,
                           "spring": {
-                            "spring": 100.0,
-                            "damper": 50.0,
+                            "spring": 500.0,
+                            "damper": 400.0,
                             "target_position": 0.0
                           },
                           "use_motor": false,
@@ -1078,8 +1100,8 @@
                             "bounce_min_velocity": 0.2,
                             "contact_distance": 0.0
                           },
-                          "connected_occurrence": "wrist-2",
-                          "parent_occurrence": "wrist-1"
+                          "connected_occurrence": "wrist_2_link",
+                          "parent_occurrence": "wrist_1_link"
                         }
                       ],
                       "visuals": [
@@ -1155,7 +1177,7 @@
                       ],
                       "children": [
                         {
-                          "name": "wrist-2",
+                          "name": "wrist_2_link",
                           "translation": [
                             0.0,
                             0.0675001144,
@@ -1172,7 +1194,7 @@
                             1.0,
                             1.0
                           ],
-                          "parent_name": "wrist-1",
+                          "parent_name": "wrist_1_link",
                           "rigidbody": {
                             "mass": 1.0,
                             "drag": 0.0,
@@ -1216,8 +1238,8 @@
                               ],
                               "use_spring": false,
                               "spring": {
-                                "spring": 100.0,
-                                "damper": 50.0,
+                                "spring": 500.0,
+                                "damper": 400.0,
                                 "target_position": 0.0
                               },
                               "use_motor": false,
@@ -1234,8 +1256,8 @@
                                 "bounce_min_velocity": 0.2,
                                 "contact_distance": 0.0
                               },
-                              "connected_occurrence": "wrist-3",
-                              "parent_occurrence": "wrist-2"
+                              "connected_occurrence": "wrist_3_link",
+                              "parent_occurrence": "wrist_2_link"
                             }
                           ],
                           "visuals": [
@@ -1311,7 +1333,7 @@
                           ],
                           "children": [
                             {
-                              "name": "wrist-3",
+                              "name": "wrist_3_link",
                               "translation": [
                                 -4.656613E-09,
                                 0.0481996536,
@@ -1328,7 +1350,7 @@
                                 1.0,
                                 1.0
                               ],
-                              "parent_name": "wrist-2",
+                              "parent_name": "wrist_2_link",
                               "rigidbody": {
                                 "mass": 1.0,
                                 "drag": 0.0,
@@ -1336,9 +1358,37 @@
                                 "use_gravity": false,
                                 "is_kinematic": false
                               },
+                              "joints": [
+                                {
+                                  "name": "ee_fixed_joint",
+                                  "type": "joint.fixed",
+                                  "anchor": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                  ],
+                                  "world_anchor": [
+                                    -6.519258E-09,
+                                    1.42800009,
+                                    -0.2313906
+                                  ],
+                                  "connected_anchor": [
+                                    -0.06721886,
+                                    0.0228736382,
+                                    0.0263507366
+                                  ],
+                                  "world_connected_anchor": [
+                                    -0.06721887,
+                                    1.40164936,
+                                    -0.208516955
+                                  ],
+                                  "connected_occurrence": "ee_link",
+                                  "parent_occurrence": "wrist_3_link"
+                                }
+                              ],
                               "children": [
                                 {
-                                  "name": "tool-flange-occurrence",
+                                  "name": "ee_link",
                                   "translation": [
                                     0.06721886,
                                     -0.0228736382,
@@ -1355,7 +1405,14 @@
                                     1.0,
                                     1.0
                                   ],
-                                  "parent_name": "wrist-3",
+                                  "parent_name": "wrist_3_link",
+                                  "rigidbody": {
+                                    "mass": 1.0,
+                                    "drag": 0.0,
+                                    "angular_drag": 0.05,
+                                    "use_gravity": true,
+                                    "is_kinematic": false
+                                  },
                                   "visuals": [
                                     {
                                       "type": "primitive.mesh",

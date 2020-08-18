@@ -250,10 +250,8 @@ namespace ZO.ROS.Unity {
                     } catch (System.Exception e) {
                         Debug.LogError("ERROR: ZOROSUnityManager Connected Invoke: " + e.ToString());
                     }
-
-
-                    // return Task.CompletedTask;
                 };
+
                 ROSBridgeConnection.ROSBridgeDisconnectEvent += delegate (ZOROSBridgeConnection rosBridge) {
                     Debug.Log("INFO: Disconnected to ROS Bridge");
 
@@ -265,8 +263,6 @@ namespace ZO.ROS.Unity {
 
                     // Unadvertise simulation clock
                     rosBridge.UnAdvertise("/clock");
-
-                    // return Task.CompletedTask;
                 };
 
                 // run async task.  if cannot connect wait for a couple of seconds and try again
