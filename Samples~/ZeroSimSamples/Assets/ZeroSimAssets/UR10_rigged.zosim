@@ -58,7 +58,7 @@
         "mass": 1.0,
         "drag": 0.0,
         "angular_drag": 0.05,
-        "use_gravity": true,
+        "use_gravity": false,
         "is_kinematic": false
       },
       "joints": [
@@ -116,31 +116,6 @@
             "contact_distance": 0.0
           },
           "connected_occurrence": "shoulder_link",
-          "parent_occurrence": "base_link"
-        },
-        {
-          "name": "joint.fixed_from_base_link",
-          "type": "joint.fixed",
-          "anchor": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "world_anchor": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "connected_anchor": [
-            0.0,
-            0.765,
-            0.0
-          ],
-          "world_connected_anchor": [
-            0.0,
-            0.765,
-            0.0
-          ],
           "parent_occurrence": "base_link"
         }
       ],
@@ -1410,7 +1385,7 @@
                                     "mass": 1.0,
                                     "drag": 0.0,
                                     "angular_drag": 0.05,
-                                    "use_gravity": true,
+                                    "use_gravity": false,
                                     "is_kinematic": false
                                   },
                                   "visuals": [
