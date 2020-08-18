@@ -322,7 +322,13 @@ namespace ZO.ROS {
         //     }
         // }
 
-        protected void PublishFeedback<T>(T feedback) where T : ZOROSMessageInterface {
+
+        /// <summary>
+        /// Send feedback through the '/feedback' topic.
+        /// </summary>
+        /// <param name="feedback"></param>
+        /// <typeparam name="T"></typeparam>
+        public void PublishFeedback<T>(T feedback) where T : ZOROSMessageInterface {
             ROSBridgeConnection.Publish<T>(feedback, ROSTopic + "/feedback");
             // action.action_feedback.status.status = (byte)_actionStatus;
             // action.action_feedback.status.goal_id = action.action_goal.goal_id;

@@ -224,17 +224,21 @@ namespace ZO.ROS.MessageTypes.Control {
 
         public HeaderMessage header { get; set; }
 
+        public string[] joint_names { get; set; }
         public JointTrajectoryPointMessage desired { get; set; }
         public JointTrajectoryPointMessage actual { get; set; }
         public JointTrajectoryPointMessage error { get; set; }
 
         public FollowJointTrajectoryFeedback() {
+            this.header = new HeaderMessage();
+            this.joint_names = new string[0];
             this.desired = new JointTrajectoryPointMessage();
             this.actual = new JointTrajectoryPointMessage();
             this.error = new JointTrajectoryPointMessage();
         }
 
-        public FollowJointTrajectoryFeedback(JointTrajectoryPointMessage desired, JointTrajectoryPointMessage actual, JointTrajectoryPointMessage error) {
+        public FollowJointTrajectoryFeedback(string[] joint_names, JointTrajectoryPointMessage desired, JointTrajectoryPointMessage actual, JointTrajectoryPointMessage error) {
+            this.joint_names = joint_names;
             this.desired = desired;
             this.actual = actual;
             this.error = error;

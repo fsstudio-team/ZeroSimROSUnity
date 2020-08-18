@@ -53,6 +53,10 @@ namespace ZO.ROS.Publisher {
                     // skip
                     continue;
                 }
+                if (typeHierarchy.Contains("fixed")) {
+                    // skip 
+                    continue;
+                }
                 joints.Add(joint);
             }
 

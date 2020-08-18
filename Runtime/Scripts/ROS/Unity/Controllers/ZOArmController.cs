@@ -12,9 +12,17 @@ using ZO.ROS.MessageTypes.ControllerManager;
 using ZO.Physics;
 using ZO.ROS.Unity;
 using ZO.ROS.Unity.Service;
-
+using ZO.ROS.Publisher;
 
 namespace ZO.ROS.Controllers {
+
+    /// <summary>
+    /// Controller for executing joint-space trajectories on a group of joints. Trajectories are specified as
+    /// a set of waypoints to be reached at specific time instants, which the controller attempts to execute
+    /// as well as the mechanism allows. Waypoints consist of positions, and optionally velocities and 
+    /// accelerations. 
+    /// </summary>
+    [RequireComponent(typeof(ZOROSJointStatesPublisher))]
     public class ZOArmController : ZOROSUnityGameObjectBase, ZOROSControllerInterface {
 
         /// <summary>
@@ -32,10 +40,26 @@ namespace ZO.ROS.Controllers {
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
 
         /// <summary>
-        /// Joint state publisher message.
+        /// Joint state publisher message published on `/arm_controller/state` topic.
         /// </summary>
         /// <returns></returns>
         private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
+
+
+        /// <summary>
+        /// Joint state feeedback message for the ROS action server.
+        /// </summary>
+        /// <returns></returns>
+        private FollowJointTrajectoryActionFeedback _followJointTrajectoryActionFeedback = new FollowJointTrajectoryActionFeedback();
+
+
+        /// <summary>
+        /// Action interface goal queue
+        /// </summary>
+        /// <value></value>
+        private Queue<FollowJointTrajectoryActionGoal> Goals {
+            get; set;
+        }
 
 
         /// <summary>
@@ -60,11 +84,14 @@ namespace ZO.ROS.Controllers {
         #region ZOGameObjectBase
 
         protected override void ZOAwake() {
-            Name = gameObject.name +  "_arm_controller";
+            Name = gameObject.name + "_arm_controller";
         }
 
         protected override void ZOStart() {
             base.ZOStart();
+
+            // setup action goals queue
+            Goals = new Queue<FollowJointTrajectoryActionGoal>();
 
             // preload joints because they cannot be updated outside the main unity thread
             ZOJointInterface[] joints = Joints;
@@ -80,6 +107,16 @@ namespace ZO.ROS.Controllers {
             _trajectoryControllerStateMessage.error.positions = new double[joints.Length];
             _trajectoryControllerStateMessage.error.velocities = new double[joints.Length];
 
+            _trajectoryControllerStateMessage.joint_names = jointNames;
+            _followJointTrajectoryActionFeedback.feedback.desired.positions = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.desired.velocities = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.desired.accelerations = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.actual.positions = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.actual.velocities = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.error.positions = new double[joints.Length];
+            _followJointTrajectoryActionFeedback.feedback.error.velocities = new double[joints.Length];
+
+
             // register with controller manager
             ControllerManager.RegisterController(this);
 
@@ -90,21 +127,41 @@ namespace ZO.ROS.Controllers {
 
         protected override void ZOFixedUpdateHzSynchronized() {
             if (this.ControllerState == ControllerStateEnum.Running) {
+
+                // see if we have any goals and update the controller state message
+                if (Goals.Count > 0) {
+
+                    FollowJointTrajectoryActionGoal currentGoal = Goals.Dequeue();
+                    _commandMessage = currentGoal.goal.trajectory;
+                    // update the desired position
+                    _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
+                }
+
                 // update the joint states
                 _trajectoryControllerStateMessage.Update();
+                _followJointTrajectoryActionFeedback.Update();
+
+
                 int i = 0;
                 foreach (ZOJointInterface joint in Joints) {
                     _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
+                    _followJointTrajectoryActionFeedback.feedback.actual.positions[i] = joint.Position;
                     _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
+                    _followJointTrajectoryActionFeedback.feedback.actual.velocities[i] = joint.Velocity;
 
                     _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                    _followJointTrajectoryActionFeedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
                     // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
                     joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
                     i++;
                 }
 
+                // publish feed back on ROS topic
                 ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
+
+                // publish feedback on ROS action
+                _actionServer.PublishFeedback<FollowJointTrajectoryActionFeedback>(_followJointTrajectoryActionFeedback);
 
             }
 
@@ -150,10 +207,11 @@ namespace ZO.ROS.Controllers {
         /// <value></value>
         public ZOJointInterface[] Joints {
             get {
-                if (_joints == null) {     
+                if (_joints == null) {
                     // Get all the joints but filter out fixed joints               
-                    _joints = Array.FindAll(this.transform.GetComponentsInChildren<ZOJointInterface>(), 
-                                joint => joint.Type != "joint.articulated_body.fixedjoint");
+                    _joints = Array.FindAll(this.transform.GetComponentsInChildren<ZOJointInterface>(),
+                                joint => joint.Type != "joint.articulated_body.fixedjoint"
+                                        && joint.Type != "joint.fixed");
                 }
                 return _joints;
             }
@@ -216,7 +274,8 @@ namespace ZO.ROS.Controllers {
             // start up the follow joint trajectory action server
             _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
             _actionServer.Name = "arm_controller";
-            _actionServer.OnGoalReceived = OnGoalReceived;
+            _actionServer.OnGoalReceived += OnGoalReceived;
+            _actionServer.OnCancelReceived += OnCancelReceived;
             _actionServer.Initialize();
 
 
@@ -246,6 +305,14 @@ namespace ZO.ROS.Controllers {
 
         #region Control Message/Action Handlers
 
+
+        /// <summary>
+        /// This responds to a "simple" JointTrajectoryMessage. This is usually seen in the simple RViz
+        /// joint controller but not used by MoveIt.
+        /// </summary>
+        /// <param name="rosBridgeConnection"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public Task OnControlMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _commandMessage = (JointTrajectoryMessage)msg;
             _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
@@ -254,11 +321,32 @@ namespace ZO.ROS.Controllers {
             return Task.CompletedTask;
         }
 
+
+        /// <summary>
+        /// This is a FollowJointTrajectoryActionMessage action responder.  Usually used by MoveIt.
+        /// </summary>
+        /// <param name="actionServer"></param>
+        /// <param name="goalMessage"></param>
+        /// <returns></returns>
         Task OnGoalReceived(ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> actionServer, FollowJointTrajectoryActionGoal goalMessage) {
 
             Debug.Log("INFO: ZOArmController::OnGoalReceived");
 
+            // queue up the messages to be processed later.
+            Goals.Enqueue(goalMessage);
+
+            actionServer.AcceptNewGoal("hey ho lets go");
+
             return Task.CompletedTask;
+        }
+
+        Task OnCancelReceived(ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> actionServer) {
+
+            Debug.Log("INFO: ZOArmController::OnCancelReceived");
+
+            return Task.CompletedTask;
+
+
         }
 
         #endregion
