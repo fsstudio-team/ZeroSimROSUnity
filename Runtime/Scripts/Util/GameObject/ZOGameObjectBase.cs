@@ -16,11 +16,38 @@ namespace ZO.Util {
     public abstract class ZOGameObjectBase : MonoBehaviour {
 
         public float _updateRateHz;
+
+        /// <summary>
+        /// The update rate in Hz
+        /// </summary>
+        /// <value></value>
         public float UpdateRateHz {
             get => _updateRateHz;
             set => _updateRateHz = value;
         }
+
+
+        /// <summary>
+        /// The delta update time in seconds.
+        /// </summary>
+        /// <value></value>
+        public float UpdateTimeSeconds {
+            get {
+                if (UpdateRateHz == 0.0f) {
+                    return 0.0f; // avoid divide by zero
+                }
+                
+                return 1.0f / UpdateRateHz;
+            }
+        }
+
+
         public bool _debug;
+
+        /// <summary>
+        /// Debug flag dependent on implementation. May not do anything.
+        /// </summary>
+        /// <value></value>
         public bool IsDebug {
             get => _debug;
             set => _debug = value;
@@ -67,7 +94,25 @@ namespace ZO.Util {
         /// <summary>
         /// Awake function for Zero Sim Objects
         /// </summary>
-        protected virtual void ZOAwake() {}
+        protected virtual void ZOAwake() { }
+
+
+        /// <summary>
+        /// Reset function for Zero Sim Objects
+        /// </summary>
+        protected virtual void ZOReset() { }
+
+        /// <summary>
+        /// OnGUI is called for rendering and handling GUI events.
+        /// OnGUI is the only function that can implement the "Immediate Mode" GUI (IMGUI) system for rendering and 
+        /// handling GUI events. Your OnGUI implementation might be called several times per frame (one call per 
+        /// event). For more information on GUI events see the Event reference. If the MonoBehaviour's enabled 
+        /// property is set to false, OnGUI() will not be called.
+        /// 
+        /// If Debug property is set to false `ZOOnGUI` will not be called.
+        /// </summary>
+        protected virtual void ZOOnGUI() { }
+
 
         /// <summary>
         /// Destruction function for Zero Sim Objects
@@ -76,13 +121,13 @@ namespace ZO.Util {
 
         /// <summary>Update function for Zero Sim Objects. Will run inside this Monobehavior's Update function.</summary>
         protected virtual void ZOUpdate() { }
-        
+
         /// <summary>FixedUpdate function for Zero Sim Objects. Will run inside this Monobehavior's Update function</summary>
         protected virtual void ZOFixedUpdate() { }
 
         /// <summary>HZ synched function that runs inside Monobehavior's Update function. It's guaranteed to use the set frequency HZ for this sensor.</summary>
         protected virtual void ZOUpdateHzSynchronized() { }
-        
+
         /// <summary>HZ synched function that runs inside Monobehavior's FixedUpdate function. It's guaranteed to use the set frequency HZ for this sensor.</summary>
         protected virtual void ZOFixedUpdateHzSynchronized() { }
 
@@ -99,12 +144,31 @@ namespace ZO.Util {
             _nextUpdateTimeOffset += 0.13f;
         }
 
+        private void Reset() {
+            ZOReset();
+        }
+
         private void Awake() {
-            ZOAwake();    
+            ZOAwake();
         }
 
         private void OnDestroy() {
             ZOOnDestroy();
+        }
+
+
+        /// <summary>
+        /// OnGUI is called for rendering and handling GUI events.
+        /// OnGUI is the only function that can implement the "Immediate Mode" GUI (IMGUI) system for rendering and 
+        /// handling GUI events. Your OnGUI implementation might be called several times per frame (one call per 
+        /// event). For more information on GUI events see the Event reference. If the MonoBehaviour's enabled 
+        /// property is set to false, OnGUI() will not be called.
+        /// </summary>
+        private void OnGUI() {
+            if (IsDebug == true) {
+                ZOOnGUI();
+            }
+
         }
 
         /// <summary>

@@ -28,6 +28,17 @@ namespace ZO.ROS.MessageTypes.ActionLib {
 
     }
 
+    /// <summary>
+    /// Common interface for all ROS Action message goal types
+    /// </summary>
+    public interface ZOROSActionGoalMessageInterface : ZOROSMessageInterface {
+        string MessageType { get; }
+
+        GoalIDMessage goal_id { get; set; }
+
+    }
+
+
     public class GoalIDMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
         public string MessageType { get { return GoalIDMessage.Type; } }

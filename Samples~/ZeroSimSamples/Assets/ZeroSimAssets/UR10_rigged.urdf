@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<robot name="UR10_rigged">
+<robot name="ur10">
+    <link name="world"/>
+
     <link name="base_link">
         <visual >
             <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 0.0" />
@@ -8,16 +10,22 @@
             </geometry>
         </visual>
     </link>
+    <joint name="world_to_baselink" type="fixed">
+        <parent link="world" />
+        <child link="base_link" />
+        <origin rpy="0.0 0.0 -0.0" xyz="0.0 0.0 0.0" />
+
+    </joint>
     <joint name="shoulder_pan_joint" type="continuous">
         <parent link="base_link" />
         <child link="shoulder_link" />
         <origin rpy="-0.0 0.0 -0.0" xyz="0.0 -0.0 0.0364999771" />
         <axis xyz="0.0 -0.0 1.0" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="shoulder_link">
         <visual >
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 0.0" />
+            <origin rpy="0 0 0" xyz="0.00138993561 1.80751085e-05 0.005407788" />
             <geometry >
                 <box size="0.08861007 0.07516342 0.0805922151" />
             </geometry>
@@ -28,23 +36,23 @@
         <child link="upper_arm_link" />
         <origin rpy="-0.0 0.0 -0.0" xyz="-0.0855 -0.0 0.0915000439" />
         <axis xyz="-1.0 -0.0 0.0" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="upper_arm_link">
         <visual >
-            <origin rpy="0.0 0.0 0.0" xyz="-0.176000059 -0.0 0.0" />
+            <origin rpy="0 0 0" xyz="0.00138993561 1.80751085e-05 0.005407788" />
             <geometry >
                 <box size="0.08861007 0.07516342 0.0805922151" />
             </geometry>
         </visual>
         <visual >
-            <origin rpy="-1.1071487177940864 0.7297276562269754 2.0344439357957067" xyz="-0.101840138 0.0100000193 0.546400547" />
+            <origin rpy="0 0 0" xyz="0.0628492758 0.0100024287 0.0745239258" />
             <geometry >
                 <box size="0.06345073 0.0599891022 0.06847392" />
             </geometry>
         </visual>
         <visual >
-            <origin rpy="0.0 0.0 0.0" xyz="-0.176 -0.0 0.0789999962" />
+            <origin rpy="0 0 0" xyz="0.0 -0.0 0.23709999" />
             <geometry >
                 <box size="0.075 0.075 0.2303" />
             </geometry>
@@ -55,23 +63,23 @@
         <child link="forearm_link" />
         <origin rpy="-0.0 0.0 -0.0" xyz="-0.022499999999999992 -0.0 0.619999979" />
         <axis xyz="1.0 -0.0 0.0" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="forearm_link">
         <visual >
-            <origin rpy="-1.5707963267948966 0.0 3.141592653589793" xyz="0.6379001 -0.0100000128 0.0138502754" />
+            <origin rpy="0 0 0" xyz="0.004050866 0.000140544027 0.06518407" />
             <geometry >
                 <box size="0.0499491356 0.0454888642 0.05938407" />
             </geometry>
         </visual>
         <visual >
-            <origin rpy="-2.0344439357957067 0.7297276562269754 -2.034443935795707" xyz="0.378976136 -0.0142755527 -0.0314135626" />
+            <origin rpy="0 0 0" xyz="-0.00427554 -0.0207261965 0.0222361814" />
             <geometry >
                 <box size="0.058 0.225649983 0.058" />
             </geometry>
         </visual>
         <visual >
-            <origin rpy="-1.5707963267948966 0.0 1.5707963267948966" xyz="0.0846814141 0.00389776751 -0.0563208163" />
+            <origin rpy="0 0 0" xyz="-0.013897771 -0.00151552632 0.01525671" />
             <geometry >
                 <box size="0.0600000024 0.06388664 0.063175" />
             </geometry>
@@ -82,11 +90,11 @@
         <child link="wrist_1_link" />
         <origin rpy="-0.0 0.0 -0.0" xyz="-0.0038402560000000002 0.0100000147 0.5644004600000001" />
         <axis xyz="-2.0 -0.0 0.0" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="wrist_1_link">
         <visual >
-            <origin rpy="3.141592566167011 8.74227694680485e-08 -8.742276236262114e-08" xyz="-0.06750013 -0.0 -0.0481998" />
+            <origin rpy="0 0 0" xyz="0.004050866 0.000140544027 0.06518407" />
             <geometry >
                 <box size="0.0499491356 0.0454888642 0.05938407" />
             </geometry>
@@ -97,11 +105,11 @@
         <child link="wrist_2_link" />
         <origin rpy="-0.0 0.0 -0.0" xyz="-0.05385033 -0.010000012837354851 0.06189990000000001" />
         <axis xyz="0.0 -0.0 1.0" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="wrist_2_link">
         <visual >
-            <origin rpy="-3.141592566167003 8.742276191853193e-08 -8.74227694680485e-08" xyz="-0.06750023 -0.0 -0.0481996536" />
+            <origin rpy="0 0 0" xyz="0.004050866 0.000140544027 0.06518407" />
             <geometry >
                 <box size="0.0499491356 0.0454888642 0.05938407" />
             </geometry>
@@ -112,7 +120,7 @@
         <child link="wrist_3_link" />
         <origin rpy="1.471582213606204e-15 1.5707963267948963 1.4715822136062052e-15" xyz="-0.06019978200000001 -0.0 0.05550002999999992" />
         <axis xyz="0.0 -1.4715822136062044e-15 1.0000000000000002" />
-        <limit effort="10.0" velocity="500.0" />
+        <limit velocity="500.0" effort="10.0" />
     </joint>
     <link name="wrist_3_link" />
     <joint name="ee_fixed_joint" type="fixed">
@@ -122,7 +130,7 @@
     </joint>
     <link name="ee_link">
         <visual >
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 0.0" />
+            <origin rpy="0 0 0" xyz="0.0264006 -0.06721881 0.01342369" />
             <geometry >
                 <box size="0.04505 0.04499998 0.01525" />
             </geometry>

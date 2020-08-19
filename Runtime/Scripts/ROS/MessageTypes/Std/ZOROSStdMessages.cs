@@ -40,6 +40,10 @@ namespace ZO.ROS.MessageTypes.Std {
             this.Now();
         }
 
+        public TimeSpan TimeSpan() {
+            return System.TimeSpan.FromSeconds(this.secs) + System.TimeSpan.FromMilliseconds(this.nsecs / 1e6);
+        }
+
     }
 
     public class HeaderMessage : ZOROSMessageInterface {
@@ -228,6 +232,18 @@ namespace ZO.ROS.MessageTypes.Std {
         public DurationMessage(uint secs, uint nsecs) {
             this.secs = secs;
             this.nsecs = nsecs;
+        }
+
+
+        /// <summary>
+        /// Converts to seconds
+        /// </summary>
+        /// <value></value>
+        public double Seconds {
+            get {
+                double sec = (double)this.secs + ((double)this.nsecs)/1000000000.0;
+                return sec;
+            }
         }
     }
 

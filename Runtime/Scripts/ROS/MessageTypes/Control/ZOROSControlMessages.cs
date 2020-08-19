@@ -127,7 +127,7 @@ namespace ZO.ROS.MessageTypes.Control {
 
     }
 
-    public class FollowJointTrajectoryActionGoal : ZOROSMessageInterface {
+    public class FollowJointTrajectoryActionGoal : ZOROSActionGoalMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
         public string MessageType { get { return FollowJointTrajectoryActionGoal.Type; } }
 
