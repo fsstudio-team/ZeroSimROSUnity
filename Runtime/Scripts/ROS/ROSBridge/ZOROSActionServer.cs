@@ -252,9 +252,11 @@ namespace ZO.ROS {
         }
 
         private Task _OnCancelReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
-            Debug.Log("INFO: ZOROSActionServer::OnCancelReceived");
+            
             GoalIDMessage goalID = msg as GoalIDMessage;
             OnCancelReceived?.Invoke(this, goalID);
+
+            Debug.Log("INFO: ZOROSActionServer::OnCancelReceived for goal id: " + goalID.id);
             // switch (ActionStatus) {
             //     case ActionStatusEnum.PENDING:
             //         ActionStatus = ActionStatusEnum.RECALLING;
@@ -288,6 +290,7 @@ namespace ZO.ROS {
 
             // if we are still active start the preempt process
             if (CurrentGoalActionStatus == ActionStatusEnum.ACTIVE) {
+                Debug.Log("INFO: AcceptNewGoal preempting goal: " + CurrentGoal.goal_id.id);
                 // first notify client about preemption
                 CurrentGoalActionStatus = ActionStatusEnum.PREEMPTING;
 
@@ -302,6 +305,8 @@ namespace ZO.ROS {
                 NextGoal = default(TGoalMessage);
                 _nextGoalActionStatus = ActionStatusEnum.NO_GOAL;
                 CurrentGoalActionStatus = ActionStatusEnum.ACTIVE;
+
+                Debug.Log("INFO: AcceptNewGoal accepting goal: " + CurrentGoal.goal_id.id);
             }
 
         }
@@ -357,6 +362,8 @@ namespace ZO.ROS {
                     Debug.LogWarning("WARNING: Goal cannot succeed in current state: " + CurrentGoalActionStatus.ToString());
                     break;
             }
+
+            CurrentGoalActionStatus = ActionStatusEnum.NO_GOAL;
         }
 
 

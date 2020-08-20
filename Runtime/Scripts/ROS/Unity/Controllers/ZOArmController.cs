@@ -43,11 +43,24 @@ namespace ZO.ROS.Controllers {
             get => _actionServer;
         }
 
+        private FollowJointTrajectoryActionMessage _followJointTrajectorActionMessage = new FollowJointTrajectoryActionMessage();
+
+        /// <summary>
+        /// The FollowJointTrajectoryActionMessage which contains the goal, result & feedback messages.
+        /// </summary>
+        /// <value></value>
+        public FollowJointTrajectoryActionMessage ActionMessage {
+            get => _followJointTrajectorActionMessage;
+        }
+
+
         /// <summary>
         /// Simple single joint control message as used by RQT joint controller.
         /// </summary>
         /// <returns></returns>
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
+
+
 
         /// <summary>
         /// Joint state publisher message published on `/arm_controller/state` topic.
@@ -55,12 +68,6 @@ namespace ZO.ROS.Controllers {
         /// <returns></returns>
         private JointTrajectoryControllerStateMessage _trajectoryControllerStateMessage = new JointTrajectoryControllerStateMessage();
 
-
-        /// <summary>
-        /// Joint state feeedback message for the ROS action server.
-        /// </summary>
-        /// <returns></returns>
-        private FollowJointTrajectoryActionFeedback _followJointTrajectoryActionFeedback = new FollowJointTrajectoryActionFeedback();
 
 
         /// <summary>
@@ -131,13 +138,13 @@ namespace ZO.ROS.Controllers {
             _trajectoryControllerStateMessage.error.velocities = new double[joints.Length];
 
             _trajectoryControllerStateMessage.joint_names = jointNames;
-            _followJointTrajectoryActionFeedback.feedback.desired.positions = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.desired.velocities = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.desired.accelerations = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.actual.positions = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.actual.velocities = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.error.positions = new double[joints.Length];
-            _followJointTrajectoryActionFeedback.feedback.error.velocities = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.desired.positions = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.desired.velocities = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.desired.accelerations = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.actual.positions = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.actual.velocities = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.error.positions = new double[joints.Length];
+            ActionMessage.action_feedback.feedback.error.velocities = new double[joints.Length];
 
 
             // register with controller manager
@@ -161,8 +168,8 @@ namespace ZO.ROS.Controllers {
 
                     bool foundPoints = false;
                     foreach (JointTrajectoryPointMessage point in Goal.goal.trajectory.points) {
-                        Debug.Log("INFO: point time: " + point.time_from_start.Seconds.ToString("R3"));
-                        if (_currentGoalTime < point.time_from_start.Seconds) {
+                        // Debug.Log("INFO: point time: " + point.time_from_start.Seconds.ToString("R3"));
+                        if (_currentGoalTime <= point.time_from_start.Seconds) {
                             _currentPoint = point;
                             foundPoints = true;
                             break;
@@ -177,15 +184,15 @@ namespace ZO.ROS.Controllers {
                             ZOJointInterface joint = GetJointByName(Goal.goal.trajectory.joint_names[i]);
 
                             _trajectoryControllerStateMessage.desired.positions[i] = _currentPoint.positions[i];
-                            _followJointTrajectoryActionFeedback.feedback.desired.positions[i] = _currentPoint.positions[i];
+                            ActionMessage.action_feedback.feedback.desired.positions[i] = _currentPoint.positions[i];
 
                             _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
-                            _followJointTrajectoryActionFeedback.feedback.actual.positions[i] = joint.Position;
+                            ActionMessage.action_feedback.feedback.actual.positions[i] = joint.Position;
                             _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
-                            _followJointTrajectoryActionFeedback.feedback.actual.velocities[i] = joint.Velocity;
+                            ActionMessage.action_feedback.feedback.actual.velocities[i] = joint.Velocity;
 
                             _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
-                            _followJointTrajectoryActionFeedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                            ActionMessage.action_feedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
                             // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
                             joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
@@ -194,7 +201,10 @@ namespace ZO.ROS.Controllers {
 
                     } else {
                         // at the end of the points for this goal so finish it
-                        ActionServer.SetSucceeded(new FollowJointTrajectoryResult(), "Finished arm control movement");
+                        ActionMessage.action_result.status = new GoalStatusMessage(Goal.goal_id, (byte)ActionStatusEnum.SUCCEEDED, "finished arm control");
+                        ActionMessage.action_result.result = new FollowJointTrajectoryResult(FollowJointTrajectoryResult.SUCCESSFUL);
+                        ActionMessage.Update();
+                        ActionServer.SetSucceeded(ActionMessage.action_result, "Finished arm control movement");
 
                     }
 
@@ -205,18 +215,18 @@ namespace ZO.ROS.Controllers {
 
                 // update the joint states
                 _trajectoryControllerStateMessage.Update();
-                _followJointTrajectoryActionFeedback.Update();
+                ActionMessage.action_feedback.Update();
 
 
                 // int i = 0;
                 // foreach (ZOJointInterface joint in Joints) {
                 //     _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
-                //     _followJointTrajectoryActionFeedback.feedback.actual.positions[i] = joint.Position;
+                //     ActionMessage.action_feedback.feedback.actual.positions[i] = joint.Position;
                 //     _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
-                //     _followJointTrajectoryActionFeedback.feedback.actual.velocities[i] = joint.Velocity;
+                //     ActionMessage.action_feedback.feedback.actual.velocities[i] = joint.Velocity;
 
                 //     _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
-                //     _followJointTrajectoryActionFeedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                //     ActionMessage.action_feedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
                 //     // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
                 //     joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
@@ -227,7 +237,7 @@ namespace ZO.ROS.Controllers {
                 ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
 
                 // publish feedback on ROS action
-                _actionServer.PublishFeedback<FollowJointTrajectoryActionFeedback>(_followJointTrajectoryActionFeedback);
+                _actionServer.PublishFeedback<FollowJointTrajectoryActionFeedback>(ActionMessage.action_feedback);
 
             }
 
