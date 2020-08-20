@@ -87,6 +87,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9438881b22c91134f968e2ed48f649c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _updateRateHz: 30
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _cameraId: none
   _camera: {fileID: 960009185217398533}
   _width: 320
   _height: 240
@@ -94,3 +99,5 @@ MonoBehaviour:
   _depthScale: 100
   _debugVisualizeRGB: {fileID: 0}
   _debugVisualizeDepth: {fileID: 0}
+  _maxAsyncGPURequestQueue: 2
+  _maxPublishTaskQueue: 2

@@ -35,7 +35,11 @@
             };
 
             sampler2D _MainTex;
-            //the depth texture
+
+            /// Depth textures are available for sampling in shaders as global shader properties. 
+            /// By declaring a sampler called _CameraDepthTexture you will be able to sample the main 
+            /// depth texture for the camera.
+            /// See: https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html
             sampler2D _CameraDepthTexture;
 
             v2f vert (appdata v)

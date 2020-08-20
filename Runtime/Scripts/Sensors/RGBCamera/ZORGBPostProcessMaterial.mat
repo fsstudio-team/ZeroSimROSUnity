@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: ZORGBPostProcessMaterial
   m_Shader: {fileID: 4800000, guid: 9f7289fcd1e4a3849989012be8610810, type: 3}
-  m_ShaderKeywords: FLIP_X
+  m_ShaderKeywords: FLIP_Y
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -60,8 +60,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FlipX: 1
-    - _FlipY: 0
+    - _FlipX: 0
+    - _FlipY: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

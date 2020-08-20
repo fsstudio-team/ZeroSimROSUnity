@@ -15,6 +15,8 @@ namespace ZO.Util {
     /// </summary>
     public abstract class ZOGameObjectBase : MonoBehaviour {
 
+
+        [Header("ZeroSim GameObject Base")]
         public float _updateRateHz;
 
         /// <summary>

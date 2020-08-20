@@ -121,7 +121,7 @@ namespace AsyncGPUReadbackPluginNs {
         public unsafe NativeArray<float> GetRawData_NativeArrayFloat() {
             // UnityEngine.Profiling.Profiler.BeginSample("ZOAsyncGPUReadbackPluginRequest::GetRawData_NativeArrayFloat");
             if (usePlugin) {
-                Debug.Assert(false, "ERROR: Not Implemented For OpenGL");
+                Debug.Assert(false, "ERROR: GetRawData_NativeArrayFloat Not Implemented For OpenGL");
                 // // Get data from cpp plugin
                 // void* ptr = null;
                 // int length = 0;

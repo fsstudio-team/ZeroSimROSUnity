@@ -40,21 +40,29 @@ namespace ZO.Sensors {
         }
     };
 
+
+    /// <summary>
+    /// A RGB image + depth camera. 
+    /// </summary>
     public class ZORGBDepthCamera : ZOGameObjectBase {
+
+        public enum FrameOutputType {
+            RGB8D32,
+            RGB8D16
+        };
 
         [Header("Camera Parameters")]
         public string _cameraId = "none";
         public Camera _camera;
         public int _width = 1280;
         public int _height = 720;
+        public FrameOutputType _frameOutputType = FrameOutputType.RGB8D16;
 
         [Header("Depth")]
         public Material _depthMaterial;
         public float _depthScale = 100.0f;
 
-        [Header("Debug")]
-        public UnityEngine.UI.RawImage _debugVisualizeRGB;
-        public UnityEngine.UI.RawImage _debugVisualizeDepth;
+
 
         [Header("Internal")]
         public int _maxAsyncGPURequestQueue = 2;
@@ -75,15 +83,26 @@ namespace ZO.Sensors {
         // ~~~~~~ Render Buffers ~~~~~~~
         private RenderTexture _colorBuffer;
         private RenderTexture _depthBuffer;
+
+        // the color texture used for debug rendering
         private Texture2D _colorTexture;
+
+        // the depth texture used for debug rendering
         private Texture2D _depthTexture;
-        private RenderTexture _depthRenderTexture;
+
+        // the final color and depth render texture which is of type ARGBFloat 
+        // Alpha channel contains depth image.
+        private RenderTexture _colorDepthRenderTexture;
         private bool _isOpenGLRenderer = false;
 
         // ~~~~ Async GPU Read ~~~~ //
         Queue<AsyncGPUReadbackPluginRequest> _asyncGPURequests = new Queue<AsyncGPUReadbackPluginRequest>();
-        private NativeArray<float> _depthBufferValues;
+
+        // the final native arrays that contain the F32 depth values and RGB8 color values
+        private NativeArray<float> _depthBufferValuesFloat;
         private NativeArray<byte> _rgbValues;
+
+        // publish queue
         private Queue<Task> _publishTasks = new Queue<Task>();
 
 
@@ -92,18 +111,23 @@ namespace ZO.Sensors {
             if (_camera == null) {
                 _camera = this.GetComponent<Camera>();
             }
+
+            // setup the buffers
             _colorBuffer = new RenderTexture(_width, _height, 0, RenderTextureFormat.ARGB32);
             _depthBuffer = new RenderTexture(_width, _height, 32, RenderTextureFormat.Depth);
             _camera.SetTargetBuffers(_colorBuffer.colorBuffer, _depthBuffer.depthBuffer);
 
+            // setup depth texture mode for the camera
             _camera.depthTextureMode = _camera.depthTextureMode | DepthTextureMode.Depth;
 
             _colorTexture = new Texture2D(_width, _height, TextureFormat.RGB24, false);
             _depthTexture = new Texture2D(_width, _height, TextureFormat.RGBAFloat, false);
 
-            _depthRenderTexture = new RenderTexture(_width, _height, 0, RenderTextureFormat.ARGBFloat);
+            // create the render texture.  RGB is color and alpha is depth.  Float32
+            _colorDepthRenderTexture = new RenderTexture(_width, _height, 0, RenderTextureFormat.ARGBFloat);
 
-            _depthBufferValues = new NativeArray<float>(_width * _height, Allocator.Persistent);
+            // create the final publish buffers where the color buffer is converted from Float32 to RGB8
+            _depthBufferValuesFloat = new NativeArray<float>(_width * _height, Allocator.Persistent);
             _rgbValues = new NativeArray<byte>(_width * _height * 3, Allocator.Persistent);
 
             _depthBufferFloat = new float[_width * _height];
@@ -133,27 +157,25 @@ namespace ZO.Sensors {
             DoRenderTextureUpdate();
         }
 
+        protected override void ZOOnGUI() {
+            base.ZOOnGUI();
+            GUI.DrawTexture(new Rect(10, 10, 320, 240), _colorBuffer, ScaleMode.ScaleToFit);
+            GUI.DrawTexture(new Rect(10, 242, 320, 240), _depthBuffer, ScaleMode.ScaleToFit);
+            GUI.DrawTexture(new Rect(325, 242, 320, 240), _colorDepthRenderTexture, ScaleMode.ScaleToFit, true);
+        }
+
 
         private float[] _depthBufferFloat;
-        private byte[] _colorPixels24;  
+        private byte[] _colorPixels24;
 
         private void OnPostRender() {
             UnityEngine.Profiling.Profiler.BeginSample("ZORGBDepthCamera::OnPostRender");
             Rect cameraRect = new Rect(0, 0, _width, _height);
             _depthMaterial.SetTexture("_MainTex", _colorBuffer);
-            Graphics.Blit(_camera.targetTexture, _depthRenderTexture, _depthMaterial);
+            Graphics.Blit(_camera.targetTexture, _colorDepthRenderTexture, _depthMaterial);
 
             if (_asyncGPURequests.Count < _maxAsyncGPURequestQueue) {
-                _asyncGPURequests.Enqueue(AsyncGPUReadbackPlugin.Request(_depthRenderTexture));
-            }
- 
-            // debug visualize
-            if (_debugVisualizeRGB) {
-                _debugVisualizeRGB.texture = _colorTexture;
-            }
-
-            if (_debugVisualizeDepth) {
-                _debugVisualizeDepth.texture = _depthTexture;
+                _asyncGPURequests.Enqueue(AsyncGPUReadbackPlugin.Request(_colorDepthRenderTexture));
             }
             UnityEngine.Profiling.Profiler.EndSample();
         }
@@ -211,7 +233,7 @@ namespace ZO.Sensors {
 
         }
         private void OnDestroy() {
-            _depthBufferValues.Dispose();
+            _depthBufferValuesFloat.Dispose();
             _rgbValues.Dispose();
         }
 
