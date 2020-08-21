@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
@@ -8,8 +9,15 @@ using ZO.ROS.Unity;
 namespace ZO.ROS.Publisher {
 
     /// <summary>
-    /// Publish /sensor/Image message.
-    /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
+    /// ROS Publisher for `ZORGBDepthCamera`.  
+    /// 
+    /// Follows ROS `depth_image_proc` topics <see>http://wiki.ros.org/depth_image_proc</see>:
+    /// 
+    /// Publishes ROS Topics:
+    ///     `rgb/camera_info (sensor_msgs/CameraInfo)`: Camera calibration and metadata. 
+    ///     `rgb/image_rect_color (sensor_msgs/Image)`: Rectified color image. 
+    ///     `depth_registered/image_rect (sensor_msgs/Image)`: Rectified depth image, registered to the RGB camera. 
+    /// 
     /// </summary>
     public class ZOROSRGBDepthPublisher : ZOROSUnityGameObjectBase, ZOSerializationInterface {
 
@@ -29,8 +37,9 @@ namespace ZO.ROS.Publisher {
             get => _rgbDepthCameraSensor;
             set => _rgbDepthCameraSensor = value;
         }
-        private ImageMessage _rosColorImageMessage = new ImageMessage();
-        private ImageMessage _rosDepthImageMessage = new ImageMessage();
+        private ImageMessage _colorImageMessage = new ImageMessage();
+        private ImageMessage _depthImageMessage = new ImageMessage();
+        private CameraInfoMessage _camerInfoMessage = new CameraInfoMessage();
 
         protected override void ZOReset() {
             base.ZOReset();
@@ -44,15 +53,32 @@ namespace ZO.ROS.Publisher {
             }
         }
         protected override void ZOOnDestroy() {
-            ROSBridgeConnection?.UnAdvertise(ROSTopic);
+            Terminate();
         }
 
         private void Initialize() {
             // advertise
-            ROSBridgeConnection.Advertise(ROSTopic, _rosColorImageMessage.MessageType);
+            ROSBridgeConnection.Advertise(_rgbImageROSTopic, _colorImageMessage.MessageType);
+            ROSBridgeConnection.Advertise(_depthROSTopic, _depthImageMessage.MessageType);
+            ROSBridgeConnection.Advertise(_cameraInfoROSTopic, _camerInfoMessage.MessageType);
+
+            // initialize the camera info
+            _camerInfoMessage.BuildCameraInfo((uint)_rgbDepthCameraSensor.Width, (uint)_rgbDepthCameraSensor.Height, (double)_rgbDepthCameraSensor.FieldOfViewDegrees * Mathf.Deg2Rad);
+
 
             // hookup to the sensor update delegate
             _rgbDepthCameraSensor.OnPublishDelegate = OnPublishRGBDepthDelegate;
+
+        }
+
+        private void Terminate() {
+            // unadvertise
+            ROSBridgeConnection?.UnAdvertise(_rgbImageROSTopic);
+            ROSBridgeConnection?.UnAdvertise(_depthROSTopic);
+            ROSBridgeConnection?.UnAdvertise(_cameraInfoROSTopic);
+
+            // remove delegate
+            _rgbDepthCameraSensor.OnPublishDelegate = null;
 
         }
 
@@ -64,27 +90,28 @@ namespace ZO.ROS.Publisher {
 
         public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOImagePublisher::OnROSBridgeDisconnected");
-            ROSBridgeConnection.UnAdvertise(ROSTopic);
+            Terminate();
         }
 
         private Task OnPublishRGBDepthDelegate(ZORGBDepthCamera rgbdCamera, string cameraId, int width, int height, byte[] rgbData, float[] depthData) {
-            _rosColorImageMessage.header.Update();
-            _rosColorImageMessage.height = (uint)height;
-            _rosColorImageMessage.width = (uint)width;
-            _rosColorImageMessage.encoding = "rgb8";
-            _rosColorImageMessage.is_bigendian = 0;
-            _rosColorImageMessage.step = 1 * 3 * (uint)width;
-            _rosColorImageMessage.data = rgbData;
-            ROSBridgeConnection.Publish<ImageMessage>(_rosColorImageMessage, ROSTopic, Name);
+            _colorImageMessage.header.Update();
+            _colorImageMessage.height = (uint)height;
+            _colorImageMessage.width = (uint)width;
+            _colorImageMessage.encoding = "rgb8";
+            _colorImageMessage.is_bigendian = 0;
+            _colorImageMessage.step = 1 * 3 * (uint)width;
+            _colorImageMessage.data = rgbData;
+            ROSBridgeConnection.Publish<ImageMessage>(_colorImageMessage, _rgbImageROSTopic, Name);
 
-            _rosDepthImageMessage.header.Update();
-            _rosDepthImageMessage.height = (uint)height;
-            _rosDepthImageMessage.width = (uint)width;
-            _rosDepthImageMessage.encoding = "32FC1";
-            _rosDepthImageMessage.is_bigendian = 0;
-            _rosDepthImageMessage.step = 4 * (uint)width;
-            _rosDepthImageMessage.data = new byte[4 * width * height];
-            System.Buffer.BlockCopy(depthData, 0, _rosDepthImageMessage.data, 0, 4 * width * height);
+            _depthImageMessage.header.Update();
+            _depthImageMessage.height = (uint)height;
+            _depthImageMessage.width = (uint)width;
+            _depthImageMessage.encoding = "32FC1";
+            _depthImageMessage.is_bigendian = 0;
+            _depthImageMessage.step = 4 * (uint)width;
+            _depthImageMessage.data = new byte[4 * width * height];
+            System.Buffer.BlockCopy(depthData, 0, _depthImageMessage.data, 0, 4 * width * height);
+            ROSBridgeConnection.Publish<ImageMessage>(_depthImageMessage, _depthROSTopic, Name);
 
 
             return Task.CompletedTask;

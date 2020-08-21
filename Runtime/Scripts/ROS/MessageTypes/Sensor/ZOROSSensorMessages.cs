@@ -433,14 +433,15 @@ namespace ZO.ROS.MessageTypes.Sensor {
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public void BuildCameraInfo(uint width, uint height, double fov) {
+        /// <param name="fovRadians">Field Of View in radians.</param>
+        public void BuildCameraInfo(uint width, uint height, double fovRadians) {
             this.width = width;
             this.height = height;
             this.distortion_model = "plumb_bob";
 
             double cx = this.width / 2.0;
             double cy = this.height / 2.0;
-            double fx = this.width / (2.0 * System.Math.Tan(fov) * System.Math.PI / 360.0);
+            double fx = this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
             double fy = fx;
             this.K = new double[9] {fx, 0, cx,
                                     0, fy, cy,

@@ -62,12 +62,49 @@ namespace ZO.Sensors {
             get => _cameraId;
         }
         public Camera _camera;
+
+        /// <summary>
+        /// The Unity Camera associated with this depth camera. (readonly)
+        /// </summary>
+        /// <value></value>
+        public Camera UnityCamera {
+            get => _camera;
+        }
+
         public int _width = 1280;
+        
+        /// <summary>
+        /// Camera frame width in pixels.  (readonly)
+        /// </summary>
+        /// <value></value>
+        public int Width {
+            get => _width;
+        }
+
         public int _height = 720;
-        public FrameOutputType _frameOutputType = FrameOutputType.RGB8D16;
+
+        /// <summary>
+        /// Camera frame height in pixels. (readonly)
+        /// </summary>
+        /// <value></value>
+        public int Height {
+            get => _height;
+        }
+
+        /// <summary>
+        /// The cameras field of view in degrees.
+        /// </summary>
+        /// <value></value>
+        public float FieldOfViewDegrees {
+            get {
+                return UnityCamera.fieldOfView;
+            }
+        }
+
+        //public FrameOutputType _frameOutputType = FrameOutputType.RGB8D16;
 
         [Header("Depth")]
-        public Material _depthMaterial;
+        public Material _rgbDepthCameraShader;
         public float _depthScale = 100.0f;
 
 
@@ -184,8 +221,8 @@ namespace ZO.Sensors {
         private void OnPostRender() {
             UnityEngine.Profiling.Profiler.BeginSample("ZORGBDepthCamera::OnPostRender");
             Rect cameraRect = new Rect(0, 0, _width, _height);
-            _depthMaterial.SetTexture("_MainTex", _colorBuffer);
-            Graphics.Blit(_camera.targetTexture, _colorDepthRenderTexture, _depthMaterial);
+            _rgbDepthCameraShader.SetTexture("_MainTex", _colorBuffer);
+            Graphics.Blit(_camera.targetTexture, _colorDepthRenderTexture, _rgbDepthCameraShader);
 
             if (_asyncGPURequests.Count < _maxAsyncGPURequestQueue) {
                 _asyncGPURequests.Enqueue(AsyncGPUReadbackPlugin.Request(_colorDepthRenderTexture));
