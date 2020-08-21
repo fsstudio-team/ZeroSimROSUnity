@@ -56,7 +56,8 @@ namespace ZO.ROS.Unity.Service {
             get => Name + "/controller_manager/list_controller_types";
         }
 
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             _ROSTopic = "controller_manager";
             UpdateRateHz = 5.0f;
         }

@@ -1,3 +1,4 @@
+using System;
 
 using ZO.ROS.MessageTypes.Std;
 
@@ -9,8 +10,13 @@ namespace ZO.ROS.MessageTypes.Sensor {
     /// </summary>
     public class ImageMessage : ZOROSMessageInterface {
 
+
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "sensor_msgs/Image"; } }
+        public string MessageType { get { return ImageMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "sensor_msgs/Image";
+
 
         public HeaderMessage header { get; set; }
         //  Header timestamp should be acquisition time of image
@@ -64,10 +70,23 @@ namespace ZO.ROS.MessageTypes.Sensor {
         }
     }
 
+
+    /// <summary>
+    /// Single scan from a planar laser range-finder
+    ///
+    /// If you have another ranging device with different behavior (e.g. a sonar
+    /// array), please find or create a different message, since applications
+    /// will make fairly laser-specific assumptions about this data
+    /// <see>http://docs.ros.org/api/sensor_msgs/html/msg/LaserScan.html</see>
+    /// </summary>
     public class LaserScanMessage : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "sensor_msgs/LaserScan"; } }
+        public string MessageType { get { return LaserScanMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "sensor_msgs/LaserScan";
+
 
         public HeaderMessage header { get; set; }
 
@@ -175,6 +194,267 @@ namespace ZO.ROS.MessageTypes.Sensor {
 
         public void Update() {
             this.header.Update();
+        }
+    }
+
+
+    /// <summary>
+    /// This message is used to specify a region of interest within an image.
+    ///
+    /// When used to specify the ROI setting of the camera when the image was
+    /// taken, the height and width fields should either match the height and
+    /// width fields for the associated image; or height = width = 0
+    /// indicates that the full resolution image was captured.
+    /// <see>http://docs.ros.org/api/sensor_msgs/html/msg/RegionOfInterest.html</see>
+    /// </summary>
+    public class RegionOfInterestMessage : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return RegionOfInterestMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type { get { return "sensor_msgs/RegionOfInterest"; } }
+
+        /// <summary>
+        /// Leftmost pixel of the ROI
+        /// (0 if the ROI includes the left edge of the image)
+        /// </summary>
+        /// <value></value>
+        public uint x_offset { get; set; }
+
+        /// <summary>
+        /// Topmost pixel of the ROI
+        /// (0 if the ROI includes the top edge of the image)
+        /// </summary>
+        /// <value></value>
+        public uint y_offset { get; set; }
+
+        /// <summary>
+        /// Height of ROI
+        /// </summary>
+        /// <value></value>
+        public uint height { get; set; }
+
+        /// <summary>
+        /// Width of ROI
+        /// </summary>
+        /// <value></value>
+        public uint width { get; set; }
+
+        /// <summary>
+        /// True if a distinct rectified ROI should be calculated from the "raw"
+        /// ROI in this message. Typically this should be False if the full image
+        /// is captured (ROI not used), and True if a subwindow is captured (ROI
+        /// used).
+        /// </summary>
+        /// <value></value>
+        public bool do_rectify { get; set; }
+
+        public RegionOfInterestMessage() {
+            this.x_offset = 0;
+            this.y_offset = 0;
+            this.height = 0;
+            this.width = 0;
+            this.do_rectify = false;
+        }
+
+        public RegionOfInterestMessage(uint x_offset, uint y_offset, uint height, uint width, bool do_rectify) {
+            this.x_offset = x_offset;
+            this.y_offset = y_offset;
+            this.height = height;
+            this.width = width;
+            this.do_rectify = do_rectify;
+        }
+
+    }
+
+    /// <summary>
+    /// This message defines meta information for a camera. It should be in a
+    /// camera namespace on topic "camera_info" and accompanied by up to five
+    /// image topics named:
+    /// 
+    ///   image_raw - raw data from the camera driver, possibly Bayer encoded
+    ///   image            - monochrome, distorted
+    ///   image_color      - color, distorted
+    ///   image_rect       - monochrome, rectified
+    ///   image_rect_color - color, rectified
+    /// 
+    /// The image_pipeline contains packages (image_proc, stereo_image_proc)
+    /// for producing the four processed image topics from image_raw and
+    /// camera_info. The meaning of the camera parameters are described in
+    /// detail at http://www.ros.org/wiki/image_pipeline/CameraInfo.
+    /// 
+    /// The image_geometry package provides a user-friendly interface to
+    /// common operations using this meta information. If you want to, e.g.,
+    /// project a 3d point into image coordinates, we strongly recommend
+    /// using image_geometry.
+    ///
+    /// /// If the camera is uncalibrated, the matrices D, K, R, P should be left
+    /// zeroed out. In particular, clients may assume that K[0] == 0.0
+    /// indicates an uncalibrated camera.
+    ///<see>http://docs.ros.org/api/sensor_msgs/html/msg/CameraInfo.html</see>
+    /// </summary>
+    public class CameraInfoMessage : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return CameraInfoMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type { get { return "sensor_msgs/CameraInfo"; } }
+
+        /// <summary>
+        /// Time of image acquisition, camera coordinate frame ID
+        /// Header timestamp should be acquisition time of image
+        /// Header frame_id should be optical frame of camera
+        /// origin of frame should be optical center of camera
+        /// +x should point to the right in the image
+        /// +y should point down in the image
+        /// +z should point into the plane of the image
+        /// </summary>
+        /// <value></value>
+        public HeaderMessage header { get; set; }
+
+        public uint height { get; set; }
+        public uint width { get; set; }
+
+        /// <summary>
+        /// The distortion model used. Supported models are listed in
+        /// sensor_msgs/distortion_models.h. For most cameras, "plumb_bob" - a
+        /// simple model of radial and tangential distortion - is sufficient.
+        /// </summary>
+        /// <value></value>
+        public string distortion_model { get; set; }
+
+        /// <summary>
+        /// The distortion parameters, size depending on the distortion model.
+        /// For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
+        /// </summary>
+        /// <value></value>
+        public double[] D { get; set; }
+
+        /// <summary>
+        /// Intrinsic camera matrix for the raw (distorted) images.
+        ///     [fx  0 cx]
+        /// K = [ 0 fy cy]
+        ///     [ 0  0  1]
+        /// Projects 3D points in the camera coordinate frame to 2D pixel
+        /// coordinates using the focal lengths (fx, fy) and principal point
+        /// (cx, cy).
+        /// </summary>
+        /// <value></value>
+        public double[] K { get; set; }
+
+        /// <summary>
+        /// Rectification matrix (stereo cameras only)
+        /// A rotation matrix aligning the camera coordinate system to the ideal
+        /// stereo image plane so that epipolar lines in both stereo images are
+        /// parallel.
+        /// </summary>
+        /// <value></value>
+        public double[] R { get; set; }
+
+        /// <summary>
+        /// Projection/camera matrix
+        ///     [fx'  0  cx' Tx]
+        /// P = [ 0  fy' cy' Ty]
+        ///     [ 0   0   1   0]
+        /// By convention, this matrix specifies the intrinsic (camera) matrix
+        ///  of the processed (rectified) image. That is, the left 3x3 portion
+        ///  is the normal camera intrinsic matrix for the rectified image.
+        /// It projects 3D points in the camera coordinate frame to 2D pixel
+        ///  coordinates using the focal lengths (fx', fy') and principal point
+        ///  (cx', cy') - these may differ from the values in K.
+        /// For monocular cameras, Tx = Ty = 0. Normally, monocular cameras will
+        ///  also have R = the identity and P[1:3,1:3] = K.
+        /// For a stereo pair, the fourth column [Tx Ty 0]' is related to the
+        ///  position of the optical center of the second camera in the first
+        ///  camera's frame. We assume Tz = 0 so both cameras are in the same
+        ///  stereo image plane. The first camera always has Tx = Ty = 0. For
+        ///  the right (second) camera of a horizontal stereo pair, Ty = 0 and
+        ///  Tx = -fx' * B, where B is the baseline between the cameras.
+        /// Given a 3D point [X Y Z]', the projection (x, y) of the point onto
+        ///  the rectified image is given by:
+        ///  [u v w]' = P * [X Y Z 1]'
+        ///         x = u / w
+        ///         y = v / w
+        ///  This holds for both images of a stereo pair.
+        /// 
+        /// 3x4 row-major matrix
+        /// </summary>
+        /// <value></value>
+        public double[] P { get; set; }
+
+        /// <summary>
+        /// Binning refers here to any camera setting which combines rectangular
+        ///  neighborhoods of pixels into larger "super-pixels." It reduces the
+        ///  resolution of the output image to
+        ///  (width / binning_x) x (height / binning_y).
+        /// The default values binning_x = binning_y = 0 is considered the same
+        ///  as binning_x = binning_y = 1 (no subsampling).
+        /// </summary>
+        /// <value></value>
+        public uint binning_x { get; set; }
+        public uint binning_y { get; set; }
+
+        public RegionOfInterestMessage roi { get; set; }
+        public CameraInfoMessage() {
+            this.header = new HeaderMessage();
+            this.height = 0;
+            this.width = 0;
+            this.distortion_model = "plumb_bob";
+            this.D = new double[0];
+            this.K = new double[9];
+            this.R = new double[9];
+            this.P = new double[12];
+            this.binning_x = 0;
+            this.binning_y = 0;
+            this.roi = new RegionOfInterestMessage();
+        }
+
+        public CameraInfoMessage(HeaderMessage header, uint height, uint width, string distortion_model, double[] D, double[] K, double[] R, double[] P, uint binning_x, uint binning_y, RegionOfInterestMessage roi) {
+            this.header = header;
+            this.height = height;
+            this.width = width;
+            this.distortion_model = distortion_model;
+            this.D = D;
+            this.K = K;
+            this.R = R;
+            this.P = P;
+            this.binning_x = binning_x;
+            this.binning_y = binning_y;
+            this.roi = roi;
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+
+        /// <summary>
+        /// Builds up camera info given just width, height & fov
+        /// <see>https://www.programcreek.com/python/?code=carla-simulator%2Fscenario_runner%2Fscenario_runner-master%2Fsrunner%2Fautoagents%2Fros_agent.py</see>
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public void BuildCameraInfo(uint width, uint height, double fov) {
+            this.width = width;
+            this.height = height;
+            this.distortion_model = "plumb_bob";
+
+            double cx = this.width / 2.0;
+            double cy = this.height / 2.0;
+            double fx = this.width / (2.0 * System.Math.Tan(fov) * System.Math.PI / 360.0);
+            double fy = fx;
+            this.K = new double[9] {fx, 0, cx,
+                                    0, fy, cy,
+                                    0, 0, 1};
+            this.D = new double[5] { 0, 0, 0, 0, 0 };
+            this.R = new double[9] { 1.0, 0, 0,
+                                     0, 1.0, 0,
+                                     0, 0, 1.0};
+            this.P = new double[12] { fx, 0, cx, 0,
+                                      0, fy, cy, 0,
+                                      0, 0, 1.0, 0};
+
+            this.roi.width = width;
+            this.roi.height = height;
         }
     }
 }

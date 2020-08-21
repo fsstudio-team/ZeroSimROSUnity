@@ -16,7 +16,8 @@ namespace ZO.ROS.Unity.Service {
 
         private Queue<Tuple<ZOSimPrefabSpawnRequest, string>> _spawnZOSimModelRequests = new Queue<Tuple<ZOSimPrefabSpawnRequest, string>>();
 
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             _ROSTopic = "spawn_prefab_model";
             UpdateRateHz = 5.0f;
         }

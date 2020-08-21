@@ -12,7 +12,8 @@ namespace ZO.ROS.Publisher {
 
         private JointStateMessage _jointStatesMessage = new JointStateMessage();
 
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             UpdateRateHz = 25.0f;
             ROSTopic = "/joint_states";
         }

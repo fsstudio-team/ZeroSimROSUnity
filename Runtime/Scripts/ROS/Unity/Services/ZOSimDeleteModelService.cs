@@ -16,7 +16,8 @@ namespace ZO.ROS.Unity.Service {
 
         private Queue<Tuple<ZOSimDeleteModelRequest, string>> _deleteModelRequests = new Queue<Tuple<ZOSimDeleteModelRequest, string>>();
 
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             _ROSTopic = "delete_model";
             UpdateRateHz = 5.0f;
         }

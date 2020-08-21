@@ -8,6 +8,8 @@ using ZO.Util;
 namespace ZO.ROS.Unity {
     public abstract class ZOROSUnityGameObjectBase : ZOGameObjectBase, ZOROSUnityInterface, ZOSerializationInterface {
 
+
+        [Header("ROS Info")]
         public string _ROSTopic = "";
 
         /// <summary>
@@ -58,7 +60,8 @@ namespace ZO.ROS.Unity {
         }
 
         // TODO: make a ZOReset in ZOGameObjectBase
-        private void Reset() {
+        private void ZOReset() {
+            base.ZOReset();
             // generate the default name
             string dummy = Name;
         }
@@ -66,6 +69,7 @@ namespace ZO.ROS.Unity {
 
         #region ZOSerializationInterface
 
+        [Header("Zero Sim Serialization")]
         protected JObject _json;
         /// <summary>
         /// The ZOSim JSON

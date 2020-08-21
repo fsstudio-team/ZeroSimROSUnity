@@ -16,7 +16,8 @@ namespace ZO.ROS.Unity.Service {
 
         private Queue<Tuple<EmptyServiceRequest, string>> _resetSimulationRequest = new Queue<Tuple<EmptyServiceRequest, string>>();
 
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             _ROSTopic = "reset_simulation";
             UpdateRateHz = 5.0f;
         }

@@ -392,12 +392,12 @@ GameObject:
   - component: {fileID: 523318796}
   - component: {fileID: 523318795}
   m_Layer: 0
-  m_Name: ROSImagePublisher
+  m_Name: ROSDepthImagePublisher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &523318795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,16 +407,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 523318794}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eab68bc499af59ddb04d723f31065f2, type: 3}
+  m_Script: {fileID: 11500000, guid: a437ef45c9a9dd830980d2e1fe5d9c54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _updateRateHz: 30
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _ROSTopic: unity_image/image
+  _ROSTopic: 
   _name: 
-  _rgbCameraSensor: {fileID: 1852383705}
+  _rgbDepthCameraSensor: {fileID: 1219858510}
+  _rgbImageROSTopic: rgb/image_rect_color
+  _depthROSTopic: depth_registered/image_rect
+  _cameraInfoROSTopic: rgb/camera_info
 --- !u!4 &523318796
 Transform:
   m_ObjectHideFlags: 0
@@ -425,7 +428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523318794}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.4141068, y: 6.1704483, z: 1.466458}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -877,6 +880,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f68745431f3fd804c8ef81036758af64, type: 3}
+--- !u!114 &1219858510 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 960009185217398532, guid: f68745431f3fd804c8ef81036758af64,
+    type: 3}
+  m_PrefabInstance: {fileID: 1219858509}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9438881b22c91134f968e2ed48f649c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1298881059
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,18 +996,6 @@ MonoBehaviour:
   yMaxLimit: 80
   distanceMin: 0.01
   distanceMax: 2
---- !u!114 &1852383705 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-    type: 3}
-  m_PrefabInstance: {fileID: 1916065678}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7de0e78cad1cc57a3b409bbb96c7af6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1868798745
 GameObject:
   m_ObjectHideFlags: 0

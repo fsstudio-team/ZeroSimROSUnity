@@ -42,7 +42,7 @@ namespace ZO.Sensors {
 
 
     /// <summary>
-    /// A RGB image + depth camera. 
+    /// A RGB image + depth camera sensor. 
     /// </summary>
     public class ZORGBDepthCamera : ZOGameObjectBase {
 
@@ -53,6 +53,14 @@ namespace ZO.Sensors {
 
         [Header("Camera Parameters")]
         public string _cameraId = "none";
+
+        /// <summary>
+        /// The unique name identifying this depth camera.
+        /// </summary>
+        /// <value></value>
+        public string Name {
+            get => _cameraId;
+        }
         public Camera _camera;
         public int _width = 1280;
         public int _height = 720;
@@ -105,6 +113,11 @@ namespace ZO.Sensors {
         // publish queue
         private Queue<Task> _publishTasks = new Queue<Task>();
 
+
+        protected override void ZOReset() {
+            base.ZOReset();
+            UpdateRateHz = 30;
+        }
 
         // Start is called before the first frame update
         protected override void ZOStart() {
@@ -222,6 +235,7 @@ namespace ZO.Sensors {
                         }
 
                     }
+
                     // You need to explicitly Dispose data after using them
                     asyncGPURequest.Dispose();
 
