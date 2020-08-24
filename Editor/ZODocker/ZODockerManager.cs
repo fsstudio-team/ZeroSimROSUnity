@@ -114,7 +114,9 @@ public class ZODockerManager
             workDirectory = settings.ComposeWorkingDirectory,
             environmentVars = new Dictionary<string, string>(){ }
         };
-        string command = "docker-compose up";
+
+        // need to set environment variable so that we execute container as current user in host machine
+        string command = "CURRENT_UID=$(id -u):$(id -g) docker-compose up";
         // Execute docker command
         var task = EditorShell.Execute(command, options);
         DockerLog($"Starting docker container, please wait...");
@@ -186,7 +188,7 @@ public class ZODockerManager
         string volumes = BuildVolumesString(additionalVolumes);
 
         // Run command in a new container, and delete after execution with --rm
-        string dockerCommand = $"docker-compose run --rm{volumes} {service} {command}";
+        string dockerCommand = $"CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm{volumes} {service} {command}";
         Debug.Log(dockerCommand);
 
         // Execute docker command

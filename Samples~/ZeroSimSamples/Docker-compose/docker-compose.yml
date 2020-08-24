@@ -9,6 +9,7 @@ services:
             - ../../../../../../catkin_ws/:/catkin_ws/
         hostname: zosim
         container_name: zosim
+        user: ${CURRENT_UID}
         environment:
             PYTHONUNBUFFERED: 1 # to make roslaunch logs appear on screen
         networks:
@@ -18,6 +19,7 @@ services:
         image: docker.pkg.github.com/fsstudio-team/zerosimros/zosim-tools:latest
         volumes: # include unity project directory as volume
             - ../../../../../../:/unity-project-root/
+        user: ${CURRENT_UID}
         environment:
             PYTHONUNBUFFERED: 1
         networks:
