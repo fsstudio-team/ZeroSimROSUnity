@@ -95,9 +95,10 @@ namespace ZO.Sensors {
         /// The cameras field of view in degrees.
         /// </summary>
         /// <value></value>
+        float _fieldOfViewDegrees = 0;
         public float FieldOfViewDegrees {
             get {
-                return UnityCamera.fieldOfView;
+                return _fieldOfViewDegrees;
             }
         }
 
@@ -154,6 +155,12 @@ namespace ZO.Sensors {
         protected override void ZOReset() {
             base.ZOReset();
             UpdateRateHz = 30;
+            
+        }
+
+        protected override void ZOAwake() {
+            base.ZOAwake();
+            _fieldOfViewDegrees = UnityCamera.fieldOfView;            
         }
 
         // Start is called before the first frame update
@@ -161,6 +168,7 @@ namespace ZO.Sensors {
             if (_camera == null) {
                 _camera = this.GetComponent<Camera>();
             }
+            
 
             // setup the buffers
             _colorBuffer = new RenderTexture(_width, _height, 0, RenderTextureFormat.ARGB32);
@@ -228,7 +236,7 @@ namespace ZO.Sensors {
                 _asyncGPURequests.Enqueue(AsyncGPUReadbackPlugin.Request(_colorDepthRenderTexture));
             }
             UnityEngine.Profiling.Profiler.EndSample();
-        }
+        } 
 
         private void DoRenderTextureUpdate() {
             // ~~~ Handle Async GPU Readback ~~~ //
@@ -256,9 +264,9 @@ namespace ZO.Sensors {
                                     b = rawTextureData[p + 2];
                                     d = rawTextureData[p + 3];
 
-                                    _colorPixels24[c + 0] = (byte)(b * 255.0f);
+                                    _colorPixels24[c + 0] = (byte)(r * 255.0f);
                                     _colorPixels24[c + 1] = (byte)(g * 255.0f);
-                                    _colorPixels24[c + 2] = (byte)(r * 255.0f);
+                                    _colorPixels24[c + 2] = (byte)(b * 255.0f);
                                     _depthBufferFloat[z] = d * inverseScale;
 
                                 }

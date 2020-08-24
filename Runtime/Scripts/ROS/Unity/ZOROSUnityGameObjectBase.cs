@@ -60,7 +60,7 @@ namespace ZO.ROS.Unity {
         }
 
         // TODO: make a ZOReset in ZOGameObjectBase
-        private void ZOReset() {
+        protected override void ZOReset() {
             base.ZOReset();
             // generate the default name
             string dummy = Name;

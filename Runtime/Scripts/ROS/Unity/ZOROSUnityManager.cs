@@ -115,9 +115,20 @@ namespace ZO.ROS.Unity {
                 _rootMapTransformPublisher.ChildFrameID = WorldFrameId;
                 _rootMapTransformPublisher.UpdateRateHz = 1.0f;
                 _rootMapTransformPublisher.ROSTopic = "";
-                // _rootMapTransformPublisher.ROSId = "";
             }
         }
+
+        /// <summary>
+        /// The ROS "/tf" topic broadcast. Provides an easy way to publish coordinate frame transform information. 
+        /// </summary>
+        /// <param name="transformStamped"></param> 
+        public void BroadcastTransform(TransformStampedMessage transformStamped) {
+            if (ROSBridgeConnection.IsConnected) {
+                _transformsToBroadcast.Add(transformStamped);
+            }
+
+        }
+
         #endregion // Transform Publishing
 
 
@@ -131,7 +142,7 @@ namespace ZO.ROS.Unity {
             get => _instance;
         }
             
-        #endregion
+        #endregion // Singleton
 
 
         #region AssetBundle Management
@@ -195,23 +206,6 @@ namespace ZO.ROS.Unity {
 
         // Start is called before the first frame update
         void Start() {
-            // if (_instance == null) {
-            //     _instance = this;
-            //     // DontDestroyOnLoad(this.gameObject);
-            // } else if (_instance != this) {
-            //     Debug.LogError("ERROR: Cannot have two ZOROSUnityManager's!!!");
-            //     Destroy(this.gameObject);
-            // }
-
-            // if (_defaultZeroSimAssets == null) {
-            //     // Load default asset bundles
-            //     _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
-            //     if (_defaultZeroSimAssets == null) {
-            //         Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
-            //     } else {
-            //         Debug.Log("INFO: Load zerosimrobots asset bundle success!");
-            //     }
-            // }
 
 
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
@@ -302,16 +296,6 @@ namespace ZO.ROS.Unity {
 
         }
 
-        /// <summary>
-        /// The ROS "/tf" topic broadcast. Provides an easy way to publish coordinate frame transform information. 
-        /// </summary>
-        /// <param name="transformStamped"></param>
-        public void BroadcastTransform(TransformStampedMessage transformStamped) {
-            if (ROSBridgeConnection.IsConnected) {
-                _transformsToBroadcast.Add(transformStamped);
-            }
-
-        }
 
     }
 
