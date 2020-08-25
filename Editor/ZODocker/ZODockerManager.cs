@@ -188,7 +188,7 @@ public class ZODockerManager
         string volumes = BuildVolumesString(additionalVolumes);
 
         // Run command in a new container, and delete after execution with --rm
-        string dockerCommand = $"CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm{volumes} {service} {command}";
+        string dockerCommand = $"docker-compose run --rm{volumes} {service} {command}";
         Debug.Log(dockerCommand);
 
         // Execute docker command
