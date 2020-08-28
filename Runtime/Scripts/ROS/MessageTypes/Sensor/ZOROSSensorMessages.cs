@@ -312,6 +312,12 @@ namespace ZO.ROS.MessageTypes.Sensor {
         /// <value></value>
         public HeaderMessage header { get; set; }
 
+
+        /// <summary>
+        /// The image dimensions with which the camera was calibrated. Normally
+        /// this will be the full camera resolution in pixels.
+        /// </summary>
+        /// <value></value>
         public uint height { get; set; }
         public uint width { get; set; }
 
@@ -428,11 +434,11 @@ namespace ZO.ROS.MessageTypes.Sensor {
         }
 
         /// <summary>
-        /// Builds up camera info given just width, height & fov
+        /// Builds up camera info given width, height & fov
         /// <see>https://www.programcreek.com/python/?code=carla-simulator%2Fscenario_runner%2Fscenario_runner-master%2Fsrunner%2Fautoagents%2Fros_agent.py</see>
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        /// <param name="width">width of camera in pixels</param>
+        /// <param name="height">height of camera in pixels</param> 
         /// <param name="fovRadians">Field Of View in radians.</param>
         public void BuildCameraInfo(uint width, uint height, double fovRadians) {
             this.width = width;
@@ -441,21 +447,61 @@ namespace ZO.ROS.MessageTypes.Sensor {
 
             double cx = this.width / 2.0;
             double cy = this.height / 2.0;
-            double fx = this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
+            // focal length pixels = focal length mm * pixel width / sensor size mm
+            //double fx = 37.46 * 640.0 / 36.0;// //360;//37.46;//this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
+            double fx = this.width / System.Math.Tan(fovRadians/2.0);
             double fy = fx;
+            
             this.K = new double[9] {fx, 0, cx,
                                     0, fy, cy,
                                     0, 0, 1};
             this.D = new double[5] { 0, 0, 0, 0, 0 };
-            this.R = new double[9] { 1.0, 0, 0,
-                                     0, 1.0, 0,
-                                     0, 0, 1.0};
-            this.P = new double[12] { fx, 0, cx, 0,
-                                      0, fy, cy, 0,
-                                      0, 0, 1.0, 0};
+            this.R = new double[9] { 1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1};
+            this.P = new double[12] { fx, 0, cx,
+                                      0,  0, fy,
+                                      cy, 0, 0,
+                                      0,  1, 0};
 
-            this.roi.width = width;
-            this.roi.height = height;
+
         }
+
+
+        /// <summary>
+        /// Builds up the camera info given width, height, focal length and sensor size
+        /// </summary>
+        /// <param name="width">Width of camera in pixels.</param>
+        /// <param name="height">Height of camera in pixels.</param>
+        /// <param name="focalLengthMM">Focal length in millimeters.</param>
+        /// <param name="sensorSizeXMM">Sensor width in millimeters.</param>
+        /// <param name="sensorSizeYMM">Sensor height in millimeters.</param>
+        public void BuildCameraInfo(uint width, uint height, double focalLengthMM, double sensorSizeXMM, double sensorSizeYMM) {
+            this.width = width;
+            this.height = height;
+            this.distortion_model = "plumb_bob";
+
+            double cx = this.width / 2.0;
+            double cy = this.height / 2.0;
+            // focal length pixels = focal length mm * pixel width / sensor size mm
+            //double fx = 37.46 * 640.0 / 36.0;// //360;//37.46;//this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
+            double fx = focalLengthMM * this.width / sensorSizeXMM;
+            double fy = focalLengthMM * this.height / sensorSizeYMM;
+            
+            this.K = new double[9] {fx, 0, cx,
+                                    0, fy, cy,
+                                    0, 0, 1};
+            this.D = new double[5] { 0, 0, 0, 0, 0 };
+            this.R = new double[9] { 1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1};
+            this.P = new double[12] { fx, 0, cx,
+                                      0,  0, fy,
+                                      cy, 0, 0,
+                                      0,  1, 0};
+
+
+        }
+
     }
 }

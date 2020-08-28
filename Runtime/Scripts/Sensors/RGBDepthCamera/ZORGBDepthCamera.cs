@@ -97,10 +97,28 @@ namespace ZO.Sensors {
         /// <value></value>
         float _fieldOfViewDegrees = 0;
         public float FieldOfViewDegrees {
-            get {
-                return _fieldOfViewDegrees;
-            }
+            get => _fieldOfViewDegrees;            
         }
+
+        float _focalLengthMM = 0;
+        /// <summary>
+        /// The camera focal length in millimeters.
+        /// </summary>
+        /// <value></value>
+        public float FocalLengthMM {
+            get => _focalLengthMM;
+        }
+
+        Vector2 _sensorSizeMM = new Vector2();
+        /// <summary>
+        /// Sensor width and height in millimeters.
+        /// </summary>
+        /// <value></value>
+        public Vector2 SensorSizeMM {
+            get => _sensorSizeMM;
+        }
+
+
 
         //public FrameOutputType _frameOutputType = FrameOutputType.RGB8D16;
 
@@ -160,7 +178,11 @@ namespace ZO.Sensors {
 
         protected override void ZOAwake() {
             base.ZOAwake();
-            _fieldOfViewDegrees = UnityCamera.fieldOfView;            
+            _fieldOfViewDegrees = UnityCamera.fieldOfView;
+            if (UnityCamera.usePhysicalProperties) {
+                _focalLengthMM = UnityCamera.focalLength;
+                _sensorSizeMM = UnityCamera.sensorSize;
+            }            
         }
 
         // Start is called before the first frame update
@@ -215,12 +237,17 @@ namespace ZO.Sensors {
             DoRenderTextureUpdate();
         }
 
+
+        float _averageDepth = 0;
         protected override void ZOOnGUI() {
             base.ZOOnGUI();
             GUI.DrawTexture(new Rect(10, 10, 320, 240), _colorBuffer, ScaleMode.ScaleToFit);
             GUI.DrawTexture(new Rect(10, 242, 320, 240), _depthBuffer, ScaleMode.ScaleToFit);
             GUI.DrawTexture(new Rect(325, 242, 320, 240), _colorDepthRenderTexture, ScaleMode.ScaleToFit, true);
+
+            GUI.Label(new Rect(320, 10, 100, 30), "Depth: " + _averageDepth.ToString());
         }
+        
 
 
         private float[] _depthBufferFloat;
@@ -230,6 +257,7 @@ namespace ZO.Sensors {
             UnityEngine.Profiling.Profiler.BeginSample("ZORGBDepthCamera::OnPostRender");
             Rect cameraRect = new Rect(0, 0, _width, _height);
             _rgbDepthCameraShader.SetTexture("_MainTex", _colorBuffer);
+            _rgbDepthCameraShader.SetTexture("_CameraDepthTexture", _depthBuffer);
             Graphics.Blit(_camera.targetTexture, _colorDepthRenderTexture, _rgbDepthCameraShader);
 
             if (_asyncGPURequests.Count < _maxAsyncGPURequestQueue) {
@@ -268,6 +296,8 @@ namespace ZO.Sensors {
                                     _colorPixels24[c + 1] = (byte)(g * 255.0f);
                                     _colorPixels24[c + 2] = (byte)(b * 255.0f);
                                     _depthBufferFloat[z] = d * inverseScale;
+
+                                    _averageDepth = d;
 
                                 }
                                 OnPublishDelegate(this, _cameraId, _width, _height, _colorPixels24, _depthBufferFloat);

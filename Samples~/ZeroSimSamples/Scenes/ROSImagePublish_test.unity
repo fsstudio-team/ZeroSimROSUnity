@@ -157,7 +157,7 @@ MonoBehaviour:
   Hostname: localhost
   Port: 9090
   _serializationType: 1
-  _worldFrameId: map
+  _worldFrameId: world
   _rootMapTransformPublisher: {fileID: 30226136}
 --- !u!4 &30226135
 Transform:
@@ -192,7 +192,7 @@ MonoBehaviour:
   _ROSTopic: 
   _name: ros.publisher.transform_ROSUnityManager
   _frameId: 
-  _childFrameId: map
+  _childFrameId: world
 --- !u!1 &155950647
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@
 
         Pass
         {
+            Tags{ "RenderType" = "Opaque" }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -58,7 +59,7 @@
                 float depth = tex2D(_CameraDepthTexture, i.uv).r;
                 // //linear depth between camera and far clipping plane
                 depth = Linear01Depth(depth);
-                // //depth as distance from camera in units 
+                //depth as distance from camera in units 
                 depth = depth * _ProjectionParams.z;
                 col.a = depth;
                 return col;
