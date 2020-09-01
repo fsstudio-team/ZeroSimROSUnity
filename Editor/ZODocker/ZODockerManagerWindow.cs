@@ -14,6 +14,11 @@ public class ZODockerManagerWindow : EditorWindow {
 
     private string _dockerLogColor = "#207020";
 
+    private float _dockerPollTimespan = 2.0f;
+    private double _lastPollTimestamp = 0;
+
+    private ZOSettings _ZOSettings;
+
     [MenuItem("Zero Sim/Docker Manager")]
     public static void OpenDockerManager() {
         
@@ -29,9 +34,36 @@ public class ZODockerManagerWindow : EditorWindow {
         _window.ShowUtility();
     }
 
+    async void Awake(){
+        CheckDockerInstallation();
+
+        _lastPollTimestamp = EditorApplication.timeSinceStartup;
+    }
+
+    private async void CheckDockerInstallation(){
+        bool isDockerInstalled = await ZODockerManager.IsZODockerInstalled();
+
+        if(isDockerInstalled){
+            bool isDockerRunning = await ZODockerManager.IsZODockerRunning();
+            UnityEngine.Debug.Log($"Docker running: {isDockerRunning}");
+        }
+    }
+
     private void OnGUI() {
         
+        if(ZODockerManager.isInstalled)
+            OnGUIDocker();
+        else
+            OnGUIInstallDocker();
+        
+    }
+
+    private void OnGUIDocker(){
         EditorGUILayout.LabelField("Docker running", ZODockerManager.isRunning.ToString());
+
+        _ZOSettings = ZOSettings.GetOrCreateSettings();
+        
+        EditorGUILayout.LabelField("Docker-compose directory", _ZOSettings.ComposeWorkingDirectory);
 
         if (!ZODockerManager.isRunning && GUILayout.Button("Start Docker service")){
             ZODockerManager.DockerComposeUp();
@@ -45,7 +77,16 @@ public class ZODockerManagerWindow : EditorWindow {
         
     }
 
-    
+    private async void OnGUIInstallDocker(){
+
+        EditorGUILayout.LabelField("Docker installation not found. We're checking for a new installation in the background...");
+        
+        if(EditorApplication.timeSinceStartup - _lastPollTimestamp > _dockerPollTimespan){
+            CheckDockerInstallation();
+            _lastPollTimestamp = EditorApplication.timeSinceStartup;
+        }
+        
+    }
 }
 
 }

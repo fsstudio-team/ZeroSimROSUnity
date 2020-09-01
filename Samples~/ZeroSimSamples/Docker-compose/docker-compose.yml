@@ -1,0 +1,30 @@
+---
+version: '3.5'
+services:
+    zosim:
+        image: docker.pkg.github.com/fsstudio-team/zerosimros/zosim:latest
+        ports:
+            - 9090:9090
+        volumes:
+            - ../../../../../../catkin_ws/:/catkin_ws/
+        hostname: zosim
+        container_name: zosim
+        user: ${CURRENT_UID}
+        environment:
+            PYTHONUNBUFFERED: 1 # to make roslaunch logs appear on screen
+        networks:
+            - zosim_net
+
+    zosim_tools:
+        image: docker.pkg.github.com/fsstudio-team/zerosimros/zosim-tools:latest
+        volumes: # include unity project directory as volume
+            - ../../../../../../:/unity-project-root/
+        user: ${CURRENT_UID}
+        environment:
+            PYTHONUNBUFFERED: 1
+        networks:
+            - zosim_net
+
+networks:
+    zosim_net:
+        name: 'zosim_net'

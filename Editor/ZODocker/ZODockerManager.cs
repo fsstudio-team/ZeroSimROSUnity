@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MS.Shell.Editor;
+using UnityEditor;
 using UnityEngine;
 
 namespace ZO.Editor{
@@ -10,18 +12,111 @@ public class ZODockerManager
 {
     public static string dockerLogColor = "#207020";
     public static bool showLogs = true;
+    public static bool isInstalled = false;
     public static bool isRunning = false;
+    public static string composeWorkingDirectory = "../../docker/dev"; // default Compose file for development
 
-    public static void DockerComposeUp(){
+    private static readonly string installScriptAssetName = "docker_install"; // need this for AssetDatabase to find it
+    private static readonly string installScriptName = "docker_install.sh";
+
+    public static void DockerInstall(){
+        
+        // Find Docker install script
+        string[] installScriptAssets = AssetDatabase.FindAssets(installScriptAssetName);
+        if(installScriptAssets.Length == 0){
+            EditorUtility.DisplayDialog("Error", "Couldn't find docker_install.sh among your assets. Have you imported ZeroSim samples already?", "Ok");
+            return;
+        }
+
+        string scriptPath = AssetDatabase.GUIDToAssetPath(installScriptAssets[0]);
+        string directory = System.IO.Path.GetDirectoryName(scriptPath);
+        Debug.Log(directory);
+
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
-            //encoding = System.Text.Encoding.GetEncoding("GBK"),
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+            workDirectory = directory
         };
-        string command = "docker-compose up";
+        string command = "./" + installScriptName;
+        // Execute docker command
+        var task = EditorShell.Execute(command, options);
+        task.onLog += (EditorShell.LogType logType, string log) => {
+            DockerLog(log);
+        };
+        task.onExit += (exitCode) => {
+            if(exitCode == 0){
+                isRunning = true;
+            }
+            
+            DockerLog($"Install script exit code: {exitCode}", forceDisplay: true);
+        };
+    }
+
+    public static Task<bool> IsZODockerInstalled(){
+        var options = new EditorShell.Options(){
+            workDirectory = Application.dataPath
+        };
+
+        // Create a task and return it so clients can use async/await
+        // Use TaskCompletionSource so that we can manually fulfill the task when 
+        // the shell script executes the onExit callback
+        TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
+
+        string command = "docker --version && docker-compose --version";
+        // Execute docker command
+        var shellTask = EditorShell.Execute(command, options);
+        DockerLog($"Checking if docker installed...");
+        shellTask.onLog += (EditorShell.LogType logType, string log) => {
+            //DockerLog(log);
+        };
+        shellTask.onExit += (exitCode) => {
+            //DockerLog("Check if docker installed exit code: " + exitCode);
+            isInstalled = exitCode == 0;
+            taskCompletionSource.SetResult(isInstalled);
+        };
+
+        return taskCompletionSource.Task;
+    }
+
+    public static Task<bool> IsZODockerRunning(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
+        var options = new EditorShell.Options(){
+            workDirectory = settings.ComposeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
+        };
+
+        // Create a task and return it so clients can use async/await
+        // Use TaskCompletionSource so that we can manually fulfill the task when 
+        // the shell script executes the onExit callback
+        TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
+
+        string command = "if [ $(docker inspect -f '{{.State.Running}}' zosim) = \"true\" ]; then exit 0; else exit 1; fi";
+        // Execute docker command
+        var shellTask = EditorShell.Execute(command, options);
+        DockerLog($"Checking if docker running...");
+        shellTask.onLog += (EditorShell.LogType logType, string log) => {
+            DockerLog(log);
+        };
+        shellTask.onExit += (exitCode) => {
+            Debug.Log("Check if docker running exit code: " + exitCode);
+            isRunning = exitCode == 0;
+            taskCompletionSource.SetResult(isRunning);
+        };
+
+        return taskCompletionSource.Task;
+    }
+
+    public static void DockerComposeUp(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
+        // Navigate to parent directories where the docker and dockercompose files are located
+        var options = new EditorShell.Options(){
+            workDirectory = settings.ComposeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
+        };
+
+        // need to set environment variable so that we execute container as current user in host machine
+        string command = "CURRENT_UID=$(id -u):$(id -g) docker-compose up";
         // Execute docker command
         var task = EditorShell.Execute(command, options);
         DockerLog($"Starting docker container, please wait...");
@@ -29,20 +124,25 @@ public class ZODockerManager
             DockerLog(log);
         };
         task.onExit += (exitCode) => {
+            if(exitCode == 0){
+                // we won't get this until the server is stopped
+            }
+            
             DockerLog($"Docker compose up exit: {exitCode}", forceDisplay: true);
         };
 
+        // TODO: poll to check if the server was started successfully
+        // here we assume it will
         isRunning = true;
     }
 
     public static void DockerComposeDown(){
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
+
         // Navigate to parent directories where the docker and dockercompose files are located
         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
-            //encoding = System.Text.Encoding.GetEncoding("GBK"),
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+            workDirectory = settings.ComposeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
         };
         string command = "docker-compose down";
         // Execute docker command
@@ -76,14 +176,13 @@ public class ZODockerManager
                                  string command, 
                                  string[] additionalVolumes = null, 
                                  Action<int> callback = null) {
+        
+        ZOSettings settings = ZOSettings.GetOrCreateSettings();
 
-         // docker-compose -f ./docker/docker-compose.yml run --rm 
-         // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
-         var options = new EditorShell.Options(){
-            workDirectory = "../../docker/",
-            environmentVars = new Dictionary<string, string>(){
-                //{"PATH", "usr/bin"}
-            }
+        // docker-compose -f ./docker/docker-compose.yml run --rm 
+        // zosim_tools python ./zo-asset-tools/zo_convex_decomposition/zo_convex_decomposition.py
+        var options = new EditorShell.Options(){workDirectory = settings.ComposeWorkingDirectory,
+            environmentVars = new Dictionary<string, string>(){ }
         };
 
         string volumes = BuildVolumesString(additionalVolumes);
