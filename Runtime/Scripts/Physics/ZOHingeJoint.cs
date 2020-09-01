@@ -43,9 +43,9 @@ namespace ZO.Physics {
         /// <value></value>
         public float Position {
             get {
-                _connectedBodyStartRotation.
+                // _connectedBodyStartRotation.
                 // NOTE:  There is a bug in Unity Hinge Joint angle where it is the "world" angle (or something).
-                //return UnityHingeJoint.angle * Mathf.Deg2Rad;
+                return UnityHingeJoint.angle * Mathf.Deg2Rad;
             }
             set {
                 JointSpring spring = UnityHingeJoint.spring;
