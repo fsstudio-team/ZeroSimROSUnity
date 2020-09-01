@@ -163,21 +163,18 @@ namespace ZO.ROS.Controllers {
                 if (GoalStatus == ActionStatusEnum.ACTIVE) {
 
                     // find the closest target position given the current time
-
-                    
-
-                    bool foundPoints = false;
+                    bool foundTargetPoint = false;
                     foreach (JointTrajectoryPointMessage point in Goal.goal.trajectory.points) {
                         // Debug.Log("INFO: point time: " + point.time_from_start.Seconds.ToString("R3"));
                         if (_currentGoalTime <= point.time_from_start.Seconds) {
                             _currentPoint = point;
-                            foundPoints = true;
+                            foundTargetPoint = true;
                             break;
                         }
                     }
 
 
-                    if (foundPoints == true) {
+                    if (foundTargetPoint == true) {
 
                         for (int i = 0; i < Goal.goal.trajectory.joint_names.Length; i++) {
                             _trajectoryControllerStateMessage.joint_names[i] = Goal.goal.trajectory.joint_names[i];
@@ -217,7 +214,7 @@ namespace ZO.ROS.Controllers {
                 _trajectoryControllerStateMessage.Update();
                 ActionMessage.action_feedback.Update();
 
-
+                //TODO:  this is for the simple rqt control
                 // int i = 0;
                 // foreach (ZOJointInterface joint in Joints) {
                 //     _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
@@ -252,17 +249,20 @@ namespace ZO.ROS.Controllers {
             base.ZOOnGUI();
             int y = 10;
             GUI.TextField(new Rect(10, y, 200, 20), "Goal Status: " + GoalStatus.ToString());
-            if (GoalStatus == ActionStatusEnum.ACTIVE) {
-                for (int i = 0; i < _trajectoryControllerStateMessage.joint_names.Length; i++, y += 25) {
-                    GUI.TextField(new Rect(10, y, 500, 22), _trajectoryControllerStateMessage.joint_names[i]
-                    + " actual: " + (_trajectoryControllerStateMessage.actual.positions[i] * Mathf.Rad2Deg).ToString("N2")
-                    + " desired: " + (_trajectoryControllerStateMessage.desired.positions[i] * Mathf.Rad2Deg).ToString("N2")
-                    + " error: " + (_trajectoryControllerStateMessage.error.positions[i] * Mathf.Rad2Deg).ToString("N2"));
-                }
 
+            for (int i = 0; i < _trajectoryControllerStateMessage.joint_names.Length; i++, y += 25) {
+                ZOJointInterface joint = GetJointByName(_trajectoryControllerStateMessage.joint_names[i]);
+
+                GUI.TextField(new Rect(10, y, 500, 22), _trajectoryControllerStateMessage.joint_names[i]
+                //+ " actual: " + (_trajectoryControllerStateMessage.actual.positions[i] * Mathf.Rad2Deg).ToString("N2")
+                + " actual: " + (joint.Position * Mathf.Rad2Deg).ToString("N2")
+                + " desired: " + (_trajectoryControllerStateMessage.desired.positions[i] * Mathf.Rad2Deg).ToString("N2")
+                + " error: " + (_trajectoryControllerStateMessage.error.positions[i] * Mathf.Rad2Deg).ToString("N2"));
+            }
+            if (GoalStatus == ActionStatusEnum.ACTIVE) {
                 foreach (JointTrajectoryPointMessage point in Goal.goal.trajectory.points) {
                     y += 25;
-                    GUI.TextField(new Rect(10, y, 200, 22), "Point time: " + point.time_from_start.Seconds.ToString("R2"));                    
+                    GUI.TextField(new Rect(10, y, 200, 22), "Point time: " + point.time_from_start.Seconds.ToString("R2"));
                 }
 
             }

@@ -42,7 +42,11 @@ namespace ZO.Physics {
         /// </summary>
         /// <value></value>
         public float Position {
-            get { return UnityHingeJoint.angle * Mathf.Deg2Rad; }
+            get {
+                _connectedBodyStartRotation.
+                // NOTE:  There is a bug in Unity Hinge Joint angle where it is the "world" angle (or something).
+                //return UnityHingeJoint.angle * Mathf.Deg2Rad;
+            }
             set {
                 JointSpring spring = UnityHingeJoint.spring;
                 UnityHingeJoint.spring = spring;
@@ -78,7 +82,7 @@ namespace ZO.Physics {
         /// <value></value>
         public float Effort {
             get { return UnityHingeJoint.motor.force; }
-            set { 
+            set {
                 // TODO
             }
         }
@@ -98,6 +102,14 @@ namespace ZO.Physics {
         // }
 
 
+        private Quaternion _connectedBodyStartRotation = Quaternion.identity;
+        private void Start() {
+            _connectedBodyStartRotation = UnityHingeJoint.connectedBody.transform.localRotation;
+        }
+
+        // private void FixedUpdate() {
+        //     Debug.Log("Joint: " + Name + " Angle: " + UnityHingeJoint.angle.ToString("n2"));
+        // }
 
         /// <summary>
         /// Reset is a MonoBehavior method that gets called on creation of this component.
@@ -179,7 +191,7 @@ namespace ZO.Physics {
             // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?
             Vector3 worldAnchor = this.transform.TransformPoint(UnityHingeJoint.anchor);
             worldAnchor = documentRoot.transform.InverseTransformPoint(worldAnchor);
-            
+
             Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
             worldConnectedAnchor = documentRoot.transform.InverseTransformPoint(worldConnectedAnchor);
 
@@ -293,7 +305,7 @@ namespace ZO.Physics {
                     } else {
                         Debug.LogWarning("WARNING: ZOHingeJoint failed to find connected occurrence: " + JSON["connected_occurrence"].Value<string>());
                     }
-                    
+
                 }
             });
 
