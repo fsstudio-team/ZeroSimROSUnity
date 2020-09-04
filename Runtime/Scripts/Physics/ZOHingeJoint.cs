@@ -35,6 +35,8 @@ namespace ZO.Physics {
             }
         }
 
+        public bool _debug = false;
+
 
         #region ZOJointInterface
 
@@ -46,7 +48,8 @@ namespace ZO.Physics {
             get {
                 // _connectedBodyStartRotation.
                 // NOTE:  There is a bug in Unity Hinge Joint angle where it is the "world" angle (or something).
-                return UnityHingeJoint.angle * Mathf.Deg2Rad;
+                // return UnityHingeJoint.angle * Mathf.Deg2Rad;
+                return _currentAngleRadians;
             }
             set {
                 JointSpring spring = UnityHingeJoint.spring;
@@ -125,11 +128,41 @@ namespace ZO.Physics {
         // }
 
 
-        private Quaternion _connectedBodyStartRotation = Quaternion.identity;
+        private float _startAngleRadians = 0;
+        private float _currentAngleRadians = 0;
 
         #region MonoBehaviour
         private void Start() {
-            _connectedBodyStartRotation = UnityHingeJoint.connectedBody.transform.localRotation;
+            // calculate starting "zero" joint angle in radians
+            // NOTE: this has to be done because there is a bug in the Unity HingeJoint angle :-/
+            Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
+            _startAngleRadians = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis);
+
+        }
+
+        private void FixedUpdate() {
+            // calculate joint angle relative to the starting joint
+            // NOTE: this has to be done because there is a bug in the Unity HingeJoint angle :-/
+            Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
+            float angle = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis);
+            _currentAngleRadians = angle - _startAngleRadians;
+
+        }
+
+        private void OnGUI() {
+            if (_debug) {
+                // Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
+                // ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                // ZOSimDocumentRoot documentRoot = occurrence.DocumentRoot;
+                // worldAxis = documentRoot.transform.InverseTransformDirection(worldAxis);
+
+                // float angle = Vector3.SignedAngle(transform.forward, ConnectedBody.transform.forward, worldAxis);
+                // Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
+                // float angle = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis) * Mathf.Rad2Deg;
+
+                GUI.TextField(new Rect(10, 10, 200, 22), this.Name + " Angle: " + _currentAngleRadians.ToString("R2"));
+
+            }
         }
 
         #endregion

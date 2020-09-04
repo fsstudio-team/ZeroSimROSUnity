@@ -162,7 +162,7 @@ namespace ZO.Math {
         /// </summary>
         /// <param name="q">The quaternion.</param>
         /// <param name="axis">The axis.</param>
-        /// <returns>The twis in radians.</returns>
+        /// <returns>The twist in radians.</returns>
         public static float FindQuaternionTwist(UnityEngine.Quaternion q, UnityEngine.Vector3 axis) {
             axis.Normalize();
 
