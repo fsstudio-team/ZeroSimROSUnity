@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
-using ZO;
+using ZO.Document;
+
 
 namespace ZO.Physics {
 
@@ -87,6 +88,28 @@ namespace ZO.Physics {
             }
         }
 
+        /// <summary>
+        /// The connected rigid body.  If null then it is the world.
+        /// </summary>
+        /// <value></value>
+        public Rigidbody ConnectedBody {
+            get {
+                return UnityHingeJoint.connectedBody;
+            }
+            set {
+                UnityHingeJoint.connectedBody = value;
+            }
+        }
+
+        /// <summary>
+        /// The connected ZOSim Occurrence.  Being null does not necessarily mean anything.
+        /// </summary>
+        /// <value></value>
+        public ZOSimOccurrence ConnectedOccurrence {
+            get { return ConnectedBody.gameObject.GetComponent<ZOSimOccurrence>(); }
+        }
+
+
 
         #endregion
 
@@ -103,9 +126,13 @@ namespace ZO.Physics {
 
 
         private Quaternion _connectedBodyStartRotation = Quaternion.identity;
+
+        #region MonoBehaviour
         private void Start() {
             _connectedBodyStartRotation = UnityHingeJoint.connectedBody.transform.localRotation;
         }
+
+        #endregion
 
         // private void FixedUpdate() {
         //     Debug.Log("Joint: " + Name + " Angle: " + UnityHingeJoint.angle.ToString("n2"));

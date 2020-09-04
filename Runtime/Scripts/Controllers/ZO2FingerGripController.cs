@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
+using ZO.Document;
 
 namespace ZO.Controllers {
 
     [ExecuteAlways]
-    public class ZO2FingerGripController : MonoBehaviour, ZO.ZOSerializationInterface {
+    public class ZO2FingerGripController : MonoBehaviour, ZOSerializationInterface {
 
         [SerializeField] public string _name;
         public Vector2 _minMaxLimitsDegrees = new Vector2(0, 45);

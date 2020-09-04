@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
-using ZO;
+using ZO.Document;
 
 namespace ZO.Physics {
 
@@ -93,6 +93,8 @@ namespace ZO.Physics {
 
         }
 
+        #region ZOJointInterface
+
         /// <summary>
         /// The joint position.  
         /// 
@@ -155,8 +157,29 @@ namespace ZO.Physics {
             }
         }
 
+        /// <summary>
+        /// Does not apply to articulated bodies. See property: UnityArticulationBody
+        /// </summary>
+        /// <value></value>
+        public Rigidbody ConnectedBody {
+            get {
+                return null;
+            }
+            set {
+                // Not applicable
+            }
+        }
+
+        /// <summary>
+        /// The connected ZOSim Occurrence.  Being null does not necessarily mean anything.
+        /// </summary>
+        /// <value></value>
+        public ZOSimOccurrence ConnectedOccurrence {
+            get { return UnityArticulationBody.gameObject.GetComponent<ZOSimOccurrence>(); }
+        }
 
 
+        #endregion // ZOJointInterface
 
 
         #region ZOSerializationInterface

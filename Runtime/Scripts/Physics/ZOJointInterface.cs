@@ -1,3 +1,5 @@
+using UnityEngine;
+using ZO.Document;
 
 namespace ZO.Physics {
 
@@ -42,6 +44,18 @@ namespace ZO.Physics {
         /// </summary>
         /// <value></value>
         float Effort { get; set; }
+
+        /// <summary>
+        /// The connected rigid body.  If null then it is the world.
+        /// </summary>
+        /// <value></value>
+        Rigidbody ConnectedBody { get; set; }
+
+        /// <summary>
+        /// The connected ZOSim Occurrence.  Being null does not necessarily mean anything.
+        /// </summary>
+        /// <value></value>
+        ZOSimOccurrence ConnectedOccurrence { get;  }
 
     }
 }

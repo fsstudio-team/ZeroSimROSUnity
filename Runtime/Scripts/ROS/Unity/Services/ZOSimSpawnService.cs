@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.ZOSim;
+using ZO.Document;
 
 namespace ZO.ROS.Unity.Service {
 

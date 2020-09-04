@@ -9,7 +9,7 @@ using ZO.ROS.Publisher;
 using ZO.ROS.Controllers;
 using ZO.ROS.Unity.Service;
 
-namespace ZO {
+namespace ZO.Document {
 
     /// <summary>
     /// A ZOSim root document. This is the "document root" and "root" GameObject component in the  

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json.Linq;
 
-namespace ZO {
+namespace ZO.Document {
 
     /// <summary>
     /// Defines a standard interface to serialize and deserialize ZOSim objects.
