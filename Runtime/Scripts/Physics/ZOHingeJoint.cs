@@ -47,7 +47,7 @@ namespace ZO.Physics {
         public float Position {
             get {
                 // _connectedBodyStartRotation.
-                // NOTE:  There is a bug in Unity Hinge Joint angle where it is the "world" angle (or something).
+                // NOTE:  There is longstanding bug in Unity Hinge Joint angle where 
                 // return UnityHingeJoint.angle * Mathf.Deg2Rad;
                 return _currentAngleRadians;
             }
@@ -160,7 +160,8 @@ namespace ZO.Physics {
                 // Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
                 // float angle = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis) * Mathf.Rad2Deg;
 
-                GUI.TextField(new Rect(10, 10, 200, 22), this.Name + " Angle: " + _currentAngleRadians.ToString("R2"));
+                GUI.TextField(new Rect(10, 10, 300, 22), this.Name + " Angle: " + (_currentAngleRadians * Mathf.Rad2Deg).ToString("R2") 
+                                + " Target: " + (UnityHingeJoint.spring.targetPosition * Mathf.Rad2Deg).ToString("R2"));
 
             }
         }
