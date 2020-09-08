@@ -156,7 +156,6 @@ namespace ZO.Math {
             orthonormal2.Normalize();
         }
 
-
         /// <summary>
         /// Calculate the quaternion twist about an axis.
         /// <see>https://stackoverflow.com/questions/3684269/component-of-a-quaternion-rotation-around-an-axis</see>
@@ -167,32 +166,66 @@ namespace ZO.Math {
         public static float FindQuaternionTwist(UnityEngine.Quaternion q, UnityEngine.Vector3 axis) {
             axis.Normalize();
 
+            // Get the plane the axis is a normal of
+            UnityEngine.Vector3 orthonormal1, orthonormal2;
+            FindOrthonormals(axis, out orthonormal1, out orthonormal2);
+
+            UnityEngine.Vector3 transformed = q * orthonormal1;
+
+            // Project transformed vector onto plane
+            UnityEngine.Vector3 flattened = transformed - (UnityEngine.Vector3.Dot(transformed, axis) * axis);
+            flattened.Normalize();
+
+            // Get angle between original vector and projected transform to get angle around normal
+            float a = UnityEngine.Mathf.Acos(UnityEngine.Vector3.Dot(orthonormal1, flattened));
+
+            // fix the angle 
             UnityEngine.Vector3 rotationAxis = new UnityEngine.Vector3(q.x, q.y, q.z);
-
             float dotProd =  UnityEngine.Vector3.Dot(axis, rotationAxis);
-            // Shortcut calculation of `projection` requires `direction` to be normalized
-            UnityEngine.Vector3 projection = axis * dotProd;// direction.mul(dotProd, new Vector3d());
-            UnityEngine.Quaternion twist = new UnityEngine.Quaternion(
-                    projection.x, projection.y, projection.z, q.w);
-
-            // weird fixup of joint angle in some casese.  See stackeoverflow explanation above.
-            float flipAngleOffset = 0.0f;
-            if (dotProd < 0.0) {
-                // Ensure `twist` points towards `direction`
-                twist.x = -twist.x;
-                twist.y = -twist.y;
-                twist.z = -twist.z;
-                twist.w = -twist.w;
-                // Rotation angle `twist.angle()` is now reliable
-                flipAngleOffset = 360;
+            if (dotProd > 0) {
+                a = -a;
             }
 
-            float twistAngle = 0;
-            UnityEngine.Vector3 twistAxis = new UnityEngine.Vector3();
-            twist.ToAngleAxis(out twistAngle, out twistAxis);
-            return (flipAngleOffset - twistAngle) * UnityEngine.Mathf.Deg2Rad;
 
+            return a;
         }
+
+        /// <summary>
+        /// Calculate the quaternion twist about an axis.
+        /// <see>https://stackoverflow.com/questions/3684269/component-of-a-quaternion-rotation-around-an-axis</see>
+        /// </summary>
+        /// <param name="q">The quaternion.</param>
+        /// <param name="axis">The axis.</param>
+        /// <returns>The twist in radians.</returns>
+        // public static float FindQuaternionTwist(UnityEngine.Quaternion q, UnityEngine.Vector3 axis) {
+        //     axis.Normalize();
+
+        //     UnityEngine.Vector3 rotationAxis = new UnityEngine.Vector3(q.x, q.y, q.z);
+
+        //     float dotProd =  UnityEngine.Vector3.Dot(axis, rotationAxis);
+        //     // Shortcut calculation of `projection` requires `direction` to be normalized
+        //     UnityEngine.Vector3 projection = axis * dotProd;// direction.mul(dotProd, new Vector3d());
+        //     UnityEngine.Quaternion twist = new UnityEngine.Quaternion(
+        //             projection.x, projection.y, projection.z, q.w);
+
+        //     // weird fixup of joint angle in some casese.  See stackeoverflow explanation
+        //     float flipAngle = 0.0f;
+        //     if (dotProd < 0.0) {
+        //         // Ensure `twist` points towards `direction`
+        //         twist.x = -twist.x;
+        //         twist.y = -twist.y;
+        //         twist.z = -twist.z;
+        //         twist.w = -twist.w;
+        //         // Rotation angle `twist.angle()` is now reliable
+        //         flipAngle = 360;
+        //     }
+
+        //     float twistAngle = 0;
+        //     UnityEngine.Vector3 twistAxis = new UnityEngine.Vector3();
+        //     twist.ToAngleAxis(out twistAngle, out twistAxis);
+        //     return (flipAngle - twistAngle) * UnityEngine.Mathf.Deg2Rad;
+
+        // }
 
     }
 }
