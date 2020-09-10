@@ -6,6 +6,7 @@ using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.Publisher;
 using ZO.Sensors;
 using ZO.ROS.Unity;
+using ZO.Document;
 
 namespace ZO.ROS.Publisher {
 

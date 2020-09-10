@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
-using ZO;
+using ZO.Document;
+
 
 namespace ZO.Physics {
 
@@ -29,7 +30,7 @@ namespace ZO.Physics {
         /// </summary>
         /// <value></value>
         public UnityEngine.FixedJoint UnityFixedJoint {
-            get => _fixedJoint;            
+            get => _fixedJoint;
         }
 
 
@@ -41,7 +42,7 @@ namespace ZO.Physics {
         /// <value></value>
         public float Position {
             get { return 0; }
-            set {}
+            set { }
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace ZO.Physics {
         /// <value></value>
         public float Velocity {
             get { return 0; }
-            set {}
+            set { }
         }
 
 
@@ -62,6 +63,29 @@ namespace ZO.Physics {
             get { return 0; }
             set { }
         }
+
+        /// <summary>
+        /// The connected rigid body.  If null then it is the world.
+        /// </summary>
+        /// <value></value>
+        public Rigidbody ConnectedBody {
+            get {
+                return UnityFixedJoint.connectedBody;
+            }
+            set {
+                UnityFixedJoint.connectedBody = value;
+            }
+        }
+
+        /// <summary>
+        /// The connected ZOSim Occurrence.  Being null does not necessarily mean anything.
+        /// </summary>
+        /// <value></value>
+        public ZOSimOccurrence ConnectedOccurrence {
+            get { return ConnectedBody.gameObject.GetComponent<ZOSimOccurrence>(); }
+        }
+
+
 
 
         #endregion
@@ -142,7 +166,7 @@ namespace ZO.Physics {
             // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?
             Vector3 worldAnchor = this.transform.TransformPoint(UnityFixedJoint.anchor);
             worldAnchor = documentRoot.transform.InverseTransformPoint(worldAnchor);
-            
+
             Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityFixedJoint.connectedAnchor);
             worldConnectedAnchor = documentRoot.transform.InverseTransformPoint(worldConnectedAnchor);
 
@@ -199,7 +223,7 @@ namespace ZO.Physics {
                     } else {
                         Debug.LogWarning("WARNING: ZOFixedJoint failed to find connected occurrence: " + JSON["connected_occurrence"].Value<string>());
                     }
-                    
+
                 }
             });
 

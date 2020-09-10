@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
+using ZO.Document;
 
 namespace ZO.Physics {
 
@@ -7,7 +8,7 @@ namespace ZO.Physics {
     /// Proportional Integral Derivative (PID) controller.
     /// </summary>
     [System.Serializable]
-    public class ZOPIDController : ZO.ZOSerializationInterface {
+    public class ZOPIDController : ZOSerializationInterface {
         public string _name;
 
         [UnityEngine.Tooltip("Proportional constant (counters current error)")]

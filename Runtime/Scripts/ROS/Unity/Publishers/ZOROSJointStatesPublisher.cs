@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.Physics;
 using ZO.ROS.Unity;
+using ZO.Document;
 
 namespace ZO.ROS.Publisher {
     public class ZOROSJointStatesPublisher : ZOROSUnityGameObjectBase {

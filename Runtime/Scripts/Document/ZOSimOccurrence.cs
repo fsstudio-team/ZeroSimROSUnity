@@ -14,7 +14,7 @@ using ZO.Sensors;
 using ZO.ROS.Unity;
 using ZO.ROS.Publisher;
 
-namespace ZO {
+namespace ZO.Document {
 
     /// <summary>
     /// A `ZOSimOccurence` is similar to a Unity GameObject but contains additional "meta" info specific

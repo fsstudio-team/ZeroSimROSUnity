@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 using ZO.Util;
 using ZO.Util.Extensions;
 using ZO.ROS.Unity;
+using ZO.Document;
+
 
 namespace ZO.Sensors {
     [RequireComponent(typeof(Camera))]

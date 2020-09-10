@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.Unity;
+using ZO.Document;
 
 namespace ZO.ROS.Publisher {
     public class ZOROSTransformPublisher : ZOROSUnityGameObjectBase {

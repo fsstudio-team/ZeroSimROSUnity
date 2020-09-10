@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.Sensors;
 using ZO.ROS.Unity;
+using ZO.Document;
 
 namespace ZO.ROS.Publisher {
 

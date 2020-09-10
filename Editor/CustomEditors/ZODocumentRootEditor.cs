@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using ZO.Document;
+
 
 namespace ZO.Editor {
 
-    [CustomEditor(typeof(ZO.ZOSimDocumentRoot))]
+    [CustomEditor(typeof(ZOSimDocumentRoot))]
     public class ZOSimDocumentRootEditor : UnityEditor.Editor {
 
         public override void OnInspectorGUI() {
 
             DrawDefaultInspector();
 
-            ZO.ZOSimDocumentRoot zoSimBaseComponent = (ZOSimDocumentRoot)target;
+            ZOSimDocumentRoot zoSimBaseComponent = (ZOSimDocumentRoot)target;
 
             if (GUILayout.Button("Save ZOSim")) {
                 Debug.Log("INFO: ZOSimBaseComponent Save ZOSim");

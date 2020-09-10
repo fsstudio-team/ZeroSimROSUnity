@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ZO.Document;
 
 namespace ZO.Import {
     public class ZOImportZeroSim : EditorWindow {
@@ -154,7 +155,7 @@ namespace ZO.Import {
             GameObject rootGameObject = new GameObject(ZeroSimJSON["document_name"].Value<string>());
 
             // add the document root component
-            _documentRoot = rootGameObject.AddComponent<ZO.ZOSimDocumentRoot>();
+            _documentRoot = rootGameObject.AddComponent<ZOSimDocumentRoot>();
             string zosimSaveToFilePath = Path.Combine(RootExportDirectory, DocumentName + ".zosim");
             string zosimSaveToFilePathUnityRelative = MakeRelativePath(Application.dataPath, zosimSaveToFilePath);
 

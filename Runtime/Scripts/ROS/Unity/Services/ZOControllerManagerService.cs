@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Std;
 using ZO.ROS.MessageTypes.ControllerManager;
 using ZO.ROS.Controllers;
+using ZO.Document;
 
 namespace ZO.ROS.Unity.Service {
 

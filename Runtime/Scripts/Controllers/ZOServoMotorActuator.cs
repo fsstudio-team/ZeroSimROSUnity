@@ -5,6 +5,7 @@ using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Physics;
 using ZO.Util.Extensions;
+using ZO.Document;
 
 namespace ZO.Controllers {
 
@@ -13,7 +14,7 @@ namespace ZO.Controllers {
     /// A PID controlled servo motor controller.
     /// </summary>
     [ExecuteAlways]
-    public class ZOServoMotorActuator : MonoBehaviour, ZO.ZOSerializationInterface {
+    public class ZOServoMotorActuator : MonoBehaviour, ZOSerializationInterface {
 
         public string _name;
         public ZOHingeJoint _hingeJoint;
