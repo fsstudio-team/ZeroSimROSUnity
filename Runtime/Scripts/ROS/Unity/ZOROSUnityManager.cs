@@ -10,6 +10,7 @@ using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.MessageTypes.ROSGraph;
 using ZO.ROS.Publisher;
+using ZO.ROS.Unity.Docker;
 
 namespace ZO.ROS.Unity {
 
@@ -90,6 +91,28 @@ namespace ZO.ROS.Unity {
             }
         }
         #endregion // ROSBridgeConnection
+
+        #region ROS Docker Launch
+        public bool _launchROSDocker = false;
+
+        /// <summary>
+        /// If set then launch docker image with ROS and execute ROS launch file.  
+        /// </summary>
+        /// <value></value>
+        public bool LaunchROSDocker {
+            get => _launchROSDocker;
+        }
+        public ZOROSLaunchParameters _rosLaunchParameters;
+
+        /// <summary>
+        /// The ROS Launch parameter scriptable object.
+        /// </summary>
+        /// <value></value>
+        public ZOROSLaunchParameters ROSLaunchParameters {
+            get => _rosLaunchParameters;
+        }
+
+        #endregion // Docker Launch
 
 
         #region Tranform Publishing
@@ -211,6 +234,12 @@ namespace ZO.ROS.Unity {
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
                 if (RootMapTransform == null) { // create the root map transform if doesn't exist
                     RootMapTransform = gameObject.AddComponent<ZOROSTransformPublisher>();
+                }
+
+                // 
+                if (_launchROSDocker == true) {
+                    string launchCommand = $"";
+                    // ZO.Editor.ZODockerManager.DockerRun("zosim", launchCommand);
                 }
             } else { // in play mode
 
