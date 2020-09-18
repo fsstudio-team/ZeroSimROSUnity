@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System;
 
 namespace ZO.Util {
@@ -56,7 +57,7 @@ namespace ZO.Util {
                 }
             }
 
-            string dockerRunString = "run -it -rm ";
+            string dockerRunString = "run ";
 
             // build up necessary stuff for X11
             if (runX11 == true) {
@@ -64,13 +65,17 @@ namespace ZO.Util {
                 environmentString += " --env=QT_X11_NO_MITSHM=1";
                 environmentString += " --env=XAUTHORITY=$XAUTH";
                 volumeString += " --volume=$XAUTH:$XAUTH";
-                dockerRunString += " --gpus all";
-                portsString += " --publish=9090:9090";
+                dockerRunString += " --gpus all";                
             }
+
 
             string runCommandString = "";
 
             if (setupROS == true) {
+                // sets up the ROS bridge port 
+                // TODO: the ROS master port
+                portsString += " --publish=9090:9090";
+
                 // sources ROS setup.bash
                 string rosSetupString = " /bin/bash -c \"source /catkin_ws/devel/setup.bash && ";
                 runCommandString += rosSetupString;
@@ -78,18 +83,21 @@ namespace ZO.Util {
 
             runCommandString += command;
 
-            dockerRunString += $" {imageName}";
-            dockerRunString += runCommandString;
-
-
             // if doing ros we need to add a " at the end
             if (setupROS == true) {
                 runCommandString += "\"";
             }
 
+
+            dockerRunString += $" {portsString} {environmentString} {volumeString} {imageName}";
+            dockerRunString += runCommandString;
+
+
             // find the docker executable
             int exitCode = -99;
             string dockerExecutable = ZOSystem.RunProcessAndGetOutput("./", "which", "docker", out exitCode);
+            // remove \n and spaces
+            dockerExecutable = Regex.Replace(dockerExecutable, @"\s+", string.Empty);
 
             UnityEngine.Debug.Log("INFO: Docker Run: " + dockerExecutable + " " + dockerRunString);
             Task<int> t = ZOSystem.RunProcessAsync(dockerExecutable, dockerRunString);
