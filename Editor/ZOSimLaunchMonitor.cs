@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using ZO.Util;
 using ZO.ROS.Unity;
-using ZO.ROS.Unity.Docker;
 
 namespace ZO.Editor {
 
@@ -18,29 +18,16 @@ namespace ZO.Editor {
         private static void LogPlayModeState(PlayModeStateChange state) {
             Debug.Log("INFO: Editor State Change: " + state.ToString());
             if (state == PlayModeStateChange.EnteredPlayMode) {
-                // if we are entering play mode then launch ROS 
-                ZOROSLaunchParameters launchParameters = ZOROSUnityManager.Instance?.ROSLaunchParameters;
+                // if we are entering play mode then launch ROS docker
+                ZODockerRunParameters dockerRunParams = ZOROSUnityManager.Instance?.ROSLaunchParameters;
 
-                if (launchParameters) {
-                    string ros_setup = "/bin/bash -c \"source /catkin_ws/devel/setup.bash && ";
-                    string command = ros_setup + $"roslaunch {launchParameters.rosPackage} {launchParameters.launchFile}\"";
+                if (dockerRunParams) {
 
-                    ZODockerManager.DockerRun(launchParameters.dockerServiceName,
-                                            command,
-                                            launchParameters.volumeMappings.ToArray(),
-                                            true, true,
-                                            (exitCode) => {
-
-                                                if (exitCode != 0) {
-                                                    UnityEngine.Debug.LogError($"Docker command error exit code: {exitCode}");
-                                                    return;
-                                                }
-
-                                                UnityEngine.Debug.Log($"Docker command exit code: {exitCode}");
-                                            });
+                    ZODocker.DockerRun(dockerRunParams);
                 }
             } else if (state == PlayModeStateChange.ExitingPlayMode) {
-                ZODockerManager.DockerComposeDown();
+                // ZODockerManager.DockerComposeDown();
+                // TODO: stop docker
             }
         }
     }

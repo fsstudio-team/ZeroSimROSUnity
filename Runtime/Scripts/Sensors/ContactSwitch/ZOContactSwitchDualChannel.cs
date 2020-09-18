@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using ZO.Util;
 
-namespace ZO.Util{
+
+namespace ZO.Sensors {
 
     /// <summary>
     /// This class implements a dual channel contact switch sensor.
     /// </summary>
-    public class ZOContactSwitchDualChannel : ZOGameObjectBase
-    {
+    public class ZOContactSwitchDualChannel : ZOGameObjectBase {
         public string _contactSwitchId = "Not Set";
 
         [SerializeField]
@@ -32,11 +33,11 @@ namespace ZO.Util{
 
         // ZOUpdateHZ is synchronized with the HZ set for this sensor. Runs inside Monobehavior's Update() method.
         protected override void ZOFixedUpdateHzSynchronized() {
-            
+
             bool channel1HasContact = channel1.IsDetectingContact;
             bool channel2HasContact = channel2.IsDetectingContact;
-            
-            if(OnPublishDelegate != null){
+
+            if (OnPublishDelegate != null) {
                 Task publishTask = OnPublishDelegate(this, _contactSwitchId, channel1HasContact, channel2HasContact);
             }
 

@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace ZO.Util {
+namespace ZO.Sensors {
     public struct ZORaycastJobBatch : System.IDisposable {
 
         private NativeArray<RaycastCommand> _raycastCommands;

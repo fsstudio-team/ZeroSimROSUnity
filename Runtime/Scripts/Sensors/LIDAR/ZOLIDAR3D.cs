@@ -99,7 +99,7 @@ namespace ZO.Sensors {
         private int _verticalScanCount = -1;
         private int _totalRayCount = -1;
 
-        private ZO.Util.ZORaycastJobBatch _raycastBatchJob;
+        private ZORaycastJobBatch _raycastBatchJob;
         private RaycastHit[] _rayCastHits;
 
         private NativeArray<Vector3> _hitPositions;

@@ -10,7 +10,7 @@ using ZO.ROS.MessageTypes.TF2;
 using ZO.ROS.MessageTypes.Geometry;
 using ZO.ROS.MessageTypes.ROSGraph;
 using ZO.ROS.Publisher;
-using ZO.ROS.Unity.Docker;
+using ZO.Util;
 
 namespace ZO.ROS.Unity {
 
@@ -102,13 +102,13 @@ namespace ZO.ROS.Unity {
         public bool LaunchROSDocker {
             get => _launchROSDocker;
         }
-        public ZOROSLaunchParameters _rosLaunchParameters;
+        public ZODockerRunParameters _rosLaunchParameters;
 
         /// <summary>
         /// The ROS Launch parameter scriptable object.
         /// </summary>
         /// <value></value>
-        public ZOROSLaunchParameters ROSLaunchParameters {
+        public ZODockerRunParameters ROSLaunchParameters {
             get => _rosLaunchParameters;
         }
 

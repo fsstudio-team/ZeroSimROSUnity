@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ZO.Util {
+namespace ZO.Sensors {
 
     /// <summary>
     /// This class uses a trigger and a layermask to detect collision with other objects.

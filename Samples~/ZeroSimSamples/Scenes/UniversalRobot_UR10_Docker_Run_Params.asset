@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c8b12c94125a5b4fbe5456ffbfcaf91, type: 3}
-  m_Name: UniversalRobot_UR10_test_launch_params
+  m_Script: {fileID: 11500000, guid: f5d3ac37447232d31899b2b7f967b6e2, type: 3}
+  m_Name: UniversalRobot_UR10_Docker_Run_Params
   m_EditorClassIdentifier: 
-  dockerServiceName: zosim
-  rosPackage: zero_sim_ros
-  launchFile: ur10_moveit.launch
-  arguments: []
-  volumeMappings: []
+  imageName: zerosim_ros
+  command: roslaunch zero_sim_ros basic_unity_editor.launch
+  volumes: []
+  ports: 
+  environments: []
+  runX11: 0
+  setupROS: 1
