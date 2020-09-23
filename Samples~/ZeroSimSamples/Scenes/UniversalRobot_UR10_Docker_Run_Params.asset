@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: UniversalRobot_UR10_Docker_Run_Params
   m_EditorClassIdentifier: 
   imageName: zerosim_ros
-  command: roslaunch zero_sim_ros basic_unity_editor.launch
+  containerName: my_docker_container
+  command: roslaunch zero_sim_ros ur10_moveit.launch
   volumes: []
   ports: 
   environments: []
-  runX11: 0
+  runX11: 1
   setupROS: 1

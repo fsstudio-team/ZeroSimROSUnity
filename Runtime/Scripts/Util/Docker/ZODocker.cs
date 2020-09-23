@@ -1,3 +1,4 @@
+using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -18,16 +19,19 @@ namespace ZO.Util {
         }
 
         /// <summary>
-        /// Docker run 
+        /// Docker run with special ROS specific parameters.
+        /// <see>https://docs.docker.com/engine/reference/commandline/run/</see>
         /// </summary>
         /// <param name="imageName"></param>
+        /// <param name="containerName"></param>
         /// <param name="command"></param>
         /// <param name="volumes"></param>
         /// <param name="ports"></param>
         /// <param name="environments"></param>
         /// <param name="runX11"></param>
         /// <param name="setupROS"></param>
-        public static void DockerRun(string imageName,
+        public static void DockerRunROS(string imageName,
+                             string containerName,
                              string command,
                              List<VolumeMapEntry> volumes = null,
                              List<int> ports = null,
@@ -35,11 +39,23 @@ namespace ZO.Util {
                              bool runX11 = false,
                              bool setupROS = false) {
 
+            // find the docker executable
+            int exitCode = -99;
+            string dockerExecutable = ZOSystem.RunProcessAndGetOutput("./", "which", "docker", out exitCode);
+
+            // TODO: check exit code...
+
+            // remove \n and spaces
+            dockerExecutable = Regex.Replace(dockerExecutable, @"\s+", string.Empty);
+
+
+
+
             // build volumes string
-            string volumeString = "";
+            string dockerVolString = "";
             if (volumes != null) {
                 foreach (VolumeMapEntry volumeMapEntry in volumes) {
-                    volumeString += volumeMapEntry.String();
+                    dockerVolString += volumeMapEntry.String();
                 }
             }
 
@@ -50,31 +66,46 @@ namespace ZO.Util {
                 }
             }
 
-            string environmentString = "";
+            string dockerEnvString = "";
             if (environments != null) {
                 foreach (string env in environments) {
-                    environmentString += $" --env={env}";
+                    dockerEnvString += $" --env={env}";
                 }
             }
 
-            string dockerRunString = "run ";
+            // docker run string
+            // See: https://docs.docker.com/engine/reference/commandline/run/
+            string dockerRunString = $"docker run --name={containerName} --rm ";
+
+
+            // source ROS setup
+            string preDockerRunString = "";
 
             // build up necessary stuff for X11
             if (runX11 == true) {
-                environmentString += " --env=DISPLAY=$DISPLAY";
-                environmentString += " --env=QT_X11_NO_MITSHM=1";
-                environmentString += " --env=XAUTHORITY=$XAUTH";
-                volumeString += " --volume=$XAUTH:$XAUTH";
-                dockerRunString += " --gpus all";                
+                string tmpDirectory = Path.GetTempPath();
+                // setup XAuthority in order for X11 + OpenGL to work
+                preDockerRunString = $@"
+{preDockerRunString}                                
+XAUTH={tmpDirectory}.docker.xauth
+touch $XAUTH
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+";
+                dockerEnvString += " --env=DISPLAY=$DISPLAY";
+                dockerEnvString += " --env=QT_X11_NO_MITSHM=1";
+                dockerEnvString += " --env=XAUTHORITY=$XAUTH";
+                dockerVolString += " --volume=$XAUTH:$XAUTH";
+                dockerVolString += $" --volume={tmpDirectory}.X11-unix:{tmpDirectory}.X11-unix:rw";
+                dockerRunString += " --gpus all";
             }
 
 
             string runCommandString = "";
 
             if (setupROS == true) {
-                // sets up the ROS bridge port 
+                // sets up the ROS bridge port & the roscore port
                 // TODO: the ROS master port
-                portsString += " --publish=9090:9090";
+                portsString += " --publish=9090:9090 --publish=11311:11311 ";
 
                 // sources ROS setup.bash
                 string rosSetupString = " /bin/bash -c \"source /catkin_ws/devel/setup.bash && ";
@@ -89,24 +120,26 @@ namespace ZO.Util {
             }
 
 
-            dockerRunString += $" {portsString} {environmentString} {volumeString} {imageName}";
-            dockerRunString += runCommandString;
+            dockerRunString += $" {portsString} {dockerEnvString} {dockerVolString} {imageName} {runCommandString}";
+            // dockerRunString += runCommandString;            
 
 
-            // find the docker executable
-            int exitCode = -99;
-            string dockerExecutable = ZOSystem.RunProcessAndGetOutput("./", "which", "docker", out exitCode);
-            // remove \n and spaces
-            dockerExecutable = Regex.Replace(dockerExecutable, @"\s+", string.Empty);
+            string bashScript = $@"
+{preDockerRunString}
+{dockerRunString}                        
+            ";
 
-            UnityEngine.Debug.Log("INFO: Docker Run: " + dockerExecutable + " " + dockerRunString);
-            Task<int> t = ZOSystem.RunProcessAsync(dockerExecutable, dockerRunString);
+            UnityEngine.Debug.Log("INFO: Docker Run: " + $"-c \'{bashScript}\'");
+            Task<int> t = ZOSystem.RunProcessAsync("/bin/bash", $"-c \'{bashScript}\'");
 
         }
 
         public static void DockerRun(ZODockerRunParameters runParameters) {
-            DockerRun(runParameters.imageName, runParameters.command,
-                        runParameters.volumes, runParameters.ports,
+            DockerRunROS(runParameters.imageName,
+                        runParameters.containerName,
+                        runParameters.command,
+                        runParameters.volumes,
+                        runParameters.ports,
                         runParameters.environments,
                         runParameters.runX11,
                         runParameters.setupROS);

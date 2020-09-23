@@ -13,6 +13,11 @@ namespace ZO.Util {
         public string imageName = "zerosim_ros";
 
         /// <summary>
+        /// The container name of the docker
+        /// </summary>
+        public string containerName = "my_docker_container";
+
+        /// <summary>
         /// The command to send to the Docker image.
         /// </summary>
         public string command = "roslaunch zero_sim_ros basic_unity_editor.launch";
