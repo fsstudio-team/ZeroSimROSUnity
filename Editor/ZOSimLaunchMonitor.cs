@@ -22,10 +22,15 @@ namespace ZO.Editor {
                 ZODockerRunParameters dockerRunParams = ZOROSUnityManager.Instance?.ROSLaunchParameters;
 
                 if (dockerRunParams) {
-
                     ZODocker.DockerRun(dockerRunParams);
                 }
             } else if (state == PlayModeStateChange.ExitingPlayMode) {
+                // if we are exiting play mode stop docker
+                ZODockerRunParameters dockerRunParams = ZOROSUnityManager.Instance?.ROSLaunchParameters;
+                if (dockerRunParams) {
+                    ZODocker.DockerStop(dockerRunParams.containerName);
+                }
+
                 // ZODockerManager.DockerComposeDown();
                 // TODO: stop docker
             }

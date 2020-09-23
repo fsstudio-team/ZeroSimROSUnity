@@ -37,7 +37,8 @@ namespace ZO.Util {
                              List<int> ports = null,
                              List<string> environments = null,
                              bool runX11 = false,
-                             bool setupROS = false) {
+                             bool setupROS = false,
+                             bool showOutput = false) {
 
             // find the docker executable
             int exitCode = -99;
@@ -134,6 +135,11 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
         }
 
+
+        /// <summary>
+        /// Docker Run with docker run parameters.
+        /// </summary>
+        /// <param name="runParameters"></param>
         public static void DockerRun(ZODockerRunParameters runParameters) {
             DockerRunROS(runParameters.imageName,
                         runParameters.containerName,
@@ -142,7 +148,16 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
                         runParameters.ports,
                         runParameters.environments,
                         runParameters.runX11,
-                        runParameters.setupROS);
+                        runParameters.setupROS,
+                        runParameters.showOutput);
+        }
+
+        /// <summary>
+        /// Stop a docker container.
+        /// </summary>
+        /// <param name="containerName">The name of the container.</param>
+        public static void DockerStop(string containerName) {
+            Task<int> t = ZOSystem.RunProcessAsync("docker", $"stop {containerName}");
         }
     }
 }

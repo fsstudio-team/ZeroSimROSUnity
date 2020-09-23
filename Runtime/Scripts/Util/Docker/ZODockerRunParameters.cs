@@ -42,7 +42,15 @@ namespace ZO.Util {
         /// </summary>
         public bool runX11 = false;
 
+        /// <summary>
+        /// Do any ROS setup required before running the command.
+        /// </summary>
         public bool setupROS = false;
+
+        /// <summary>
+        /// Show docker output.
+        /// </summary>
+        public bool showOutput = false;
 
     }
 

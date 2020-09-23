@@ -29,7 +29,7 @@ namespace ZO.Util {
         }
 
 
-        public static async Task<int> RunProcessAsync(string fileName, string args, string workingDirectory = "./") {
+        public static async Task<int> RunProcessAsync(string fileName, string args, string workingDirectory = "./", bool showOutput = false) {
             using (var process = new Process {
                 StartInfo = {
                     FileName = fileName,
@@ -42,17 +42,20 @@ namespace ZO.Util {
                 },
                 EnableRaisingEvents = true
             }) {
-                return await RunProcessAsync(process).ConfigureAwait(false);
+                return await RunProcessAsync(process, showOutput).ConfigureAwait(false);
             }
 
         }
 
-        public static Task<int> RunProcessAsync(Process process) {
+        public static Task<int> RunProcessAsync(Process process, bool showOutput = false) {
             var tcs = new TaskCompletionSource<int>();
 
             process.Exited += (s, ea) => tcs.SetResult(process.ExitCode);
-            process.OutputDataReceived += (s, ea) => UnityEngine.Debug.Log(ea.Data);
-            process.ErrorDataReceived += (s, ea) => UnityEngine.Debug.LogError("ERROR: " + ea.Data);
+            if (showOutput) {
+                process.OutputDataReceived += (s, ea) => UnityEngine.Debug.Log(ea.Data);
+                process.ErrorDataReceived += (s, ea) => UnityEngine.Debug.LogWarning("ERROR: " + ea.Data);
+
+            }
 
             bool started = process.Start();
             if (!started) {
