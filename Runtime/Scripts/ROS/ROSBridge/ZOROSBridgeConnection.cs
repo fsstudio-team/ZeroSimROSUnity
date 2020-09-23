@@ -413,10 +413,11 @@ namespace ZO.ROS {
             while (_isConnected == false) {
                 try {
                     await _tcpClient.ConnectAsync(Hostname, Port);
+                    await Task.Delay(600); // pause a short bit for things to settle
                     _isConnected = true;
                 } catch (SocketException e) {
                     Debug.Log("WARNING: ZOROSBridgeConnection SocketException: " + e.ToString());
-                    await Task.Delay(2000); // wait for 2 seconds
+                    await Task.Delay(5000); // wait for 5 seconds
                 }
             }
 
@@ -794,7 +795,7 @@ namespace ZO.ROS {
 
                                 string service = msgJSON["service"].Value<string>();
                                 string id = msgJSON["id"].Value<string>();
-                                // Debug.Log("INFO: ReadAsync::service_response: service: " + service + " id: " + id + " values: " + msgJSON["values"].ToString());
+                                Debug.Log("INFO: ReadAsync::service_response: service: " + service + " id: " + id + " values: " + msgJSON["values"].ToString());
                                 // var serviceResponseHandler = _serviceCallResponseHandlers[service][id];
                                 MessageHandler serviceResponseHandler = _serviceCallResponseHandlers.Dequeue();
 

@@ -281,12 +281,7 @@ namespace ZO.ROS.Unity.Service {
         #region ZOROSUnityInterface
         public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOControllerManagerService::OnROSBridgeConnected");
-            //HACKHACK: DELAY STARTUP.  For some reason this is required.
-            var t = Task.Run(async delegate {
-                await Task.Delay(1000);
-                Initialize();
-            });
-            
+            Initialize();
         }
 
         public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
