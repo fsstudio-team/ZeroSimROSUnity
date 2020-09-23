@@ -2194,8 +2194,6 @@ GameObject:
   - component: {fileID: 3442158417589199127}
   - component: {fileID: 3442158417589199124}
   - component: {fileID: 3442158417589199125}
-  - component: {fileID: 3253166362543785052}
-  - component: {fileID: 3253166362543785055}
   - component: {fileID: 6342209971591077135}
   - component: {fileID: 6301135155815775378}
   m_Layer: 0
@@ -2251,34 +2249,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &3253166362543785052
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3442158417589199126}
-  m_ConnectedBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
---- !u!114 &3253166362543785055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3442158417589199126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d54edc081e20dfbb3b27d3f855559c74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fixedJoint: {fileID: 3253166362543785052}
-  _name: ee_fixed_joint
 --- !u!138 &6342209971591077135
 FixedJoint:
   m_ObjectHideFlags: 0

@@ -52,7 +52,7 @@ namespace ZO.Import {
                 $"{_outputDirectory}:/output/" 
             };
 
-            ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, additionalVolumes, (exitCode) => {
+            ZO.Editor.ZODockerManager.DockerRun(service: "zosim_tools", commandAWithArgs, additionalVolumes, true, true, (exitCode) => {
 
                 if(exitCode != 0){
                     UnityEngine.Debug.LogError($"Docker command error exit code: {exitCode}");
