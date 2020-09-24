@@ -289,6 +289,8 @@ namespace ZO.ROS.Unity {
                 };
 
                 // run async task.  if cannot connect wait for a couple of seconds and try again
+                ROSBridgeConnection.Port = Port;
+                ROSBridgeConnection.Hostname = Hostname;                
                 Task rosBridgeConnectionTask = Task.Run(async () => {
                     await ROSBridgeConnection.ConnectAsync();
                 });
