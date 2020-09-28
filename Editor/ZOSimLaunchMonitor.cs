@@ -44,7 +44,14 @@ namespace ZO.Editor {
                 // if we are exiting play mode stop docker
                 ZODockerRunParameters dockerRunParams = ZOROSUnityManager.Instance?.ROSLaunchParameters;
                 if (dockerRunParams) {
-                    ZODocker.DockerStop(dockerRunParams.containerName);
+                    if (dockerRunParams.runRemoteDocker) {
+                        var t = Task.Run(async () => {
+                            await ZODocker.DockerStopRemoteAsync(dockerRunParams.containerName, dockerRunParams.remoteDockerUri);
+                        });
+                    } else {
+                        ZODocker.DockerStop(dockerRunParams.containerName);
+                    }
+                    
                 }
 
                 // ZODockerManager.DockerComposeDown();

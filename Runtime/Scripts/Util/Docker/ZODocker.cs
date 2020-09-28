@@ -202,7 +202,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
             // build the docker --publish
             Dictionary<string, EmptyStruct> exposedPorts = new Dictionary<string, EmptyStruct>();
-            Dictionary<string, IList<PortBinding>> portBindings =  new Dictionary<string, IList<PortBinding>>();
+            Dictionary<string, IList<PortBinding>> portBindings = new Dictionary<string, IList<PortBinding>>();
             if (ports != null) {
                 // setup exposed and bindings ports
                 foreach (int port in ports) {
@@ -254,7 +254,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
                         // setup host config port bindings.
                         HostConfig = new HostConfig {
-                            PortBindings = portBindings                        
+                            PortBindings = portBindings
                         },
 
                         // setup to get docker output
@@ -301,6 +301,14 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
                                         runParameters.setupROS,
                                         runParameters.setupVNC,
                                         runParameters.showOutput);
+        }
+
+        public static async Task DockerStopRemoteAsync(string containerName, string uri) {
+            using (DockerClient client = new DockerClientConfiguration(new Uri(uri)).CreateClient()) {
+
+                await client.Containers.StopContainerAsync(containerName, new ContainerStopParameters());
+                await client.Containers.RemoveContainerAsync(containerName, new ContainerRemoveParameters());
+            }
         }
     }
 }
