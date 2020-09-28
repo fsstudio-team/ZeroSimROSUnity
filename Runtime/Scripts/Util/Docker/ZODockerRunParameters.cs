@@ -48,9 +48,30 @@ namespace ZO.Util {
         public bool setupROS = false;
 
         /// <summary>
+        /// Do any VNC setup required before running the command.
+        /// </summary>
+        public bool setupVNC = false;
+
+        /// <summary>
         /// Show docker output.
         /// </summary>
         public bool showOutput = false;
+
+        /// <summary>
+        /// Run docker remotely using the Docker Engine API.
+        /// <see>https://docs.docker.com/engine/api/v1.40/#</see>
+        /// </summary>
+        public bool runRemoteDocker = false;
+
+    
+        /// <summary>
+        /// The remote docker URI.
+        /// Note to connect to the local docker:
+        /// * Linux & MacOS use: `unix:///var/run/docker.sock`
+        /// * Windows use: `npipe://./pipe/docker_engine`
+        /// * MacOs use: 
+        /// </summary>
+        public string remoteDockerUri = "unix:///var/run/docker.sock";
 
     }
 

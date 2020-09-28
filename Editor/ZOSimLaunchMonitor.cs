@@ -2,6 +2,7 @@
 using UnityEditor;
 using ZO.Util;
 using ZO.ROS.Unity;
+using System.Threading.Tasks;
 
 namespace ZO.Editor {
 
@@ -22,7 +23,22 @@ namespace ZO.Editor {
                 ZODockerRunParameters dockerRunParams = ZOROSUnityManager.Instance?.ROSLaunchParameters;
 
                 if (dockerRunParams) {
-                    ZODocker.DockerRun(dockerRunParams);
+                    if (dockerRunParams.runRemoteDocker == true) {
+                        // Use the Docker Remote API to launch a remote docker.
+                        var t = Task.Run(async () => {
+
+                            await ZODocker.DockerRunRemoteAsync(dockerRunParams);
+
+                            // await ZODocker.DockerRunRemoteAsync("unix:///var/run/docker.sock",
+                            //                     "docker.pkg.github.com/fsstudio-team/zerosimros/zerosim_ros",
+                            //                     "/bin/bash -c \"source /catkin_ws/devel/setup.bash && roslaunch zero_sim_ros basic_unity_editor.launch\"", null, null, null, true, false);
+
+                        });
+
+                    } else { // run local docker
+                        ZODocker.DockerRun(dockerRunParams);
+                    }
+                    
                 }
             } else if (state == PlayModeStateChange.ExitingPlayMode) {
                 // if we are exiting play mode stop docker
