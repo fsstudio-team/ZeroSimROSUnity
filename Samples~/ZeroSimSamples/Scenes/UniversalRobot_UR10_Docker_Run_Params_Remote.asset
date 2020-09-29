@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d3ac37447232d31899b2b7f967b6e2, type: 3}
   m_Name: UniversalRobot_UR10_Docker_Run_Params_Remote
   m_EditorClassIdentifier: 
-  imageName: docker.pkg.github.com/fsstudio-team/zerosimros/zerosim_ros
+  imageName: docker.pkg.github.com/fsstudio-team/zerosimros/zerosim_ros_vnc
   containerName: my_docker_container
   command: roslaunch zero_sim_ros ur10_moveit.launch
   volumes: []
   ports: 
   environments: []
-  runX11: 1
+  setupX11: 0
   setupROS: 1
-  setupVNC: 0
-  showOutput: 0
+  setupVNC: 1
+  showOutput: 1
   runRemoteDocker: 1
   remoteDockerUri: unix:///var/run/docker.sock

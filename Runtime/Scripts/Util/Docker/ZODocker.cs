@@ -150,7 +150,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
                         runParameters.volumes,
                         runParameters.ports,
                         runParameters.environments,
-                        runParameters.runX11,
+                        runParameters.setupX11,
                         runParameters.setupROS,
                         runParameters.showOutput);
         }
@@ -239,6 +239,18 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
                 });
             }
 
+            // do ROS specific setup
+            if (setupVNC == true) {
+                // add the default ros ports
+                exposedPorts.Add("8083/tcp", new EmptyStruct());
+                portBindings.Add("8083/tcp", new List<PortBinding> {
+                    new PortBinding {
+                        HostIP = "0.0.0.0",
+                        HostPort = "8083"
+                    }
+                });
+            }
+
             try {
                 using (DockerClient client = new DockerClientConfiguration(new Uri(uri)).CreateClient()) {
                     UnityEngine.Debug.Log("INFO: DockerRunRemote CreateContainerAsync");
@@ -290,6 +302,11 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
             }
         }
 
+        /// <summary>
+        /// Run remote docker using ZODockerRunParameters.
+        /// </summary>
+        /// <param name="runParameters"></param>
+        /// <returns></returns>
         public static async Task DockerRunRemoteAsync(ZODockerRunParameters runParameters) {
             await DockerRunRemoteAsync(runParameters.remoteDockerUri,
                                         runParameters.imageName,
@@ -303,6 +320,12 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
                                         runParameters.showOutput);
         }
 
+        /// <summary>
+        /// Stop and remove remote docker.
+        /// </summary>
+        /// <param name="containerName"></param>
+        /// <param name="uri"></param>
+        /// <returns></returns>
         public static async Task DockerStopRemoteAsync(string containerName, string uri) {
             using (DockerClient client = new DockerClientConfiguration(new Uri(uri)).CreateClient()) {
 

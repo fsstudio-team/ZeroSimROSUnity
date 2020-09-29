@@ -40,7 +40,7 @@ namespace ZO.Util {
         /// <summary>
         /// Run X11 server.  Note:  Will require NVidia GPU.
         /// </summary>
-        public bool runX11 = false;
+        public bool setupX11 = false;
 
         /// <summary>
         /// Do any ROS setup required before running the command.
