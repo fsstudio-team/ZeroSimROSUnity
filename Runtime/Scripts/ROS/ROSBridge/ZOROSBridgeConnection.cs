@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Net;
+using System.Net.NetworkInformation;
 using System;
 using System.IO;
 using System.Text;
@@ -412,7 +413,8 @@ namespace ZO.ROS {
             _tcpClient = new TcpClient();
             while (_isConnected == false) {
                 try {
-                    await _tcpClient.ConnectAsync(Hostname, Port);
+                    IPAddress[] iPAddresses = Dns.GetHostAddresses(Hostname);
+                    await _tcpClient.ConnectAsync(iPAddresses, Port);
                     await Task.Delay(600); // pause a short bit for things to settle
                     _isConnected = true;
                 } catch (SocketException e) {
