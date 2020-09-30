@@ -23,4 +23,4 @@ MonoBehaviour:
   setupVNC: 1
   showOutput: 1
   runRemoteDocker: 1
-  remoteDockerUri: tcp://ec2-3-101-109-42.us-west-1.compute.amazonaws.com
+  remoteDockerUri: tcp://ec2-3-101-109-42.us-west-1.compute.amazonaws.com:2375
