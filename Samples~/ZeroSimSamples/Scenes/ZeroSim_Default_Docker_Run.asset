@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d3ac37447232d31899b2b7f967b6e2, type: 3}
   m_Name: ZeroSim_Default_Docker_Run
   m_EditorClassIdentifier: 
-  imageName: zerosim_ros
+  imageName: docker.pkg.github.com/fsstudio-team/zerosimros/zerosim_ros
   containerName: default_docker_container
   command: roslaunch zero_sim_ros basic_unity_editor.launch
   volumes: []
@@ -20,3 +20,7 @@ MonoBehaviour:
   environments: []
   runX11: 0
   setupROS: 1
+  setupVNC: 0
+  showOutput: 1
+  runRemoteDocker: 0
+  remoteDockerUri: unix:///var/run/docker.sock

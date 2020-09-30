@@ -20,4 +20,7 @@ MonoBehaviour:
   environments: []
   runX11: 1
   setupROS: 1
-  showOutput: 0
+  setupVNC: 0
+  showOutput: 1
+  runRemoteDocker: 1
+  remoteDockerUri: unix:///var/run/docker.sock

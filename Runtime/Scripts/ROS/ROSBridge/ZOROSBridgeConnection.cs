@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Net;
+using System.Net.NetworkInformation;
 using System;
 using System.IO;
 using System.Text;
@@ -412,11 +413,24 @@ namespace ZO.ROS {
             _tcpClient = new TcpClient();
             while (_isConnected == false) {
                 try {
-                    await _tcpClient.ConnectAsync(Hostname, Port);
-                    await Task.Delay(600); // pause a short bit for things to settle
-                    _isConnected = true;
+                    IPAddress[] iPAddresses = Dns.GetHostAddresses(Hostname);
+                    // find the IP V4 addresss from list of addresses.
+                    IPAddress ipv4Address = null;
+                    foreach (var addresss in iPAddresses) {
+                        if (addresss.AddressFamily == AddressFamily.InterNetwork) {
+                            ipv4Address = addresss;
+                            break;
+                        }
+                    }
+                    if (ipv4Address != null) {
+                        await _tcpClient.ConnectAsync(ipv4Address.ToString(), Port);
+                        await Task.Delay(600); // pause a short bit for things to settle
+                        _isConnected = true;
+                    } else {
+                        Debug.LogError("INFO: ZOROSBridgeConnection could not resolve hostname: " + Hostname);
+                    }
                 } catch (SocketException e) {
-                    Debug.Log("WARNING: ZOROSBridgeConnection SocketException: " + e.ToString());
+                    Debug.LogWarning("WARNING: ZOROSBridgeConnection SocketException: " + e.ToString());
                     await Task.Delay(5000); // wait for 5 seconds
                 }
             }
