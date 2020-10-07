@@ -495,7 +495,7 @@ GameObject:
   - component: {fileID: 632044120}
   - component: {fileID: 632044121}
   m_Layer: 0
-  m_Name: assem3-occurrence
+  m_Name: link5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -508,14 +508,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 632044119}
-  m_LocalRotation: {x: 0.6830127, y: -0.18301271, z: -0.18301271, w: -0.6830127}
-  m_LocalPosition: {x: -0.66895115, y: 0.19141921, z: -0.1417491}
+  m_LocalRotation: {x: 0.5001179, y: 0.50011814, z: 0.49988204, w: -0.49988192}
+  m_LocalPosition: {x: -0.030520735, y: -0.069997326, z: -0.03211397}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 882196593}
   - {fileID: 347264235}
-  m_Father: {fileID: 1069148771}
-  m_RootOrder: 6
+  m_Father: {fileID: 2091689165}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &632044121
 MonoBehaviour:
@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 1069148770}
   - component: {fileID: 1069148769}
   m_Layer: 0
-  m_Name: xArm6-3D-File-20190524
+  m_Name: xArm-6-rigged
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -860,11 +860,6 @@ Transform:
   m_Children:
   - {fileID: 1374250991}
   - {fileID: 1561619597}
-  - {fileID: 1352991281}
-  - {fileID: 1654170129}
-  - {fileID: 1169664571}
-  - {fileID: 2091689165}
-  - {fileID: 632044120}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -955,7 +950,7 @@ GameObject:
   - component: {fileID: 1169664571}
   - component: {fileID: 1169664572}
   m_Layer: 0
-  m_Name: x5-ss-4-21052019-occurrence
+  m_Name: link3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -968,14 +963,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1169664570}
-  m_LocalRotation: {x: 0.00022804903, y: 0.9659258, z: -0.000061105566, w: -0.25881904}
-  m_LocalPosition: {x: -0.6020421, y: 0.4908219, z: -0.14888245}
+  m_LocalRotation: {x: -0.5001181, y: -0.49988192, z: 0.500118, w: 0.49988195}
+  m_LocalPosition: {x: 0.01176093, y: 0.07970805, z: -0.10041937}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1209267193}
   - {fileID: 1267883979}
-  m_Father: {fileID: 1069148771}
-  m_RootOrder: 4
+  - {fileID: 2091689165}
+  m_Father: {fileID: 1654170129}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1169664572
 MonoBehaviour:
@@ -1296,7 +1292,7 @@ GameObject:
   - component: {fileID: 1352991281}
   - component: {fileID: 1352991282}
   m_Layer: 0
-  m_Name: cf-2-occurrence
+  m_Name: link1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1310,12 +1306,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1352991280}
   m_LocalRotation: {x: 0.6830127, y: -0.18301271, z: -0.18301271, w: -0.6830127}
-  m_LocalPosition: {x: -0.5386068, y: 0.21590388, z: -0.23813786}
+  m_LocalPosition: {x: -0.005642295, y: 0.20714481, z: -0.0061353743}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2086936874}
   - {fileID: 646916522}
-  m_Father: {fileID: 1069148771}
+  - {fileID: 1654170129}
+  m_Father: {fileID: 1561619597}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1352991282
@@ -1342,7 +1339,7 @@ GameObject:
   - component: {fileID: 1374250991}
   - component: {fileID: 1374250992}
   m_Layer: 0
-  m_Name: xarm-toolhead-assembly-occurrence
+  m_Name: link6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1681,7 +1678,7 @@ GameObject:
   - component: {fileID: 1561619597}
   - component: {fileID: 1561619598}
   m_Layer: 0
-  m_Name: cf-1-occurrence
+  m_Name: link_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1700,6 +1697,7 @@ Transform:
   m_Children:
   - {fileID: 764726841}
   - {fileID: 129066939}
+  - {fileID: 1352991281}
   m_Father: {fileID: 1069148771}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1897,7 +1895,7 @@ GameObject:
   - component: {fileID: 1654170129}
   - component: {fileID: 1654170130}
   m_Layer: 0
-  m_Name: cf-3-occurrence
+  m_Name: link2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1910,14 +1908,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1654170128}
-  m_LocalRotation: {x: -0.61237246, y: 0.35355344, z: -0.35355344, w: -0.61237246}
-  m_LocalPosition: {x: -0.53889334, y: 0.39040247, z: -0.19892171}
+  m_LocalRotation: {x: 0.70710677, y: -0.7071068, z: 0.000000014901159, w: 0}
+  m_LocalPosition: {x: -0.019856207, y: -0.03381893, z: 0.1744987}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1134194741}
   - {fileID: 1757760754}
-  m_Father: {fileID: 1069148771}
-  m_RootOrder: 3
+  - {fileID: 1169664571}
+  m_Father: {fileID: 1352991281}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1654170130
 MonoBehaviour:
@@ -2731,7 +2730,7 @@ GameObject:
   - component: {fileID: 2091689165}
   - component: {fileID: 2091689166}
   m_Layer: 0
-  m_Name: x5-ss-5-21052019-occurrence
+  m_Name: link4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2744,14 +2743,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091689164}
-  m_LocalRotation: {x: 0.00011804687, y: 0.86602545, z: -0.0002044632, w: 0.49999997}
-  m_LocalPosition: {x: -0.6563714, y: 0.26140136, z: -0.18425435}
+  m_LocalRotation: {x: -0.000000029781202, y: -0.7071067, z: -0.000000119209275, w: 0.7071069}
+  m_LocalPosition: {x: 0.029256297, y: -0.22943439, z: 0.057797655}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2136229021}
   - {fileID: 1659418093}
-  m_Father: {fileID: 1069148771}
-  m_RootOrder: 5
+  - {fileID: 632044120}
+  m_Father: {fileID: 1169664571}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2091689166
 MonoBehaviour:
