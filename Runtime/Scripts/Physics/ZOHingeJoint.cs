@@ -135,9 +135,10 @@ namespace ZO.Physics {
         private void Start() {
             // calculate starting "zero" joint angle in radians
             // NOTE: this has to be done because there is a bug in the Unity HingeJoint angle :-/
-            Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
-            _startAngleRadians = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis);
-
+            if (ConnectedBody) {
+                Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
+                _startAngleRadians = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis);
+            }
         }
 
         private void FixedUpdate() {
@@ -160,7 +161,7 @@ namespace ZO.Physics {
                 // Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
                 // float angle = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis) * Mathf.Rad2Deg;
 
-                GUI.TextField(new Rect(10, 10, 300, 22), this.Name + " Angle: " + (_currentAngleRadians * Mathf.Rad2Deg).ToString("R2") 
+                GUI.TextField(new Rect(10, 10, 300, 22), this.Name + " Angle: " + (_currentAngleRadians * Mathf.Rad2Deg).ToString("R2")
                                 + " Target: " + (UnityHingeJoint.spring.targetPosition * Mathf.Rad2Deg).ToString("R2"));
 
             }
