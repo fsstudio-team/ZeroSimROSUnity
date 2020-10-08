@@ -585,13 +585,13 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0.00081533194, y: 0.015422344, z: -0.0029318929}
   m_UseSpring: 0
   m_Spring:
-    spring: 0
-    damper: 0
+    spring: 500
+    damper: 400
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0
+    force: 10
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -1251,13 +1251,13 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0.0013646483, y: 0.10442054, z: 0.021797657}
   m_UseSpring: 0
   m_Spring:
-    spring: 0
-    damper: 0
+    spring: 500
+    damper: 400
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0
+    force: 10
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -1646,13 +1646,13 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0.022856206, y: -0.14249861, z: 0.052181087}
   m_UseSpring: 0
   m_Spring:
-    spring: 0
-    damper: 0
+    spring: 500
+    damper: 400
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0
+    force: 10
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -2404,13 +2404,13 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0.04970804, y: 0.04608059, z: 0.033239104}
   m_UseSpring: 0
   m_Spring:
-    spring: 0
-    damper: 0
+    spring: 500
+    damper: 400
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0
+    force: 10
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
@@ -3324,13 +3324,13 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0.03214699, y: 0.0024821758, z: -0.012020746}
   m_UseSpring: 0
   m_Spring:
-    spring: 0
-    damper: 0
+    spring: 500
+    damper: 400
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
-    force: 0
+    force: 10
     freeSpin: 0
   m_UseLimits: 0
   m_Limits:
