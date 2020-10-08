@@ -33,6 +33,9 @@ namespace ZO.ROS.MessageTypes.ControllerManager {
 
     }
 
+    /// <summary>
+    /// Controller Manager message that lists all the resources which is usually just the joint names.
+    /// </summary>
     public class ControllerStateMessage : ZOROSMessageInterface {
         [Newtonsoft.Json.JsonIgnore]
         public string MessageType { get { return ControllerStateMessage.Type; } }

@@ -1,0 +1,291 @@
+{
+  "document_name": "xArm6-3D-File-20190524",
+  "document_version": "1.0",
+  "mesh_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "transform_scale": [
+    0.001,
+    0.001,
+    0.001
+  ],
+  "components": [
+    {
+      "name": "333"
+    },
+    {
+      "name": "xarm-toolhead-assembly",
+      "visual_mesh_file": "visual_meshes/xarm-toolhead-assembly_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 0.00012269256514228452,
+        "volume": 0.00012269256514228452,
+        "center_mass": [
+          0.00055662529767320568,
+          -0.00088790738032720621,
+          -0.0010925573260095797
+        ],
+        "inertia": [
+          [
+            4.9861240455110415E-08,
+            -6.5816843576383269E-11,
+            -3.2881007661499606E-11
+          ],
+          [
+            -6.5816843576383269E-11,
+            9.0292151573457866E-08,
+            -2.0852009772086972E-11
+          ],
+          [
+            -3.2881007661499606E-11,
+            -2.0852009772086972E-11,
+            5.5514836262076936E-08
+          ]
+        ]
+      },
+      "collision_meshes": [
+        "xarm-toolhead-assembly_collision_0.obj"
+      ]
+    },
+    {
+      "name": "cf-1",
+      "visual_mesh_file": "visual_meshes/cf-1_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 0.0011691370506551168,
+        "volume": 0.0011691370506551168,
+        "center_mass": [
+          0.0033297222291933577,
+          0.04906851819966207,
+          -8.46989064141893E-05
+        ],
+        "inertia": [
+          [
+            3.1893452998613726E-06,
+            -7.2314252968682161E-08,
+            -3.9737089146238126E-08
+          ],
+          [
+            -7.2314252968682161E-08,
+            1.5002459735842084E-06,
+            3.61095621512273E-08
+          ],
+          [
+            -3.9737089146238126E-08,
+            3.61095621512273E-08,
+            3.2524502699929654E-06
+          ]
+        ]
+      },
+      "collision_meshes": [
+        "cf-1_collision_0.obj",
+        "cf-1_collision_1.obj",
+        "cf-1_collision_2.obj"
+      ]
+    },
+    {
+      "name": "cf-2",
+      "visual_mesh_file": "visual_meshes/cf-2_visual_.obj",
+      "physical_properties": {
+        "density": 1.0,
+        "mass": 0.0013249158068088926,
+        "volume": 0.0013249158068088926,
+        "center_mass": [
+          0.0033910774142247328,
+          -0.017027479373334382,
+          0.0085157315338057066
+        ],
+        "inertia": [
+          [
+            3.90468525004042E-06,
+            3.0459354997409441E-09,
+            -7.4869368825336786E-09
+          ],
+          [
+            3.0459354997409441E-09,
+            3.234375285576109E-06,
+            -4.1315583869640372E-07
+          ],
+          [
+            -7.4869368825336786E-09,
+            -4.1315583869640372E-07,
+            2.1905484652601818E-06
+          ]
+        ]
+      },
+      "collision_meshes": [
+        "cf-2_collision_0.obj",
+        "cf-2_collision_1.obj"
+      ]
+    },
+    {
+      "name": "cf-3",
+      "visual_mesh_file": "visual_meshes/cf-3_visual_.obj",
+      "collision_meshes": [
+        "cf-3_collision_0.obj",
+        "cf-3_collision_1.obj",
+        "cf-3_collision_2.obj"
+      ]
+    },
+    {
+      "name": "x5-ss-4-21052019",
+      "visual_mesh_file": "visual_meshes/x5-ss-4-21052019_visual_.obj",
+      "collision_meshes": [
+        "x5-ss-4-21052019_collision_0.obj",
+        "x5-ss-4-21052019_collision_1.obj"
+      ]
+    },
+    {
+      "name": "x5-ss-5-21052019",
+      "visual_mesh_file": "visual_meshes/x5-ss-5-21052019_visual_.obj",
+      "collision_meshes": [
+        "x5-ss-5-21052019_collision_0.obj",
+        "x5-ss-5-21052019_collision_1.obj",
+        "x5-ss-5-21052019_collision_2.obj",
+        "x5-ss-5-21052019_collision_3.obj"
+      ]
+    },
+    {
+      "name": "assem3",
+      "visual_mesh_file": "visual_meshes/assem3_visual_.obj",
+      "collision_meshes": [
+        "assem3_collision_0.obj",
+        "assem3_collision_1.obj"
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "xarm-toolhead-assembly-occurrence",
+      "component_name": "xarm-toolhead-assembly",
+      "translation": [
+        -0.71043036695906681,
+        0.11049678733938605,
+        -0.12596256852281038
+      ],
+      "rotation_quaternion": [
+        -0.49999999999982603,
+        -5.2402873788224242E-15,
+        0.86602540378453907,
+        8.9931559208857215E-15
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "cf-1-occurrence",
+      "component_name": "cf-1",
+      "translation": [
+        -0.53296449850515026,
+        0.00875900090276266,
+        -0.23200248423566319
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "cf-2-occurrence",
+      "component_name": "cf-2",
+      "translation": [
+        -0.53860682792023706,
+        0.21590388469845606,
+        -0.23813785175141641
+      ],
+      "rotation_quaternion": [
+        -0.68301270189218377,
+        0.18301270189235694,
+        0.18301270189235641,
+        0.68301270189218122
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "cf-3-occurrence",
+      "component_name": "cf-3",
+      "translation": [
+        -0.538893352181266,
+        0.39040246266219913,
+        -0.19892170716221677
+      ],
+      "rotation_quaternion": [
+        0.61237243569586541,
+        -0.353553390593151,
+        0.353553390593151,
+        0.61237243569586541
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "x5-ss-4-21052019-occurrence",
+      "component_name": "x5-ss-4-21052019",
+      "translation": [
+        -0.60204209726790114,
+        0.49082189349181704,
+        -0.14888244739622677
+      ],
+      "rotation_quaternion": [
+        0.00022804903666255645,
+        0.96592579936854162,
+        -6.1105555208416167E-05,
+        -0.258819037889395
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "x5-ss-5-21052019-occurrence",
+      "component_name": "x5-ss-5-21052019",
+      "translation": [
+        -0.65637142422995209,
+        0.26140134961810929,
+        -0.18425434218009037
+      ],
+      "rotation_quaternion": [
+        0.00011804686781100111,
+        0.86602537964830151,
+        -0.00020446317272318485,
+        0.49999998606476315
+      ],
+      "parent_name": "none",
+      "children": []
+    },
+    {
+      "name": "assem3-occurrence",
+      "component_name": "assem3",
+      "translation": [
+        -0.6689511463023986,
+        0.19141921863796935,
+        -0.14174910071721383
+      ],
+      "rotation_quaternion": [
+        -0.68301270189218255,
+        0.18301270189235627,
+        0.18301270189235638,
+        0.68301270189218277
+      ],
+      "parent_name": "none",
+      "children": []
+    }
+  ],
+  "position_transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "mesh_transform_scale": [
+    -1.0,
+    1.0,
+    1.0
+  ],
+  "asset_bundle": "xarm6-3d-file-20190524"
+}

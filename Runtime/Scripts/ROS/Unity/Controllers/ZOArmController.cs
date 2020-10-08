@@ -57,10 +57,13 @@ namespace ZO.ROS.Controllers {
 
 
         /// <summary>
-        /// Simple single joint control message as used by RQT joint controller.
+        /// Simple single joint control message as used by RQT joint controller.  NOT by MoveIt.
         /// </summary>
         /// <returns></returns>
         private JointTrajectoryMessage _commandMessage = new JointTrajectoryMessage();
+
+
+        private bool _needToProcessCommandMessage = false;
 
 
 
@@ -116,6 +119,13 @@ namespace ZO.ROS.Controllers {
         }
 
         #region ZOGameObjectBase
+
+        protected override void ZOReset() {
+            base.ZOReset();
+            UpdateRateHz = 25.0f;
+            ROSTopic = "/joint_states";
+        }
+
 
         protected override void ZOAwake() {
             Name = gameObject.name + "_arm_controller";
@@ -212,25 +222,34 @@ namespace ZO.ROS.Controllers {
 
                 }
 
+                // process the "simple" joint command message (as used by RQT but NOT MoveIt)
+                if (_needToProcessCommandMessage == true) {
+                    int i = 0;
+                    foreach (ZOJointInterface joint in Joints) {
+                        _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
+                        ActionMessage.action_feedback.feedback.actual.positions[i] = joint.Position;
+                        _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
+                        ActionMessage.action_feedback.feedback.actual.velocities[i] = joint.Velocity;
+
+                        _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                        ActionMessage.action_feedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
+                        // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
+
+                        joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
+                        i++;
+
+                        // BUGBUG: we should be waiting until we get within some error of the desired position or we timed out
+                        _needToProcessCommandMessage = false;
+                    }
+
+                }
+
                 // update the joint states
                 _trajectoryControllerStateMessage.Update();
                 ActionMessage.action_feedback.Update();
 
+
                 //TODO:  this is for the simple rqt control
-                // int i = 0;
-                // foreach (ZOJointInterface joint in Joints) {
-                //     _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
-                //     ActionMessage.action_feedback.feedback.actual.positions[i] = joint.Position;
-                //     _trajectoryControllerStateMessage.actual.velocities[i] = joint.Velocity;
-                //     ActionMessage.action_feedback.feedback.actual.velocities[i] = joint.Velocity;
-
-                //     _trajectoryControllerStateMessage.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
-                //     ActionMessage.action_feedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
-                //     // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
-
-                //     joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
-                //     i++;
-                // }
 
                 // publish feed back on ROS topic
                 ROSBridgeConnection.Publish<JointTrajectoryControllerStateMessage>(_trajectoryControllerStateMessage, ControllerManager.Name + "/arm_controller/state");
@@ -348,6 +367,11 @@ namespace ZO.ROS.Controllers {
 
 
 
+        /// <summary>
+        /// Build a ControllerStateMessage for the controller manager.
+        /// Basically just lists all the joints for this arm controller.
+        /// </summary>
+        /// <value></value>
         public ControllerStateMessage ControllerStateMessage {
             get {
 
@@ -395,13 +419,13 @@ namespace ZO.ROS.Controllers {
             // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
+            // This is a "simple" interface NOT used by MoveIt but something like a simple joint controller you would find using RQT
             ROSBridgeConnection.Subscribe<JointTrajectoryMessage>("arm_controller", ControllerManager.Name + "/arm_controller/command", JointTrajectoryMessage.Type, OnControlMessageReceived);
 
             // advertise joint state
             ROSBridgeConnection.Advertise(ControllerManager.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
 
             ControllerState = ControllerStateEnum.Running;
-
 
         }
 
@@ -418,8 +442,8 @@ namespace ZO.ROS.Controllers {
 
 
         /// <summary>
-        /// This responds to a "simple" JointTrajectoryMessage. This is usually seen in the simple RViz
-        /// joint controller but not used by MoveIt.
+        /// This responds to a "simple" JointTrajectoryMessage. This is usually seen in the simple RQT
+        /// joint controller but NOT used by MoveIt.
         /// </summary>
         /// <param name="rosBridgeConnection"></param>
         /// <param name="msg"></param>
@@ -430,6 +454,8 @@ namespace ZO.ROS.Controllers {
             // up a points path.
             _trajectoryControllerStateMessage.desired = _commandMessage.points[0];
             // Debug.Log("INFO: command message: " + JsonConvert.SerializeObject(_commandMessage));
+
+            _needToProcessCommandMessage = true;
 
             return Task.CompletedTask;
         }

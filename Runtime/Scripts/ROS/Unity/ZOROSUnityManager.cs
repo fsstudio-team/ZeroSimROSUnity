@@ -229,11 +229,10 @@ namespace ZO.ROS.Unity {
 
         // Start is called before the first frame update
         void Start() {
-
-
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
                 if (RootMapTransform == null) { // create the root map transform if doesn't exist
                     RootMapTransform = gameObject.AddComponent<ZOROSTransformPublisher>();
+                    RootMapTransform.UpdateRateHz = 10.0f;
                 }
 
                 // 
