@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 592209722}
   - component: {fileID: 592209721}
   - component: {fileID: 592209720}
+  - component: {fileID: 592209723}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -484,6 +485,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &592209723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592209719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e0e3af0b8141964b85373790012f3b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 772803304}
+  distance: 2
+  xSpeed: 120
+  ySpeed: 120
+  yMinLimit: -20
+  yMaxLimit: 80
+  distanceMin: 0.5
+  distanceMax: 15
 --- !u!1 &632044119
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hingeJoint: {fileID: 632044123}
   _debug: 0
-  _name: joint.hinge_from_link5
+  _name: joint6
 --- !u!1 &646916521
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,6 +774,12 @@ Transform:
   m_Father: {fileID: 1561619597}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &772803304 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 20697ea7cbeed561983199f2eaa2bce2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1774109998}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &790447748
 GameObject:
   m_ObjectHideFlags: 0
@@ -894,7 +921,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1069148769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,7 +979,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: controller_manager
-  _name: xarm_control
+  _name: xarm6_control
 --- !u!114 &1069148773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -969,8 +996,8 @@ MonoBehaviour:
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _ROSTopic: /joint_states
-  _name: undefined_xArm6_rigged
+  _ROSTopic: 
+  _name: xArn6
 --- !u!114 &1069148774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -983,7 +1010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129fe926cb5f9784893878adb84b7b04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 25
+  _updateRateHz: 10
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
@@ -1059,6 +1086,11 @@ PrefabInstance:
     - target: {fileID: 8887529722417478314, guid: af855350700eaa077ab4d8f3cd612fc8,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887529723145379846, guid: af855350700eaa077ab4d8f3cd612fc8,
+        type: 3}
+      propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2134,7 +2166,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
