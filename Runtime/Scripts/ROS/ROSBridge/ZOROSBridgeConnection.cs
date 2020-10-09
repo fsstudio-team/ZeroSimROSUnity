@@ -424,7 +424,7 @@ namespace ZO.ROS {
                     }
                     if (ipv4Address != null) {
                         await _tcpClient.ConnectAsync(ipv4Address.ToString(), Port);
-                        await Task.Delay(600); // pause a short bit for things to settle
+                        Task.Delay(1000).Wait(); // pause a short bit for things to settle
                         _isConnected = true;
                     } else {
                         Debug.LogError("INFO: ZOROSBridgeConnection could not resolve hostname: " + Hostname);
@@ -442,7 +442,6 @@ namespace ZO.ROS {
                _connectEvent.Invoke(this);
             } catch (Exception e) {
                 Debug.LogError("ERROR: ConnectAsync::OnConnectedToROSBridge: " + e.ToString());
-
             }
 
             await ClientReadAsync();

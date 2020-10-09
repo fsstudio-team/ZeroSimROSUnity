@@ -2219,7 +2219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8887529722417478311
 Transform:
   m_ObjectHideFlags: 0
@@ -2294,7 +2294,7 @@ MonoBehaviour:
   _debug: 1
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _ROSTopic: 
+  _ROSTopic: /arm_controller/follow_joint_trajectory
   _name: UR10_Arm
 --- !u!114 &8887529722417478304
 MonoBehaviour:
@@ -3003,7 +3003,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

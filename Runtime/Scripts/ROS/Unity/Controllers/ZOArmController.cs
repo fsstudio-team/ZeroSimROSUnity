@@ -123,7 +123,7 @@ namespace ZO.ROS.Controllers {
         protected override void ZOReset() {
             base.ZOReset();
             UpdateRateHz = 25.0f;
-            ROSTopic = "/joint_states";
+            ROSTopic = "/arm_controller";
         }
 
 
@@ -169,6 +169,12 @@ namespace ZO.ROS.Controllers {
 
 
         protected override void ZOFixedUpdateHzSynchronized() {
+            
+            // if not connected the don't run
+            if (ZOROSBridgeConnection.Instance.IsConnected == false) {
+                return;
+            }
+
             if (this.ControllerState == ControllerStateEnum.Running) {
 
                 // see if we have any goals and update the controller state message
@@ -407,7 +413,8 @@ namespace ZO.ROS.Controllers {
             Debug.Log("INFO: ZOArmController::Initialize");
 
             // start up the follow joint trajectory action server
-            _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory";
+            // _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory"; //BUGBUG: HARDWIRED
+            _actionServer.ROSTopic = ROSTopic;  
             _actionServer.Name = "arm_controller";
             _actionServer.OnGoalReceived += OnActionGoalReceived;
             _actionServer.OnCancelReceived += OnActionCancelReceived;
@@ -415,8 +422,6 @@ namespace ZO.ROS.Controllers {
 
 
 
-            // advertise
-            // ROSBridgeConnection.Advertise(ROSTopic, _jointStatesMessage.MessageType);
 
             // subscribe to the /arm_controller/command
             // This is a "simple" interface NOT used by MoveIt but something like a simple joint controller you would find using RQT
