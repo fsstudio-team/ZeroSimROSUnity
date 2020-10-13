@@ -286,16 +286,21 @@ namespace ZO.ROS {
         /// implementations to make sure the new goal does not have a pending preempt request.
         /// <see>http://wiki.ros.org/actionlib#SimpleActionServer_Goal_Policies</see>
         /// </summary>
-        public void AcceptNewGoal() {
+        public void AcceptNewGoal(TGoalMessage newGoal) {
 
             // if we are still active start the preempt process
             if (CurrentGoalActionStatus == ActionStatusEnum.ACTIVE) {
                 Debug.Log("INFO: AcceptNewGoal preempting goal: " + CurrentGoal.goal_id.id);
+
                 // first notify client about preemption
                 CurrentGoalActionStatus = ActionStatusEnum.PREEMPTING;
 
                 // notify delegates about cancelattion
                 OnCancelReceived?.Invoke(this, CurrentGoal.goal_id);
+
+                // set next goal as the new goal
+                NextGoal = newGoal;
+                NextGoalActionStatus = ActionStatusEnum.PENDING;
             }
 
 
