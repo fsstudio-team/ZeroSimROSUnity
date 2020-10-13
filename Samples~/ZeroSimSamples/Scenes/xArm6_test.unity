@@ -478,8 +478,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 592209719}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.03911182, y: -0.9554744, z: 0.25213182, w: 0.14821804}
+  m_LocalPosition: {x: 0.57488745, y: 1.4876335, z: 1.2783153}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -580,7 +580,7 @@ HingeJoint:
   m_GameObject: {fileID: 632044119}
   m_ConnectedBody: {fileID: 1374250993}
   m_Anchor: {x: -0.043, y: -0.0655, z: -0.01}
-  m_Axis: {x: 0, y: -1, z: 0}
+  m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.00081533194, y: 0.015422344, z: -0.0029318929}
   m_UseSpring: 0
@@ -1726,7 +1726,7 @@ HingeJoint:
   m_GameObject: {fileID: 1352991280}
   m_ConnectedBody: {fileID: 1654170133}
   m_Anchor: {x: 0.003, y: 0.032, z: 0.086}
-  m_Axis: {x: 0, y: 0, z: 1}
+  m_Axis: {x: 0, y: 0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.022856206, y: -0.14249861, z: 0.052181087}
   m_UseSpring: 0
@@ -2484,7 +2484,7 @@ HingeJoint:
   m_GameObject: {fileID: 1654170128}
   m_ConnectedBody: {fileID: 1169664573}
   m_Anchor: {x: -0.03, y: 0.1465, z: 0.045}
-  m_Axis: {x: 0, y: 0, z: 1}
+  m_Axis: {x: 0, y: 0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.04970804, y: 0.04608059, z: 0.033239104}
   m_UseSpring: 0
@@ -3093,6 +3093,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2432090755550338912, guid: c99e040286ff3698c9fc9b07f6dd26d2, type: 3}
+--- !u!1 &1941519685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 17be92f99b8fb14eaa65adc226ac3fd4,
+    type: 3}
+  m_PrefabInstance: {fileID: 733169651}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1941519686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941519685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: 
+  _name: ros.publisher.transform_teapot
+  _frameId: world
+  _childFrameId: teapot
 --- !u!1 &2016134727
 GameObject:
   m_ObjectHideFlags: 0
@@ -3404,7 +3430,7 @@ HingeJoint:
   m_GameObject: {fileID: 2091689164}
   m_ConnectedBody: {fileID: 632044122}
   m_Anchor: {x: 0, y: -0.0675, z: 0.0185}
-  m_Axis: {x: 0, y: 0, z: 1}
+  m_Axis: {x: 0, y: 0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.03214699, y: 0.0024821758, z: -0.012020746}
   m_UseSpring: 0
