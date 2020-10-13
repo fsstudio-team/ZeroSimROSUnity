@@ -276,6 +276,7 @@ namespace ZO.ROS.Controllers {
             base.ZOOnGUI();
             int y = 10;
             GUI.TextField(new Rect(10, y, 200, 20), "Goal Status: " + GoalStatus.ToString());
+            y+=20;
 
             for (int i = 0; i < _trajectoryControllerStateMessage.joint_names.Length; i++, y += 25) {
                 ZOJointInterface joint = GetJointByName(_trajectoryControllerStateMessage.joint_names[i]);
