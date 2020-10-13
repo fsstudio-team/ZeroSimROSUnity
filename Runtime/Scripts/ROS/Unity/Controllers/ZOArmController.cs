@@ -95,7 +95,6 @@ namespace ZO.ROS.Controllers {
 
 
         private float _currentGoalTime = 0;
-        private float _startGoalTime = 0;
         private JointTrajectoryPointMessage _currentPoint = new JointTrajectoryPointMessage();
 
 
@@ -477,10 +476,11 @@ namespace ZO.ROS.Controllers {
 
             Debug.Log("INFO: ZOArmController::OnGoalReceived");
 
+            // automatically acccept new goal
+            // TODO: perhaps more complex logic?  are there conditions where we will not accept a new goal?
             actionServer.AcceptNewGoal();
 
             _currentGoalTime = 0;
-            _startGoalTime = Time.fixedTime;
 
             return Task.CompletedTask;
         }
