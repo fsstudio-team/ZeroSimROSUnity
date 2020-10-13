@@ -131,6 +131,7 @@ namespace ZO.ROS.Controllers {
         }
 
         protected override void ZOStart() {
+            Debug.Log("INFO: ZOArmController::ZOStart");
             base.ZOStart();
 
 
@@ -168,7 +169,7 @@ namespace ZO.ROS.Controllers {
 
 
         protected override void ZOFixedUpdateHzSynchronized() {
-            
+
             // if not connected the don't run
             if (ZOROSBridgeConnection.Instance.IsConnected == false) {
                 return;
@@ -275,7 +276,7 @@ namespace ZO.ROS.Controllers {
             base.ZOOnGUI();
             int y = 10;
             GUI.TextField(new Rect(10, y, 200, 20), "Goal Status: " + GoalStatus.ToString());
-            y+=20;
+            y += 20;
 
             for (int i = 0; i < _trajectoryControllerStateMessage.joint_names.Length; i++, y += 25) {
                 ZOJointInterface joint = GetJointByName(_trajectoryControllerStateMessage.joint_names[i]);
@@ -392,32 +393,49 @@ namespace ZO.ROS.Controllers {
         /// <summary>
         /// Implements ROS Controller Load
         /// </summary>
-        public void Load() {
+        public void LoadController() {
             Debug.Log("INFO: ZOArmController::Load");
-            Initialize();
+            Initialize();   // BUGBUG: we should separate initialized into load -> start calls 
+            ControllerState = ControllerStateEnum.Initialized;
         }
 
         /// <summary>
         /// Implements ROS Controller Unload
         /// </summary>
-        public void Unload() {
+        public void UnloadController() {
             Debug.Log("INFO: ZOArmController::Unload");
             Terminate();
+            ControllerState = ControllerStateEnum.Terminated;
+        }
+
+        public void StartController() {
+            Debug.Log("INFO: ZOArmController::Start");
+            ControllerState = ControllerStateEnum.Running;
+            _actionServer.OnGoalReceived += OnActionGoalReceived;
+            _actionServer.OnCancelReceived += OnActionCancelReceived;
+
+        }
+
+        public void StopController() {
+            Debug.Log("INFO: ZOArmController::Stop");
+            ControllerState = ControllerStateEnum.Stopped;
+            _actionServer.OnGoalReceived -= OnActionGoalReceived;
+            _actionServer.OnCancelReceived -= OnActionCancelReceived;
         }
 
         #endregion // ZOROSControllerInterface
 
 
-
+        // BUGBUG: we should separate initialized into load -> start calls 
         private void Initialize() {
             Debug.Log("INFO: ZOArmController::Initialize");
 
             // start up the follow joint trajectory action server
             // _actionServer.ROSTopic = "/arm_controller/follow_joint_trajectory"; //BUGBUG: HARDWIRED
-            _actionServer.ROSTopic = ROSTopic;  
+            _actionServer.ROSTopic = ROSTopic;
             _actionServer.Name = "arm_controller";
-            _actionServer.OnGoalReceived += OnActionGoalReceived;
-            _actionServer.OnCancelReceived += OnActionCancelReceived;
+            // _actionServer.OnGoalReceived += OnActionGoalReceived;
+            // _actionServer.OnCancelReceived += OnActionCancelReceived;
             _actionServer.Initialize();
 
 
@@ -430,15 +448,20 @@ namespace ZO.ROS.Controllers {
             // advertise joint state
             ROSBridgeConnection.Advertise(ControllerManager.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
 
-            ControllerState = ControllerStateEnum.Running;
+            
 
         }
 
         private void Terminate() {
+            Debug.Log("INFO: ZOArmController::Terminate");
+
             ROSBridgeConnection?.Unsubscribe("arm_controller", ControllerManager?.Name + "/arm_controller/command");
             ROSBridgeConnection?.UnAdvertise(ControllerManager?.Name + "/arm_controller/state");
 
             ControllerState = ControllerStateEnum.Stopped;
+
+            _actionServer.OnGoalReceived -= OnActionGoalReceived;
+            _actionServer.OnCancelReceived -= OnActionCancelReceived;
 
             _actionServer.Terminate();
         }
@@ -478,7 +501,7 @@ namespace ZO.ROS.Controllers {
 
             // automatically acccept new goal
             // TODO: perhaps more complex logic?  are there conditions where we will not accept a new goal?
-            actionServer.AcceptNewGoal();
+            actionServer.AcceptNewGoal(goalMessage);
 
             _currentGoalTime = 0;
 

@@ -3,7 +3,8 @@ namespace ZO.ROS.Controllers {
     public enum ControllerStateEnum {
         Stopped,
         Initialized,
-        Running
+        Running,
+        Terminated
     };
 
 
@@ -20,8 +21,25 @@ namespace ZO.ROS.Controllers {
 
         ControllerStateMessage ControllerStateMessage { get; }
 
-        void Load();
-        void Unload();
+        /// <summary>
+        /// Set controller state to loaded/initialized
+        /// </summary>
+        void LoadController();
+
+        /// <summary>
+        /// Set controller state to unloaded/stopped
+        /// </summary>
+        void UnloadController();
+
+        /// <summary>
+        /// Set controller state to started/running
+        /// </summary>
+        void StartController();
+
+        /// <summary>
+        /// Set controller state to stopped
+        /// </summary>
+        void StopController();
 
     }
 }

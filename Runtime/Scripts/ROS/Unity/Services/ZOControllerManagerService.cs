@@ -148,7 +148,7 @@ namespace ZO.ROS.Unity.Service {
                     if (_controllers.ContainsKey(loadControllerServiceRequest.name)) {
 
                         // initialize the actual controller
-                        _controllers[loadControllerServiceRequest.name].Load();
+                        _controllers[loadControllerServiceRequest.name].LoadController();
 
                         // respond back we loaded the controller succesfully
                         ROSBridgeConnection.ServiceResponse<LoadControllerServiceResponse>(new LoadControllerServiceResponse(true), LoadControllerServiceTopic, true, id);
@@ -175,16 +175,16 @@ namespace ZO.ROS.Unity.Service {
                     bool success = true;
                     foreach (string controller in switchControllerServiceRequest.stop_controllers) {
 
-                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: " + controller);
+                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: Stop Controller: " + controller);
 
                         // check if controller is registered
                         if (_controllers.ContainsKey(controller)) {
 
-                            // initialize the actual controller
-                            _controllers[controller].Load();
+                            // Unload the controller if necessary
+                            _controllers[controller].StopController();
 
                         } else {
-                            Debug.LogWarning("WARNING: could not unload controller: " + controller);
+                            Debug.LogWarning("WARNING: could not stop controller: " + controller);
                             success = false;
                         }
 
@@ -192,16 +192,16 @@ namespace ZO.ROS.Unity.Service {
 
                     foreach (string controller in switchControllerServiceRequest.start_controllers) {
 
-                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: " + controller);
+                        Debug.Log("INFO: ZOControllerManagerService::SwitchControllerServiceRequest: Start Controller: " + controller);
 
                         // check if controller is registered
                         if (_controllers.ContainsKey(controller)) {
 
                             // initialize the actual controller
-                            _controllers[controller].Load();
+                            _controllers[controller].StartController();
 
                         } else {
-                            Debug.LogWarning("WARNING: could not unload controller: " + controller);
+                            Debug.LogWarning("WARNING: could not start controller: " + controller);
                             success = false;
                         }
 
@@ -230,7 +230,7 @@ namespace ZO.ROS.Unity.Service {
                     if (_controllers.ContainsKey(unloadControllerServiceRequest.name)) {
 
                         // initialize the actual controller
-                        _controllers[unloadControllerServiceRequest.name].Unload();
+                        _controllers[unloadControllerServiceRequest.name].UnloadController();
 
                         // respond back we loaded the controller succesfully
                         ROSBridgeConnection.ServiceResponse<UnloadControllerServiceResponse>(new UnloadControllerServiceResponse(true), UnloadControllerServiceTopic, true, id);
@@ -256,8 +256,8 @@ namespace ZO.ROS.Unity.Service {
                     Debug.Log("INFO: ZOControllerManagerService::ReloadControllerServiceRequest");
 
                     foreach (KeyValuePair<string, ZOROSControllerInterface> entry in _controllers) {
-                        entry.Value.Load();
-                        entry.Value.Unload();
+                        entry.Value.UnloadController();
+                        entry.Value.LoadController();
                     }
 
 
