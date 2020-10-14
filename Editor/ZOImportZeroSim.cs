@@ -305,7 +305,7 @@ namespace ZO.Import {
             if (selectedGo != null) {
                 MeshRenderer[] meshRenderers = selectedGo.GetComponentsInChildren<MeshRenderer>();
                 foreach (MeshRenderer meshRenderer in meshRenderers) {
-                    meshRenderer.sharedMaterial.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    meshRenderer.sharedMaterial.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.85f, 1f);
                 }
 
             }
