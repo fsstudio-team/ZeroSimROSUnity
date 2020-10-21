@@ -71,6 +71,11 @@ namespace ZO.Import {
             get { return Path.Combine(RootExportDirectory, "collision_meshes"); }
         }
 
+        // Asset Bundles Directory
+        private string AssetBundlesDirectory {
+            get => "AssetBundles"; 
+        }        
+
 
         /// <summary>
         /// The directory that is importing from.
@@ -138,6 +143,10 @@ namespace ZO.Import {
             if (Directory.Exists(CollisionMeshDirectory) == false) {
                 Directory.CreateDirectory(CollisionMeshDirectory);
             }
+            if (Directory.Exists(AssetBundlesDirectory) == false) {
+                Directory.CreateDirectory(AssetBundlesDirectory);
+            }
+            
 
 
             // read all components and load any assets like visual and collision meshes
@@ -197,7 +206,7 @@ namespace ZO.Import {
 
             // build the asset bundle
             Debug.Log("INFO: Building asset bundles...");
-            BuildPipeline.BuildAssetBundles("AssetBundles", BuildAssetBundleOptions.None, BuildTarget.StandaloneLinux64);
+            BuildPipeline.BuildAssetBundles(AssetBundlesDirectory, BuildAssetBundleOptions.None, BuildTarget.StandaloneLinux64);
 
 
             ZeroSimProjectFile = null; // need to reset
@@ -305,7 +314,7 @@ namespace ZO.Import {
             if (selectedGo != null) {
                 MeshRenderer[] meshRenderers = selectedGo.GetComponentsInChildren<MeshRenderer>();
                 foreach (MeshRenderer meshRenderer in meshRenderers) {
-                    meshRenderer.sharedMaterial.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.85f, 1f);
+                    meshRenderer.sharedMaterial.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
 
             }
