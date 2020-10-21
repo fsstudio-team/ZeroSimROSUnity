@@ -503,6 +503,8 @@ namespace ZO.ROS.Controllers {
             // TODO: perhaps more complex logic?  are there conditions where we will not accept a new goal?
             actionServer.AcceptNewGoal(goalMessage);
 
+            Debug.Log($"INFO: Goad id: {goalMessage.goal_id.id}: with number of points: {goalMessage.goal.trajectory.points.Length}");
+
             _currentGoalTime = 0;
 
             return Task.CompletedTask;
