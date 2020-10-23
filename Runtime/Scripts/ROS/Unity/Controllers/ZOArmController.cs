@@ -314,7 +314,7 @@ namespace ZO.ROS.Controllers {
             get { return "hardware_interface::PositionJointInterface"; }
         }
 
-        ControllerStateEnum _state;
+        ControllerStateEnum _state = ControllerStateEnum.Uninitialized;
         /// <summary>
         /// Returns controller state of Stopped, Initialize, or Running
         /// </summary>
@@ -395,8 +395,15 @@ namespace ZO.ROS.Controllers {
         /// </summary>
         public void LoadController() {
             Debug.Log("INFO: ZOArmController::Load");
+            if (ControllerState != ControllerStateEnum.Uninitialized && ControllerState != ControllerStateEnum.Terminated) {
+                Debug.LogError("ERROR: Cannot load arm controller in current state: " + ControllerState.ToString());
+                return;
+            }
             Initialize();   // BUGBUG: we should separate initialized into load -> start calls 
             ControllerState = ControllerStateEnum.Initialized;
+            _actionServer.OnGoalReceived += OnActionGoalReceived;
+            _actionServer.OnCancelReceived += OnActionCancelReceived;
+
         }
 
         /// <summary>
@@ -404,23 +411,34 @@ namespace ZO.ROS.Controllers {
         /// </summary>
         public void UnloadController() {
             Debug.Log("INFO: ZOArmController::Unload");
+            if (ControllerState == ControllerStateEnum.Uninitialized || ControllerState == ControllerStateEnum.Terminated) {
+                Debug.LogError("ERROR: Cannot unload arm controller in current state: " + ControllerState.ToString());
+                return;
+            }
+
             Terminate();
             ControllerState = ControllerStateEnum.Terminated;
+            _actionServer.OnGoalReceived -= OnActionGoalReceived;
+            _actionServer.OnCancelReceived -= OnActionCancelReceived;
         }
 
         public void StartController() {
             Debug.Log("INFO: ZOArmController::Start");
+            if (ControllerState != ControllerStateEnum.Initialized && ControllerState != ControllerStateEnum.Stopped) {
+                Debug.LogError("ERROR: Cannot start arm controller in current state: " + ControllerState.ToString());
+                return;
+            }
             ControllerState = ControllerStateEnum.Running;
-            _actionServer.OnGoalReceived += OnActionGoalReceived;
-            _actionServer.OnCancelReceived += OnActionCancelReceived;
-
         }
 
         public void StopController() {
             Debug.Log("INFO: ZOArmController::Stop");
+            if (ControllerState != ControllerStateEnum.Running) {
+                Debug.LogError("ERROR: Cannot stop arm controller in current state: " + ControllerState.ToString());
+                return;
+            }
+
             ControllerState = ControllerStateEnum.Stopped;
-            _actionServer.OnGoalReceived -= OnActionGoalReceived;
-            _actionServer.OnCancelReceived -= OnActionCancelReceived;
         }
 
         #endregion // ZOROSControllerInterface
@@ -448,7 +466,7 @@ namespace ZO.ROS.Controllers {
             // advertise joint state
             ROSBridgeConnection.Advertise(ControllerManager.Name + "/arm_controller/state", JointTrajectoryControllerStateMessage.Type);
 
-            
+
 
         }
 
@@ -490,35 +508,48 @@ namespace ZO.ROS.Controllers {
 
 
         /// <summary>
-        /// This is a FollowJointTrajectoryActionMessage action responder.  Usually used by MoveIt.
+        /// FollowJointTrajectoryActionMessage action goal responder.  Usually used by MoveIt.
         /// </summary>
         /// <param name="actionServer"></param>
         /// <param name="goalMessage"></param>
         /// <returns></returns>
         Task OnActionGoalReceived(ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> actionServer, FollowJointTrajectoryActionGoal goalMessage) {
 
-            Debug.Log("INFO: ZOArmController::OnGoalReceived");
-
-            // automatically acccept new goal
-            // TODO: perhaps more complex logic?  are there conditions where we will not accept a new goal?
-            actionServer.AcceptNewGoal(goalMessage);
-
-            Debug.Log($"INFO: Goad id: {goalMessage.goal_id.id}: with number of points: {goalMessage.goal.trajectory.points.Length}");
-
-            _currentGoalTime = 0;
+            Debug.Log("INFO: ZOArmController::OnActionGoalReceived");
+            if (ControllerState == ControllerStateEnum.Terminated || ControllerState == ControllerStateEnum.Uninitialized) {
+                Debug.LogError("INFO: ZOArmController::OnActionGoalReceived invalid controller state: " + ControllerState.ToString());
+                actionServer.SetRejected("Controller not initialized");
+            } else {
+                if (ControllerState != ControllerStateEnum.Running) {
+                    StartController();
+                }
+                actionServer.AcceptNewGoal(goalMessage);
+                Debug.Log($"INFO: Accepted Goal id: {goalMessage.goal_id.id}: with number of points: {goalMessage.goal.trajectory.points.Length}");
+                _currentGoalTime = 0;
+            }
 
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// FollowJointTrajectoryActionMessage action cancel responder.  Usually used by MoveIt.
+        /// </summary>
+        /// <param name="actionServer"></param>
+        /// <param name="goalID"></param>
+        /// <returns></returns>
         Task OnActionCancelReceived(ZOROSActionServer<FollowJointTrajectoryActionMessage, FollowJointTrajectoryActionGoal> actionServer, GoalIDMessage goalID) {
 
             Debug.Log("INFO: ZOArmController::OnCancelReceived");
+
+            if (ControllerState == ControllerStateEnum.Running) {
+                // Stop Controller
+                StopController();
+            }
+
             // confirm cancellation to the action server
             actionServer.SetCanceled();
 
             return Task.CompletedTask;
-
-
         }
 
         #endregion
@@ -526,7 +557,7 @@ namespace ZO.ROS.Controllers {
 
         #region ZOSerializationInterface
 
-        public string Type {
+        public override string Type {
             get => "controller.arm_controller";
         }
 

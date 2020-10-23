@@ -254,29 +254,27 @@ namespace ZO.ROS {
         private Task _OnCancelReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             
             GoalIDMessage goalID = msg as GoalIDMessage;
-            OnCancelReceived?.Invoke(this, goalID);
+            // OnCancelReceived?.Invoke(this, goalID);
 
             Debug.Log("INFO: ZOROSActionServer::OnCancelReceived for goal id: " + goalID.id);
-            // switch (ActionStatus) {
-            //     case ActionStatusEnum.PENDING:
-            //         ActionStatus = ActionStatusEnum.RECALLING;
-            //         OnCancelReceived?.Invoke(this, goalID);
-            //         break;
-            //     case ActionStatusEnum.ACTIVE:
-            //         ActionStatus = ActionStatusEnum.PREEMPTING;
-            //         OnCancelReceived?.Invoke(this, goalID);
-            //         break;
-            //     default:
-            //         Debug.LogWarning("WARNING: Goal cannot be canceled in current state: " + _actionStatus.ToString());
-            //         break;
-            // }
+            switch (CurrentGoalActionStatus) {
+                case ActionStatusEnum.PENDING:
+                    CurrentGoalActionStatus = ActionStatusEnum.RECALLING;
+                    OnCancelReceived?.Invoke(this, goalID);
+                    break;
+                case ActionStatusEnum.ACTIVE:
+                    CurrentGoalActionStatus = ActionStatusEnum.PREEMPTING;
+                    OnCancelReceived?.Invoke(this, goalID);
+                    break;
+                default:
+                    Debug.LogWarning("WARNING: Goal cannot be canceled in current state: " + CurrentGoalActionStatus.ToString());
+                    break;
+            }
 
             return Task.CompletedTask;
         }
 
         // Server Triggered Actions
-        // protected abstract void OnGoalActive();
-
         /// <summary>
         /// Accepts a new goal when one is available. The status of this goal is set to active upon 
         /// acceptance, and the status of any previously active goal is set to preempted. Preempts 

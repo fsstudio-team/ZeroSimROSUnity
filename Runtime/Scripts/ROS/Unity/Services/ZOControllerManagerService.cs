@@ -180,7 +180,7 @@ namespace ZO.ROS.Unity.Service {
                         // check if controller is registered
                         if (_controllers.ContainsKey(controller)) {
 
-                            // Unload the controller if necessary
+                            // stop the controller if necessary
                             _controllers[controller].StopController();
 
                         } else {

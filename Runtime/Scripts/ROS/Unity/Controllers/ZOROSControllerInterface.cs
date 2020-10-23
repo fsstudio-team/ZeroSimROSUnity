@@ -1,6 +1,7 @@
 using ZO.ROS.MessageTypes.ControllerManager;
 namespace ZO.ROS.Controllers {
     public enum ControllerStateEnum {
+        Uninitialized,
         Stopped,
         Initialized,
         Running,
