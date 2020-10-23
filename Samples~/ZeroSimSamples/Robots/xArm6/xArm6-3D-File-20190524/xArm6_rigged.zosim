@@ -1,0 +1,1425 @@
+{
+  "document_name": "xArm6_rigged",
+  "document_version": "1.0",
+  "mesh_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "transform_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "components": [
+    {
+      "name": "xArm6_rigged",
+      "controllers": [
+        {
+          "name": "ros.publisher.joint_states_xArm6_rigged",
+          "type": "ros.publisher.joint_states",
+          "ros_topic": "/joint_states",
+          "update_rate_hz": 10.0
+        },
+        {
+          "name": "undefined_xArm6_rigged",
+          "type": "controller.arm_controller",
+          "update_rate_hz": 25.0
+        },
+        {
+          "name": "xarm",
+          "type": "controller.controller_manager",
+          "ros_topic": "controller_manager",
+          "update_rate_hz": 25.0
+        }
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "name": "link_base",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rigidbody": {
+        "mass": 1.0,
+        "drag": 0.0,
+        "angular_drag": 0.05,
+        "use_gravity": false,
+        "is_kinematic": true
+      },
+      "joints": [
+        {
+          "name": "joint1",
+          "type": "joint.hinge",
+          "anchor": [
+            0.0,
+            0.1315,
+            0.0
+          ],
+          "world_anchor": [
+            0.0,
+            0.1315,
+            0.0
+          ],
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "world_axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "connected_anchor": [
+            0.00181868672,
+            -0.07564479,
+            0.008134538
+          ],
+          "world_connected_anchor": [
+            0.00181868672,
+            -0.07564479,
+            0.008134538
+          ],
+          "use_spring": false,
+          "spring": {
+            "spring": 500.0,
+            "damper": 400.0,
+            "target_position": 0.0
+          },
+          "use_motor": false,
+          "motor": {
+            "target_velocity": 0.0,
+            "force": 10.0,
+            "free_spin": false
+          },
+          "use_limits": false,
+          "limits": {
+            "min": 0.0,
+            "max": 0.0,
+            "bounciness": 0.0,
+            "bounce_min_velocity": 0.2,
+            "contact_distance": 0.0
+          },
+          "connected_occurrence": "link1",
+          "parent_occurrence": "link_base"
+        }
+      ],
+      "visuals": [
+        {
+          "type": "primitive.mesh",
+          "name": "cf-1_visual_",
+          "has_collisions": false,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              -0.01596865,
+              0.0529922545,
+              0.0005876869
+            ],
+            "extents": [
+              0.07697443,
+              0.0774,
+              0.0629956052
+            ]
+          }
+        }
+      ],
+      "collisions": [
+        {
+          "type": "primitive.mesh",
+          "name": "cf-1_collision_0",
+          "has_collisions": true,
+          "is_convex": true,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              -0.024997,
+              0.00331750046,
+              -0.0059605
+            ],
+            "extents": [
+              0.0700259954,
+              0.0177255012,
+              0.0527615026
+            ]
+          }
+        },
+        {
+          "type": "primitive.mesh",
+          "name": "cf-1_collision_1",
+          "has_collisions": true,
+          "is_convex": true,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              -0.00165149942,
+              -0.0194935,
+              0.000249501318
+            ],
+            "extents": [
+              0.0638854951,
+              0.00614250032,
+              0.0638854951
+            ]
+          }
+        },
+        {
+          "type": "primitive.mesh",
+          "name": "cf-1_collision_2",
+          "has_collisions": true,
+          "is_convex": true,
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            -1.0,
+            1.0,
+            1.0
+          ],
+          "bounding_box": {
+            "center": [
+              -0.00353950076,
+              0.0734795,
+              0.0001389999
+            ],
+            "extents": [
+              0.0485595,
+              0.0554515,
+              0.046582
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "link1",
+          "translation": [
+            -0.00181868672,
+            0.2071448,
+            -0.008134538
+          ],
+          "rotation_quaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "parent_name": "link_base",
+          "rigidbody": {
+            "mass": 1.0,
+            "drag": 0.0,
+            "angular_drag": 0.05,
+            "use_gravity": false,
+            "is_kinematic": false
+          },
+          "joints": [
+            {
+              "name": "joint2",
+              "type": "joint.hinge",
+              "anchor": [
+                0.003,
+                0.032,
+                0.086
+              ],
+              "world_anchor": [
+                0.00118130445,
+                0.239144862,
+                0.07786547
+              ],
+              "axis": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "world_axis": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "connected_anchor": [
+                0.0228562057,
+                -0.142498612,
+                0.0521810874
+              ],
+              "world_connected_anchor": [
+                0.02103749,
+                0.0646461844,
+                0.04404655
+              ],
+              "use_spring": false,
+              "spring": {
+                "spring": 500.0,
+                "damper": 400.0,
+                "target_position": 0.0
+              },
+              "use_motor": false,
+              "motor": {
+                "target_velocity": 0.0,
+                "force": 10.0,
+                "free_spin": false
+              },
+              "use_limits": false,
+              "limits": {
+                "min": 0.0,
+                "max": 0.0,
+                "bounciness": 0.0,
+                "bounce_min_velocity": 0.2,
+                "contact_distance": 0.0
+              },
+              "connected_occurrence": "link2",
+              "parent_occurrence": "link1"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "primitive.mesh",
+              "name": "cf-2_visual_",
+              "has_collisions": false,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                1.0,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  -0.003317969,
+                  -0.01900855,
+                  0.00349254534
+                ],
+                "extents": [
+                  0.0484358519,
+                  0.0659233,
+                  0.08004449
+                ]
+              }
+            }
+          ],
+          "collisions": [
+            {
+              "type": "primitive.mesh",
+              "name": "cf-2_collision_0",
+              "has_collisions": true,
+              "is_convex": true,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                0.9999999,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  -0.00316700153,
+                  -0.0171905,
+                  0.0352565
+                ],
+                "extents": [
+                  0.049547,
+                  0.0656665,
+                  0.0495415
+                ]
+              }
+            },
+            {
+              "type": "primitive.mesh",
+              "name": "cf-2_collision_1",
+              "has_collisions": true,
+              "is_convex": true,
+              "translation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                -1.0,
+                0.9999999,
+                1.0
+              ],
+              "bounding_box": {
+                "center": [
+                  -0.00316300057,
+                  -0.008699,
+                  -0.0460585
+                ],
+                "extents": [
+                  0.0495420024,
+                  0.049542,
+                  0.0317635
+                ]
+              }
+            }
+          ],
+          "children": [
+            {
+              "name": "link2",
+              "translation": [
+                -0.0198562145,
+                0.174498677,
+                0.0338189155
+              ],
+              "rotation_quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "parent_name": "link1",
+              "rigidbody": {
+                "mass": 1.0,
+                "drag": 0.0,
+                "angular_drag": 0.05,
+                "use_gravity": false,
+                "is_kinematic": false
+              },
+              "joints": [
+                {
+                  "name": "joint3",
+                  "type": "joint.hinge",
+                  "anchor": [
+                    -0.03,
+                    0.1465,
+                    0.045
+                  ],
+                  "world_anchor": [
+                    -0.0516749024,
+                    0.528143466,
+                    0.07068438
+                  ],
+                  "axis": [
+                    0.0,
+                    0.0,
+                    -1.0
+                  ],
+                  "world_axis": [
+                    0.0,
+                    0.0,
+                    -1.0
+                  ],
+                  "connected_anchor": [
+                    0.04970804,
+                    0.04608059,
+                    0.0332391039
+                  ],
+                  "world_connected_anchor": [
+                    0.0280331671,
+                    0.427724063,
+                    0.0589234829
+                  ],
+                  "use_spring": false,
+                  "spring": {
+                    "spring": 500.0,
+                    "damper": 400.0,
+                    "target_position": 0.0
+                  },
+                  "use_motor": false,
+                  "motor": {
+                    "target_velocity": 0.0,
+                    "force": 10.0,
+                    "free_spin": false
+                  },
+                  "use_limits": false,
+                  "limits": {
+                    "min": 0.0,
+                    "max": 0.0,
+                    "bounciness": 0.0,
+                    "bounce_min_velocity": 0.2,
+                    "contact_distance": 0.0
+                  },
+                  "connected_occurrence": "link3",
+                  "parent_occurrence": "link2"
+                }
+              ],
+              "visuals": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "cf-3_visual_",
+                  "has_collisions": false,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.000781528652,
+                      0.000870145857,
+                      -0.0010387972
+                    ],
+                    "extents": [
+                      0.09404464,
+                      0.07156385,
+                      0.187372
+                    ]
+                  }
+                }
+              ],
+              "collisions": [
+                {
+                  "type": "primitive.mesh",
+                  "name": "cf-3_collision_0",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.00000012,
+                    1.0,
+                    0.9999999
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0147909988,
+                      -0.0226494987,
+                      -0.00263999775
+                    ],
+                    "extents": [
+                      0.060856,
+                      0.0496355,
+                      0.084878
+                    ]
+                  }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "cf-3_collision_1",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.00000012,
+                    1.0,
+                    0.9999999
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      0.0244000014,
+                      0.0029685013,
+                      -0.138764992
+                    ],
+                    "extents": [
+                      0.070465,
+                      0.0688575059,
+                      0.051246997
+                    ]
+                  }
+                },
+                {
+                  "type": "primitive.mesh",
+                  "name": "cf-3_collision_2",
+                  "has_collisions": true,
+                  "is_convex": true,
+                  "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    -1.00000012,
+                    1.0,
+                    0.9999999
+                  ],
+                  "bounding_box": {
+                    "center": [
+                      -0.0716935,
+                      -0.0226494987,
+                      0.0838395
+                    ],
+                    "extents": [
+                      0.025618501,
+                      0.0496355,
+                      0.104095496
+                    ]
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "name": "link3",
+                  "translation": [
+                    -0.07970804,
+                    0.1004194,
+                    0.0117608979
+                  ],
+                  "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "parent_name": "link2",
+                  "rigidbody": {
+                    "mass": 1.0,
+                    "drag": 0.0,
+                    "angular_drag": 0.05,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                  },
+                  "joints": [
+                    {
+                      "name": "joint4",
+                      "type": "joint.hinge",
+                      "anchor": [
+                        -0.028,
+                        -0.125,
+                        -0.036
+                      ],
+                      "world_anchor": [
+                        -0.129382938,
+                        0.357062876,
+                        0.00144527666
+                      ],
+                      "axis": [
+                        0.0,
+                        -1.0,
+                        0.0
+                      ],
+                      "world_axis": [
+                        0.0,
+                        -1.0,
+                        0.0
+                      ],
+                      "connected_anchor": [
+                        0.00136464834,
+                        0.104420543,
+                        0.021797657
+                      ],
+                      "world_connected_anchor": [
+                        -0.100018293,
+                        0.5864834,
+                        0.059242934
+                      ],
+                      "use_spring": false,
+                      "spring": {
+                        "spring": 500.0,
+                        "damper": 400.0,
+                        "target_position": 0.0
+                      },
+                      "use_motor": false,
+                      "motor": {
+                        "target_velocity": 0.0,
+                        "force": 10.0,
+                        "free_spin": false
+                      },
+                      "use_limits": false,
+                      "limits": {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "bounciness": 0.0,
+                        "bounce_min_velocity": 0.2,
+                        "contact_distance": 0.0
+                      },
+                      "connected_occurrence": "link4",
+                      "parent_occurrence": "link3"
+                    }
+                  ],
+                  "visuals": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "x5-ss-4-21052019_visual_",
+                      "has_collisions": false,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          0.0105712973,
+                          -0.0181847438,
+                          0.00355080143
+                        ],
+                        "extents": [
+                          0.0811463,
+                          0.1057203,
+                          0.0744585246
+                        ]
+                      }
+                    }
+                  ],
+                  "collisions": [
+                    {
+                      "type": "primitive.mesh",
+                      "name": "x5-ss-4-21052019_collision_0",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          -0.028685,
+                          -0.0585195,
+                          0.024978
+                        ],
+                        "extents": [
+                          0.040746998,
+                          0.0636915043,
+                          0.055319
+                        ]
+                      }
+                    },
+                    {
+                      "type": "primitive.mesh",
+                      "name": "x5-ss-4-21052019_collision_1",
+                      "has_collisions": true,
+                      "is_convex": true,
+                      "translation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        -1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "bounding_box": {
+                        "center": [
+                          0.0105845,
+                          0.003943,
+                          -0.0512425
+                        ],
+                        "extents": [
+                          0.0823625,
+                          0.084822,
+                          0.0208945
+                        ]
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "name": "link4",
+                      "translation": [
+                        -0.0293646455,
+                        -0.229420543,
+                        -0.0577976555
+                      ],
+                      "rotation_quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ],
+                      "parent_name": "link3",
+                      "rigidbody": {
+                        "mass": 1.0,
+                        "drag": 0.0,
+                        "angular_drag": 0.05,
+                        "use_gravity": false,
+                        "is_kinematic": false
+                      },
+                      "joints": [
+                        {
+                          "name": "joint5",
+                          "type": "joint.hinge",
+                          "anchor": [
+                            0.0,
+                            -0.0675,
+                            0.0185
+                          ],
+                          "world_anchor": [
+                            -0.130747586,
+                            0.185142338,
+                            -0.00185238011
+                          ],
+                          "axis": [
+                            0.0,
+                            0.0,
+                            -1.0
+                          ],
+                          "world_axis": [
+                            0.0,
+                            0.0,
+                            -1.0
+                          ],
+                          "connected_anchor": [
+                            0.03214699,
+                            0.00248217583,
+                            -0.0120207462
+                          ],
+                          "world_connected_anchor": [
+                            -0.0986005962,
+                            0.2551245,
+                            -0.0323731229
+                          ],
+                          "use_spring": false,
+                          "spring": {
+                            "spring": 500.0,
+                            "damper": 400.0,
+                            "target_position": 0.0
+                          },
+                          "use_motor": false,
+                          "motor": {
+                            "target_velocity": 0.0,
+                            "force": 10.0,
+                            "free_spin": false
+                          },
+                          "use_limits": false,
+                          "limits": {
+                            "min": 0.0,
+                            "max": 0.0,
+                            "bounciness": 0.0,
+                            "bounce_min_velocity": 0.2,
+                            "contact_distance": 0.0
+                          },
+                          "connected_occurrence": "link5",
+                          "parent_occurrence": "link4"
+                        }
+                      ],
+                      "visuals": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "x5-ss-5-21052019_visual_",
+                          "has_collisions": false,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              0.000105660409,
+                              0.000282488763,
+                              0.00104058906
+                            ],
+                            "extents": [
+                              0.06449486,
+                              0.105246969,
+                              0.04248663
+                            ]
+                          }
+                        }
+                      ],
+                      "collisions": [
+                        {
+                          "type": "primitive.mesh",
+                          "name": "x5-ss-5-21052019_collision_0",
+                          "has_collisions": true,
+                          "is_convex": true,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.041703,
+                              0.0413365,
+                              0.00170500018
+                            ],
+                            "extents": [
+                              0.021045,
+                              0.0378815,
+                              0.039994
+                            ]
+                          }
+                        },
+                        {
+                          "type": "primitive.mesh",
+                          "name": "x5-ss-5-21052019_collision_1",
+                          "has_collisions": true,
+                          "is_convex": true,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              0.0225014985,
+                              0.066588,
+                              0.00065250136
+                            ],
+                            "extents": [
+                              0.0431514978,
+                              0.039994,
+                              0.0431514978
+                            ]
+                          }
+                        },
+                        {
+                          "type": "primitive.mesh",
+                          "name": "x5-ss-5-21052019_collision_2",
+                          "has_collisions": true,
+                          "is_convex": true,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.0490645021,
+                              -0.0512885,
+                              0.00170499831
+                            ],
+                            "extents": [
+                              0.0157855,
+                              0.0547285,
+                              0.037889
+                            ]
+                          }
+                        },
+                        {
+                          "type": "primitive.mesh",
+                          "name": "x5-ss-5-21052019_collision_3",
+                          "has_collisions": true,
+                          "is_convex": true,
+                          "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            -1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "bounding_box": {
+                            "center": [
+                              -0.006967499,
+                              -0.0660535,
+                              0.0006524995
+                            ],
+                            "extents": [
+                              0.0263064988,
+                              0.0379195,
+                              0.0389415
+                            ]
+                          }
+                        }
+                      ],
+                      "children": [
+                        {
+                          "name": "link5",
+                          "translation": [
+                            -0.03214699,
+                            -0.06998217,
+                            0.0305207465
+                          ],
+                          "rotation_quaternion": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "parent_name": "link4",
+                          "rigidbody": {
+                            "mass": 1.0,
+                            "drag": 0.0,
+                            "angular_drag": 0.05,
+                            "use_gravity": false,
+                            "is_kinematic": false
+                          },
+                          "joints": [
+                            {
+                              "name": "joint6",
+                              "type": "joint.hinge",
+                              "anchor": [
+                                -0.043,
+                                -0.0655,
+                                -0.01
+                              ],
+                              "world_anchor": [
+                                -0.20589456,
+                                0.117160141,
+                                0.000168366358
+                              ],
+                              "axis": [
+                                0.0,
+                                -1.0,
+                                0.0
+                              ],
+                              "world_axis": [
+                                0.0,
+                                -1.0,
+                                0.0
+                              ],
+                              "connected_anchor": [
+                                0.000815331936,
+                                0.0154223442,
+                                -0.00293189287
+                              ],
+                              "world_connected_anchor": [
+                                -0.162079245,
+                                0.1980825,
+                                0.00723647326
+                              ],
+                              "use_spring": false,
+                              "spring": {
+                                "spring": 500.0,
+                                "damper": 400.0,
+                                "target_position": 0.0
+                              },
+                              "use_motor": false,
+                              "motor": {
+                                "target_velocity": 0.0,
+                                "force": 10.0,
+                                "free_spin": false
+                              },
+                              "use_limits": false,
+                              "limits": {
+                                "min": 0.0,
+                                "max": 0.0,
+                                "bounciness": 0.0,
+                                "bounce_min_velocity": 0.2,
+                                "contact_distance": 0.0
+                              },
+                              "connected_occurrence": "link6",
+                              "parent_occurrence": "link5"
+                            }
+                          ],
+                          "visuals": [
+                            {
+                              "type": "primitive.mesh",
+                              "name": "assem3_visual_",
+                              "has_collisions": false,
+                              "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                -1.0,
+                                1.0,
+                                1.0
+                              ],
+                              "bounding_box": {
+                                "center": [
+                                  0.00482254848,
+                                  -0.00158504024,
+                                  -0.0129979849
+                                ],
+                                "extents": [
+                                  0.0754971057,
+                                  0.04774646,
+                                  0.0530116931
+                                ]
+                              }
+                            }
+                          ],
+                          "collisions": [
+                            {
+                              "type": "primitive.mesh",
+                              "name": "assem3_collision_0",
+                              "has_collisions": true,
+                              "is_convex": true,
+                              "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                -1.0,
+                                0.9999999,
+                                1.0
+                              ],
+                              "bounding_box": {
+                                "center": [
+                                  -0.0339195,
+                                  -0.0175465,
+                                  0.00253349915
+                                ],
+                                "extents": [
+                                  0.0377485,
+                                  0.0327784978,
+                                  0.0377485
+                                ]
+                              }
+                            },
+                            {
+                              "type": "primitive.mesh",
+                              "name": "assem3_collision_1",
+                              "has_collisions": true,
+                              "is_convex": true,
+                              "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                -1.0,
+                                0.9999999,
+                                1.0
+                              ],
+                              "bounding_box": {
+                                "center": [
+                                  0.042571,
+                                  0.003339,
+                                  -0.0143534988
+                                ],
+                                "extents": [
+                                  0.038742,
+                                  0.041735,
+                                  0.052649498
+                                ]
+                              }
+                            }
+                          ],
+                          "children": [
+                            {
+                              "name": "link6",
+                              "translation": [
+                                -0.0438153148,
+                                -0.0809223652,
+                                -0.007068107
+                              ],
+                              "rotation_quaternion": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                              ],
+                              "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                              ],
+                              "parent_name": "link5",
+                              "rigidbody": {
+                                "mass": 1.0,
+                                "drag": 0.0,
+                                "angular_drag": 0.05,
+                                "use_gravity": false,
+                                "is_kinematic": false
+                              },
+                              "visuals": [
+                                {
+                                  "type": "primitive.mesh",
+                                  "name": "xarm-toolhead-assembly_visual_",
+                                  "has_collisions": false,
+                                  "translation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                  ],
+                                  "rotation_quaternion": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                  ],
+                                  "scale": [
+                                    -1.0,
+                                    1.0,
+                                    1.0
+                                  ],
+                                  "bounding_box": {
+                                    "center": [
+                                      0.00545644946,
+                                      -0.0005321498,
+                                      -0.00107827969
+                                    ],
+                                    "extents": [
+                                      0.04455609,
+                                      0.014,
+                                      0.0374998376
+                                    ]
+                                  }
+                                }
+                              ],
+                              "collisions": [
+                                {
+                                  "type": "primitive.mesh",
+                                  "name": "xarm-toolhead-assembly_collision_0",
+                                  "has_collisions": true,
+                                  "is_convex": true,
+                                  "translation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                  ],
+                                  "rotation_quaternion": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                  ],
+                                  "scale": [
+                                    -0.9999999,
+                                    1.0,
+                                    1.00000012
+                                  ],
+                                  "bounding_box": {
+                                    "center": [
+                                      0.00545600057,
+                                      -0.0006084996,
+                                      -0.00126250088
+                                    ],
+                                    "extents": [
+                                      0.045113,
+                                      0.0144805,
+                                      0.0378725
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
