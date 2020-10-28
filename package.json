@@ -4,10 +4,10 @@
   "displayName": "ZeroSim",
   "description": "ZeroSim",
   "unity": "2020.1",
-  "unityRelease": "0b14",
   "keywords": [
     "simulation",
-    "ROS"
+    "ROS",
+    "Robotics"
   ],
   "dependencies": {
     "com.unity.burst": "1.2.3"
@@ -23,5 +23,9 @@
     "name": "FS Studio",
     "email": "micah@fsstudio.com",
     "url": "http://www.fsstudio.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fsstudio-team/ZeroSimROSUnity.git"
   }
 }
