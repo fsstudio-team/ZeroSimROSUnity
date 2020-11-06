@@ -250,6 +250,41 @@ namespace ZO.ROS.MessageTypes.Std {
                 this.nsecs = (uint)((value - (double)this.secs) * 1000000000.0);
             }
         }
+
+        public static DurationMessage operator +(DurationMessage lhs, DurationMessage rhs) {
+            return new DurationMessage (lhs.secs + rhs.secs, lhs.nsecs + rhs.nsecs);
+        }
+
+        public static DurationMessage operator -(DurationMessage lhs, DurationMessage rhs) {
+            return new DurationMessage (lhs.secs - rhs.secs, lhs.nsecs - rhs.nsecs);
+        }
+
+        public static bool operator <(DurationMessage lhs, DurationMessage rhs) {
+            if (lhs.secs < rhs.secs) {
+                return true;
+            } else if (lhs.secs == rhs.secs && lhs.nsecs < rhs.nsecs) {
+                return true;
+            }
+            return false;            
+        }
+
+        public static bool operator >(DurationMessage lhs, DurationMessage rhs) {
+            if (lhs.secs > rhs.secs) {
+                return true;
+            } else if (lhs.secs == rhs.secs && lhs.nsecs > rhs.nsecs) {
+                return true;
+            }
+            return false;            
+        }
+
+        public static bool operator ==(DurationMessage lhs, DurationMessage rhs) {
+            return lhs.secs == rhs.secs && lhs.nsecs == rhs.nsecs;
+        }
+
+        public static bool operator !=(DurationMessage lhs, DurationMessage rhs) {
+            return lhs.secs != rhs.secs || lhs.nsecs != rhs.nsecs;
+        }
+
     }
 
 }
