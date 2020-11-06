@@ -236,13 +236,18 @@ namespace ZO.ROS.MessageTypes.Std {
 
 
         /// <summary>
-        /// Converts to seconds
+        /// Converts to/from seconds
         /// </summary>
         /// <value></value>
         public double Seconds {
             get {
                 double sec = (double)this.secs + ((double)this.nsecs)/1000000000.0;
                 return sec;
+            }
+
+            set {
+                this.secs = (uint)System.Math.Truncate(value);
+                this.nsecs = (uint)((value - (double)this.secs) * 1000000000.0);
             }
         }
     }
