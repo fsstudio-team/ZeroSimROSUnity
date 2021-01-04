@@ -709,7 +709,7 @@ namespace ZO.ROS {
 
 
         /// <summary>
-        /// 
+        /// Call ROS service.
         /// </summary>
         /// <param name="calling_message">The calling message</param>
         /// <param name="service">Service name</param>
@@ -752,20 +752,33 @@ namespace ZO.ROS {
 
         private async Task ClientReadAsync() {
             Debug.Log("INFO: ZOROSBridgeConnection::ClientReadAsync Start");
-            byte[] buffer = new byte[1024 * 100];  // BUGBUG: hardwired buffer.  TODO: handle when we get messages larger then the buffer!
+            const int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];  
+
 
             while (_isConnected) {
                 int bytesRead = -1;
+                int totalBytes = 0;
                 try {
 
-                    bytesRead = await _tcpClient.GetStream().ReadAsync(buffer, 0, buffer.Length);
-                    // Debug.Log("INFO: ReadAsync read byte count" + bytesRead.ToString());
-                    if (bytesRead > 0) {
+                    MemoryStream memoryStream = new MemoryStream();
+
+                   do {
+                        bytesRead = await _tcpClient.GetStream().ReadAsync(buffer, 0, buffer.Length);
+                        memoryStream.Write(buffer, 0, bytesRead);
+                        totalBytes += bytesRead;
+                        // Debug.Log($"INFO: bytesRead: {bytesRead} totalBytes: {totalBytes}");
+                    } while(_tcpClient.GetStream().DataAvailable);
+
+                    if (totalBytes > 0) {
+
+                        byte[] finalBuffer = memoryStream.ToArray();
 
                         if (Serialization == SerializationType.JSON) {
+                            
                             // check if we have valid JSON by checking if we have the '{' & '}'
-                            if (buffer[0] == '{' && buffer[bytesRead - 1] == '}') {
-                                string msg = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                            if (finalBuffer[0] == '{' && buffer[totalBytes - 1] == '}') {
+                                string msg = System.Text.Encoding.UTF8.GetString(finalBuffer, 0, totalBytes);
                                 JObject msgJSON = JObject.Parse(msg);
                                 string topic = msgJSON["topic"].Value<string>();
                                 foreach (var subscriber in _subscribers[topic]) {
@@ -782,9 +795,8 @@ namespace ZO.ROS {
 
                             // TODO: we have to deserialize to JSON because we do not know the type of the object
                             // coming in.  Would be faster to be able to "peek" into the BSON and then deserialize...
-                            MemoryStream memStream = new MemoryStream(buffer);
-                            JObject msgJSON;
-                            using (BsonDataReader reader = new BsonDataReader(memStream)) {
+                            JObject msgJSON = null;
+                            using (BsonDataReader reader = new BsonDataReader(new MemoryStream(finalBuffer))) {
                                 msgJSON = (JObject)JToken.ReadFrom(reader);
                             }
 
@@ -827,12 +839,12 @@ namespace ZO.ROS {
                                         await SendJSONStringAsync(JsonConvert.SerializeObject(nextServiceCall));
                                     } else if (Serialization == SerializationType.BSON) {
 
-                                        MemoryStream memoryStream = new MemoryStream();
-                                        BsonDataWriter writer = new BsonDataWriter(memoryStream);
+                                        MemoryStream bsonMemoryStream = new MemoryStream();
+                                        BsonDataWriter writer = new BsonDataWriter(bsonMemoryStream);
                                         JsonSerializer serializer = new JsonSerializer();
                                         serializer.Serialize(writer, nextServiceCall);
 
-                                        await SendBSONAsync(memoryStream);
+                                        await SendBSONAsync(bsonMemoryStream);
                                     }
                                 }
 
