@@ -1,6 +1,6 @@
 {
   "name": "com.fsstudio.zerosim",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "displayName": "ZeroSim",
   "description": "ZeroSim ROS robotic simulator in Unity.",
   "unity": "2020.1",
@@ -27,5 +27,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fsstudio-team/ZeroSimROSUnity.git"
-  }
+  },
+  "type": "module"
 }
