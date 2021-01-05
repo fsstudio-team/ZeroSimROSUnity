@@ -1,8 +1,8 @@
 {
   "name": "com.fsstudio.zerosim",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "displayName": "ZeroSim",
-  "description": "ZeroSim",
+  "description": "ZeroSim ROS robotic simulator in Unity.",
   "unity": "2020.1",
   "keywords": [
     "simulation",
