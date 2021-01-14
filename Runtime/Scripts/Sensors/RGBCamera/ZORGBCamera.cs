@@ -17,12 +17,60 @@ namespace ZO.Sensors {
         [Header("Camera Parameters")]
         // string _cameraId = "none";
         public Camera _camera;
+
+        /// <summary>
+        /// The Unity Camera associated with this depth camera. (readonly)
+        /// </summary>
+        /// <value></value>
         public Camera UnityCamera {
             get => _camera;
             private set => _camera = value;
         }
         public int _width = 1280;
+
+        /// <summary>
+        /// Camera frame width in pixels.  (readonly)
+        /// </summary>
+        /// <value></value>
+        public int Width {
+            get => _width;
+        }
+
         public int _height = 720;
+        /// <summary>
+        /// Camera frame height in pixels. (readonly)
+        /// </summary>
+        /// <value></value>
+        public int Height {
+            get => _height;
+        }
+
+
+        /// <summary>
+        /// The camera focal length in millimeters.
+        /// </summary>
+        /// <value></value>
+        public float FocalLengthMM {
+            get { return UnityCamera.focalLength; }
+        }
+
+        /// <summary>
+        /// The cameras field of view in degrees.
+        /// </summary>
+        /// <value></value>
+        public float FieldOfViewDegrees {
+            get { return UnityCamera.fieldOfView; }            
+        }
+
+        /// <summary>
+        /// Sensor width and height in millimeters.
+        /// </summary>
+        /// <value></value>
+        public Vector2 SensorSizeMM {
+            get { return UnityCamera.sensorSize; }
+        }
+
+        
 
         [Header("Render Parameters")]
         [SerializeField]
@@ -84,6 +132,7 @@ namespace ZO.Sensors {
             } else {
                 Debug.LogWarning("WARNING: NO support for native AsyncGPUReadback. Using 3rd party.");
             }
+            
 
         }
 

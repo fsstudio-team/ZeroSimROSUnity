@@ -17,6 +17,20 @@ namespace ZO.ROS.Publisher {
 
         public ZORGBCamera _rgbCameraSensor;
 
+        [Header("ROS Topics")]
+        /// <summary>
+        /// The ROS Image message topic to publish to.
+        /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
+        /// </summary>
+        public string _imageROSTopic = "image/image_raw";
+
+        /// <summary>
+        /// The CameraInfo message topic to publish to.
+        /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html
+        /// </summary>
+        public string _cameraInfoROSTopic = "image/camera_info";
+
+
         /// <summary>
         /// The camera sensor that we will publish.
         /// </summary>
@@ -25,7 +39,29 @@ namespace ZO.ROS.Publisher {
             get => _rgbCameraSensor;
             set => _rgbCameraSensor = value;
         }
+
         private ImageMessage _rosImageMessage = new ImageMessage();
+        private CameraInfoMessage _rosCameraInfoMessage = new CameraInfoMessage();
+
+        /// <summary>
+        /// The ROS Image message topic to publish to.
+        /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
+        /// </summary>
+        /// <value></value>
+        public string ImageROSTopic {
+            get => _imageROSTopic;
+            set => _imageROSTopic = value;
+        }
+
+        /// <summary>
+        /// The CameraInfo message topic to publish to.
+        /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html
+        /// </summary>
+        /// <value></value>
+        public string CameraInfoROSTopic {
+            get => _cameraInfoROSTopic;
+            set => _cameraInfoROSTopic = value;
+        }
 
 
         protected override void ZOStart() {
@@ -40,7 +76,8 @@ namespace ZO.ROS.Publisher {
 
         private void Initialize() {
             // advertise
-            ROSBridgeConnection.Advertise(ROSTopic, _rosImageMessage.MessageType);
+            ROSBridgeConnection.Advertise(ImageROSTopic, _rosImageMessage.MessageType);
+            ROSBridgeConnection.Advertise(CameraInfoROSTopic, _rosCameraInfoMessage.MessageType);
 
             // hookup to the sensor update delegate
             _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishRGBImageDelegate;
@@ -55,7 +92,8 @@ namespace ZO.ROS.Publisher {
 
         public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOImagePublisher::OnROSBridgeDisconnected");
-            ROSBridgeConnection.UnAdvertise(ROSTopic);
+            ROSBridgeConnection?.UnAdvertise(ImageROSTopic);
+            ROSBridgeConnection?.UnAdvertise(CameraInfoROSTopic);
         }
 
 
@@ -70,13 +108,18 @@ namespace ZO.ROS.Publisher {
         /// <param name="rgbData">Raw RBG8 data </param>
         /// <returns></returns>
         private Task OnPublishRGBImageDelegate(ZORGBCamera rgbCamera, string cameraId, int width, int height, byte[] rgbData) {
+
+            // figure out the transforms
             ZOROSTransformPublisher transformPublisher = GetComponent<ZOROSTransformPublisher>();
             if (transformPublisher != null) {
-                _rosImageMessage.header.frame_id = transformPublisher.ChildFrameID;            
+                _rosImageMessage.header.frame_id = transformPublisher.ChildFrameID;
+                _rosCameraInfoMessage.header.frame_id = transformPublisher.ChildFrameID;
             } else {
-                _rosImageMessage.header.frame_id = Name;            
+                _rosImageMessage.header.frame_id = Name;
+                _rosCameraInfoMessage.header.frame_id = Name;
             }
-            
+
+            // setup and send Image message
             _rosImageMessage.header.Update();
             _rosImageMessage.height = (uint)height;
             _rosImageMessage.width = (uint)width;
@@ -84,7 +127,21 @@ namespace ZO.ROS.Publisher {
             _rosImageMessage.is_bigendian = 0;
             _rosImageMessage.step = 1 * 3 * (uint)width;
             _rosImageMessage.data = rgbData;
-            ROSBridgeConnection.Publish<ImageMessage>(_rosImageMessage, ROSTopic, Name);
+            ROSBridgeConnection.Publish<ImageMessage>(_rosImageMessage, _imageROSTopic, Name);
+
+            // setup and send CameraInfo message            
+            _rosCameraInfoMessage.Update();
+            _rosCameraInfoMessage.header = _rosImageMessage.header;
+            // initialize the camera info
+            if (RGBCameraSensor.UnityCamera.usePhysicalProperties == true) {
+                _rosCameraInfoMessage.BuildCameraInfo((uint)RGBCameraSensor.Width, (uint)RGBCameraSensor.Height,
+                                                (double)RGBCameraSensor.FocalLengthMM,
+                                                (double)RGBCameraSensor.SensorSizeMM.x, (double)RGBCameraSensor.SensorSizeMM.y);
+            } else {
+                _rosCameraInfoMessage.BuildCameraInfo((uint)RGBCameraSensor.Width, (uint)RGBCameraSensor.Height, (double)RGBCameraSensor.FieldOfViewDegrees);
+            }
+
+            ROSBridgeConnection.Publish<CameraInfoMessage>(_rosCameraInfoMessage, _cameraInfoROSTopic, cameraId);
 
             return Task.CompletedTask;
         }

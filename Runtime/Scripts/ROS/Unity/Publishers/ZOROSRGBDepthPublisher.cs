@@ -45,7 +45,7 @@ namespace ZO.ROS.Publisher {
         }
         private ImageMessage _colorImageMessage = new ImageMessage();
         private ImageMessage _depthImageMessage = new ImageMessage();
-        private CameraInfoMessage _camerInfoMessage = new CameraInfoMessage();
+        private CameraInfoMessage _cameraInfoMessage = new CameraInfoMessage();
 
         protected override void ZOReset() {
             base.ZOReset();
@@ -59,11 +59,11 @@ namespace ZO.ROS.Publisher {
             }
             // initialize the camera info
             if (_rgbDepthCameraSensor.UnityCamera.usePhysicalProperties == true) {
-                _camerInfoMessage.BuildCameraInfo((uint)_rgbDepthCameraSensor.Width, (uint)_rgbDepthCameraSensor.Height,
+                _cameraInfoMessage.BuildCameraInfo((uint)_rgbDepthCameraSensor.Width, (uint)_rgbDepthCameraSensor.Height,
                                                 (double)_rgbDepthCameraSensor.FocalLengthMM,
                                                 (double)_rgbDepthCameraSensor.SensorSizeMM.x, (double)_rgbDepthCameraSensor.SensorSizeMM.y);
             } else {
-                _camerInfoMessage.BuildCameraInfo((uint)_rgbDepthCameraSensor.Width, (uint)_rgbDepthCameraSensor.Height, (double)_rgbDepthCameraSensor.FieldOfViewDegrees);
+                _cameraInfoMessage.BuildCameraInfo((uint)_rgbDepthCameraSensor.Width, (uint)_rgbDepthCameraSensor.Height, (double)_rgbDepthCameraSensor.FieldOfViewDegrees);
             }
 
         }
@@ -77,13 +77,13 @@ namespace ZO.ROS.Publisher {
             // advertise
             ROSBridgeConnection.Advertise(_rgbImageROSTopic, _colorImageMessage.MessageType);
             ROSBridgeConnection.Advertise(_depthROSTopic, _depthImageMessage.MessageType);
-            ROSBridgeConnection.Advertise(_cameraInfoROSTopic, _camerInfoMessage.MessageType);
+            ROSBridgeConnection.Advertise(_cameraInfoROSTopic, _cameraInfoMessage.MessageType);
 
 
             // setup the transforms
             _colorImageMessage.header.frame_id = _rgbTransformName;
             _depthImageMessage.header.frame_id = _rgbTransformName;
-            _camerInfoMessage.header.frame_id = _rgbTransformName;
+            _cameraInfoMessage.header.frame_id = _rgbTransformName;
 
             // hookup to the sensor update delegate
             _rgbDepthCameraSensor.OnPublishDelegate = OnPublishRGBDepthDelegate;
@@ -136,9 +136,9 @@ namespace ZO.ROS.Publisher {
             System.Buffer.BlockCopy(depthData, 0, _depthImageMessage.data, 0, 4 * width * height);
             ROSBridgeConnection.Publish<ImageMessage>(_depthImageMessage, _depthROSTopic, cameraId);
 
-            _camerInfoMessage.Update();
-            _camerInfoMessage.header = _colorImageMessage.header;
-            ROSBridgeConnection.Publish<CameraInfoMessage>(_camerInfoMessage, _cameraInfoROSTopic, cameraId);
+            _cameraInfoMessage.Update();
+            _cameraInfoMessage.header = _colorImageMessage.header;
+            ROSBridgeConnection.Publish<CameraInfoMessage>(_cameraInfoMessage, _cameraInfoROSTopic, cameraId);
 
 
             return Task.CompletedTask;
