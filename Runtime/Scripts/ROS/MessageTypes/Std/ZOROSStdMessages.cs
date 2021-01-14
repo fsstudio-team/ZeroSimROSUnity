@@ -68,8 +68,6 @@ namespace ZO.ROS.MessageTypes.Std {
         //  time-handling sugar is provided by the client library
         public TimeMessage stamp { get; set; }
         // Frame this data is associated with
-        //  0: no frame
-        //  1: global frame
         public string frame_id { get; set; }
 
         public HeaderMessage() {

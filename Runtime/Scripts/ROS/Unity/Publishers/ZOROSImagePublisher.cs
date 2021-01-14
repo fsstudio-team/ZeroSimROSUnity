@@ -10,6 +10,7 @@ namespace ZO.ROS.Publisher {
 
     /// <summary>
     /// Publish /sensor/Image message.
+    /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
     /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
     /// </summary>
     public class ZOROSImagePublisher : ZOROSUnityGameObjectBase, ZOSerializationInterface {
@@ -57,7 +58,25 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }
 
+
+        /// <summary>
+        /// Publishes raw camera RBG8 data as a ROS Image message.
+        /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
+        /// </summary>
+        /// <param name="rgbCamera">The camera component</param>
+        /// <param name="cameraId">Camera ID</param>
+        /// <param name="width">Frame width</param>
+        /// <param name="height">Frame height</param>
+        /// <param name="rgbData">Raw RBG8 data </param>
+        /// <returns></returns>
         private Task OnPublishRGBImageDelegate(ZORGBCamera rgbCamera, string cameraId, int width, int height, byte[] rgbData) {
+            ZOROSTransformPublisher transformPublisher = GetComponent<ZOROSTransformPublisher>();
+            if (transformPublisher != null) {
+                _rosImageMessage.header.frame_id = transformPublisher.ChildFrameID;            
+            } else {
+                _rosImageMessage.header.frame_id = Name;            
+            }
+            
             _rosImageMessage.header.Update();
             _rosImageMessage.height = (uint)height;
             _rosImageMessage.width = (uint)width;
