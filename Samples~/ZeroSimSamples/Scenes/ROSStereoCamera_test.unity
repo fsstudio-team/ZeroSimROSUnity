@@ -815,6 +815,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 179339641093186884, guid: 9ea38337ae883d6fbabf438dcdcbdf9f,
+        type: 3}
+      propertyPath: _imageROSTopic
+      value: stereo_camera/left/image_raw
+      objectReference: {fileID: 0}
+    - target: {fileID: 179339641093186884, guid: 9ea38337ae883d6fbabf438dcdcbdf9f,
+        type: 3}
+      propertyPath: _cameraInfoROSTopic
+      value: stereo_camera/left/camera_info
+      objectReference: {fileID: 0}
     - target: {fileID: 1268806742888531290, guid: 9ea38337ae883d6fbabf438dcdcbdf9f,
         type: 3}
       propertyPath: m_RootOrder
@@ -884,6 +894,16 @@ PrefabInstance:
         type: 3}
       propertyPath: _updateRateHz
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861479331441298344, guid: 9ea38337ae883d6fbabf438dcdcbdf9f,
+        type: 3}
+      propertyPath: _imageROSTopic
+      value: stereo_camera/right/image_raw
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861479331441298344, guid: 9ea38337ae883d6fbabf438dcdcbdf9f,
+        type: 3}
+      propertyPath: _cameraInfoROSTopic
+      value: stereo_camera/right/camera_info
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ea38337ae883d6fbabf438dcdcbdf9f, type: 3}
