@@ -354,8 +354,8 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         /// <summary>
         /// Handles subscribed to `TwistMessage` which controls the differential control steering and drive. 
         /// </summary>
-        /// <param name="rosBridgeConnection"></param>
-        /// <param name="msg"></param>
+        /// <param name="rosBridgeConnection">ROS Bridge Connection</param>
+        /// <param name="msg">TwistMessage</param>
         /// <returns></returns>
         public Task OnROSTwistMessageReceived(ZOROSBridgeConnection rosBridgeConnection, ZOROSMessageInterface msg) {
             _twistMessage = (TwistMessage)msg;
