@@ -1,6 +1,7 @@
 using System;
 
 using ZO.ROS.MessageTypes.Std;
+using ZO.ROS.MessageTypes.Geometry;
 
 namespace ZO.ROS.MessageTypes.Sensor {
 
@@ -197,6 +198,64 @@ namespace ZO.ROS.MessageTypes.Sensor {
         }
     }
 
+    /// <summary>
+    /// This is a message to hold data from an IMU (Inertial Measurement Unit)
+    ///
+    /// Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec
+    ///
+    /// If the covariance of the measurement is known, it should be filled in (if all you know is the 
+    /// variance of each measurement, e.g. from the datasheet, just put those along the diagonal)
+    /// A covariance matrix of all zeros will be interpreted as "covariance unknown", and to use the
+    /// data a covariance will have to be assumed or gotten from some other source
+    ///
+    /// If you have no estimate for one of the data elements (e.g. your IMU doesn't produce an orientation 
+    /// estimate), please set element 0 of the associated covariance matrix to -1
+    /// If you are interpreting this message, please check for a value of -1 in the first element of each 
+    /// covariance matrix, and disregard the associated estimate.
+    /// </summary>
+    public class ImuMessage : ZOROSMessageInterface {
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return ImuMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type { get { return "sensor_msgs/Imu"; } }
+
+        public HeaderMessage header { get; set; }
+
+        public QuaternionMessage orientation { get; set; }
+        public double[] orientation_covariance { get; set; }
+        public Vector3Message angular_velocity { get; set; }
+        public double[] angular_velocity_covariance { get; set; }
+        //  Row major about x, y, z axes
+        public Vector3Message linear_acceleration { get; set; }
+        public double[] linear_acceleration_covariance { get; set; }
+        //  Row major x, y z 
+
+        public ImuMessage() {
+            this.header = new HeaderMessage();
+            this.orientation = new QuaternionMessage();
+            this.orientation_covariance = new double[9];
+            this.angular_velocity = new Vector3Message();
+            this.angular_velocity_covariance = new double[9];
+            this.linear_acceleration = new Vector3Message();
+            this.linear_acceleration_covariance = new double[9];
+        }
+
+        public ImuMessage(HeaderMessage header, QuaternionMessage orientation, double[] orientation_covariance, Vector3Message angular_velocity, double[] angular_velocity_covariance, Vector3Message linear_acceleration, double[] linear_acceleration_covariance) {
+            this.header = header;
+            this.orientation = orientation;
+            this.orientation_covariance = orientation_covariance;
+            this.angular_velocity = angular_velocity;
+            this.angular_velocity_covariance = angular_velocity_covariance;
+            this.linear_acceleration = linear_acceleration;
+            this.linear_acceleration_covariance = linear_acceleration_covariance;
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+
+    }
 
     /// <summary>
     /// This message is used to specify a region of interest within an image.
@@ -449,9 +508,9 @@ namespace ZO.ROS.MessageTypes.Sensor {
             double cy = this.height / 2.0;
             // focal length pixels = focal length mm * pixel width / sensor size mm
             //double fx = 37.46 * 640.0 / 36.0;// //360;//37.46;//this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
-            double fx = this.width / System.Math.Tan(fovRadians/2.0);
+            double fx = this.width / System.Math.Tan(fovRadians / 2.0);
             double fy = fx;
-            
+
             this.K = new double[9] {fx, 0, cx,
                                     0, fy, cy,
                                     0, 0, 1};
@@ -487,7 +546,7 @@ namespace ZO.ROS.MessageTypes.Sensor {
             //double fx = 37.46 * 640.0 / 36.0;// //360;//37.46;//this.width / (2.0 * System.Math.Tan(fovRadians) * System.Math.PI / 360.0);
             double fx = focalLengthMM * this.width / sensorSizeXMM;
             double fy = focalLengthMM * this.height / sensorSizeYMM;
-            
+
             this.K = new double[9] {fx, 0, cx,
                                     0, fy, cy,
                                     0, 0, 1};

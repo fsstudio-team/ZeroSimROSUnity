@@ -3,24 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 
-namespace ZO.Util {
+using ZO.Document;
+using ZO.Util;
+using ZO.Util.Extensions;
+
+
+namespace ZO.Sensors {
 
     [RequireComponent(typeof(Rigidbody))]
-    public class ZOIMU : ZOGameObjectBase {
+    public class ZOIMU : ZOGameObjectBase, ZOSerializationInterface {
 
-        [Header("IMU Parametrs")]
+        [Header("IMU Parameters")]
         public String _imuId = "none";
 
-        // RightHanded_XBackward_YLeft_ZUp,
-        // LeftHanded_XRight_YUp_ZForward // Unity Standard
-
-        public enum ReferenceFrame {
-            RightHanded_XBackward_YLeft_ZUp,
-            LeftHanded_XRight_YUp_ZForward // Unity Standard
-        };
-
-        public ReferenceFrame _referenceFrame = ReferenceFrame.LeftHanded_XRight_YUp_ZForward;
 
         [Header("Noise Models")]
         /// <summary>
@@ -90,8 +87,11 @@ namespace ZO.Util {
             get { return _orientation; }
         }
 
+
+        #region ZOGameObjectBase
+
         // Start is called before the first frame update
-        void Start() {
+        protected override void ZOStart() {
             _rigidBody = GetComponent<Rigidbody>();
         }
 
@@ -115,20 +115,14 @@ namespace ZO.Util {
             Vector3 publishedAngularVelocity = _angularVelocity;
             Quaternion publishedOrientation = transform.rotation;
 
-            if (_referenceFrame == ReferenceFrame.RightHanded_XBackward_YLeft_ZUp) {
-                //  (x, y, z, w) -> (-x, -z, y, -w).
-                publishedOrientation = new Quaternion(-transform.rotation.z, -transform.rotation.x, transform.rotation.y, -transform.rotation.w);
-                // if (m_zReverse)
-                //     rot = new Quaternion (-rot.x, rot.y, -rot.z, rot.w);     
-                publishedAcceleration = new Vector3(-_acceleration.z, -_acceleration.x, _acceleration.y);
-                publishedAngularVelocity = new Vector3(-_angularVelocity.z, -_angularVelocity.x, _angularVelocity.y);
-            }
 
             if (OnPublishDelegate != null) {
                 await OnPublishDelegate(this, _imuId, publishedAcceleration, publishedAngularVelocity, publishedOrientation);
             }
 
         }
+
+        #endregion // ZOGameObjectBase
 
         /* # Notes:
 
@@ -138,6 +132,55 @@ namespace ZO.Util {
 
         */
 
+        #region ZOSerializationInterface
+        public string Type {
+            get { return "sensor.imu"; }
+        }
+
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        private JObject _json;
+        public JObject JSON {
+            get => _json;
+        }
+
+
+        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
+            JObject json = new JObject(
+                new JProperty("name", Name),
+                new JProperty("type", Type),
+                new JProperty("update_rate_hz", UpdateRateHz)
+            );
+
+
+            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
+            if (parent_occurrence) {
+                json["parent_occurrence"] = parent_occurrence.Name;
+            }
+
+            _json = json;
+
+            return json;
+        }
+
+
+        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
+            // Assert.Equals(json["type"].Value<string>() == Type);
+            _json = json;
+            Name = json.ValueOrDefault("name", Name);
+            UpdateRateHz = json.ValueOrDefault("update_rate_hz", UpdateRateHz);
+
+
+        }
+        #endregion // ZOSerializationInterface
 
 
     }
