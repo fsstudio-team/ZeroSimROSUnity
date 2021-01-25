@@ -185,11 +185,16 @@ namespace ZO.ROS.Publisher {
             _leftImageMessage.header.Update();
             _leftImageMessage.height = (uint)height;
             _leftImageMessage.width = (uint)width;
-            _leftImageMessage.encoding = "rgb8";
             _leftImageMessage.is_bigendian = 0;
-            _leftImageMessage.step = 1 * 3 * (uint)width;
             _leftImageMessage.data = rgbData;
-            // ROSBridgeConnection.Publish<ImageMessage>(_rosImageMessage, _imageROSTopic, Name);
+
+            if (LeftCameraSensor.IsMonochrome == true) {
+                _leftImageMessage.step = (uint)width;
+                _leftImageMessage.encoding = "mono8";
+            } else { // RGB
+                _leftImageMessage.step = 1 * 3 * (uint)width;
+                _leftImageMessage.encoding = "rgb8";
+            }
 
             // setup and send CameraInfo message            
             _leftCameraInfoMessage.Update();
@@ -203,7 +208,6 @@ namespace ZO.ROS.Publisher {
                 _leftCameraInfoMessage.BuildCameraInfo((uint)LeftCameraSensor.Width, (uint)LeftCameraSensor.Height, (double)LeftCameraSensor.FieldOfViewDegrees);
             }
 
-            // ROSBridgeConnection.Publish<CameraInfoMessage>(_rosCameraInfoMessage, _cameraInfoROSTopic, cameraId);
             UpdateCameraSynchronization();
 
             return Task.CompletedTask;
@@ -235,11 +239,16 @@ namespace ZO.ROS.Publisher {
             _rightImageMessage.header.Update();
             _rightImageMessage.height = (uint)height;
             _rightImageMessage.width = (uint)width;
-            _rightImageMessage.encoding = "rgb8";
             _rightImageMessage.is_bigendian = 0;
-            _rightImageMessage.step = 1 * 3 * (uint)width;
             _rightImageMessage.data = rgbData;
-            // ROSBridgeConnection.Publish<ImageMessage>(_rosImageMessage, _imageROSTopic, Name);
+
+            if (RightCameraSensor.IsMonochrome == true) {
+                _rightImageMessage.step = (uint)width;
+                _rightImageMessage.encoding = "mono8";
+            } else { // RGB
+                _rightImageMessage.step = 1 * 3 * (uint)width;
+                _rightImageMessage.encoding = "rgb8";
+            }
 
             // setup and send CameraInfo message            
             _rightCameraInfoMessage.Update();
@@ -253,7 +262,6 @@ namespace ZO.ROS.Publisher {
                 _rightCameraInfoMessage.BuildCameraInfo((uint)RightCameraSensor.Width, (uint)RightCameraSensor.Height, (double)RightCameraSensor.FieldOfViewDegrees);
             }
 
-            // ROSBridgeConnection.Publish<CameraInfoMessage>(_rightCameraInfoMessage, _cameraInfoROSTopic, cameraId);
             UpdateCameraSynchronization();
 
             return Task.CompletedTask;
