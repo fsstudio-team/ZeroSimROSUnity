@@ -59,7 +59,7 @@ namespace ZO.Sensors {
         /// </summary>
         /// <value></value>
         public float FieldOfViewDegrees {
-            get { return UnityCamera.fieldOfView; }            
+            get { return UnityCamera.fieldOfView; }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace ZO.Sensors {
             get { return _isMonochrome; }
         }
 
-        
+
 
         [Header("Render Parameters")]
         [SerializeField]
@@ -134,7 +134,7 @@ namespace ZO.Sensors {
             } else { // RGB
                 _colorPixels24 = new byte[_width * _height * 3];
             }
-            
+
 
             if (IsDebug == true) {
                 _debugTexture = new Texture2D(_width, _height, TextureFormat.RGB24, false);
@@ -146,7 +146,7 @@ namespace ZO.Sensors {
             } else {
                 Debug.LogWarning("WARNING: NO support for native AsyncGPUReadback. Using 3rd party.");
             }
-            
+
 
         }
 
@@ -210,8 +210,9 @@ namespace ZO.Sensors {
                                     _colorPixels24[c3 + 1] = (byte)(rawTextureData[c4 + 2]);
                                     _colorPixels24[c3 + 2] = (byte)(rawTextureData[c4 + 3]);
                                 }
+                                OnPublishRGBImageDelegate(this, Name, _width, _height, _colorPixels24);
+
                             }
-                            OnPublishRGBImageDelegate(this, Name, _width, _height, _colorPixels24);
                             UnityEngine.Profiling.Profiler.EndSample();
                         } else {
                             // Debug.Log("skip");
@@ -240,7 +241,7 @@ namespace ZO.Sensors {
             }
         }
 
-#region ZOSerializationInterface
+        #region ZOSerializationInterface
         public string Type {
             get { return "sensor.rgbcamera"; }
         }
@@ -304,12 +305,12 @@ namespace ZO.Sensors {
             UnityCamera.fieldOfView = json.ValueOrDefault("field_of_view", UnityCamera.fieldOfView);
             UnityCamera.depth = json.ValueOrDefault("depth", UnityCamera.depth);
             UnityCamera.sensorSize = json.ToVector2OrDefault("sensor_size", UnityCamera.sensorSize);
-            UnityCamera.focalLength = json.ValueOrDefault("focal_length", UnityCamera.focalLength);   
+            UnityCamera.focalLength = json.ValueOrDefault("focal_length", UnityCamera.focalLength);
 
             Initialize();
 
         }
-#endregion
+        #endregion
 
 
 

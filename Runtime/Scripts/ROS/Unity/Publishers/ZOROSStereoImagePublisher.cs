@@ -107,6 +107,7 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
 
+
         private void Initialize() {
             // advertise
             ROSBridgeConnection.Advertise(LeftImageROSTopic, _leftImageMessage.MessageType);
@@ -151,7 +152,7 @@ namespace ZO.ROS.Publisher {
                 // send the messages
                 ROSBridgeConnection.Publish<ImageMessage>(_leftImageMessage, LeftImageROSTopic, LeftCameraSensor.Name);
                 ROSBridgeConnection.Publish<CameraInfoMessage>(_leftCameraInfoMessage, LeftCameraInfoROSTopic, LeftCameraSensor.Name);
-                ROSBridgeConnection.Publish<ImageMessage>(_rightImageMessage, RightImageROSTopic, RightCameraSensor.Name);                
+                ROSBridgeConnection.Publish<ImageMessage>(_rightImageMessage, RightImageROSTopic, RightCameraSensor.Name);
                 ROSBridgeConnection.Publish<CameraInfoMessage>(_rightCameraInfoMessage, RightCameraInfoROSTopic, RightCameraSensor.Name);
             }
             _cameraSync++;
@@ -189,7 +190,7 @@ namespace ZO.ROS.Publisher {
             _leftImageMessage.data = rgbData;
 
             if (LeftCameraSensor.IsMonochrome == true) {
-                _leftImageMessage.step = (uint)width;
+                _leftImageMessage.step = 1 * (uint)width;
                 _leftImageMessage.encoding = "mono8";
             } else { // RGB
                 _leftImageMessage.step = 1 * 3 * (uint)width;
