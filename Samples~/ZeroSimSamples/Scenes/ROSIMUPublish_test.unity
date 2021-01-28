@@ -2081,6 +2081,7 @@ GameObject:
   - component: {fileID: 1753787005}
   - component: {fileID: 1753787004}
   - component: {fileID: 1753787003}
+  - component: {fileID: 1753787008}
   m_Layer: 0
   m_Name: IMU
   m_TagString: Untagged
@@ -2107,6 +2108,7 @@ MonoBehaviour:
   _ROSTopic: imu
   _name: ros.publisher.imu_IMU
   _imuSensor: {fileID: 1753787004}
+  _coordinateSystem: 1
 --- !u!114 &1753787004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2119,7 +2121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c60fd8f844d425c388b59c3631f6062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 100
+  _updateRateHz: 10
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
@@ -2190,6 +2192,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!138 &1753787008
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753787002}
+  m_ConnectedBody: {fileID: 0}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &1764802517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2551,6 +2568,7 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _camera: {fileID: 2143639010}
+  _isMonochrome: 0
   _width: 640
   _height: 480
   _postProcessMaterial: {fileID: 2100000, guid: d2f03b5f033866ec6b3b16cabc66b331,
