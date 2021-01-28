@@ -16,7 +16,19 @@ namespace ZO.Sensors {
     public class ZOIMU : ZOGameObjectBase, ZOSerializationInterface {
 
         [Header("IMU Parameters")]
-        public String _imuId = "none";
+        public bool _flipGravity = false;
+
+        /// <summary>
+        /// Flips gravity vectory. 
+        /// Why would you: the accelerometer is an intertial sensor and it measures inertial force. 
+        /// The accelerometer doesn’t measure G-force, but rather the force that resists to G. 
+        /// The resisting force aims up to the ceiling.
+        /// </summary>
+        /// <value></value>
+        public bool FlipGravity {
+            get {return _flipGravity;}
+            set {_flipGravity = value;}
+        }
 
 
         [Header("Noise Models")]
@@ -102,7 +114,14 @@ namespace ZO.Sensors {
             Vector3 prevAcceleration = _acceleration;
             _acceleration = (velocity - _lastVelocity) / Time.fixedDeltaTime;
             _lastVelocity = velocity;
-            _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);
+
+            // apply gravity
+            if (FlipGravity == true) {
+                _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity * -1);
+            } else {
+                _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);
+            }
+            
             _acceleration = _linearNoise.Apply(_acceleration);
             _acceleration = ZO.Math.ZOMathUtil.lowPassFilter(_acceleration, prevAcceleration, _preFilterAccelerationAlpha);
 
@@ -117,7 +136,7 @@ namespace ZO.Sensors {
 
 
             if (OnPublishDelegate != null) {
-                await OnPublishDelegate(this, _imuId, publishedAcceleration, publishedAngularVelocity, publishedOrientation);
+                await OnPublishDelegate(this, Name, publishedAcceleration, publishedAngularVelocity, publishedOrientation);
             }
 
         }
