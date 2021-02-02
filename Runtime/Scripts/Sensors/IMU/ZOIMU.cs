@@ -16,18 +16,18 @@ namespace ZO.Sensors {
     public class ZOIMU : ZOGameObjectBase, ZOSerializationInterface {
 
         [Header("IMU Parameters")]
-        public bool _flipGravity = false;
+        public bool _flipAccelerations = false;
 
         /// <summary>
-        /// Flips gravity vectory. 
+        /// Flips gravity vector. 
         /// Why would you: the accelerometer is an intertial sensor and it measures inertial force. 
         /// The accelerometer doesn’t measure G-force, but rather the force that resists to G. 
         /// The resisting force aims up to the ceiling.
         /// </summary>
         /// <value></value>
-        public bool FlipGravity {
-            get {return _flipGravity;}
-            set {_flipGravity = value;}
+        public bool FlipAccellerations {
+            get {return _flipAccelerations;}
+            set {_flipAccelerations = value;}
         }
 
 
@@ -116,12 +116,14 @@ namespace ZO.Sensors {
             _lastVelocity = velocity;
 
             // apply gravity
-            if (FlipGravity == true) {
+            if (FlipAccellerations == true) {
                 _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity * -1);
             } else {
-                _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);
+                
             }
-            
+
+            // calculate gravity
+            _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);            
             _acceleration = _linearNoise.Apply(_acceleration);
             _acceleration = ZO.Math.ZOMathUtil.lowPassFilter(_acceleration, prevAcceleration, _preFilterAccelerationAlpha);
 
@@ -133,6 +135,10 @@ namespace ZO.Sensors {
             Vector3 publishedAcceleration = _acceleration;
             Vector3 publishedAngularVelocity = _angularVelocity;
             Quaternion publishedOrientation = transform.rotation;
+
+            if (FlipAccellerations == true) {
+                publishedAcceleration = publishedAcceleration * -1;
+            }
 
 
             if (OnPublishDelegate != null) {
