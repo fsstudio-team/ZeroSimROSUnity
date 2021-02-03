@@ -76,9 +76,7 @@ namespace ZO.ROS.Controllers {
         }
         public float _wheelRadius = 0;
         public float _wheelSeperation = 0;
-
-        // public ZO.Physics.ZOSpeedLimiter _speedLimiterLinear;
-        // public ZO.Physics.ZOSpeedLimiter _speedLimiterAngular;
+        public bool _steerOpposite = false;
 
         private float _linearVelocity = 0;
         private float _angularVelocity = 0;
@@ -138,9 +136,14 @@ namespace ZO.ROS.Controllers {
         }
 
         protected override void ZOFixedUpdate() {
-            // update the motors
+            // update the motors from the twist message
             LinearVelocity = (float)-_twistMessage.linear.x * Mathf.Rad2Deg;
-            AngularVelocity = (float)_twistMessage.angular.z * Mathf.Rad2Deg;
+            if (_steerOpposite == true) {
+                AngularVelocity = (float)-_twistMessage.angular.z * Mathf.Rad2Deg;
+            } else {
+                AngularVelocity = (float)_twistMessage.angular.z * Mathf.Rad2Deg;
+            }
+            
         }
         protected override void ZOFixedUpdateHzSynchronized() {
 
