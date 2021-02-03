@@ -15,20 +15,6 @@ namespace ZO.Sensors {
     [RequireComponent(typeof(Rigidbody))]
     public class ZOIMU : ZOGameObjectBase, ZOSerializationInterface {
 
-        [Header("IMU Parameters")]
-        public bool _flipAccelerations = false;
-
-        /// <summary>
-        /// Flips gravity vector. 
-        /// Why would you: the accelerometer is an intertial sensor and it measures inertial force. 
-        /// The accelerometer doesn’t measure G-force, but rather the force that resists to G. 
-        /// The resisting force aims up to the ceiling.
-        /// </summary>
-        /// <value></value>
-        public bool FlipAccellerations {
-            get {return _flipAccelerations;}
-            set {_flipAccelerations = value;}
-        }
 
 
         [Header("Noise Models")]
@@ -115,12 +101,6 @@ namespace ZO.Sensors {
             _acceleration = (velocity - _lastVelocity) / Time.fixedDeltaTime;
             _lastVelocity = velocity;
 
-            // apply gravity
-            if (FlipAccellerations == true) {
-                _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity * -1);
-            } else {
-                
-            }
 
             // calculate gravity
             _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);            
@@ -135,10 +115,6 @@ namespace ZO.Sensors {
             Vector3 publishedAcceleration = _acceleration;
             Vector3 publishedAngularVelocity = _angularVelocity;
             Quaternion publishedOrientation = transform.rotation;
-
-            if (FlipAccellerations == true) {
-                publishedAcceleration = publishedAcceleration * -1;
-            }
 
 
             if (OnPublishDelegate != null) {

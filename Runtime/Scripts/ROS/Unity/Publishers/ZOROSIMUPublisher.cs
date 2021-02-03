@@ -49,6 +49,21 @@ namespace ZO.ROS.Publisher {
             set { _coordinateSystem = value; }
         }
 
+        public bool _reverseLinearAccelerations = false;
+
+        /// <summary>
+        /// Flips gravity vector. 
+        /// Why would you: the accelerometer is an intertial sensor and it measures inertial force. 
+        /// The accelerometer doesn’t measure G-force, but rather the force that resists to G. 
+        /// The resisting force aims up to the ceiling.
+        /// </summary>
+        /// <value></value>
+        public bool ReverseLinearAccelerations {
+            get { return _reverseLinearAccelerations; }
+            set { _reverseLinearAccelerations = value; }
+        }
+
+
 
         private ZOROSTransformPublisher _transformPublisher = null;
         public ZOROSTransformPublisher TransformPublisher {
@@ -102,6 +117,12 @@ namespace ZO.ROS.Publisher {
             _imuMessage.header.Update();
             _imuMessage.header.frame_id = TransformPublisher.ChildFrameID;
 
+
+            if (ReverseLinearAccelerations == true) {
+                linearAccel = linearAccel * -1;
+            }
+
+
             if (_coordinateSystem == CoordinateSystemEnum.ROS_RightHanded_XForward_YLeft_ZUp) {
                 _imuMessage.linear_acceleration.UnityVector3 = linearAccel;
                 _imuMessage.angular_velocity.UnityVector3 = angularVelocity;
@@ -133,7 +154,7 @@ namespace ZO.ROS.Publisher {
                 _imuMessage.linear_acceleration.z = linearAccel.z;
 
                 _imuMessage.angular_velocity.x = angularVelocity.x;
-                _imuMessage.angular_velocity.y = -angularVelocity.y;
+                _imuMessage.angular_velocity.y = angularVelocity.y;
                 _imuMessage.angular_velocity.z = angularVelocity.z;
 
             } else if (CoordinateSystem == CoordinateSystemEnum.Unity_LeftHanded_XRight_YUp_ZForward) {
@@ -151,6 +172,8 @@ namespace ZO.ROS.Publisher {
                 _imuMessage.angular_velocity.z = angularVelocity.z;
 
             }
+
+
 
 
             ROSBridgeConnection.Publish(_imuMessage, ROSTopic, Name);
