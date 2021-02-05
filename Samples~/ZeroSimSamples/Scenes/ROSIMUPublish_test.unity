@@ -1810,6 +1810,7 @@ MonoBehaviour:
   _leftWheelMotor: {fileID: 785401904}
   _wheelRadius: 0.033
   _wheelSeperation: 0.273
+  _steerOpposite: 0
   _ROSTopicSubscription: /cmd_vel
 --- !u!1 &1503137396
 GameObject:
@@ -2122,7 +2123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c60fd8f844d425c388b59c3631f6062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 200
+  _updateRateHz: 100
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
