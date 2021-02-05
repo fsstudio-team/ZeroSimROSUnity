@@ -93,7 +93,7 @@ namespace ZO.Sensors {
             _rigidBody = GetComponent<Rigidbody>();
         }
 
-        protected override async void ZOFixedUpdate() {
+        protected override async void ZOFixedUpdateHzSynchronized() {
 
             // calculate linear acceleration
             Vector3 velocity = transform.InverseTransformDirection(_rigidBody.velocity);
