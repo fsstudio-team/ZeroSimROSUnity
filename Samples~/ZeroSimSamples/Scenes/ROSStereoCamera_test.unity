@@ -323,10 +323,30 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 270870987501896694, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: field of view
+      value: 64.00057
+      objectReference: {fileID: 0}
+    - target: {fileID: 270870987501896694, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: m_FocalLength
+      value: 2.208437
+      objectReference: {fileID: 0}
+    - target: {fileID: 270870987501896694, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: m_projectionMatrixMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 270870987501896694, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: m_AllowDynamicResolution
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1530428453377767332, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
       propertyPath: m_Name
-      value: ROSMonoStereoCamera
+      value: ROSMonochromeStereoCamera
       objectReference: {fileID: 0}
     - target: {fileID: 1530428453377767332, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
@@ -346,12 +366,12 @@ PrefabInstance:
     - target: {fileID: 1530428453377767333, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.7600002
+      value: 2.33
       objectReference: {fileID: 0}
     - target: {fileID: 1530428453377767333, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.4099998
+      value: 2.87
       objectReference: {fileID: 0}
     - target: {fileID: 1530428453377767333, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
@@ -402,6 +422,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759282756972031258, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: field of view
+      value: 64.00057
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759282756972031258, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: m_FocalLength
+      value: 2.208437
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759282756972031258, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
+        type: 3}
+      propertyPath: m_projectionMatrixMode
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1759282756972031263, guid: 8f56f9469e91f25c8bbc5230cc29a09a,
         type: 3}
@@ -1021,22 +1056,22 @@ PrefabInstance:
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.436238
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.6646724
+      value: 2.29
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.720226
+      value: 2.85
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
@@ -1046,7 +1081,7 @@ PrefabInstance:
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
@@ -1061,7 +1096,7 @@ PrefabInstance:
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 8727341330058895102, guid: 37c5c5ffff32e0944a9fa39eedba6605,
         type: 3}
