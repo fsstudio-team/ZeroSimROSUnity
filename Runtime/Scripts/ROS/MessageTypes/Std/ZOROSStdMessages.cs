@@ -22,12 +22,15 @@ namespace ZO.ROS.MessageTypes.Std {
             this.nsecs = nsecs;
         }
 
+        [Newtonsoft.Json.JsonIgnore]
+        private ZO.Util.ZOClock _clock = new ZO.Util.ZOClock();
         /// <summary>
         /// Sets the timestamp to Now
         /// </summary>
         public void Now() {
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            TimeSpan timeSpan = DateTime.Now.ToUniversalTime() - epoch;
+            // TimeSpan timeSpan = DateTime.Now.ToUniversalTime() - epoch;
+            TimeSpan timeSpan = _clock.UtcNow - epoch;
             double msecs = timeSpan.TotalMilliseconds;
             secs = (uint)(msecs / 1000);
             nsecs = (uint)((msecs / 1000 - secs) * 1e+9);
