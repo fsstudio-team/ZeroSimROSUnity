@@ -59,8 +59,8 @@ namespace ZO.Util {
             get { return _nextUpdateTime; }
             set { _nextUpdateTime = value; }
         }
-        private float _nextFixedUpdateTime = 0.0f;
-        public float NextFixedUpdateTime {
+        private double _nextFixedUpdateTime = 0.0f;
+        public double NextFixedUpdateTime {
             get { return _nextFixedUpdateTime; }
             set { _nextFixedUpdateTime = value; }
         }
@@ -197,8 +197,8 @@ namespace ZO.Util {
         void FixedUpdate() {
             ZOFixedUpdate();
 
-            if (Time.fixedTime >= _nextFixedUpdateTime) {
-                _nextFixedUpdateTime = Time.fixedTime + (1.0f / _updateRateHz);
+            if (Time.fixedUnscaledTimeAsDouble >= _nextFixedUpdateTime) {
+                _nextFixedUpdateTime = Time.fixedUnscaledTimeAsDouble + (1.0 / _updateRateHz);
 
                 ZOFixedUpdateHzSynchronized();
 
