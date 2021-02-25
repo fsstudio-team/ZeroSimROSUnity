@@ -113,7 +113,7 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }
 
-        private Task OnPublishImuDelegate(ZOIMU lidar, string name, Vector3 linearAccel, Vector3 angularVelocity, Quaternion orientation) {
+        private Task OnPublishImuDelegate(ZOIMU lidar, string name, Vector3 linearAccel, Vector3 gravity, Vector3 angularVelocity, Quaternion orientation) {
             _imuMessage.header.Update();
             _imuMessage.header.frame_id = TransformPublisher.ChildFrameID;
 
@@ -124,7 +124,7 @@ namespace ZO.ROS.Publisher {
 
 
             if (_coordinateSystem == CoordinateSystemEnum.ROS_RightHanded_XForward_YLeft_ZUp) {
-                _imuMessage.linear_acceleration.UnityVector3 = linearAccel;
+                _imuMessage.linear_acceleration.UnityVector3 = (linearAccel + gravity); 
                 _imuMessage.angular_velocity.UnityVector3 = angularVelocity;
                 _imuMessage.orientation.UnityQuaternion = orientation;
 
@@ -135,23 +135,23 @@ namespace ZO.ROS.Publisher {
                 _imuMessage.orientation.z = orientation.y;
                 _imuMessage.orientation.w = -orientation.w;
 
-                _imuMessage.linear_acceleration.x = -linearAccel.z;
-                _imuMessage.linear_acceleration.y = -linearAccel.x;
-                _imuMessage.linear_acceleration.z = linearAccel.y;
+                _imuMessage.linear_acceleration.x = -linearAccel.z + -gravity.z;
+                _imuMessage.linear_acceleration.y = -linearAccel.x + -gravity.x;
+                _imuMessage.linear_acceleration.z = linearAccel.y + gravity.y;
 
                 _imuMessage.angular_velocity.x = -angularVelocity.z;
                 _imuMessage.angular_velocity.y = -angularVelocity.x;
                 _imuMessage.angular_velocity.z = angularVelocity.y;
-            } else if (CoordinateSystem == CoordinateSystemEnum.RightHanded_XRight_YDown_ZForward) {
+            } else if (CoordinateSystem == CoordinateSystemEnum.RightHanded_XRight_YDown_ZForward) { // aka RealSense
                 Quaternion flippedYOrientation = Quaternion.Euler(Vector3.Scale(orientation.eulerAngles, Vector3.up * -1));
                 _imuMessage.orientation.x = flippedYOrientation.x;
                 _imuMessage.orientation.y = flippedYOrientation.y;
                 _imuMessage.orientation.z = flippedYOrientation.z;
                 _imuMessage.orientation.w = -flippedYOrientation.w;  // negate left to right handed coordinate system
 
-                _imuMessage.linear_acceleration.x = linearAccel.x;
-                _imuMessage.linear_acceleration.y = -linearAccel.y;
-                _imuMessage.linear_acceleration.z = linearAccel.z;
+                _imuMessage.linear_acceleration.x = -linearAccel.x + gravity.x;
+                _imuMessage.linear_acceleration.y = linearAccel.y + gravity.y;
+                _imuMessage.linear_acceleration.z = -linearAccel.z + gravity.z;
 
                 _imuMessage.angular_velocity.x = angularVelocity.x;
                 _imuMessage.angular_velocity.y = angularVelocity.y;
@@ -163,9 +163,9 @@ namespace ZO.ROS.Publisher {
                 _imuMessage.orientation.z = orientation.z;
                 _imuMessage.orientation.w = orientation.w;
 
-                _imuMessage.linear_acceleration.x = linearAccel.x;
-                _imuMessage.linear_acceleration.y = linearAccel.y;
-                _imuMessage.linear_acceleration.z = linearAccel.z;
+                _imuMessage.linear_acceleration.x = linearAccel.x + gravity.x;
+                _imuMessage.linear_acceleration.y = linearAccel.y + gravity.y;
+                _imuMessage.linear_acceleration.z = linearAccel.z + gravity.z;
 
                 _imuMessage.angular_velocity.x = angularVelocity.x;
                 _imuMessage.angular_velocity.y = angularVelocity.y;

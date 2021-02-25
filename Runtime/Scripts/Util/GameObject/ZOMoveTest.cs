@@ -49,7 +49,7 @@ namespace ZO.Util {
         // Update is called once per frame
         void FixedUpdate() {
             if (_isRunning) {
-                if (_moveType == MoveTypeEnum.RotateRoll) {                    
+                if (_moveType == MoveTypeEnum.RotateRoll) {
                     Quaternion rotation = Quaternion.Euler(_startRotationEuler + new Vector3(0, 0, _currentValue));
                     _rigidBody.MoveRotation(rotation);
                 } else if (_moveType == MoveTypeEnum.RotatePitch) {
@@ -66,7 +66,7 @@ namespace ZO.Util {
                     _rigidBody.MovePosition(_startPosition + velocity);
                 } else if (_moveType == MoveTypeEnum.TranslateUp) {
                     Vector3 velocity = new Vector3(0, _currentValue, 0);
-                    _rigidBody.MovePosition(_startPosition+ velocity);
+                    _rigidBody.MovePosition(_startPosition + velocity);
                 }
 
                 _currentValue = _currentValue + (_speed * Time.fixedDeltaTime);

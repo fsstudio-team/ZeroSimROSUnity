@@ -45,6 +45,11 @@ namespace ZO.Sensors {
         [ZO.Util.ZOReadOnly]
         [SerializeField]
         private Vector3 _acceleration = Vector3.zero;
+
+        [ZO.Util.ZOReadOnly]
+        [SerializeField]
+        private Vector3 _gravity = Vector3.zero;
+
         [ZO.Util.ZOReadOnly]
         [SerializeField]
         private Vector3 _angularVelocity = Vector3.zero;
@@ -57,7 +62,8 @@ namespace ZO.Sensors {
         /// Called every frame passing in:
         /// this, 
         /// string imuID, 
-        /// Vector3 linear_accel, 
+        /// Vector3 linear_accel no gravity, 
+        /// Vector3 gravity_accel,
         /// Vector3 angular_velocity,
         /// Quaternion orientation
         /// 
@@ -65,7 +71,7 @@ namespace ZO.Sensors {
         /// </summary>
         /// 
         /// <value></value>
-        public Func<ZOIMU, string, Vector3, Vector3, Quaternion, Task> OnPublishDelegate { get; set; }
+        public Func<ZOIMU, string, Vector3, Vector3, Vector3, Quaternion, Task> OnPublishDelegate { get; set; }
 
 
         private Rigidbody _rigidBody;
@@ -73,6 +79,10 @@ namespace ZO.Sensors {
 
         public Vector3 Acceleration {
             get { return _acceleration; }
+        }
+
+        public Vector3 Gravity {
+            get { return _gravity; }
         }
 
 
@@ -103,7 +113,8 @@ namespace ZO.Sensors {
 
 
             // calculate gravity
-            _acceleration += transform.InverseTransformDirection(UnityEngine.Physics.gravity);            
+            _gravity = transform.InverseTransformDirection(UnityEngine.Physics.gravity);  
+                      
             _acceleration = _linearNoise.Apply(_acceleration);
             _acceleration = ZO.Math.ZOMathUtil.lowPassFilter(_acceleration, prevAcceleration, _preFilterAccelerationAlpha);
 
@@ -112,13 +123,14 @@ namespace ZO.Sensors {
 
             _orientation = transform.rotation;
 
+            Vector3 publishedGravity = _gravity;
             Vector3 publishedAcceleration = _acceleration;
             Vector3 publishedAngularVelocity = _angularVelocity;
             Quaternion publishedOrientation = transform.rotation;
 
 
             if (OnPublishDelegate != null) {
-                await OnPublishDelegate(this, Name, publishedAcceleration, publishedAngularVelocity, publishedOrientation);
+                await OnPublishDelegate(this, Name, publishedAcceleration, publishedGravity, publishedAngularVelocity, publishedOrientation);
             }
 
         }
