@@ -108,7 +108,7 @@ namespace ZO.Sensors {
             // calculate linear acceleration
             Vector3 velocity = transform.InverseTransformDirection(_rigidBody.velocity);
             Vector3 prevAcceleration = _acceleration;
-            _acceleration = (velocity - _lastVelocity) / Time.fixedDeltaTime;
+            _acceleration = (velocity - _lastVelocity) / Time.deltaTime;
             _lastVelocity = velocity;
 
 
