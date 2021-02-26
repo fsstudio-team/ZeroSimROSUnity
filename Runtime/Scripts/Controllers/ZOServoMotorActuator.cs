@@ -134,7 +134,7 @@ namespace ZO.Controllers {
 
         private void FixedUpdate() {
 
-            float motorTargetVelocity = _pidController.Update(UnityHingeJoint.angle, Time.fixedDeltaTime);
+            float motorTargetVelocity = _pidController.Update(UnityHingeJoint.angle, Time.deltaTime);
             if (_pidController.IsAtDeadBand) {
                 JointSpring hingeJointSpring = UnityHingeJoint.spring;
                 hingeJointSpring.damper = 50000.0f;

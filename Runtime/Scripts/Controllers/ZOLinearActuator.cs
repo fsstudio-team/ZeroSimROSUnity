@@ -31,7 +31,7 @@ namespace ZO.Controllers {
         private void FixedUpdate() {
             Rigidbody slideBody = _prismaticJoint.gameObject.GetComponent<Rigidbody>();
             float currentPosition = slideBody.transform.localPosition[(int)_driveAxis];
-            float force = _pidController.Update(currentPosition, Time.fixedDeltaTime);
+            float force = _pidController.Update(currentPosition, Time.deltaTime);
             Vector3 globalUpForce = new Vector3(0, 0, 0);
             globalUpForce[(int)_driveAxis] = force;
             Vector3 localUpForce = slideBody.transform.worldToLocalMatrix.MultiplyVector(globalUpForce);
