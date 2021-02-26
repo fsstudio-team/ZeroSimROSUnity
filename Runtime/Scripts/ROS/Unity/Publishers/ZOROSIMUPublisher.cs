@@ -149,13 +149,13 @@ namespace ZO.ROS.Publisher {
                 _imuMessage.orientation.z = flippedYOrientation.z;
                 _imuMessage.orientation.w = -flippedYOrientation.w;  // negate left to right handed coordinate system
 
-                _imuMessage.linear_acceleration.x = -linearAccel.x + gravity.x;
-                _imuMessage.linear_acceleration.y = linearAccel.y + gravity.y;
-                _imuMessage.linear_acceleration.z = -linearAccel.z + gravity.z;
+                _imuMessage.linear_acceleration.x = linearAccel.x + gravity.x;
+                _imuMessage.linear_acceleration.y = -linearAccel.y + gravity.y;
+                _imuMessage.linear_acceleration.z = linearAccel.z + gravity.z;
 
-                _imuMessage.angular_velocity.x = angularVelocity.x;
-                _imuMessage.angular_velocity.y = angularVelocity.y;
-                _imuMessage.angular_velocity.z = angularVelocity.z;
+                _imuMessage.angular_velocity.x = -angularVelocity.x; // pitch
+                _imuMessage.angular_velocity.y = angularVelocity.y; // yaw
+                _imuMessage.angular_velocity.z = -angularVelocity.z; // roll
 
             } else if (CoordinateSystem == CoordinateSystemEnum.Unity_LeftHanded_XRight_YUp_ZForward) {
                 _imuMessage.orientation.x = orientation.x;
