@@ -12,15 +12,15 @@ namespace ZO.Util {
         // public float _time = 1.0f;
 
         public enum MoveTypeEnum {
-            RotateRoll,
-            RotatePitch,
-            RotateYaw,
+            RotateRollRight,
+            RotatePitchForward,
+            RotateYawRight,
             TranslateForward,
             TranslateRight,
             TranslateUp
         }
 
-        public MoveTypeEnum _moveType = MoveTypeEnum.RotateRoll;
+        public MoveTypeEnum _moveType = MoveTypeEnum.RotateRollRight;
 
 
         private Rigidbody _rigidBody;
@@ -49,13 +49,13 @@ namespace ZO.Util {
         // Update is called once per frame
         void FixedUpdate() {
             if (_isRunning) {
-                if (_moveType == MoveTypeEnum.RotateRoll) {
-                    Quaternion rotation = Quaternion.Euler(_startRotationEuler + new Vector3(0, 0, _currentValue));
+                if (_moveType == MoveTypeEnum.RotateRollRight) {
+                    Quaternion rotation = Quaternion.Euler(_startRotationEuler + new Vector3(0, 0, -_currentValue));
                     _rigidBody.MoveRotation(rotation);
-                } else if (_moveType == MoveTypeEnum.RotatePitch) {
+                } else if (_moveType == MoveTypeEnum.RotatePitchForward) {
                     Quaternion rotation = Quaternion.Euler(_startRotationEuler + new Vector3(_currentValue, 0, 0));
                     _rigidBody.MoveRotation(rotation);
-                } else if (_moveType == MoveTypeEnum.RotateYaw) {
+                } else if (_moveType == MoveTypeEnum.RotateYawRight) {
                     Quaternion rotation = Quaternion.Euler(_startRotationEuler + new Vector3(0, _currentValue, 0));
                     _rigidBody.MoveRotation(rotation);
                 } else if (_moveType == MoveTypeEnum.TranslateForward) {
@@ -69,7 +69,7 @@ namespace ZO.Util {
                     _rigidBody.MovePosition(_startPosition + velocity);
                 }
 
-                _currentValue = _currentValue + (_speed * Time.fixedDeltaTime);
+                _currentValue = _currentValue + (_speed * Time.deltaTime);
 
                 if (_currentValue > _minMax.y) {
                     _isRunning = false;

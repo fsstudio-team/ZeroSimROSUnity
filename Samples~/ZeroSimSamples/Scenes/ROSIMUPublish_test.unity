@@ -2110,7 +2110,7 @@ MonoBehaviour:
   _name: ros.publisher.imu_IMU
   _imuSensor: {fileID: 1753787004}
   _coordinateSystem: 1
-  _reverseLinearAccelerations: 1
+  _reverseLinearAccelerations: 0
 --- !u!114 &1753787004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2206,9 +2206,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef77affe836d7c54adde928a35ad253, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minMax: {x: 0, y: 1}
-  _speed: 2
-  _moveType: 4
+  _minMax: {x: 0, y: 90}
+  _speed: 90
+  _moveType: 0
 --- !u!1 &1764802517
 GameObject:
   m_ObjectHideFlags: 0
