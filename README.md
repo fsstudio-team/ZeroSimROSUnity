@@ -1,13 +1,64 @@
-# Zero Sim distributable package
+# ZeroSim 
 
-- [Zero Sim distributable package](#zero-sim-distributable-package)
-  - [Publish new version](#publish-new-version)
+ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
-## Publish new version
-Github Actions is being used for creating new releases. Currently a workflow is triggered by pushing a tag that starts with `v`. So a tag `v0.1.6` would work. There's no automatic control on these tag versions, user needs to take care of it.\
-The following regex is being used:\
-`v*`
+ZeroSim is a project developed over several years by [FS Studios](https://fsstudio.com/?gclid=CjwKCAjw9MuCBhBUEiwAbDZ-7gpTTbBtgXtQe5VmZd_glTheBonWnaXt30lAFk5efc5mhaChyRNADBoC2EcQAvD_BwE) for the rapid development of all sorts of robotic simulation projects for various clients, from robotic arms to mobile robots.
 
-This workflow creates a new release draft in Github and adds a .tgz file associated to it. Maintainer needs to update the release notes accordingly and publish that release draft.
+We are releasing ZeroSim as open source to support the community of roboticist and software engineers that have supported us over the decades.  We are in active development and welcome all feature requests, bug reports, and pull requests.
 
-Note: In the future this will work automatically by using a more complex Github Actions workflow, which can autogenerate release notes, bump up versions and publish everything automatically.
+![MoveIt Example](./Documentation~/images/zerosim_moveit.gif)
+![Mobile Robot Example](Documentation~/images/zerosim_turtlebot_hospital.gif)
+## Overview
+
+ZeroSim provides a multitude of tools for building robots and environments in Unity to interface with ROS.  We strive to provide the same functionality and ROS interfaces of [Gazebo](http://gazebosim.org/).  Including:
+
+* Dynamics simulation using the latest [PhysX 4.x](https://developer.nvidia.com/physx-sdk) integrated int Unity.
+  * Hinge, ball, linear and fixed joints.
+  * Temporal Gauss-Seidel solver option making articulated or jointed configurations much more robust.
+* Advanced 3D Rendering, including the latest realtime ray tracing technology.
+* Sensors:
+  * 2D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
+  * 3D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
+  * Color camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
+  * Color + depth camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
+  * Stereo camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
+  * IMU -> ROS [Imu](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Imu.html) message
+  * Magnetometer -> ROS [MagneticField](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/MagneticField.html) message.
+  * Contact switch
+
+* Ready to use ROS standard controllers and plugins:
+  * Differential drive.  Controlled via standard ROS [Twist](https://docs.ros.org/en/api/geometry_msgs/html/msg/Twist.html) message.
+  * Robotic arm controller via the ROS [FollowJointTrajectory Action Controller Interface](http://docs.ros.org/en/electric/api/control_msgs/html/msg/FollowJointTrajectoryAction.html) allowing [MoveIt](https://moveit.ros.org/) to connect seamlessly with ZeroSim.
+  * ROS [TF](http://wiki.ros.org/tf) publisher.
+  * ROS [JointState](http://wiki.ros.org/joint_state_publisher) publisher.
+
+* Full ROS messaging communications layers API.
+  * Premade standard ROS messages
+  * Subscribe and publish
+  * Action Servers
+  * Fast and efficient message encoding using [ROS Bridge](http://wiki.ros.org/rosbridge_suite) and BSON over TCP.  
+
+* Ready to run prebuilt ROS Docker images available publically on DockerHub: https://hub.docker.com/r/zerodog/zerosim_ros_vnc
+
+* **COMING SOON:**
+  * Secure communications via WebSockets.
+  * URDF import & export.
+  * Support for other Physics engines such as Bullet or Havok.
+
+## Getting Started
+
+### Setting up a new Unity Project
+
+1. In Unity Hub create a new Unity project using Unity 2020.x or later. ![New Unity Project](Documentation~/images/new_unity_project.png)
+2. Add ZeroSim via Unity Packages:  
+   1. Unity Menu `Window -> Package Manager`
+   2. Select the `+` dropdown:   
+   ![Dropdown](Documentation~/images/unity_package_manager.png)
+   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.git`.  Note this can take upto a few minutes to update but you should see the following:  
+   ![ZeroSim Package Installed](Documentation~/images/zerosim_package_installed.png) 
+   1. Import the ZeroSim Sample by selecting the Samples `Import` button in the Package Manager:  
+    ![Import ZeroSim Samples](Documentation~/images/import_zerosim_samples.png)
+3. If running Unity on Linux you want to avoid using OpenGL and use Vulkan, otherwise image based sensors may run slowly or not at all.  To change to using Vulkan:  
+   1. In the Unity Menu: `Edit -> Project Settings...`:  
+   2. Uncheck `Auto Graphics API for Linux` and then under `Graphics APIs for Linux` set `Vulkan` ahead of `OpenGL`:  
+   ![Vulkan Settings](Documentation~/images/vulkan_settings.png) 
