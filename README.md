@@ -61,11 +61,12 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
    1. Unity Menu `Window -> Package Manager`
    2. Select the `+` dropdown:   
    ![Dropdown](Documentation~/images/unity_package_manager.png)
-   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.gitm`.  Note this can take upto a few minutes to update but you should see the following:  
+   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.git`.  Note this can take upto a few minutes to update but you should see the following:  
    ![ZeroSim Package Installed](Documentation~/images/zerosim_package_installed.png) 
-   1. Import the ZeroSim Sample by selecting the Samples `Import` button in the Package Manager:  
+   1. Import the ZeroSim Samples by selecting the Samples `Import` button in the Package Manager:  
     ![Import ZeroSim Samples](Documentation~/images/import_zerosim_samples.png)
-3. If running Unity on Linux you want to avoid using OpenGL and use Vulkan, otherwise image based sensors may run slowly or not at all.  To change to using Vulkan:  
+3. *IMPORTANT* the default Unity physics setting do not work well with a lot of simulations.  It is very much reccomended (required for probably most all simulations) to set the physics settings by opening the Unity menu `Edit -> Project Settings... -> Physics` and set the `Default Solver Iterations` to `10` and the `Default Solver Velocity Iterations` to `60`. ![Unity Physics Settings](Documentation~/images/unity_physics_settings.png) 
+4. If running Unity on Linux you want to avoid using OpenGL and use Vulkan, otherwise image based sensors may run slowly or not at all.  To change to using Vulkan:  
    1. In the Unity Menu: `Edit -> Project Settings...`:  
    2. Uncheck `Auto Graphics API for Linux` and then under `Graphics APIs for Linux` set `Vulkan` ahead of `OpenGL`:  
    ![Vulkan Settings](Documentation~/images/vulkan_settings.png) 
@@ -80,7 +81,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 1. Make sure that the ZeroSim samples are installed as outlined above.
 2. Make sure that the ZeroSim Docker container above is installed.
-3. Open the `Scenes/Turtlebot3_Waffle_test.scene`
+3. Open the `Samples/ZeroSim/Scenes/Turtlebot3_Waffle_test.scene` ![Open Turtlebot Scene](Documentation~/images/open_turtlebot_scene.png)
 4. Launch the ZeroSim Docker via: 
 ```
 docker run -it --rm \
