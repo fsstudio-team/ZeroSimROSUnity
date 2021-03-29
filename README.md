@@ -54,14 +54,14 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * Unity 2020.x
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
 
-### Setting up a new Unity Project
+### Setting up a new Unity Project 
 
 1. In Unity Hub create a new Unity project using Unity 2020.x or later. ![New Unity Project](Documentation~/images/new_unity_project.png)
 2. Add ZeroSim via Unity Packages:  
    1. Unity Menu `Window -> Package Manager`
    2. Select the `+` dropdown:   
    ![Dropdown](Documentation~/images/unity_package_manager.png)
-   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.git`.  Note this can take upto a few minutes to update but you should see the following:  
+   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.gitm`.  Note this can take upto a few minutes to update but you should see the following:  
    ![ZeroSim Package Installed](Documentation~/images/zerosim_package_installed.png) 
    1. Import the ZeroSim Sample by selecting the Samples `Import` button in the Package Manager:  
     ![Import ZeroSim Samples](Documentation~/images/import_zerosim_samples.png)
