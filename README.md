@@ -42,8 +42,9 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 * **COMING SOON:**
   * More complete documentation.
-  * Secure communications via WebSockets.
   * URDF import & export.
+  * Finish Docker integration with Unity. (Currently incomplete)
+  * Secure communications via WebSockets.
   * Support for other Physics engines such as Bullet or Havok.
 
 ## Getting Started
@@ -65,8 +66,9 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
    ![ZeroSim Package Installed](Documentation~/images/zerosim_package_installed.png) 
    1. Import the ZeroSim Samples by selecting the Samples `Import` button in the Package Manager:  
     ![Import ZeroSim Samples](Documentation~/images/import_zerosim_samples.png)
-3. *IMPORTANT* the default Unity physics setting do not work well with a lot of simulations.  It is very much reccomended (required for probably most all simulations) to set the physics settings by opening the Unity menu `Edit -> Project Settings... -> Physics` and set the `Default Solver Iterations` to `10` and the `Default Solver Velocity Iterations` to `60`. ![Unity Physics Settings](Documentation~/images/unity_physics_settings.png) 
-4. If running Unity on Linux you want to avoid using OpenGL and use Vulkan, otherwise image based sensors may run slowly or not at all.  To change to using Vulkan:  
+3. **IMPORTANT** the default Unity physics settings do not work well with a lot of simulations.  It is very much recommended (required for probably most all simulations) to set the physics settings by opening the Unity menu `Edit -> Project Settings... -> Physics` and set the `Default Solver Iterations` to `30` and the `Default Solver Velocity Iterations` to `60`. ![Unity Physics Settings](Documentation~/images/unity_physics_settings.png) 
+4. **IMPORTANT** the default Unity fixed timestep setting does not work well with a lot of simulions.  It is very much recommended to set the `Fixed Timestep` setting by `Edit -> Project Settings... -> Time` to `0.005` ![Timestep Settings](Documentation~/images/unity_timestep_settings.png)
+5. If running Unity on Linux you want to avoid using OpenGL and use Vulkan, otherwise image based sensors may run slowly or not at all.  To change to using Vulkan:  
    1. In the Unity Menu: `Edit -> Project Settings...`:  
    2. Uncheck `Auto Graphics API for Linux` and then under `Graphics APIs for Linux` set `Vulkan` ahead of `OpenGL`:  
    ![Vulkan Settings](Documentation~/images/vulkan_settings.png) 
