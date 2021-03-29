@@ -41,6 +41,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 * Ready to run prebuilt ROS Docker images available publically on DockerHub: https://hub.docker.com/r/zerodog/zerosim_ros_vnc
 
 * **COMING SOON:**
+  * More complete documentation.
   * Secure communications via WebSockets.
   * URDF import & export.
   * Support for other Physics engines such as Bullet or Havok.
@@ -49,8 +50,9 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 ### Recommended System
 
-* Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
-* Unity 2020.x
+  * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
+  * Unity 2020.x
+  * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
 
 ### Setting up a new Unity Project
 
@@ -101,6 +103,8 @@ bash -c "source devel/setup.bash ; rosrun turtlebot3_teleop turtlebot3_teleop_ke
 7. The Turtlebot can now be controlled via the `w a s d` keys in the ROS teleop console window:
 
 ### Using RViz Example
+
+This will show visualizing the 2D LIDAR and ROS TF in RViz.  This uses a VNC viewer to the ZeroSim ROS Docker container.
 
 1. Startup the Turtlebot Test Scene as detailed above.
 2. Open a noVNC connection by:
