@@ -181,25 +181,26 @@ namespace ZO.ROS.Controllers {
                 if (GoalStatus == ActionStatusEnum.ACTIVE) {
 
                     // find the closest target position given the current time
-                    bool foundTargetPoint = false;
-                    foreach (JointTrajectoryPointMessage point in Goal.goal.trajectory.points) {
-                        // Debug.Log("INFO: point time: " + point.time_from_start.Seconds.ToString("R3"));
-                        if (_currentGoalTime <= point.time_from_start.Seconds) {
-                            _currentPoint = point;
-                            foundTargetPoint = true;
-                            break;
-                        }
-                    }
+                    // bool foundTargetPoint = false;
+                    // foreach (JointTrajectoryPointMessage point in Goal.goal.trajectory.points) {
+                    //     // Debug.Log("INFO: point time: " + point.time_from_start.Seconds.ToString("R3"));
+                    //     if (_currentGoalTime <= point.time_from_start.Seconds) {
+                    //         _currentPoint = point;
+                    //         foundTargetPoint = true;
+                    //         break;
+                    //     }
+                    // }
 
-
-                    if (foundTargetPoint == true) {
+                    double[] interpolatedJointPositions = GetJointPositionsAtTimeSeconds(Goal.goal.trajectory.points, _currentGoalTime);
+                    if (interpolatedJointPositions != null) {
+                        
 
                         for (int i = 0; i < Goal.goal.trajectory.joint_names.Length; i++) {
                             _trajectoryControllerStateMessage.joint_names[i] = Goal.goal.trajectory.joint_names[i];
                             ZOJointInterface joint = GetJointByName(Goal.goal.trajectory.joint_names[i]);
 
-                            _trajectoryControllerStateMessage.desired.positions[i] = _currentPoint.positions[i];
-                            ActionMessage.action_feedback.feedback.desired.positions[i] = _currentPoint.positions[i];
+                            _trajectoryControllerStateMessage.desired.positions[i] = interpolatedJointPositions[i];
+                            ActionMessage.action_feedback.feedback.desired.positions[i] = interpolatedJointPositions[i];
 
                             _trajectoryControllerStateMessage.actual.positions[i] = joint.Position;
                             ActionMessage.action_feedback.feedback.actual.positions[i] = joint.Position;
@@ -301,6 +302,41 @@ namespace ZO.ROS.Controllers {
         }
         #endregion // ZOGameObjectBase
 
+        #region Utils
+
+        protected double[] GetJointPositionsAtTimeSeconds(JointTrajectoryPointMessage[] points, float timeSeconds) {
+
+            if (points.Length > 1) {
+                for (int i = 1; i < points.Length; i++) {
+                    // search for bracket
+                    double aTime = points[i - 1].time_from_start.Seconds;
+                    double bTime = points[i].time_from_start.Seconds;                    
+                    if (timeSeconds > aTime && timeSeconds <= bTime) {
+                        
+                        double timeBetweenPoints = bTime - aTime;
+                        if (timeBetweenPoints > 0) {
+                            double timeFromA = timeSeconds - aTime;
+                            double t = timeFromA / timeBetweenPoints;
+                            int numPositions = points[i].positions.Length;
+                            double[] interpolatedJointPositions = new double[numPositions];
+                            for (int p = 0; p < numPositions; p++) {
+                                double aJointPosition = points[i-1].positions[p];
+                                double bJointPosition = points[i].positions[p];
+                                interpolatedJointPositions[p] = Mathf.LerpAngle((float)aJointPosition * Mathf.Rad2Deg, (float)bJointPosition * Mathf.Deg2Rad, (float)t) * Mathf.Deg2Rad;
+                            }
+
+                            return interpolatedJointPositions;
+
+                        }
+                    }
+                }
+            }
+
+            return null; // failed to find joint positions bracket.  perhaps time has gone beyond the last joint position.
+        }
+
+        #endregion // Utils
+
         #region ZOROSControllerInterface
 
         public string ControllerName {
@@ -363,6 +399,11 @@ namespace ZO.ROS.Controllers {
             }
         }
 
+        /// <summary>
+        /// Get Joint given its string name
+        /// </summary>
+        /// <param name="name">The name of the joint</param>
+        /// <returns>ZOJointInterface</returns>
         public ZOJointInterface GetJointByName(string name) {
             foreach (ZOJointInterface joint in Joints) {
                 if (joint.Name == name) {
