@@ -47,6 +47,10 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * Secure communications via WebSockets.
   * Support for other Physics engines such as Bullet or Havok.
 
+## API Documentation
+
+[API Documentation](https://fsstudio-team.github.io/ZeroSimROSUnity/api/index.html)
+
 ## Getting Started
 
 ### Recommended System
