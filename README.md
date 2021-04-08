@@ -87,7 +87,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 1. Make sure that the ZeroSim samples are installed as outlined above.
 2. Make sure that the ZeroSim Docker container above is installed.
-3. Open the `Samples/ZeroSim/Scenes/Turtlebot3_Waffle_test.scene` ![Open Turtlebot Scene](Documentation~/images/open_turtlebot_scene.png)
+3. Open the `Turtlebot3_Waffle_test.scene` ![Open Turtlebot Scene](Documentation~/images/open_turtlebot_scene.png)
 4. Launch the ZeroSim Docker via: 
 ```
 docker run -it --rm \
@@ -109,7 +109,7 @@ bash -c "source devel/setup.bash ; rosrun turtlebot3_teleop turtlebot3_teleop_ke
 6. In the Unity editor press the "Play" button.
 7. The Turtlebot can now be controlled via the `w a s d` keys in the ROS teleop console window:
 
-### Using RViz Example
+### Using RViz for Turtlebot
 
 This will show visualizing the 2D LIDAR and ROS TF in RViz.  This uses a VNC viewer to the ZeroSim ROS Docker container.
 
@@ -119,3 +119,30 @@ This will show visualizing the 2D LIDAR and ROS TF in RViz.  This uses a VNC vie
    2. Press the "Connect" button. ![noVNC Login](Documentation~/images/novnc_login.png)
 3. In the VNC window press the *LEFT* mouse button and select "Terminal". ![noVNC Terminal](Documentation~/images/novnc_terminal.png)
 4. In the new terminal run `rviz -d ./src/zero_sim_ros/rviz/turtlebot_viewer.rviz`.  RViz will start up with a 3D view with the LIDAR scanner visibile. ![RViz Turtlebot Viewer](Documentation~/images/rviz_turtlebot.gif)
+
+
+### Running Universal Robot UR10 Arm Test Scene with MoveIt!
+
+*NOTE:* Order of operations is important.  Especially starting the Docker *before* the Unity simulation.
+
+1. Make sure that the ZeroSim samples are installed as outlined above.
+2. Make sure that the ZeroSim Docker container above is installed.
+3. Open the `UniversalRobot_UR10_test.scene` ![Open UR10 Scene](Documentation~/images/ur10_test_scene.png)
+4. Launch the ZeroSim Docker via: 
+```
+docker run -it --rm \
+--publish=9090:9090 \
+--publish=11311:11311 \
+--publish=8083:8083 \
+--publish=80:80 \
+--publish=5678:5678 \
+--name my_zerosim_vnc_docker \
+zerodog/zerosim_ros_vnc:latest \
+roslaunch zero_sim_ros ur10_moveit.launch
+```
+5. Start the UR10 test Scene by pressing the Play button.
+6. Open a noVNC connection by:
+   1. In a browser open http://localhost:8083/vnc.html
+   2. Press the "Connect" button. ![noVNC Login](Documentation~/images/novnc_login.png)
+7. In the noVNC window RViz will be setup with MoveIt ![UR10 RViz MoveIt](Documentation~/images/ur10_moveit_rviz.png)
+8. You can now to standard MoveIt! operations in RViz to control the UR10 arm ![UR10 MoveIt](Documentation~/images/ur10_moveit_rviz.gif)
