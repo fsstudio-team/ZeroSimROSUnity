@@ -386,7 +386,7 @@ namespace ZO.ROS.Controllers {
                             for (int p = 0; p < numPositions; p++) {
                                 double aJointPosition = points[i - 1].positions[p];
                                 double bJointPosition = points[i].positions[p];
-                                interpolatedJointPositions[p] = Mathf.LerpAngle((float)aJointPosition * Mathf.Rad2Deg, (float)bJointPosition * Mathf.Deg2Rad, (float)t) * Mathf.Deg2Rad;
+                                interpolatedJointPositions[p] = Mathf.Lerp((float)aJointPosition, (float)bJointPosition, (float)t);
                             }
 
                             return interpolatedJointPositions;
