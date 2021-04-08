@@ -28,6 +28,22 @@ namespace ZO.ROS.Controllers {
     [RequireComponent(typeof(ZOROSJointStatesPublisher))]
     public class ZOArmController : ZOROSUnityGameObjectBase, ZOROSControllerInterface {
 
+
+
+        /// <summary>
+        /// The error allowed between target joint positions and actual joint positions.
+        /// </summary>
+        public float _allowedJointPositionError = 0.01f;
+
+
+        /// <summary>
+        /// The error allowed between target joint positions and actual joint positions.
+        /// </summary>
+        /// <value>float</value>
+        public float AllowedJointPositionError {
+            get => _allowedJointPositionError;
+            set => _allowedJointPositionError = value;
+        }
         /// <summary>
         /// Arm controller action server as used by MoveIt
         /// </summary>
@@ -177,6 +193,8 @@ namespace ZO.ROS.Controllers {
 
             if (this.ControllerState == ControllerStateEnum.Running) {
 
+
+
                 // see if we have any goals and update the controller state message
                 if (GoalStatus == ActionStatusEnum.ACTIVE) {
 
@@ -193,8 +211,18 @@ namespace ZO.ROS.Controllers {
 
                     double[] interpolatedJointPositions = GetJointPositionsAtTimeSeconds(Goal.goal.trajectory.points, _currentGoalTime);
                     if (interpolatedJointPositions != null) {
-                        
 
+                        // check if we are beyond the last time
+                        bool atTheEnd = false;
+                        double lastTime = Goal.goal.trajectory.points.Last<JointTrajectoryPointMessage>().time_from_start.Seconds;
+                        if (_currentGoalTime >= lastTime) {
+                            // Debug.Log("INFO: at end of joint trajectory.");
+                            atTheEnd = true;
+                        }
+
+
+                        // Update the joint status and actual position
+                        bool isLessThenAllowedJointPositionError = true;
                         for (int i = 0; i < Goal.goal.trajectory.joint_names.Length; i++) {
                             _trajectoryControllerStateMessage.joint_names[i] = Goal.goal.trajectory.joint_names[i];
                             ZOJointInterface joint = GetJointByName(Goal.goal.trajectory.joint_names[i]);
@@ -211,16 +239,37 @@ namespace ZO.ROS.Controllers {
                             ActionMessage.action_feedback.feedback.error.positions[i] = joint.Position - _trajectoryControllerStateMessage.desired.positions[i];
                             // _trajectoryControllerStateMessage.error.velocities[i] = joint.Velocity - _trajectoryControllerStateMessage.desired.velocities[i];
 
+                            // actually drive the joint position
                             joint.Position = (float)_trajectoryControllerStateMessage.desired.positions[i];
+
+                            // check if we are within error bounds
+                            if (Mathf.Abs((float)_trajectoryControllerStateMessage.error.positions[i]) > AllowedJointPositionError) {
+                                isLessThenAllowedJointPositionError = false;
+                            }
 
                         }
 
+                        // if we are at the end and within error bounds then update the goal state
+                        if (atTheEnd && isLessThenAllowedJointPositionError) {
+                            Debug.Log("INFO:  Finished arm control movement");
+
+                            // at the end of the points for this goal so finish it
+                            ActionMessage.action_result.status = new GoalStatusMessage(Goal.goal_id, (byte)ActionStatusEnum.SUCCEEDED, "finished arm control");
+                            ActionMessage.action_result.result = new FollowJointTrajectoryResult(FollowJointTrajectoryResult.SUCCESSFUL);
+                            ActionMessage.Update();
+                            ActionServer.SetSucceeded(ActionMessage.action_result, "Finished arm control movement");
+                        }
+
+
                     } else {
-                        // at the end of the points for this goal so finish it
-                        ActionMessage.action_result.status = new GoalStatusMessage(Goal.goal_id, (byte)ActionStatusEnum.SUCCEEDED, "finished arm control");
-                        ActionMessage.action_result.result = new FollowJointTrajectoryResult(FollowJointTrajectoryResult.SUCCESSFUL);
-                        ActionMessage.Update();
-                        ActionServer.SetSucceeded(ActionMessage.action_result, "Finished arm control movement");
+                        // Debug.LogWarning("WARNING Should no be here!!!");
+                        // // FIXME:  this is probably actually an error condition and not success.  
+                        // // at the end of the points for this goal so finish it
+                        // ActionMessage.action_result.status = new GoalStatusMessage(Goal.goal_id, (byte)ActionStatusEnum.SUCCEEDED, "finished arm control");
+                        // ActionMessage.action_result.result = new FollowJointTrajectoryResult(FollowJointTrajectoryResult.SUCCESSFUL);
+                        // ActionMessage.Update();
+                        // ActionServer.SetSucceeded(ActionMessage.action_result, "Finished arm control movement");
+
 
                     }
 
@@ -304,15 +353,30 @@ namespace ZO.ROS.Controllers {
 
         #region Utils
 
+
+        /// <summary>
+        /// Gets the interpolated joints position at time.  Remember a joint position is the joint angle in radians.
+        /// </summary>
+        /// <param name="points">`JointTrajectoryPointMessage` points method.</param>
+        /// <param name="timeSeconds">Time in seconds to get the joints position.</param>
+        /// <returns>An array of joint positions (angles) in radians.</returns>
         protected double[] GetJointPositionsAtTimeSeconds(JointTrajectoryPointMessage[] points, float timeSeconds) {
 
             if (points.Length > 1) {
+
+                // check if we are beyond the last time
+                double lastTime = points.Last<JointTrajectoryPointMessage>().time_from_start.Seconds;
+                if (timeSeconds >= lastTime) {
+                    // Debug.Log("INFO: at end of joint trajectory.");
+                    return points.Last<JointTrajectoryPointMessage>().positions;
+                }
+
                 for (int i = 1; i < points.Length; i++) {
                     // search for bracket
                     double aTime = points[i - 1].time_from_start.Seconds;
-                    double bTime = points[i].time_from_start.Seconds;                    
-                    if (timeSeconds > aTime && timeSeconds <= bTime) {
-                        
+                    double bTime = points[i].time_from_start.Seconds;
+                    if (timeSeconds >= aTime && timeSeconds < bTime) {
+
                         double timeBetweenPoints = bTime - aTime;
                         if (timeBetweenPoints > 0) {
                             double timeFromA = timeSeconds - aTime;
@@ -320,7 +384,7 @@ namespace ZO.ROS.Controllers {
                             int numPositions = points[i].positions.Length;
                             double[] interpolatedJointPositions = new double[numPositions];
                             for (int p = 0; p < numPositions; p++) {
-                                double aJointPosition = points[i-1].positions[p];
+                                double aJointPosition = points[i - 1].positions[p];
                                 double bJointPosition = points[i].positions[p];
                                 interpolatedJointPositions[p] = Mathf.LerpAngle((float)aJointPosition * Mathf.Rad2Deg, (float)bJointPosition * Mathf.Deg2Rad, (float)t) * Mathf.Deg2Rad;
                             }
