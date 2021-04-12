@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 883889370175839055}
   - component: {fileID: 6133085788601614884}
   m_Layer: 0
-  m_Name: ImageSegmentationCamera
+  m_Name: ZOImageSegmentationCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,8 +41,8 @@ Camera:
   m_GameObject: {fileID: 883889370175839052}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -98,3 +98,4 @@ MonoBehaviour:
     type: 2}
   _debugWindowPosition: {x: 10, y: 10}
   _name: 
+  _replacementShader: {fileID: 4800000, guid: da4f87134b204d3f3902394da6824b66, type: 3}
