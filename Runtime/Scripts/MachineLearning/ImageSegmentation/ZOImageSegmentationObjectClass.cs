@@ -19,14 +19,16 @@ namespace ZO.MachineLearning.ImageSegmentation {
         }
 
         void OnRenderObject() {
-            Renderer renderer = GetComponent<Renderer>();
-            // renderer.material.SetOverrideTag("RenderType", "MyClass");
-            if (_classId == 1) {
-                renderer.material.SetColor("_ClassColor", Color.green);
-            } else if (_classId == 2) {
-                renderer.material.SetColor("_ClassColor", Color.yellow);
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            Color color = Color.black;
+            string classHexString = _classId.ToString("X4");
+            foreach (Renderer renderer in renderers) {
+                if (ColorUtility.TryParseHtmlString($"#{classHexString}", out color)) {
+                    renderer.material.SetColor("_ClassColor", color);
+                }
+
             }
-            
+
         }
     }
 

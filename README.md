@@ -40,6 +40,9 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 * Ready to run prebuilt ROS Docker images available publically on DockerHub: https://hub.docker.com/r/zerodog/zerosim_ros_vnc
 
+* Machine Learning tools:
+  * Image Segmentation for training semantic segmentation algorithms. 
+
 * **COMING SOON:**
   * More complete documentation.
   * URDF import & export.
