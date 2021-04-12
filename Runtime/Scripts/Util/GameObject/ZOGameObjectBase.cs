@@ -97,6 +97,11 @@ namespace ZO.Util {
         /// </summary>
         protected virtual void ZOAwake() { }
 
+        /// <summary>
+        /// OnEnable function for Zero Sim Objects
+        /// </summary>
+        protected virtual void ZOOnEnable() { }
+
 
         /// <summary>
         /// Reset function for Zero Sim Objects
@@ -136,13 +141,17 @@ namespace ZO.Util {
         /// <summary>
         /// Do not redefine this method in child classes, use ZOStart() instead.
         /// </summary>
-        void Start() {
+        private void Start() {
             ZOStart();
 
             /// Offset update time so we don't get big CPU spikes
             NextUpdateTime = _nextUpdateTimeOffset;
             NextFixedUpdateTime = _nextUpdateTimeOffset;
             _nextUpdateTimeOffset += 0.13f;
+        }
+
+        private void OnEnable() {
+            ZOOnEnable();
         }
 
         private void Reset() {

@@ -16,7 +16,7 @@ namespace ZO.Sensors {
     /// <summary>
     /// Simulation of a color RGB camera sensor.
     /// </summary>
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(Camera))] //[ExecuteInEditMode]
     public class ZORGBCamera : ZOGameObjectBase, ZOSerializationInterface {
         [Header("Camera Parameters")]
         public Camera _camera;
@@ -114,6 +114,25 @@ namespace ZO.Sensors {
         // ~~~~ Async GPU Read ~~~~ //
         Queue<ZO.Util.Rendering.ZOAsyncGPUReadbackPluginRequest> _requests = new Queue<ZO.Util.Rendering.ZOAsyncGPUReadbackPluginRequest>();
 
+
+        void OnValidate() {
+
+            // if camera is not assigned see if we have a camera component on this game object
+            if (_camera == null) {
+                _camera = this.GetComponent<Camera>();
+            }
+
+            // if no post process material then assign default
+            if (_postProcessMaterial == null) {
+#if UNITY_EDITOR
+                _postProcessMaterial = Resources.Load<Material>("ZORGBPostProcessMaterial");
+#else // UNITY_EDITOR
+                _postProcessMaterial = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBPostProcessMaterial");
+#endif // UNITY_EDITOR                
+            }
+
+
+        }
 
         // Start is called before the first frame update
         protected override void ZOStart() {
