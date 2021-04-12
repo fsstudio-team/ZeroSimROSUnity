@@ -102,6 +102,11 @@ namespace ZO.Util {
         /// </summary>
         protected virtual void ZOOnEnable() { }
 
+        /// <summary>
+        /// OnValidate function for Zero Sim Obects
+        /// </summary>
+        protected virtual void ZOOnValidate() {}
+
 
         /// <summary>
         /// Reset function for Zero Sim Objects
@@ -152,6 +157,10 @@ namespace ZO.Util {
 
         private void OnEnable() {
             ZOOnEnable();
+        }
+
+        private void OnValidate() {
+            ZOOnValidate();
         }
 
         private void Reset() {

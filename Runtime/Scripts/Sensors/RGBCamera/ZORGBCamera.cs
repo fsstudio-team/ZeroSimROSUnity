@@ -28,7 +28,7 @@ namespace ZO.Sensors {
         /// <value></value>
         public Camera UnityCamera {
             get => _camera;
-            private set => _camera = value;
+            protected set => _camera = value;
         }
         public int _width = 1280;
 
@@ -115,7 +115,7 @@ namespace ZO.Sensors {
         Queue<ZO.Util.Rendering.ZOAsyncGPUReadbackPluginRequest> _requests = new Queue<ZO.Util.Rendering.ZOAsyncGPUReadbackPluginRequest>();
 
 
-        void OnValidate() {
+        protected override void ZOOnValidate() {
 
             // if camera is not assigned see if we have a camera component on this game object
             if (_camera == null) {
