@@ -81,11 +81,11 @@ namespace ZO.ROS.Publisher {
 
 
             // hookup to the sensor update delegate
-            if (RGBCameraSensor.IsMonochrome == true) {
-                _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishMonoImageDelegate;
-            } else {
+            // if (RGBCameraSensor.IsMonochrome == true) {
+            //     _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishMonoImageDelegate;
+            // } else {
                 _rgbCameraSensor.OnPublishRGBImageDelegate = OnPublishRGBImageDelegate;
-            }
+            // }
             
 
         }

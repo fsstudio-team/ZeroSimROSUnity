@@ -12,11 +12,15 @@ using ZO.Document;
 
 
 namespace ZO.Sensors {
+
+    /// <summary>
+    /// Simulation of a color RGB camera sensor.
+    /// </summary>
     [RequireComponent(typeof(Camera))]
     public class ZORGBCamera : ZOGameObjectBase, ZOSerializationInterface {
         [Header("Camera Parameters")]
         public Camera _camera;
-        public bool _isMonochrome = false;
+        // public bool _isMonochrome = false;
 
         /// <summary>
         /// The Unity Camera associated with this depth camera. (readonly)
@@ -75,9 +79,9 @@ namespace ZO.Sensors {
         /// IMPORTANT:  Should use the ZOMonoPostProcessMaterial if monochrome otherwise use the ZORGBPostProcessMaterial
         /// </summary>
         /// <value></value>
-        public bool IsMonochrome {
-            get { return _isMonochrome; }
-        }
+        // public bool IsMonochrome {
+        //     get { return _isMonochrome; }
+        // }
 
 
 
@@ -101,7 +105,7 @@ namespace ZO.Sensors {
         public Func<ZORGBCamera, string, int, int, byte[], Task> OnPublishRGBImageDelegate { get; set; }
 
         byte[] _colorPixels24;
-        byte[] _monoPixels8;
+        // byte[] _monoPixels8;
         Task _publishTask = null;
 
         // ~~~~~~ Render Buffers ~~~~~~~
@@ -129,11 +133,11 @@ namespace ZO.Sensors {
             _renderTexture = new RenderTexture(_width, _height, 16, RenderTextureFormat.ARGB32);
             _camera.targetTexture = _renderTexture;
 
-            if (IsMonochrome) {
-                _monoPixels8 = new byte[_width * _height];
-            } else { // RGB
+            // if (IsMonochrome) {
+            //     _monoPixels8 = new byte[_width * _height];
+            // } else { // RGB
                 _colorPixels24 = new byte[_width * _height * 3];
-            }
+            // }
 
 
             if (IsDebug == true) {
@@ -199,12 +203,12 @@ namespace ZO.Sensors {
                     if (OnPublishRGBImageDelegate != null) {
                         if (_publishTask == null || _publishTask.IsCompleted) {
                             UnityEngine.Profiling.Profiler.BeginSample("_publishTask");
-                            if (IsMonochrome) {
-                                for (int i = 0, c4 = 0; i < _width * _height; i++, c4 += 4) {
-                                    _monoPixels8[i] = (byte)(rawTextureData[c4 + 1]);
-                                }
-                                OnPublishRGBImageDelegate(this, Name, _width, _height, _monoPixels8);
-                            } else { // RBG
+                            // if (IsMonochrome) {
+                            //     for (int i = 0, c4 = 0; i < _width * _height; i++, c4 += 4) {
+                            //         _monoPixels8[i] = (byte)(rawTextureData[c4 + 1]);
+                            //     }
+                            //     OnPublishRGBImageDelegate(this, Name, _width, _height, _monoPixels8);
+                            // } else { // RBG
                                 for (int i = 0, c3 = 0, c4 = 0; i < _width * _height; i++, c3 += 3, c4 += 4) {
                                     _colorPixels24[c3 + 0] = (byte)(rawTextureData[c4 + 1]);
                                     _colorPixels24[c3 + 1] = (byte)(rawTextureData[c4 + 2]);
@@ -212,7 +216,7 @@ namespace ZO.Sensors {
                                 }
                                 OnPublishRGBImageDelegate(this, Name, _width, _height, _colorPixels24);
 
-                            }
+                            // }
                             UnityEngine.Profiling.Profiler.EndSample();
                         } else {
                             // Debug.Log("skip");
