@@ -217,7 +217,7 @@ namespace ZO.Document {
         /// Get the JSON for a ZoSim component name.
         /// </summary>
         /// <param name="componentName">The name of the component.</param>
-        /// <returns>A JSON Object of the conmponent or null if it doesn't exist.</returns>
+        /// <returns>A JSON Object of the component or null if it doesn't exist.</returns>
         public JObject GetComponentJSON(string componentName) {
             JObject componentJson = _components?.Find(item => string.Equals(item["name"].Value<string>(), componentName));
             return componentJson;

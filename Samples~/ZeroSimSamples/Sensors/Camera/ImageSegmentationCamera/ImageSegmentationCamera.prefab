@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &891913994308376444
+--- !u!1 &5440650876077784401
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 891913994308376443}
-  - component: {fileID: 891913994308376441}
-  - component: {fileID: 891913994308376442}
-  - component: {fileID: 682675020479464245}
-  - component: {fileID: 682675020479464244}
+  - component: {fileID: 5440650876077784405}
+  - component: {fileID: 5440650876077784402}
+  - component: {fileID: 5440650876077784400}
+  - component: {fileID: 5440650876077784403}
   m_Layer: 0
-  m_Name: ROSMonoCamera
+  m_Name: ImageSegmentationCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &891913994308376443
+--- !u!4 &5440650876077784405
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891913994308376444}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
-  m_LocalPosition: {x: -0, y: 2.76, z: 1.41}
+  m_GameObject: {fileID: 5440650876077784401}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: -0.7071068}
+  m_LocalPosition: {x: 0, y: 2.76, z: 1.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
---- !u!20 &891913994308376441
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &5440650876077784402
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891913994308376444}
+  m_GameObject: {fileID: 5440650876077784401}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 1
@@ -77,68 +76,48 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &891913994308376442
+--- !u!114 &5440650876077784400
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891913994308376444}
+  m_GameObject: {fileID: 5440650876077784401}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7de0e78cad1cc57a3b409bbb96c7af6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 30b64986313762226a59c409bcf44e32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _updateRateHz: 30
   _debug: 1
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _camera: {fileID: 891913994308376441}
-  _isMonochrome: 0
+  _camera: {fileID: 5440650876077784402}
   _width: 640
   _height: 480
-  _postProcessMaterial: {fileID: 2100000, guid: 2e597e5b56537481a894fb4316ff9bff,
+  _postProcessMaterial: {fileID: 2100000, guid: d2f03b5f033866ec6b3b16cabc66b331,
     type: 2}
   _debugWindowPosition: {x: 10, y: 10}
   _name: 
---- !u!114 &682675020479464245
+  _replacementShader: {fileID: 4800000, guid: da4f87134b204d3f3902394da6824b66, type: 3}
+--- !u!114 &5440650876077784403
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891913994308376444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 30
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: 
-  _name: ros.publisher.transform_ROSImagePublisher
-  _frameId: world
-  _childFrameId: image
---- !u!114 &682675020479464244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891913994308376444}
+  m_GameObject: {fileID: 5440650876077784401}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4eab68bc499af59ddb04d723f31065f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 30
+  _updateRateHz: 0
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _ROSTopic: unity_image/image
-  _name: 
-  _rgbCameraSensor: {fileID: 891913994308376442}
-  _imageROSTopic: image/image_raw
-  _cameraInfoROSTopic: image/camera_info
+  _ROSTopic: 
+  _name: ros.publisher.image_ImageSegmentationCamera
+  _rgbCameraSensor: {fileID: 5440650876077784400}
+  _imageROSTopic: image/segmentation_info
+  _cameraInfoROSTopic: image/segmentation_camera_info

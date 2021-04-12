@@ -189,13 +189,13 @@ namespace ZO.ROS.Publisher {
             _leftImageMessage.is_bigendian = 0;
             _leftImageMessage.data = rgbData;
 
-            if (LeftCameraSensor.IsMonochrome == true) {
-                _leftImageMessage.step = 1 * (uint)width;
-                _leftImageMessage.encoding = "mono8";
-            } else { // RGB
+            // if (LeftCameraSensor.IsMonochrome == true) {
+            //     _leftImageMessage.step = 1 * (uint)width;
+            //     _leftImageMessage.encoding = "mono8";
+            // } else { // RGB
                 _leftImageMessage.step = 1 * 3 * (uint)width;
                 _leftImageMessage.encoding = "rgb8";
-            }
+            // }
 
             // setup and send CameraInfo message            
             _leftCameraInfoMessage.Update();
@@ -243,13 +243,13 @@ namespace ZO.ROS.Publisher {
             _rightImageMessage.is_bigendian = 0;
             _rightImageMessage.data = rgbData;
 
-            if (RightCameraSensor.IsMonochrome == true) {
-                _rightImageMessage.step = (uint)width;
-                _rightImageMessage.encoding = "mono8";
-            } else { // RGB
+            // if (RightCameraSensor.IsMonochrome == true) {
+            //     _rightImageMessage.step = (uint)width;
+            //     _rightImageMessage.encoding = "mono8";
+            // } else { // RGB
                 _rightImageMessage.step = 1 * 3 * (uint)width;
                 _rightImageMessage.encoding = "rgb8";
-            }
+            // }
 
             // setup and send CameraInfo message            
             _rightCameraInfoMessage.Update();

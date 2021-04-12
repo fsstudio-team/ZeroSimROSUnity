@@ -40,6 +40,9 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 * Ready to run prebuilt ROS Docker images available publically on DockerHub: https://hub.docker.com/r/zerodog/zerosim_ros_vnc
 
+* Machine Learning tools:
+  * Image Segmentation for training semantic segmentation algorithms. 
+
 * **COMING SOON:**
   * More complete documentation.
   * URDF import & export.
@@ -146,3 +149,28 @@ roslaunch zero_sim_ros ur10_moveit.launch
    2. Press the "Connect" button. ![noVNC Login](Documentation~/images/novnc_login.png)
 7. In the noVNC window RViz will be setup with MoveIt ![UR10 RViz MoveIt](Documentation~/images/ur10_moveit_rviz.png)
 8. You can now to standard MoveIt! operations in RViz to control the UR10 arm ![UR10 MoveIt](Documentation~/images/ur10_moveit_rviz.gif)
+
+### Running Image Segmentation Test
+
+1. Make sure that the ZeroSim samples are installed as outlined above.
+2. Make sure that the ZeroSim Docker container above is installed.
+3. Open the `ImageSegmentation_test.scene` ![Open Segmentation Test Scene](Documentation~/images/image_segmentation_scene.png)
+4. Launch the ZeroSim Docker via: 
+```
+docker run -it --rm \
+--publish=9090:9090 \
+--publish=11311:11311 \
+--publish=8083:8083 \
+--publish=80:80 \
+--publish=5678:5678 \
+--name my_zerosim_vnc_docker \
+zerodog/zerosim_ros_vnc:latest \
+roslaunch zero_sim_ros basic_unity_editor.launch
+```
+5. Start the Image Segmentation Test Scene by pressing the Play button.
+6. Open a noVNC connection by:
+   1. In a browser open http://localhost:8083/vnc.html
+   2. Press the "Connect" button. ![noVNC Login](Documentation~/images/novnc_login.png)
+7. In the VNC window press the *LEFT* mouse button and select "Terminal". ![noVNC Terminal](Documentation~/images/novnc_terminal.png)
+8. In the new terminal run `rqt_image_view /image/segmentation_image`.  
+9. Open up a second terminal and run `rqt_image_view /image/image_raw` ![RQT Image View Segmentation](Documentation~/images/rqt_image_view_segmentation.png)

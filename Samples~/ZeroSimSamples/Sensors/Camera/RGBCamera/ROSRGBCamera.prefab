@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4736511200309773151}
   - component: {fileID: 4736511200309773150}
   m_Layer: 0
-  m_Name: ZOROSRGBCamera
+  m_Name: ROSRGBCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
