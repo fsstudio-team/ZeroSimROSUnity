@@ -12,7 +12,7 @@ namespace ZO.Controllers {
             CrossConfiguration
         }
 
-        public ZODroneMotorConfiguration _quadCopterConfiguration = ZOQuadCopterMotorConfiguration.XConfiguration;
+        public ZOQuadCopterMotorConfiguration _quadCopterConfiguration = ZOQuadCopterMotorConfiguration.XConfiguration;
         // Start is called before the first frame update
         void Start() {
 
