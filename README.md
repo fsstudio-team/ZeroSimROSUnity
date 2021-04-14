@@ -25,6 +25,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * IMU -> ROS [Imu](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Imu.html) message
   * Magnetometer -> ROS [MagneticField](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/MagneticField.html) message.
   * Contact switch
+  * Altimeter
 
 * Ready to use ROS standard controllers and plugins:
   * Differential drive.  Controlled via standard ROS [Twist](https://docs.ros.org/en/api/geometry_msgs/html/msg/Twist.html) message.

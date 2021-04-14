@@ -12,6 +12,10 @@ using ZO.Util.Extensions;
 
 namespace ZO.Sensors {
 
+
+    /// <summary>
+    /// IMU Sensor:  Acceleration + Rotational Velocity.
+    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public class ZOIMU : ZOGameObjectBase, ZOSerializationInterface {
 

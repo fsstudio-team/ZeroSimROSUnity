@@ -94,7 +94,7 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection.Advertise(ROSTopic, _imuMessage.MessageType);
 
             // hookup to the sensor update delegate
-            IMUSensor.OnPublishDelegate = OnPublishImuDelegate;
+            IMUSensor.OnPublishDelegate += OnPublishImuDelegate;
 
         }
 

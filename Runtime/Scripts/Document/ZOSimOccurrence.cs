@@ -52,6 +52,11 @@ namespace ZO.Document {
             }
         }
 
+        private void OnValidate() {
+            // update root component
+            ZOSimDocumentRoot rootComponent = DocumentRoot;
+        }
+        
         private void Start() {
             if (Application.IsPlaying(gameObject) == false) { // In Editor Mode 
                 // update root component
@@ -721,7 +726,7 @@ namespace ZO.Document {
                                     Debug.LogWarning("WARNING: Trying to serialize visual mesh asset but does not have a mesh: " + visualsChild.name);
                                 }
 
-                                
+
                             } else {
                                 Debug.LogWarning("WARNING: asset: " + visualsChild.name + "does not exist in bundle: " + DocumentRoot.AssetBundle.name + " try to add the asset to the asset bundle");
                             }
