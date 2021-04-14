@@ -99,6 +99,14 @@ namespace ZO.Sensors {
             get { return _orientation; }
         }
 
+        /// <summary>
+        /// Get orientation in euler degrees.
+        /// </summary>
+        /// <value></value>
+        public Vector3 OrientationEulerDegrees {
+            get { return Orientation.ToEuler() * Mathf.Rad2Deg; }
+        }
+
 
         #region ZOGameObjectBase
 

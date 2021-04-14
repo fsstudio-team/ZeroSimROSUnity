@@ -484,8 +484,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512138398}
-  m_LocalRotation: {x: 0.10914004, y: -0.696585, z: 0.10848726, w: 0.70077693}
-  m_LocalPosition: {x: 1.2535647, y: 0.49290785, z: 0.0006099139}
+  m_LocalRotation: {x: 0.000000007450581, y: 0.00000008940697, z: 0.000000007450581,
+    w: 1}
+  m_LocalPosition: {x: -0.15621507, y: 0.5334825, z: -1.451323}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1147,7 +1148,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e115d419d8845cbbfb2488170128cdbd, type: 2}
+  - {fileID: 2100000, guid: 401078a284fed1d8697532b9465b920f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1345,6 +1346,7 @@ GameObject:
   - component: {fileID: 1684369248}
   - component: {fileID: 1684369249}
   - component: {fileID: 1684369250}
+  - component: {fileID: 1684369251}
   m_Layer: 0
   m_Name: base_link
   m_TagString: Untagged
@@ -1381,7 +1383,7 @@ Rigidbody:
   m_GameObject: {fileID: 1684369246}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 0.01
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -1424,6 +1426,38 @@ MonoBehaviour:
     _stdDev: 0.0002
     _biasMean: 0.000075
     _biasStdDev: 0.00000008
+--- !u!114 &1684369251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684369246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c60fd8f844d425c388b59c3631f6062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 100
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _angularNoise:
+    _mean: 0
+    _stdDev: 0.0002
+    _biasMean: 0.000075
+    _biasStdDev: 0.00000008
+  _linearNoise:
+    _mean: 0
+    _stdDev: 0.017000000923871994
+    _biasMean: 0.1
+    _biasStdDev: 0.0001
+  _preFilterAccelerationAlpha: 0.5
+  _acceleration: {x: 0, y: 0, z: 0}
+  _gravity: {x: 0, y: 0, z: 0}
+  _angularVelocity: {x: 0, y: 0, z: 0}
+  _orientation: {x: 0, y: 0, z: 0, w: 1}
+  _name: 
 --- !u!1 &1856353362
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,13 +1742,42 @@ MonoBehaviour:
   _rotorDistanceFromCenter: 0.2
   _maxPerRotorForce: 50
   _baseRigidBody: {fileID: 1684369248}
+  _imu: {fileID: 1684369251}
   _altimeter: {fileID: 1684369250}
-  _altitudePID:
+  _altitudeHoldPID:
     _name: 
     _Kp: 50
     _Ki: 15
     _Kd: 3
     _setPoint: 0
-    _maximumOutputValue: 10000
+    _maximumOutputValue: 1000
+    _deadBandEpsilon: 0
+    _output: 0
+  _altitudeClimbPID:
+    _name: 
+    _Kp: 50
+    _Ki: 15
+    _Kd: 3
+    _setPoint: 0
+    _maximumOutputValue: 100
+    _deadBandEpsilon: 0
+    _output: 0
+  _altitudeClimbVelocity: 1
+  _rollControlPID:
+    _name: 
+    _Kp: 1
+    _Ki: 0
+    _Kd: 0.1
+    _setPoint: 0
+    _maximumOutputValue: 1000
+    _deadBandEpsilon: 0
+    _output: 0
+  _pitchControlPID:
+    _name: 
+    _Kp: 1
+    _Ki: 0
+    _Kd: 0.1
+    _setPoint: 0
+    _maximumOutputValue: 1000
     _deadBandEpsilon: 0
     _output: 0

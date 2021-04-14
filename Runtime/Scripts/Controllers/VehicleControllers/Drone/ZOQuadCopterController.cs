@@ -29,40 +29,98 @@ namespace ZO.Controllers {
             get => _baseRigidBody;
         }
 
+        public ZOIMU _imu;
+        public ZOIMU IMU {
+            get => _imu;
+        }
+
         [Header("Altitude Control")]
         public ZOAltimeter _altimeter;
         public ZOAltimeter Altimeter {
             get => _altimeter;
         }
-        public ZOPIDController _altitudePID = new ZOPIDController {
-            Kp = 10,
-            Ki = 1,
-            Kd = 1,
-            MaximumOutputValue = 100.0f,
-            DeadBandEpsilon = 0.01f
+        public ZOPIDController _altitudeHoldPID = new ZOPIDController {
+            Kp = 50,
+            Ki = 15,
+            Kd = 3,
+            MaximumOutputValue = 1000.0f,
+            DeadBandEpsilon = 0.0f
         };
-        public ZOPIDController AltitudePID {
-            get => _altitudePID;
+
+        /// <summary>
+        /// PID for altitude hold control
+        /// </summary>
+        /// <value></value>
+        public ZOPIDController AltitudeHoldPID {
+            get => _altitudeHoldPID;
         }
 
-        private float AltitudeSetPoint {
-            get {
-                return AltitudePID.SetPoint;
-            }
-            set {
-                AltitudePID.SetPoint = value;
-            }
+        public ZOPIDController _altitudeClimbPID = new ZOPIDController {
+            Kp = 50,
+            Ki = 15,
+            Kd = 3,
+            MaximumOutputValue = 100.0f,
+            DeadBandEpsilon = 0.0f
+        };
+
+        public ZOPIDController AltitudeClimbPID {
+            get => _altitudeClimbPID;
         }
 
-        private float _currentThrottle = 0.0f;
-        private float _throttleIncrement = 0.1f;
+        public float _altitudeClimbVelocity = 1.0f;
+        public float AltitudeClimbVelocity {
+            get => _altitudeClimbVelocity;
+        }
+
+        public enum AltitudeControlStateEnum {
+            AltitudeHold,
+            AltitudeClimb
+        }
+
+        public AltitudeControlStateEnum AltitudeControlState {
+            get; set;
+        } = AltitudeControlStateEnum.AltitudeHold;
+
+
+        [Header("Attitude Control")]
+        public ZOPIDController _rollControlPID = new ZOPIDController {
+            Kp = 1,
+            Ki = 0,
+            Kd = 0.1f,
+            MaximumOutputValue = 100.0f,
+            DeadBandEpsilon = 0.0f
+        };
+
+        public ZOPIDController RollControllPID {
+            get => _rollControlPID;
+        }
+
+
+        public ZOPIDController _pitchControlPID = new ZOPIDController {
+            Kp = 1,
+            Ki = 0,
+            Kd = 0.1f,
+            MaximumOutputValue = 100.0f,
+            DeadBandEpsilon = 0.0f
+        };
+
+        public ZOPIDController PitchControllPID {
+            get => _pitchControlPID;
+        }
+
+        private float _pitchForce = 0.0f;
+        private float _rollForce = 0.0f;
+
+
+        private float _altitudeForce = 0.0f;
+        private float _altitudeHeightIncrement = 0.1f;
 
         protected class Motor {
-            public Vector3 localPosition = new Vector3(0,0,0);
-            public Vector3 globalPosition = new Vector3(0,0,0);
+            public Vector3 localPosition = new Vector3(0, 0, 0);
+            public Vector3 globalPosition = new Vector3(0, 0, 0);
 
             public float force = 0;
-            public Vector3 globalForceVector = new Vector3(0,0,0);
+            public Vector3 globalForceVector = new Vector3(0, 0, 0);
         }
 
         protected Motor[] _motors = new Motor[4];
@@ -72,7 +130,7 @@ namespace ZO.Controllers {
 
         protected override void ZOStart() {
             base.ZOStart();
-            
+
             // initialize the motors
             for (int i = 0; i < Motors.Length; i++) {
                 Motors[i] = new Motor();
@@ -80,8 +138,11 @@ namespace ZO.Controllers {
 
             // set the altitude setpoint
             if (Altimeter != null) {
-                AltitudeSetPoint = Altimeter.AltitudeMeters;
+                AltitudeHoldPID.SetPoint = Altimeter.AltitudeMeters;
             }
+
+            PitchControllPID.SetPoint = 0;
+            RollControllPID.SetPoint = 0;
         }
 
 
@@ -89,60 +150,116 @@ namespace ZO.Controllers {
             base.ZOUpdate();
 
             if (Input.GetKeyDown("i")) {
-                AltitudeSetPoint += _throttleIncrement;
+                AltitudeHoldPID.SetPoint += _altitudeHeightIncrement;
             }
             if (Input.GetKeyDown("k")) {
-                AltitudeSetPoint -= _throttleIncrement;
+                AltitudeHoldPID.SetPoint -= _altitudeHeightIncrement;
+            }
+            if (Input.GetKeyDown("w")) {
+                PitchControllPID.SetPoint = 10.0f;
+            }
+            if (Input.GetKeyDown("x")) {
+                PitchControllPID.SetPoint = -10.0f;
+            }
+            if (Input.GetKeyDown("d")) {
+                RollControllPID.SetPoint = -10.0f;
+            }
+            if (Input.GetKeyDown("a")) {
+                RollControllPID.SetPoint = 10.0f;
+            }
+
+            if (Input.GetKeyDown("s")) {
+                PitchControllPID.SetPoint = 0.0f;
+                RollControllPID.SetPoint = 0.0f;
             }
 
         }
 
         protected override void ZOFixedUpdate() {
             base.ZOFixedUpdate();
+
+            // zero out forces
+            foreach (Motor motor in Motors) {
+                motor.globalForceVector = Vector3.zero;
+            }
+
             if (QuadCopterConfiguration == ZOQuadCopterMotorConfiguration.XConfiguration) {
 
                 // calculate altitude control
-                _currentThrottle = AltitudePID.Update(Altimeter.AltitudeMeters, Time.deltaTime);
+                _altitudeForce = AltitudeHoldPID.Update(Altimeter.AltitudeMeters, Time.deltaTime);
+
                 // forward right motor
-                Vector3 forwardRightPosition = BaseRigidBody.transform.TransformPoint(new Vector3(RotorDistanceFromCenter, 0, RotorDistanceFromCenter));                
-                Vector3 forwardRightForce = BaseRigidBody.transform.up * _currentThrottle;
-                BaseRigidBody.AddForceAtPosition(forwardRightForce, forwardRightPosition);
-                Motors[0].globalPosition = forwardRightPosition;
-                Motors[0].globalForceVector = forwardRightForce;
-                
+                Motors[0].globalPosition = BaseRigidBody.transform.TransformPoint(new Vector3(RotorDistanceFromCenter, 0, RotorDistanceFromCenter));
+                Motors[1].globalPosition = BaseRigidBody.transform.TransformPoint(new Vector3(-RotorDistanceFromCenter, 0, RotorDistanceFromCenter));
+                Motors[2].globalPosition = BaseRigidBody.transform.TransformPoint(new Vector3(RotorDistanceFromCenter, 0, -RotorDistanceFromCenter));
+                Motors[3].globalPosition = BaseRigidBody.transform.TransformPoint(new Vector3(-RotorDistanceFromCenter, 0, -RotorDistanceFromCenter)); ;
+
+
+                Vector3 forwardRightForce = BaseRigidBody.transform.up * _altitudeForce;
+
                 // forward left motor
-                Vector3 forwardLeftPosition = BaseRigidBody.transform.TransformPoint(new Vector3(-RotorDistanceFromCenter, 0, RotorDistanceFromCenter));
-                Vector3 forwardLeftForce = BaseRigidBody.transform.up * _currentThrottle;
-                BaseRigidBody.AddForceAtPosition(forwardLeftForce, forwardLeftPosition);
-                Motors[1].globalPosition = forwardLeftPosition;
-                Motors[1].globalForceVector = forwardLeftForce;
+                Vector3 forwardLeftForce = BaseRigidBody.transform.up * _altitudeForce;
 
                 // back right motor
-                Vector3 backRightPosition = BaseRigidBody.transform.TransformPoint(new Vector3(RotorDistanceFromCenter, 0, -RotorDistanceFromCenter));
-                Vector3 backRightForce = BaseRigidBody.transform.up * _currentThrottle;
-                BaseRigidBody.AddForceAtPosition(backRightForce, backRightPosition);
-                Motors[2].globalPosition = backRightPosition;
-                Motors[2].globalForceVector = backRightForce;
+                Vector3 backRightForce = BaseRigidBody.transform.up * _altitudeForce;
 
                 // back left motor
-                Vector3 backLeftPosition = BaseRigidBody.transform.TransformPoint(new Vector3(-RotorDistanceFromCenter, 0, -RotorDistanceFromCenter));
-                Vector3 backLeftForce = BaseRigidBody.transform.up * _currentThrottle;
-                BaseRigidBody.AddForceAtPosition(backLeftForce, backLeftPosition);
-                Motors[3].globalPosition = backLeftPosition;
-                Motors[3].globalForceVector = backLeftForce;
+                Vector3 backLeftForce = BaseRigidBody.transform.up * _altitudeForce;
+
+                Motors[0].globalForceVector += forwardRightForce;
+                Motors[1].globalForceVector += forwardLeftForce;
+                Motors[2].globalForceVector += backRightForce;
+                Motors[3].globalForceVector += backLeftForce;
+
+                // pitch control
+                _pitchForce = PitchControllPID.Update(IMU.OrientationEulerDegrees.x, Time.deltaTime);
+                forwardRightForce = BaseRigidBody.transform.up * -_pitchForce;
+                forwardLeftForce = BaseRigidBody.transform.up * -_pitchForce;
+                backRightForce = BaseRigidBody.transform.up * _pitchForce;
+                backLeftForce = BaseRigidBody.transform.up * _pitchForce;
+
+                Motors[0].globalForceVector += forwardRightForce;
+                Motors[1].globalForceVector += forwardLeftForce;
+                Motors[2].globalForceVector += backRightForce;
+                Motors[3].globalForceVector += backLeftForce;
+
+
+                // roll control
+                _rollForce = RollControllPID.Update(IMU.OrientationEulerDegrees.z, Time.deltaTime);
+                forwardRightForce = BaseRigidBody.transform.up * _rollForce;
+                forwardLeftForce = BaseRigidBody.transform.up * -_rollForce;
+                backRightForce = BaseRigidBody.transform.up * _rollForce;
+                backLeftForce = BaseRigidBody.transform.up * -_rollForce;
+
+                Motors[0].globalForceVector += forwardRightForce;
+                Motors[1].globalForceVector += forwardLeftForce;
+                Motors[2].globalForceVector += backRightForce;
+                Motors[3].globalForceVector += backLeftForce;
+
+
 
             } else if (QuadCopterConfiguration == ZOQuadCopterMotorConfiguration.CrossConfiguration) {
                 //TODO:
             }
 
+            // apply all the forces
+            foreach (Motor motor in Motors) {
+                BaseRigidBody.AddForceAtPosition(motor.globalForceVector, motor.globalPosition);
+            }
+
         }
 
-        
+
 
         private void OnGUI() {
-            GUI.TextField(new Rect(10, 10, 300, 22), $"Altitude Set Point: {AltitudeSetPoint.ToString("R2")}");
-            GUI.TextField(new Rect(10, 25, 300, 22), $"Altitude: {Altimeter.AltitudeMeters.ToString("R2")}");
-            GUI.TextField(new Rect(10, 40, 300, 22), $"Altitude Throttle: {_currentThrottle.ToString("R2")}");
+            int y = 10;
+            int yInc = 21;
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Altitude Set Point: {AltitudeHoldPID.SetPoint.ToString("n2")}");
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Altitude: {Altimeter.AltitudeMeters.ToString("n2")}");
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Altitude Throttle: {_altitudeForce.ToString("n2")}");
+
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Orientation: {IMU.OrientationEulerDegrees.x.ToString("n2")} {IMU.OrientationEulerDegrees.y.ToString("n2")} {IMU.OrientationEulerDegrees.z.ToString("n2")}");
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Pitch Force: {_pitchForce.ToString("n2")}");
 
             foreach (Motor motor in Motors) {
                 Debug.DrawRay(motor.globalPosition, motor.globalForceVector, Color.green, 0.1f);
