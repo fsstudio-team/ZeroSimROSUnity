@@ -1,4 +1,15 @@
-# ZeroSim 
+# ZeroSim
+- [ZeroSim](#zerosim)
+  - [Overview](#overview)
+  - [API Documentation](#api-documentation)
+  - [Getting Started](#getting-started)
+    - [Recommended System](#recommended-system)
+    - [Setting up a new Unity Project](#setting-up-a-new-unity-project)
+    - [Getting ZeroSim ROS Docker Container](#getting-zerosim-ros-docker-container)
+    - [Running TurtleBot Test Scene](#running-turtlebot-test-scene)
+    - [Using RViz for Turtlebot](#using-rviz-for-turtlebot)
+    - [Running Universal Robot UR10 Arm Test Scene with MoveIt!](#running-universal-robot-ur10-arm-test-scene-with-moveit)
+    - [Running Image Segmentation Test](#running-image-segmentation-test)
 
 ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
@@ -60,7 +71,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 ### Recommended System
 
   * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
-  * Unity 2020.x
+  * Unity 2020.x or greater
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
 
 ### Setting up a new Unity Project 
