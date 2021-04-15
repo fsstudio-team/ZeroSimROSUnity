@@ -60,7 +60,8 @@ namespace ZO.Controllers {
             Ki = 15,
             Kd = 3,
             MaximumOutputValue = 100.0f,
-            DeadBandEpsilon = 0.0f
+            DeadBandEpsilon = 0.0f,
+            SetPoint = 0
         };
 
         public ZOPIDController AltitudeClimbPID {
@@ -88,7 +89,8 @@ namespace ZO.Controllers {
             Ki = 0,
             Kd = 0.1f,
             MaximumOutputValue = 100.0f,
-            DeadBandEpsilon = 0.0f
+            DeadBandEpsilon = 0.0f,
+            SetPoint = 0
         };
 
         public ZOPIDController RollControllPID {
@@ -101,15 +103,30 @@ namespace ZO.Controllers {
             Ki = 0,
             Kd = 0.1f,
             MaximumOutputValue = 100.0f,
-            DeadBandEpsilon = 0.0f
+            DeadBandEpsilon = 0.0f,
+            SetPoint = 0
         };
 
-        public ZOPIDController PitchControllPID {
+        public ZOPIDController PitchControlPID {
             get => _pitchControlPID;
+        }
+
+        public ZOPIDController _yawControlPID = new ZOPIDController {
+            Kp = 1,
+            Ki = 0,
+            Kd = 0.1f,
+            MaximumOutputValue = 100.0f,
+            DeadBandEpsilon = 0.0f,
+            SetPoint = 0
+        };
+
+        public ZOPIDController YawControlPID {
+            get => _yawControlPID;
         }
 
         private float _pitchForce = 0.0f;
         private float _rollForce = 0.0f;
+        private float _yawTorque = 0.0f;
 
 
         private float _altitudeForce = 0.0f;
@@ -141,8 +158,6 @@ namespace ZO.Controllers {
                 AltitudeHoldPID.SetPoint = Altimeter.AltitudeMeters;
             }
 
-            PitchControllPID.SetPoint = 0;
-            RollControllPID.SetPoint = 0;
         }
 
 
@@ -156,10 +171,10 @@ namespace ZO.Controllers {
                 AltitudeHoldPID.SetPoint -= _altitudeHeightIncrement;
             }
             if (Input.GetKeyDown("w")) {
-                PitchControllPID.SetPoint = 10.0f;
+                PitchControlPID.SetPoint = 10.0f;
             }
             if (Input.GetKeyDown("x")) {
-                PitchControllPID.SetPoint = -10.0f;
+                PitchControlPID.SetPoint = -10.0f;
             }
             if (Input.GetKeyDown("d")) {
                 RollControllPID.SetPoint = -10.0f;
@@ -167,10 +182,17 @@ namespace ZO.Controllers {
             if (Input.GetKeyDown("a")) {
                 RollControllPID.SetPoint = 10.0f;
             }
+            if (Input.GetKeyDown("j")) {
+                YawControlPID.SetPoint = -5;
+            }
+            if (Input.GetKeyDown("l")) {
+                YawControlPID.SetPoint = 5;
+            }
 
             if (Input.GetKeyDown("s")) {
-                PitchControllPID.SetPoint = 0.0f;
+                PitchControlPID.SetPoint = 0.0f;
                 RollControllPID.SetPoint = 0.0f;
+                YawControlPID.SetPoint = 0.0f;
             }
 
         }
@@ -212,7 +234,7 @@ namespace ZO.Controllers {
                 Motors[3].globalForceVector += backLeftForce;
 
                 // pitch control
-                _pitchForce = PitchControllPID.Update(IMU.OrientationEulerDegrees.x, Time.deltaTime);
+                _pitchForce = PitchControlPID.Update(IMU.OrientationEulerDegrees.x, Time.deltaTime);
                 forwardRightForce = BaseRigidBody.transform.up * -_pitchForce;
                 forwardLeftForce = BaseRigidBody.transform.up * -_pitchForce;
                 backRightForce = BaseRigidBody.transform.up * _pitchForce;
@@ -237,7 +259,6 @@ namespace ZO.Controllers {
                 Motors[3].globalForceVector += backLeftForce;
 
 
-
             } else if (QuadCopterConfiguration == ZOQuadCopterMotorConfiguration.CrossConfiguration) {
                 //TODO:
             }
@@ -246,6 +267,10 @@ namespace ZO.Controllers {
             foreach (Motor motor in Motors) {
                 BaseRigidBody.AddForceAtPosition(motor.globalForceVector, motor.globalPosition);
             }
+
+            // apply yaw torque
+            _yawTorque = YawControlPID.Update(IMU.AngularVelocity.y, Time.deltaTime);
+            BaseRigidBody.AddTorque(BaseRigidBody.transform.up * _yawTorque);
 
         }
 
@@ -260,6 +285,9 @@ namespace ZO.Controllers {
 
             GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Orientation: {IMU.OrientationEulerDegrees.x.ToString("n2")} {IMU.OrientationEulerDegrees.y.ToString("n2")} {IMU.OrientationEulerDegrees.z.ToString("n2")}");
             GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Pitch Force: {_pitchForce.ToString("n2")}");
+
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Angular Velocity: {IMU.AngularVelocity.x.ToString("n2")} {IMU.AngularVelocity.y.ToString("n2")} {IMU.AngularVelocity.z.ToString("n2")}");
+            GUI.TextField(new Rect(10, y += yInc, 300, 22), $"Yaw Torque: {_yawTorque.ToString("n2")}");
 
             foreach (Motor motor in Motors) {
                 Debug.DrawRay(motor.globalPosition, motor.globalForceVector, Color.green, 0.1f);

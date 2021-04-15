@@ -1781,3 +1781,12 @@ MonoBehaviour:
     _maximumOutputValue: 1000
     _deadBandEpsilon: 0
     _output: 0
+  _yawControlPID:
+    _name: 
+    _Kp: 0.5
+    _Ki: 0
+    _Kd: 0.02
+    _setPoint: 0
+    _maximumOutputValue: 10000
+    _deadBandEpsilon: 0
+    _output: 0
