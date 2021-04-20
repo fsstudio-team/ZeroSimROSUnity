@@ -26,6 +26,11 @@ namespace ZO.Util.Extensions {
             return new Quaternion(-q.z, q.x, -q.y, q.w);
         }
 
+        public static string ToXMLString(this Vector3 v) {
+            return $"{v.x} {v.y} {v.z}";
+        }
+
+
     }
 
 }

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Xml.Linq;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -52,6 +52,12 @@ namespace ZO.Document {
             set => _json = value;
         }
 
+        public XDocument XML {
+            get; set;
+        } = new XDocument();
+
+
+
         /// <summary>
         /// The name of this zosim document root. Note that it *should* be unique, so if you are 
         /// spawing a bunch of these make sure to set the "document_name" in the ZeroSim JSON to
@@ -65,6 +71,9 @@ namespace ZO.Document {
             set => gameObject.name = value;
         }
 
+        public string URDFExportDirectory {
+            get; set;
+        } = "";
 
         private static AssetBundle _assetBundle = null;
 
@@ -117,7 +126,7 @@ namespace ZO.Document {
                 result.Add(asset);
 
             }
-#else // RUNTIME
+#else // RUNTIME using asset bundle
             UnityEngine.Object asset = AssetBundle.LoadAsset(name);
 
             if (asset) {
@@ -224,31 +233,6 @@ namespace ZO.Document {
 
         }
 
-        public JObject GetOccurrenceJSON(string occurrenceName, JArray occurrences = null) {
-            if (occurrences == null) {
-                occurrences = (JArray)JSON["occurrences"];
-            }
-
-            foreach (JObject oc in occurrences) {
-                if (oc["name"].Value<string>() == occurrenceName) {
-                    return oc;
-                }
-
-                // search children
-                JArray children = (JArray)oc["children"];
-                if (children != null) {
-                    JObject childrenResult = GetOccurrenceJSON(occurrenceName, children);
-                    if (childrenResult != null) {
-                        return childrenResult;
-                    }
-
-                }
-
-            }
-
-            return null;
-
-        }
 
         /// <summary>
         /// Get zosim occurrence by name.
@@ -263,6 +247,66 @@ namespace ZO.Document {
                 }
             }
             return null;
+        }
+
+        public void ExportURDF(string exportDirectory) {
+            URDFExportDirectory = exportDirectory;
+
+            // create root document and robot element
+            XElement robot = new XElement("robot");
+            robot.SetAttributeValue("name", Name);
+            XML = new XDocument(robot);
+
+            // go through the ZOSimOccurrences and convert into URDF Links and Joints    
+            List<XElement> links = new List<XElement>();        
+            foreach (Transform child in transform) {
+                ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
+                if (simOccurence) {
+                    simOccurence.BuildURDFJoints(this, robot);
+                    
+                }
+            }
+
+            robot.Add(links);
+
+            string urdfFilePath = Path.Combine(URDFExportDirectory, $"{Name}.urdf");
+            XML.Save(urdfFilePath);
+
+        }
+
+        public void ImportURDF(string urdfFilePath) {
+            //TODO
+        }
+        /// <summary>
+        /// Saves to ZOSim file.
+        /// </summary>
+        public void SaveToZOSimFile(string filePath) {
+            JSON = Serialize();
+            // Save ZoSim file
+            using (StreamWriter streamWriter = File.CreateText(filePath)) {
+                streamWriter.Write(JSON.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Load Zero Sim JSON file.
+        /// </summary>
+        /// <param name="filePath">path to zosim file</param>
+        public void LoadFromZOSimFile(string filePath) {
+
+            if (File.Exists(filePath) == true) { // load from file
+                using (StreamReader file = File.OpenText(filePath)) {
+                    using (JsonTextReader reader = new JsonTextReader(file)) {
+                        JSON = (JObject)JToken.ReadFrom(reader);
+                    }
+                }
+
+                // load json file
+                Deserialize(JSON);
+
+            } else {
+                Debug.LogError("ERROR: Could not load ZoSim Project. File does not exist: " + filePath);
+            }
         }
 
 
@@ -335,43 +379,8 @@ namespace ZO.Document {
             return zoSimDocumentJSON;
         }
 
-        /// <summary>
-        /// Saves to ZOSim file.
-        /// </summary>
-        public void SaveToZOSimFile(string filePath) {
-            JSON = Serialize();
-            // Save ZoSim file
-            using (StreamWriter streamWriter = File.CreateText(filePath)) {
-                streamWriter.Write(JSON.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Load Zero Sim JSON file.
-        /// </summary>
-        /// <param name="filePath">path to zosim file</param>
-        public void LoadFromZOSimFile(string filePath) {
-
-            if (File.Exists(filePath) == true) { // load from file
-                using (StreamReader file = File.OpenText(filePath)) {
-                    using (JsonTextReader reader = new JsonTextReader(file)) {
-                        JSON = (JObject)JToken.ReadFrom(reader);
-                    }
-                }
-
-                // load json file
-                Deserialize(JSON);
-
-            } else {
-                Debug.LogError("ERROR: Could not load ZoSim Project. File does not exist: " + filePath);
-            }
-        }
 
         public void Deserialize(JObject json) {
-
-            // unload asset bundle because otherwise weird stuff can happen
-            // AssetBundle.Unload(true);
-
             JSON = json;
             Name = JSON["document_name"].Value<string>();
 
