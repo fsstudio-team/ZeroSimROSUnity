@@ -258,7 +258,6 @@ namespace ZO.Document {
             XML = new XDocument(robot);
 
             // go through the ZOSimOccurrences and convert into URDF Links and Joints    
-            List<XElement> links = new List<XElement>();        
             foreach (Transform child in transform) {
                 ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurence) {
@@ -266,8 +265,6 @@ namespace ZO.Document {
                     
                 }
             }
-
-            robot.Add(links);
 
             string urdfFilePath = Path.Combine(URDFExportDirectory, $"{Name}.urdf");
             XML.Save(urdfFilePath);

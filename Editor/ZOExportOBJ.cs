@@ -42,26 +42,26 @@ namespace ZO.Export {
                 Vector3 v = r * nn;
                 sb.Append(string.Format("vn {0} {1} {2}\n", -v.x, -v.y, v.z));
             }
-            // sb.Append("\n");
-            // foreach (Vector3 v in m.uv) {
-            //     sb.Append(string.Format("vt {0} {1}\n", v.x, v.y));
-            // }
+            sb.Append("\n");
+            foreach (Vector3 v in m.uv) {
+                sb.Append(string.Format("vt {0} {1}\n", v.x, v.y));
+            }
             
             for (int material = 0; material < m.subMeshCount; material++) {
                 sb.Append("\n");
-                //sb.Append("usemtl ").Append(mats[material].name).Append("\n");
-                //sb.Append("usemap ").Append(mats[material].name).Append("\n");
+                sb.Append("usemtl ").Append(mats[material].name).Append("\n");
+                sb.Append("usemap ").Append(mats[material].name).Append("\n");
 
                 int[] triangles = m.GetTriangles(material);
                 for (int i = 0; i < triangles.Length; i += 3) {
-                    // sb.Append(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
-                    //                     triangles[i] + 1 + _startIndex, 
-                    //                     triangles[i + 1] + 1 + _startIndex, 
-                    //                     triangles[i + 2] + 1 + _startIndex));
-                    sb.Append(string.Format("f {0}//{0} {1}//{1} {2}//{2}\n", // pos, None, Norm
+                    sb.Append(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
                                         triangles[i] + 1 + _startIndex, 
                                         triangles[i + 1] + 1 + _startIndex, 
                                         triangles[i + 2] + 1 + _startIndex));
+                    // sb.Append(string.Format("f {0}//{0} {1}//{1} {2}//{2}\n", // pos, None, Norm
+                    //                     triangles[i] + 1 + _startIndex, 
+                    //                     triangles[i + 1] + 1 + _startIndex, 
+                    //                     triangles[i + 2] + 1 + _startIndex));
 
                 }
             }

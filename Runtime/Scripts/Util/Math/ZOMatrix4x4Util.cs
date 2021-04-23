@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ZO.Math {
     public static class ZOMatrix4x4Util {
-        public static Vector3 GetTranslation(this Matrix4x4 m) {
+        public static Vector3 Position(this Matrix4x4 m) {
             var col = m.GetColumn(3);
             return new Vector3(col.x, col.y, col.z);
         }
@@ -23,8 +23,25 @@ namespace ZO.Math {
             return q;
         }
 
+
+        /// <summary>
+        /// Gets the scale vector for matrix
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns>Vector3 scale vector</returns>
         public static Vector3 GetScale(this Matrix4x4 m) {
             return new Vector3(m.GetColumn(0).magnitude, m.GetColumn(1).magnitude, m.GetColumn(2).magnitude);
         }
+
+        /// <summary>
+        /// Get the matrix from the Transform position and rotation while ignoring scale.
+        /// See: Matrix4x4.TRS
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static Matrix4x4 WorldTranslationRotationMatrix(this Transform t) {
+            return Matrix4x4.TRS(t.position, t.rotation, Vector3.one);
+        }
+
     }
 }

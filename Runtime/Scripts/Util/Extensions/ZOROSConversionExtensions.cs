@@ -26,6 +26,12 @@ namespace ZO.Util.Extensions {
             return new Quaternion(-q.z, q.x, -q.y, q.w);
         }
 
+        public static Vector3 Unity2RosRollPitchYaw(this Quaternion q) {
+            return new Vector3(-q.eulerAngles.z * Mathf.Deg2Rad,
+                            q.eulerAngles.x * Mathf.Deg2Rad,
+                            -q.eulerAngles.y * Mathf.Deg2Rad);
+        }
+
         public static string ToXMLString(this Vector3 v) {
             return $"{v.x} {v.y} {v.z}";
         }

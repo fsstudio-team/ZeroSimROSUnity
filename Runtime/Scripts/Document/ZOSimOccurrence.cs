@@ -14,6 +14,7 @@ using ZO.ROS.Controllers;
 using ZO.Sensors;
 using ZO.ROS.Unity;
 using ZO.ROS.Publisher;
+using ZO.Math;
 
 namespace ZO.Document {
 
@@ -135,7 +136,7 @@ namespace ZO.Document {
                 Matrix4x4 matrix4X4 = new Matrix4x4(c0, c1, c2, c3);
                 matrix4X4 = matrix4X4.transpose;  // go from fusion360 row major to Unity column major
                 rotation = ZO.Math.ZOMatrix4x4Util.GetRotation(matrix4X4);
-                translation = ZO.Math.ZOMatrix4x4Util.GetTranslation(matrix4X4);
+                translation = ZO.Math.ZOMatrix4x4Util.Position(matrix4X4);
                 scale = ZO.Math.ZOMatrix4x4Util.GetScale(matrix4X4);
             }
 
@@ -1016,35 +1017,36 @@ namespace ZO.Document {
 
         public XElement XML { get; }
 
-        protected void BuildURDFVisuals(Transform trans, XElement link, XElement joint) {
+        protected void BuildURDFVisuals(Transform visualTransform, XElement link, XElement joint) {
             // build 3d primitive if exists
-            MeshFilter meshFilter = trans.GetComponent<MeshFilter>();
+            MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
             if (meshFilter) {
 
-                MeshRenderer meshRenderer = trans.GetComponent<MeshRenderer>();
+                MeshRenderer meshRenderer = visualTransform.GetComponent<MeshRenderer>();
                 Collider collider = null;
                 XElement visual = new XElement("visual");
+                visual.SetAttributeValue("name", visualTransform.name);
                 XElement geometry = new XElement("geometry");
 
                 if (meshFilter.sharedMesh.name.Contains("Cube")) {
                     XElement box = new XElement("box");
 
-                    Vector3 boxSize = trans.localScale.Unity2RosScale();
+                    Vector3 boxSize = visualTransform.localScale.Unity2RosScale();
                     box.SetAttributeValue("size", boxSize.ToXMLString());
                     geometry.Add(box);
 
-                    collider = trans.GetComponent<BoxCollider>();
+                    collider = visualTransform.GetComponent<BoxCollider>();
                     if (collider) {
                         //TODO: add box collider
                     }
                 }
                 if (meshFilter.sharedMesh.name.Contains("Sphere")) {
                     XElement sphere = new XElement("sphere");
-                    float radius = trans.localScale.x / 2.0f;
+                    float radius = visualTransform.localScale.x / 2.0f;
                     sphere.SetAttributeValue("radius", radius);
                     geometry.Add(sphere);
 
-                    collider = trans.GetComponent<SphereCollider>();
+                    collider = visualTransform.GetComponent<SphereCollider>();
                     if (collider) {
                         //TODO: add box collider
                     }
@@ -1061,14 +1063,14 @@ namespace ZO.Document {
                 // }
                 if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
                     XElement cylinder = new XElement("cylinder");
-                    float radius = trans.localScale.x / 2.0f;
-                    float height = trans.localScale.y * 2.0f;
+                    float radius = visualTransform.localScale.x / 2.0f;
+                    float height = visualTransform.localScale.y * 2.0f;
                     cylinder.SetAttributeValue("radius", radius);
                     cylinder.SetAttributeValue("length", height);
 
                     geometry.Add(cylinder);
 
-                    collider = trans.GetComponent<MeshCollider>();
+                    collider = visualTransform.GetComponent<MeshCollider>();
                     if (collider) {
                         //TODO: add box collider
                     }
@@ -1077,10 +1079,10 @@ namespace ZO.Document {
 
                 if (geometry.HasElements) {
                     // build origin                    
-                    Vector3 xyz = trans.localPosition.Unity2Ros();
-                    Vector3 rpy = new Vector3(-trans.localEulerAngles.z * Mathf.Deg2Rad,
-                                                trans.localEulerAngles.x * Mathf.Deg2Rad,
-                                                -trans.localEulerAngles.y * Mathf.Deg2Rad);
+                    Vector3 xyz = visualTransform.localPosition.Unity2Ros();
+                    Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                                                visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                                                -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
                     // Vector3 xyz = jointTransform.position.Unity2Ros();
                     // Vector3 rpy = new Vector3(-transform.eulerAngles.z * Mathf.Deg2Rad,
                     //                             transform.eulerAngles.x * Mathf.Deg2Rad,
@@ -1089,6 +1091,7 @@ namespace ZO.Document {
                     XElement origin = new XElement("origin");
                     origin.SetAttributeValue("xyz", xyz.ToXMLString());
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                    
                     visual.Add(origin);
 
                     visual.Add(geometry);
@@ -1157,14 +1160,16 @@ namespace ZO.Document {
                 joint.SetAttributeValue("type", "fixed");  //HACK hardwired!
                 // build origin
                 Transform jointTransform = this.transform;
-                Vector3 xyz = jointTransform.localPosition.Unity2Ros();
-                Vector3 rpy = new Vector3(-jointTransform.localEulerAngles.z * Mathf.Deg2Rad,
-                                            jointTransform.localEulerAngles.x * Mathf.Deg2Rad,
-                                            -jointTransform.localEulerAngles.y * Mathf.Deg2Rad);
-                // Vector3 xyz = jointTransform.position.Unity2Ros();
-                // Vector3 rpy = new Vector3(-transform.eulerAngles.z * Mathf.Deg2Rad,
-                //                             transform.eulerAngles.x * Mathf.Deg2Rad,
-                //                             -transform.eulerAngles.y * Mathf.Deg2Rad);
+                // Vector3 xyz = jointTransform.localPosition.Unity2Ros();
+                // Vector3 rpy = new Vector3(-jointTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                //                             jointTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                //                             -jointTransform.localEulerAngles.y * Mathf.Deg2Rad);
+
+                // remember everything is relative to parent.
+                // TODO: THOUGH MAYBE IT IS RELATIVE TO PARENT JOINT WHICH MAY NOT BE THE SAME!!!
+                Matrix4x4 jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+                Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
 
                 XElement origin = new XElement("origin");
                 origin.SetAttributeValue("xyz", xyz.ToXMLString());
