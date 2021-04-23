@@ -1152,14 +1152,41 @@ namespace ZO.Document {
         }
 
         public void BuildURDFJoints(ZOSimDocumentRoot documentRoot, XElement robot, ZOSimOccurrence parent = null) {
-
+            
             // if we have a parent build a joint
             if (parent) {
-                XElement joint = new XElement("joint");
-                joint.SetAttributeValue("name", $"{parent.Name}_to_{this.Name}");
-                joint.SetAttributeValue("type", "fixed");  //HACK hardwired!
+                XElement jointX = new XElement("joint");
+                jointX.SetAttributeValue("name", $"{parent.Name}_to_{this.Name}");
+                // Transform jointTransform = this.transform;
+                Matrix4x4 jointMatrix;
+
+                ZOHingeJoint hingeJoint = parent.GetComponent<ZOHingeJoint>();
+                if (hingeJoint != null) {
+                    jointX.SetAttributeValue("type", "revolute");  
+                    
+                    // create axis
+                    Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
+                    XElement axisX = new XElement("axis");
+                    axisX.SetAttributeValue("xyz", axis.ToXMLString());
+                    jointX.Add(axisX);
+
+                    // create limits
+                    // TODO:
+                    XElement limitX = new XElement("limit");
+                    limitX.SetAttributeValue("effort", 10000f); // HACK
+                    limitX.SetAttributeValue("velocity", 3.14f); // HACK
+                    jointX.Add(limitX);
+
+                    jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+
+                } else { // children of the parent even without an explicit joint are "fixed" joints
+                    jointX.SetAttributeValue("type", "fixed");  
+                    jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+                }
+
+                
                 // build origin
-                Transform jointTransform = this.transform;
+                
                 // Vector3 xyz = jointTransform.localPosition.Unity2Ros();
                 // Vector3 rpy = new Vector3(-jointTransform.localEulerAngles.z * Mathf.Deg2Rad,
                 //                             jointTransform.localEulerAngles.x * Mathf.Deg2Rad,
@@ -1167,30 +1194,30 @@ namespace ZO.Document {
 
                 // remember everything is relative to parent.
                 // TODO: THOUGH MAYBE IT IS RELATIVE TO PARENT JOINT WHICH MAY NOT BE THE SAME!!!
-                Matrix4x4 jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+                
                 Vector3 xyz = jointMatrix.Position().Unity2Ros();
                 Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
 
                 XElement origin = new XElement("origin");
                 origin.SetAttributeValue("xyz", xyz.ToXMLString());
                 origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                joint.Add(origin);
+                jointX.Add(origin);
 
-                robot.Add(joint);
+                robot.Add(jointX);
 
                 XElement parentX = new XElement("parent");
                 parentX.SetAttributeValue("link", parent.Name);
-                joint.Add(parentX);
+                jointX.Add(parentX);
 
                 XElement childX = new XElement("child");
                 childX.SetAttributeValue("link", this.Name);
-                joint.Add(childX);
+                jointX.Add(childX);
 
 
 
                 // build the links
-                parent.BuildURDFLink(documentRoot, robot, joint, jointTransform, parent);
-                this.BuildURDFLink(documentRoot, robot, joint, jointTransform, parent);
+                parent.BuildURDFLink(documentRoot, robot, jointX, null, parent);
+                this.BuildURDFLink(documentRoot, robot, jointX, null, parent);
             }
 
             // recursively go through the children
