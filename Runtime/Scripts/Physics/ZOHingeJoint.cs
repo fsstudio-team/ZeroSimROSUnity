@@ -35,6 +35,38 @@ namespace ZO.Physics {
             }
         }
 
+        /// <summary>
+        /// The direction of axis in which the body is constrained.
+        /// </summary>
+        /// <value></value>
+        public Vector3 Axis {
+            get {
+                return UnityHingeJoint.axis;
+            }
+            set {
+                UnityHingeJoint.axis = value;
+            }
+        }
+
+        /// <summary>
+        /// The position of the anchor in which the joint body is constrained
+        /// </summary>
+        /// <value></value>
+        public Vector3 Anchor {
+            get {
+                return UnityHingeJoint.anchor;
+            }
+            set {
+                UnityHingeJoint.anchor = value;
+            }
+        }
+
+        public Vector3 ConnectedAnchor {
+            get {
+                return UnityHingeJoint.connectedAnchor;
+            }
+        }
+
         public bool _debug = false;
 
 
