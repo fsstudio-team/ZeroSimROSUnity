@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using ZO.ROS.Publisher;
 using ZO.ROS.Controllers;
 using ZO.ROS.Unity.Service;
-
+using ZO.Math;
 namespace ZO.Document {
 
     /// <summary>
@@ -261,7 +261,7 @@ namespace ZO.Document {
             foreach (Transform child in transform) {
                 ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurence) {
-                    simOccurence.BuildURDFJoints(this, robot);
+                    simOccurence.BuildURDFJoints(this, robot, null, this.transform.WorldTranslationRotationMatrix());
                     
                 }
             }

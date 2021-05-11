@@ -1151,14 +1151,14 @@ namespace ZO.Document {
 
         }
 
-        public void BuildURDFJoints(ZOSimDocumentRoot documentRoot, XElement robot, ZOSimOccurrence parent = null) {
+        public void BuildURDFJoints(ZOSimDocumentRoot documentRoot, XElement robot, ZOSimOccurrence parent, Matrix4x4 worldJointMatrix) {
             
             // if we have a parent build a joint
             if (parent) {
                 XElement jointX = new XElement("joint");
                 jointX.SetAttributeValue("name", $"{parent.Name}_to_{this.Name}");
                 // Transform jointTransform = this.transform;
-                Matrix4x4 jointMatrix;
+                Matrix4x4 jointMatrix = Matrix4x4.identity;
 
                 ZOHingeJoint hingeJoint = parent.GetComponent<ZOHingeJoint>();
                 if (hingeJoint != null) {
@@ -1177,11 +1177,38 @@ namespace ZO.Document {
                     limitX.SetAttributeValue("velocity", 3.14f); // HACK
                     jointX.Add(limitX);
 
-                    jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+                    // Add the anchor position
+                    jointMatrix = parent.transform.WorldTranslationRotationMatrix(); 
+                    jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor); 
+
+                    // save this off as the new world joint matrix
+                    Matrix4x4 newWorldJointMatrix = jointMatrix; 
+
+                    // subtract out the parent root
+                    jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                    worldJointMatrix = newWorldJointMatrix;
+
+                    Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                    Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                    XElement origin = new XElement("origin");
+                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                    jointX.Add(origin);
+
 
                 } else { // children of the parent even without an explicit joint are "fixed" joints
                     jointX.SetAttributeValue("type", "fixed");  
                     jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+
+                    Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                    Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                    XElement origin = new XElement("origin");
+                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                    jointX.Add(origin);
+
                 }
 
                 
@@ -1193,15 +1220,15 @@ namespace ZO.Document {
                 //                             -jointTransform.localEulerAngles.y * Mathf.Deg2Rad);
 
                 // remember everything is relative to parent.
-                // TODO: THOUGH MAYBE IT IS RELATIVE TO PARENT JOINT WHICH MAY NOT BE THE SAME!!!
-                
-                Vector3 xyz = jointMatrix.Position().Unity2Ros();
-                Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+                // TODO: THOUGH MAYBE IT IS RELATIVE TO PARENT JOINT WHICH MAY NOT BE THE SAME!!!                
 
-                XElement origin = new XElement("origin");
-                origin.SetAttributeValue("xyz", xyz.ToXMLString());
-                origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                jointX.Add(origin);
+                // Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                // Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                // XElement origin = new XElement("origin");
+                // origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                // origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                // jointX.Add(origin);
 
                 robot.Add(jointX);
 
@@ -1224,7 +1251,7 @@ namespace ZO.Document {
             foreach (Transform child in transform) {
                 ZOSimOccurrence simOccurrence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurrence) {
-                    simOccurrence.BuildURDFJoints(documentRoot, robot, this);
+                    simOccurrence.BuildURDFJoints(documentRoot, robot, this, worldJointMatrix);
                 }
             }
 
