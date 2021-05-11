@@ -43,5 +43,13 @@ namespace ZO.Math {
             return Matrix4x4.TRS(t.position, t.rotation, Vector3.one);
         }
 
+        public static Matrix4x4 AddTranslation(this Matrix4x4 matrix, Vector3 translation) {
+            matrix[0, 3] += translation.x;
+            matrix[1, 3] += translation.y;
+            matrix[2, 3] += translation.z;
+            return matrix;
+        }
+        
+
     }
 }
