@@ -1079,7 +1079,7 @@ namespace ZO.Document {
 
                 if (geometry.HasElements) {
                     // build origin
-                    Vector3 position = visualTransform.localPosition + anchorOffset;                    
+                    Vector3 position = visualTransform.localPosition + anchorOffset;
                     Vector3 xyz = position.Unity2Ros();//visualTransform.localPosition.Unity2Ros();
                     Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
                                                 visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
@@ -1191,9 +1191,10 @@ namespace ZO.Document {
 
             simOccurrence.BuildURDFJoints(robot, null, baseTransform, ref joints);
 
+
             // build links
             HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
-            foreach(URDFJoint joint in joints) {
+            foreach (URDFJoint joint in joints) {
                 if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) { // build parent link if not exist
                     Vector3 offset = -1.0f * joint.ConnectedAnchor;
                     if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
@@ -1208,6 +1209,30 @@ namespace ZO.Document {
                     links.Add(joint.Child);
                 }
             }
+
+            if (joints.Count == 0) { // if we don't have any joints then create a dummy world link and joint to first link
+                
+                XElement link = new XElement("link");
+                link.SetAttributeValue("name", "World");
+                robot.Add(link);
+
+                simOccurrence.BuildURDFLink(robot, Vector3.zero);
+
+                XElement jointX = new XElement("joint");
+                jointX.SetAttributeValue("name", $"World_to_{simOccurrence.Name}");
+                jointX.SetAttributeValue("type", "fixed");
+
+                XElement parentX = new XElement("parent");
+                parentX.SetAttributeValue("link", "World");
+                jointX.Add(parentX);
+
+                XElement childX = new XElement("child");
+                childX.SetAttributeValue("link", simOccurrence.Name);
+                jointX.Add(childX);
+                robot.Add(jointX);
+
+            }
+
         }
 
         protected void BuildURDFJoints(XElement robot, ZOSimOccurrence parent, Matrix4x4 worldJointMatrix, ref List<URDFJoint> joints) {
