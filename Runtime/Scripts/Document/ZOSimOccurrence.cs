@@ -1017,7 +1017,7 @@ namespace ZO.Document {
 
         public XElement XML { get; }
 
-        protected void BuildURDFVisuals(Transform visualTransform, XElement link, XElement joint) {
+        protected void BuildURDFVisuals(Transform visualTransform, XElement link) {
             // build 3d primitive if exists
             MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
             if (meshFilter) {
@@ -1091,7 +1091,7 @@ namespace ZO.Document {
                     XElement origin = new XElement("origin");
                     origin.SetAttributeValue("xyz", xyz.ToXMLString());
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                    
+
                     visual.Add(origin);
 
                     visual.Add(geometry);
@@ -1126,7 +1126,7 @@ namespace ZO.Document {
         /// <summary>
         /// URDF has a "flattened" hierarchy where the hierarchy is build by URDF joints.
         /// </summary>
-        public void BuildURDFLink(ZOSimDocumentRoot documentRoot, XElement robot, XElement joint, Transform jointTransform, ZOSimOccurrence parent = null) {
+        public void BuildURDFLink(XElement robot) {
 
             XElement link = new XElement("link");
             link.SetAttributeValue("name", Name);
@@ -1143,7 +1143,7 @@ namespace ZO.Document {
                     // go through the children of the visuals and get all the models
                     foreach (Transform visualsChild in child) {
                         // check if it is a primitive type (cube, sphere, cylinder, etc)
-                        BuildURDFVisuals(visualsChild, link, joint);
+                        BuildURDFVisuals(visualsChild, link);
                     }
                 }
 
@@ -1151,8 +1151,53 @@ namespace ZO.Document {
 
         }
 
-        public void BuildURDFJoints(ZOSimDocumentRoot documentRoot, XElement robot, ZOSimOccurrence parent, Matrix4x4 worldJointMatrix) {
-            
+        protected readonly struct URDFJoint {
+            public URDFJoint(ZOSimOccurrence child, ZOSimOccurrence parent, Vector3 anchor, Vector3 connectedAnchor) {
+                Child = child;
+                Parent = parent;
+                Anchor = anchor;
+                ConnectedAnchor = connectedAnchor;
+            }
+
+
+            public ZOSimOccurrence Child {
+                get;
+            }
+
+            public ZOSimOccurrence Parent {
+                get;
+            }
+
+            public Vector3 Anchor {
+                get;
+            }
+
+            public Vector3 ConnectedAnchor {
+                get;
+            }
+        }
+
+        public static void BuildURDF(XElement robot, ZOSimOccurrence simOccurrence, Matrix4x4 baseTransform) {
+            List<URDFJoint> joints = new List<URDFJoint>();
+
+            simOccurrence.BuildURDFJoints(robot, null, baseTransform, ref joints);
+
+            // build links
+            HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
+            foreach(URDFJoint joint in joints) {
+                if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) {
+                    joint.Parent.BuildURDFLink(robot);
+                    links.Add(joint.Parent);
+                }
+                if (links.Contains<ZOSimOccurrence>(joint.Child) == false) {
+                    joint.Child.BuildURDFLink(robot);
+                    links.Add(joint.Child);
+                }
+            }
+        }
+
+        protected void BuildURDFJoints(XElement robot, ZOSimOccurrence parent, Matrix4x4 worldJointMatrix, ref List<URDFJoint> joints) {
+
             // if we have a parent build a joint
             if (parent) {
                 XElement jointX = new XElement("joint");
@@ -1162,8 +1207,8 @@ namespace ZO.Document {
 
                 ZOHingeJoint hingeJoint = parent.GetComponent<ZOHingeJoint>();
                 if (hingeJoint != null) {
-                    jointX.SetAttributeValue("type", "revolute");  
-                    
+                    jointX.SetAttributeValue("type", "revolute");
+
                     // create axis
                     Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
                     XElement axisX = new XElement("axis");
@@ -1178,11 +1223,11 @@ namespace ZO.Document {
                     jointX.Add(limitX);
 
                     // Add the anchor position
-                    jointMatrix = parent.transform.WorldTranslationRotationMatrix(); 
-                    jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor); 
+                    jointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                    jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor);
 
                     // save this off as the new world joint matrix
-                    Matrix4x4 newWorldJointMatrix = jointMatrix; 
+                    Matrix4x4 newWorldJointMatrix = jointMatrix;
 
                     // subtract out the parent root
                     jointMatrix = jointMatrix * worldJointMatrix.inverse;
@@ -1196,9 +1241,13 @@ namespace ZO.Document {
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
                     jointX.Add(origin);
 
+                    URDFJoint joint = new URDFJoint(this, parent, hingeJoint.Anchor, hingeJoint.ConnectedAnchor);
+                    joints.Add(joint);
+
 
                 } else { // children of the parent even without an explicit joint are "fixed" joints
-                    jointX.SetAttributeValue("type", "fixed");  
+
+                    jointX.SetAttributeValue("type", "fixed");
                     jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
 
                     Vector3 xyz = jointMatrix.Position().Unity2Ros();
@@ -1209,11 +1258,15 @@ namespace ZO.Document {
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
                     jointX.Add(origin);
 
+                    URDFJoint joint = new URDFJoint(this, parent, jointMatrix.Position(), jointMatrix.Position());
+                    joints.Add(joint);
+
+
                 }
 
-                
+
                 // build origin
-                
+
                 // Vector3 xyz = jointTransform.localPosition.Unity2Ros();
                 // Vector3 rpy = new Vector3(-jointTransform.localEulerAngles.z * Mathf.Deg2Rad,
                 //                             jointTransform.localEulerAngles.x * Mathf.Deg2Rad,
@@ -1241,17 +1294,15 @@ namespace ZO.Document {
                 jointX.Add(childX);
 
 
-
                 // build the links
-                parent.BuildURDFLink(documentRoot, robot, jointX, null, parent);
-                this.BuildURDFLink(documentRoot, robot, jointX, null, parent);
+                // parent.BuildURDFLink(documentRoot, robot, parent);
+                // this.BuildURDFLink(documentRoot, robot, parent);
             }
-
             // recursively go through the children
             foreach (Transform child in transform) {
                 ZOSimOccurrence simOccurrence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurrence) {
-                    simOccurrence.BuildURDFJoints(documentRoot, robot, this, worldJointMatrix);
+                    simOccurrence.BuildURDFJoints(robot, this, worldJointMatrix, ref joints);
                 }
             }
 

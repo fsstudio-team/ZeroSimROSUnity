@@ -258,10 +258,11 @@ namespace ZO.Document {
             XML = new XDocument(robot);
 
             // go through the ZOSimOccurrences and convert into URDF Links and Joints    
-            foreach (Transform child in transform) {
+            foreach (Transform child in transform) {  // BUG: Should only ever be one base object for URDF!!!
                 ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurence) {
-                    simOccurence.BuildURDFJoints(this, robot, null, this.transform.WorldTranslationRotationMatrix());
+                    ZOSimOccurrence.BuildURDF(robot, simOccurence, this.transform.WorldTranslationRotationMatrix());
+                    // simOccurence.BuildURDFJoints(this, robot, null, this.transform.WorldTranslationRotationMatrix());
                     
                 }
             }
