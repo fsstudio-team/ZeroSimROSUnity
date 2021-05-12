@@ -1194,7 +1194,7 @@ namespace ZO.Document {
             // build links
             HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
             foreach(URDFJoint joint in joints) {
-                if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) {
+                if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) { // build parent link if not exist
                     Vector3 offset = -1.0f * joint.ConnectedAnchor;
                     if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
                         offset = Vector3.zero;
@@ -1202,7 +1202,7 @@ namespace ZO.Document {
                     joint.Parent.BuildURDFLink(robot, offset);
                     links.Add(joint.Parent);
                 }
-                if (links.Contains<ZOSimOccurrence>(joint.Child) == false) {
+                if (links.Contains<ZOSimOccurrence>(joint.Child) == false) { // build child link if not exist
                     Vector3 offset = -1.0f * joint.ConnectedAnchor;
                     joint.Child.BuildURDFLink(robot, offset);
                     links.Add(joint.Child);
