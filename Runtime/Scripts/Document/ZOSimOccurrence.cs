@@ -1017,7 +1017,7 @@ namespace ZO.Document {
 
         public XElement XML { get; }
 
-        protected void BuildURDFVisuals(Transform visualTransform, XElement link) {
+        protected void BuildURDFVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists
             MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
             if (meshFilter) {
@@ -1078,8 +1078,9 @@ namespace ZO.Document {
                 }
 
                 if (geometry.HasElements) {
-                    // build origin                    
-                    Vector3 xyz = visualTransform.localPosition.Unity2Ros();
+                    // build origin
+                    Vector3 position = visualTransform.localPosition + anchorOffset;                    
+                    Vector3 xyz = position.Unity2Ros();//visualTransform.localPosition.Unity2Ros();
                     Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
                                                 visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
                                                 -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
@@ -1126,7 +1127,7 @@ namespace ZO.Document {
         /// <summary>
         /// URDF has a "flattened" hierarchy where the hierarchy is build by URDF joints.
         /// </summary>
-        public void BuildURDFLink(XElement robot) {
+        public void BuildURDFLink(XElement robot, Vector3 anchorOffset) {
 
             XElement link = new XElement("link");
             link.SetAttributeValue("name", Name);
@@ -1143,7 +1144,7 @@ namespace ZO.Document {
                     // go through the children of the visuals and get all the models
                     foreach (Transform visualsChild in child) {
                         // check if it is a primitive type (cube, sphere, cylinder, etc)
-                        BuildURDFVisuals(visualsChild, link);
+                        BuildURDFVisuals(visualsChild, link, anchorOffset);
                     }
                 }
 
@@ -1175,6 +1176,14 @@ namespace ZO.Document {
             public Vector3 ConnectedAnchor {
                 get;
             }
+
+            public static bool operator ==(URDFJoint a, URDFJoint b) {
+                return a.Equals(b);
+            }
+            public static bool operator !=(URDFJoint a, URDFJoint b) {
+                return !a.Equals(b);
+            }
+
         }
 
         public static void BuildURDF(XElement robot, ZOSimOccurrence simOccurrence, Matrix4x4 baseTransform) {
@@ -1186,11 +1195,16 @@ namespace ZO.Document {
             HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
             foreach(URDFJoint joint in joints) {
                 if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) {
-                    joint.Parent.BuildURDFLink(robot);
+                    Vector3 offset = -1.0f * joint.ConnectedAnchor;
+                    if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
+                        offset = Vector3.zero;
+                    }
+                    joint.Parent.BuildURDFLink(robot, offset);
                     links.Add(joint.Parent);
                 }
                 if (links.Contains<ZOSimOccurrence>(joint.Child) == false) {
-                    joint.Child.BuildURDFLink(robot);
+                    Vector3 offset = -1.0f * joint.ConnectedAnchor;
+                    joint.Child.BuildURDFLink(robot, offset);
                     links.Add(joint.Child);
                 }
             }
