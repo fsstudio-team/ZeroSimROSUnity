@@ -1287,7 +1287,7 @@ namespace ZO.Document {
                 } else { // children of the parent even without an explicit joint are "fixed" joints
 
                     jointX.SetAttributeValue("type", "fixed");
-                    jointMatrix = this.transform.WorldTranslationRotationMatrix() * parent.transform.WorldTranslationRotationMatrix().inverse;
+                    jointMatrix = parent.transform.WorldTranslationRotationMatrix().inverse * this.transform.WorldTranslationRotationMatrix();
 
                     Vector3 xyz = jointMatrix.Position().Unity2Ros();
                     Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
