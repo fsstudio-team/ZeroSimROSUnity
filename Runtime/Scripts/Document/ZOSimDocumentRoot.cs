@@ -36,7 +36,7 @@ namespace ZO.Document {
         /// The ZOSim JSON document path.
         /// </summary>
         /// <value></value>
-        [SerializeField] public string _zoSimDocumentFilePath;
+        private string _zoSimDocumentFilePath;
         public string ZOSimDocumentFilePath {
             get { return _zoSimDocumentFilePath; }
             set { _zoSimDocumentFilePath = value; }
