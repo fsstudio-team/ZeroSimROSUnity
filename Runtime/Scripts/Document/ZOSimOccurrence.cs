@@ -1297,7 +1297,7 @@ namespace ZO.Document {
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
                     jointX.Add(origin);
 
-                    URDFJoint joint = new URDFJoint(this, parent, jointMatrix.Position(), jointMatrix.Position());
+                    URDFJoint joint = new URDFJoint(this, parent, jointMatrix.Position(), Vector3.zero);
                     joints.Add(joint);
 
 
