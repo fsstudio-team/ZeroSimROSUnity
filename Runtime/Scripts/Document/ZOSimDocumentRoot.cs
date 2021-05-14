@@ -69,9 +69,6 @@ namespace ZO.Document {
             set => gameObject.name = value;
         }
 
-        public string URDFExportDirectory {
-            get; set;
-        } = "";
 
         private static AssetBundle _assetBundle = null;
 
@@ -247,19 +244,7 @@ namespace ZO.Document {
             return null;
         }
 
-        public void ExportURDF(string exportDirectory) {
-            URDFExportDirectory = exportDirectory;
 
-            ZOExportURDF exportURDF = new ZOExportURDF();
-            XDocument urdfXML = exportURDF.BuildURDF(this);
-            string urdfFilePath = Path.Combine(URDFExportDirectory, $"{Name}.urdf");
-            urdfXML.Save(urdfFilePath);
-
-        }
-
-        public void ImportURDF(string urdfFilePath) {
-            //TODO
-        }
         /// <summary>
         /// Saves to ZOSim file.
         /// </summary>

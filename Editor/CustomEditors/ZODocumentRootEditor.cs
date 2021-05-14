@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 using ZO.Document;
-
+using ZO.ImportExport;
 
 namespace ZO.Editor {
 
@@ -40,7 +42,7 @@ namespace ZO.Editor {
             }
             */
             if (GUILayout.Button("Export URDF...")) {
-                Debug.Log("INFO: ZOSimDocumentRoot Save URDF");
+                
                 _URDFExportDirectory = EditorUtility.OpenFolderPanel("Select URDF export directory", _URDFExportDirectory, "");
 
                 if (_URDFExportDirectory.Length == 0) {
@@ -48,7 +50,14 @@ namespace ZO.Editor {
                 } else if (!System.IO.Directory.Exists(_URDFExportDirectory)) {
                     EditorUtility.DisplayDialog("URDF Export Error", "Export root folder must be defined and folder must exist.", "Ok");
                 } else {
-                    documentRoot.ExportURDF(_URDFExportDirectory);
+                    // documentRoot.ExportURDF(_URDFExportDirectory);
+                    ZOExportURDF exportURDF = new ZOExportURDF();
+                    XDocument urdfXML = exportURDF.BuildURDF(documentRoot);
+                    string urdfFilePath = Path.Combine(_URDFExportDirectory, $"{documentRoot.Name}.urdf");
+                    urdfXML.Save(urdfFilePath);
+
+                    Debug.Log($"INFO: ZOSimDocumentRoot Saved URDF: {urdfFilePath}");
+
                 }
 
 
