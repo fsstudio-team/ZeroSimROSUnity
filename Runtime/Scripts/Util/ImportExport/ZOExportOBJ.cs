@@ -8,6 +8,11 @@ using System.Text;
 namespace ZO.ImportExport {
     public class ZOExportOBJ {
 
+        public enum Orientation {
+            URDF, 
+            Unity // Unity Default direction
+        }
+
         protected string _objString = null;
         public string OBJString {
             get { return _objString; }
@@ -31,18 +36,24 @@ namespace ZO.ImportExport {
 
         private int _startIndex = 0;
 
-        public void Start() {
+        protected void Start() {
             _startIndex = 0;
         }
-        public void End() {
+        protected void End() {
             _startIndex = 0;
         }
 
 
-        protected string MeshToString(MeshFilter meshFilter, Transform transform) {
+        protected string MeshToString(MeshFilter meshFilter, Transform transform, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
             Vector3 s = transform.localScale;
             Vector3 p = transform.localPosition;
             Quaternion r = transform.localRotation;
+
+            if (applyLocalTransform == false) {
+                s = Vector3.one;
+                p = Vector3.zero;
+                r = Quaternion.identity;
+            }
 
 
             int numVertices = 0;
@@ -54,15 +65,26 @@ namespace ZO.ImportExport {
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (Vector3 vv in mesh.vertices) {
-                Vector3 v = transform.TransformPoint(vv);
+            foreach (Vector3 vv in mesh.vertices) {                
+                Vector3 v = vv;
+                if (applyLocalTransform == true) {
+                    v = transform.TransformPoint(vv);
+                }
                 numVertices++;
-                sb.AppendLine($"v {v.x} {v.y} {v.z}");
+                if (orientation == Orientation.Unity) {
+                    sb.AppendLine($"v {v.x} {v.y} {v.z}");
+                } else if (orientation == Orientation.URDF) {
+                    sb.AppendLine($"v {v.z} {v.x} {v.y}");
+                }
             }
             sb.AppendLine();
             foreach (Vector3 nn in mesh.normals) {
                 Vector3 v = r * nn;
-                sb.AppendLine($"vn {v.x} {v.y} {v.z}");
+                if (orientation == Orientation.Unity) {
+                    sb.AppendLine($"vn {v.x} {v.y} {v.z}");
+                } else if (orientation == Orientation.URDF) {
+                    sb.AppendLine($"vn {v.z} {v.x} {v.y}");
+                }
             }
             sb.AppendLine();
             foreach (Vector3 v in mesh.uv) {
@@ -106,7 +128,7 @@ namespace ZO.ImportExport {
             return sb.ToString();
         }
 
-        protected string ProcessTransform(Transform transform, bool makeSubmeshes) {
+        protected string ProcessTransform(Transform transform, bool makeSubmeshes, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
             StringBuilder meshString = new StringBuilder();
 
             meshString.Append("#" + transform.name
@@ -119,18 +141,18 @@ namespace ZO.ImportExport {
 
             MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
             if (meshFilter != null) {
-                meshString.Append(MeshToString(meshFilter, transform));
+                meshString.Append(MeshToString(meshFilter, transform, applyLocalTransform, orientation));
             }
 
             for (int i = 0; i < transform.childCount; i++) {
-                meshString.Append(ProcessTransform(transform.GetChild(i), makeSubmeshes));
+                meshString.Append(ProcessTransform(transform.GetChild(i), makeSubmeshes, applyLocalTransform, orientation));
             }
 
             return meshString.ToString();
         }
 
 
-        public void BuildExportData(GameObject gameObject, bool makeSubmeshes, bool zeroPosition = true) {
+        public void BuildExportData(GameObject gameObject, bool makeSubmeshes, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
             Debug.Assert(gameObject != null, "ERROR: invalid GameObject in BuildExport");
 
             string meshName = gameObject.name;
@@ -149,19 +171,19 @@ namespace ZO.ImportExport {
 
             Transform transform = gameObject.transform;
 
-            Vector3 originalPosition = transform.position;
-            if (zeroPosition == true) {
-                transform.position = Vector3.zero;
-            }
+            // Vector3 originalPosition = transform.position;
+            // if (zeroPosition == true) {
+            //     transform.position = Vector3.zero;
+            // }
 
             if (!makeSubmeshes) {
                 meshString.Append("g ").Append(transform.name).Append("\n");
             }
-            meshString.Append(ProcessTransform(transform, makeSubmeshes));
+            meshString.Append(ProcessTransform(transform, makeSubmeshes, applyLocalTransform, orientation));
 
             OBJString = meshString.ToString();
 
-            transform.position = originalPosition;
+            // transform.position = originalPosition;
 
             // export materials and textures
             StringBuilder mtlFileString = new StringBuilder();
@@ -222,8 +244,8 @@ namespace ZO.ImportExport {
 
         }
 
-        public void ExportToDirectory(GameObject gameObject, string directoryPath, bool makeSubmeshes, bool zeroPosition = true) {
-            BuildExportData(gameObject, makeSubmeshes, zeroPosition);
+        public void ExportToDirectory(GameObject gameObject, string directoryPath, bool makeSubmeshes, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
+            BuildExportData(gameObject, makeSubmeshes, applyLocalTransform, orientation);
 
             // write out obj file
             string objFilePath = Path.Combine(directoryPath, $"{gameObject.name}.obj");

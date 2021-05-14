@@ -10,7 +10,8 @@ namespace ZO.Export {
 
     public class ZOExportOBJEditor : EditorWindow {
         public bool _exportSubMeshes = true;
-        public bool _zeroPosition = true;
+        public bool _applyLocalTransform = false;
+        public ZOExportOBJ.Orientation _orientation = ZOExportOBJ.Orientation.URDF;
         private string _selectedNames;
 
         [MenuItem("Zero Sim/Export OBJ...")]
@@ -23,7 +24,8 @@ namespace ZO.Export {
 
         private void OnGUI() {
             _exportSubMeshes = EditorGUILayout.Toggle("Export Sub Meshes: ", _exportSubMeshes);
-            _zeroPosition = EditorGUILayout.Toggle("Zero Position: ", _zeroPosition);
+            _applyLocalTransform = EditorGUILayout.Toggle("Apply Local Transform: ", _applyLocalTransform);
+            _orientation = (ZOExportOBJ.Orientation)EditorGUILayout.EnumPopup("Export orientation:", _orientation);
 
             foreach (var t in Selection.objects) {
                 _selectedNames += t.name + " ";
@@ -37,7 +39,7 @@ namespace ZO.Export {
                 string meshName = Selection.gameObjects[0].name;
                 string fileDirectory = EditorUtility.OpenFolderPanel("Export .OBJ to directory", "", "");
 
-                DoExport(_exportSubMeshes, fileDirectory);
+                DoExport(_exportSubMeshes, fileDirectory, _applyLocalTransform, _orientation);
             }
             EditorGUI.EndDisabledGroup();
 
@@ -47,7 +49,7 @@ namespace ZO.Export {
             Repaint();
         }
 
-        public static void DoExport(bool makeSubmeshes, string directoryPath, bool zeroPosition = true, GameObject gameObject = null) {
+        public static void DoExport(bool makeSubmeshes, string directoryPath, bool applyLocalTransform, ZOExportOBJ.Orientation orientation, GameObject gameObject = null) {
 
             if (gameObject == null && Selection.gameObjects.Length == 0) {
                 Debug.Log("ERROR: Didn't Export Any Meshes; Nothing was selected!");
@@ -58,7 +60,7 @@ namespace ZO.Export {
                 gameObject = Selection.gameObjects[0];
             }
             ZOExportOBJ exportOBJ = new ZOExportOBJ();
-            exportOBJ.ExportToDirectory(gameObject, directoryPath, makeSubmeshes, zeroPosition);
+            exportOBJ.ExportToDirectory(gameObject, directoryPath, makeSubmeshes, applyLocalTransform, orientation);
         }
 
     }
