@@ -1,23 +1,45 @@
-﻿
 using UnityEngine;
 using UnityEditor;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ZO.Export {
-    public class ZOObjExporter {
-        private static int _startIndex = 0;
+namespace ZO.ImportExport {
+    public class ZOExportOBJ {
 
-        public static void Start() {
+        protected string _objString = null;
+        public string OBJString {
+            get { return _objString; }
+            protected set {
+                _objString = value;
+            }
+        }
+
+        protected string _mtlLibraryString = null;
+        public string MtlLibraryString {
+            get { return _mtlLibraryString; }
+            protected set {
+                _mtlLibraryString = value;
+            }
+        }
+
+        List<string> _textureAssetPaths = new List<string>();
+        public List<string> TextureAssetPaths {
+            get { return _textureAssetPaths; }
+        }
+
+        private int _startIndex = 0;
+
+        public void Start() {
             _startIndex = 0;
         }
-        public static void End() {
+        public void End() {
             _startIndex = 0;
         }
 
 
-        public static string MeshToString(MeshFilter meshFilter, Transform transform) {
+        protected string MeshToString(MeshFilter meshFilter, Transform transform) {
             Vector3 s = transform.localScale;
             Vector3 p = transform.localPosition;
             Quaternion r = transform.localRotation;
@@ -70,7 +92,7 @@ namespace ZO.Export {
             return sb.ToString();
         }
 
-        public static string MaterialToString(Material material) {
+        protected string MaterialToString(Material material) {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("newmtl {0}", material.name).AppendLine();
             if (material.HasProperty("_Color")) {
@@ -78,72 +100,47 @@ namespace ZO.Export {
                 sb.AppendFormat("Kd {0} {1} {2}", c.r, c.g, c.b).AppendLine();
             }
             if (material.HasProperty("_MainTex")) {
+#if UNITY_EDITOR // AssetDatabase not available during runtime
                 string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                 string texName = Path.GetFileName(assetPath);
                 // string exportPath = Path.Combine(dir, texName);
                 sb.AppendFormat("map_Kd {0}", texName).AppendLine();
-                // if (!File.Exists(exportPath))
-                // {
-                //     File.Copy(assetPath, exportPath);
-                // }
+#endif // #if UNITY_EDITOR 
+
             }
             return sb.ToString();
         }
-    }
 
-    public class ZOExportOBJ : EditorWindow {
-        public bool _exportSubMeshes = true;
-        public bool _zeroPosition = true;
-        private string _selectedNames;
+        protected string ProcessTransform(Transform transform, bool makeSubmeshes) {
+            StringBuilder meshString = new StringBuilder();
 
-        [MenuItem("Zero Sim/Export OBJ...")]
-        public static void DoOBJExport() {
-            //EditorWindow.GetWindow<ZOExportOBJ>();
-            ZOExportOBJ window = ScriptableObject.CreateInstance<ZOExportOBJ>();
-            window.ShowUtility();
+            meshString.Append("#" + transform.name
+                              + "\n#-------"
+                              + "\n");
 
+            if (makeSubmeshes) {
+                meshString.Append("g ").Append(transform.name).Append("\n");
+            }
+
+            MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
+            if (meshFilter != null) {
+                meshString.Append(MeshToString(meshFilter, transform));
+            }
+
+            for (int i = 0; i < transform.childCount; i++) {
+                meshString.Append(ProcessTransform(transform.GetChild(i), makeSubmeshes));
+            }
+
+            return meshString.ToString();
         }
 
-        private void OnGUI() {
-            _exportSubMeshes = EditorGUILayout.Toggle("Export Sub Meshes: ", _exportSubMeshes);
-            _zeroPosition = EditorGUILayout.Toggle("Zero Position: ", _zeroPosition);
 
-            foreach (var t in Selection.objects) {
-                _selectedNames += t.name + " ";
-            }
-            EditorGUILayout.LabelField("Selected Objects: ", _selectedNames);
-
-            _selectedNames = "";
-
-            EditorGUI.BeginDisabledGroup(Selection.gameObjects.Length == 0);
-            if (GUILayout.Button("Export OBJ")) {
-                string meshName = Selection.gameObjects[0].name;
-                string fileDirectory = EditorUtility.OpenFolderPanel("Export .OBJ to directory", "", "");
-
-                DoExport(_exportSubMeshes, fileDirectory);
-            }
-            EditorGUI.EndDisabledGroup();
-
-        }
-
-        private void OnInspectorUpdate() {
-            Repaint();
-        }
-
-        public static void DoExport(bool makeSubmeshes, string fileDirectory, bool zeroPosition = true, GameObject gameObject = null) {
-
-            if (gameObject == null && Selection.gameObjects.Length == 0) {
-                Debug.Log("Didn't Export Any Meshes; Nothing was selected!");
-                return;
-            }
-
-            if (gameObject == null) {
-                gameObject = Selection.gameObjects[0];
-            }
+        public void BuildExportData(GameObject gameObject, bool makeSubmeshes, bool zeroPosition = true) {
+            Debug.Assert(gameObject != null, "ERROR: invalid GameObject in BuildExport");
 
             string meshName = gameObject.name;
 
-            ZOObjExporter.Start();
+            Start();
 
             StringBuilder meshString = new StringBuilder();
 
@@ -167,13 +164,9 @@ namespace ZO.Export {
             }
             meshString.Append(ProcessTransform(transform, makeSubmeshes));
 
-
-            string objFilePath = Path.Combine(fileDirectory, $"{meshName}.obj");
-
-            WriteToFile(meshString.ToString(), objFilePath);
+            OBJString = meshString.ToString();
 
             transform.position = originalPosition;
-
 
             // export materials and textures
             StringBuilder mtlFileString = new StringBuilder();
@@ -183,17 +176,20 @@ namespace ZO.Export {
                 Material[] materials = meshFilter.GetComponent<Renderer>().sharedMaterials;
                 foreach (Material material in materials) {
                     if (materialNames.Contains(material.name) == false) {
-                        string materialString = ZOObjExporter.MaterialToString(material);
+                        string materialString = MaterialToString(material);
                         mtlFileString.Append(materialString);
                         materialNames.Add(material.name);
 
                         // handle texture
                         if (material.HasProperty("_MainTex")) {
+#if UNITY_EDITOR // AssetDatabase not available during runtime                           
                             string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                             if (string.IsNullOrEmpty(assetPath) == false) {
-                                string texName = Path.GetFileName(assetPath);
-                                File.Copy(assetPath, Path.Combine(fileDirectory, texName));
+                                TextureAssetPaths.Add(assetPath);
+                                // string texName = Path.GetFileName(assetPath);
+                                // File.Copy(assetPath, Path.Combine(directoryPath, texName));
                             }
+#endif // UNITY_EDITOR                            
                         }
                     }
                 }
@@ -210,55 +206,55 @@ namespace ZO.Export {
                     Material[] materials = meshFilter.GetComponent<Renderer>().sharedMaterials;
                     foreach (Material material in materials) {
                         if (materialNames.Contains(material.name) == false) {
-                            string materialString = ZOObjExporter.MaterialToString(material);
+                            string materialString = MaterialToString(material);
                             mtlFileString.Append(materialString);
                             materialNames.Add(material.name);
                             // handle texture
                             if (material.HasProperty("_MainTex")) {
+#if UNITY_EDITOR // AssetDatabase not available during runtime
                                 string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                                 if (string.IsNullOrEmpty(assetPath) == false) {
-                                    string texName = Path.GetFileName(assetPath);
-                                    File.Copy(assetPath, Path.Combine(fileDirectory, texName));
+                                    TextureAssetPaths.Add(assetPath);
+                                    // string texName = Path.GetFileName(assetPath);
+                                    // File.Copy(assetPath, Path.Combine(directoryPath, texName));
                                 }
+#endif // UNITY_EDITOR                                
                             }
                         }
                     }
                 }
             }
-            string mtlFilePath = Path.Combine(fileDirectory, $"{meshName}.mtl");
-            WriteToFile(mtlFileString.ToString(), mtlFilePath);
 
-            ZOObjExporter.End();
-            Debug.Log("Exported Mesh: " + objFilePath);
+            MtlLibraryString = mtlFileString.ToString();
+            // string mtlFilePath = Path.Combine(directoryPath, $"{meshName}.mtl");
+            // WriteToFile(mtlFileString.ToString(), mtlFilePath);
+
+            End();
+
+
         }
 
-        static string ProcessTransform(Transform transform, bool makeSubmeshes) {
-            StringBuilder meshString = new StringBuilder();
+        public void ExportToDirectory(GameObject gameObject, string directoryPath, bool makeSubmeshes, bool zeroPosition = true) {
+            BuildExportData(gameObject, makeSubmeshes, zeroPosition);
 
-            meshString.Append("#" + transform.name
-                              + "\n#-------"
-                              + "\n");
-
-            if (makeSubmeshes) {
-                meshString.Append("g ").Append(transform.name).Append("\n");
+            // write out obj file
+            string objFilePath = Path.Combine(directoryPath, $"{gameObject.name}.obj");
+            using (StreamWriter sw = new StreamWriter(objFilePath)) {
+                sw.Write(OBJString);
             }
 
-            MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
-            if (meshFilter != null) {
-                meshString.Append(ZOObjExporter.MeshToString(meshFilter, transform));
+            // write out material library file
+            string mtlFilePath = Path.Combine(directoryPath, $"{gameObject.name}.mtl");
+            using (StreamWriter sw = new StreamWriter(mtlFilePath)) {
+                sw.Write(MtlLibraryString);
             }
 
-            for (int i = 0; i < transform.childCount; i++) {
-                meshString.Append(ProcessTransform(transform.GetChild(i), makeSubmeshes));
+            // copy the textures
+            foreach(string sourceTexturePath in TextureAssetPaths) {
+                File.Copy(sourceTexturePath, Path.Combine(directoryPath, Path.GetFileName(sourceTexturePath)), true);
             }
 
-            return meshString.ToString();
-        }
-
-        static void WriteToFile(string s, string filename) {
-            using (StreamWriter sw = new StreamWriter(filename)) {
-                sw.Write(s);
-            }
         }
     }
+
 }

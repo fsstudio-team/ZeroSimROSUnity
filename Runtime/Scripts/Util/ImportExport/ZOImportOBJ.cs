@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ZO.Import {
+namespace ZO.ImportExport {
     public class ZOImportOBJ {
 
         private struct meshStruct {
