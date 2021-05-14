@@ -53,9 +53,6 @@ namespace ZO.Document {
             set => _json = value;
         }
 
-        public XDocument XML {
-            get; set;
-        } = new XDocument();
 
 
 
@@ -253,22 +250,10 @@ namespace ZO.Document {
         public void ExportURDF(string exportDirectory) {
             URDFExportDirectory = exportDirectory;
 
-            // create root document and robot element
-            XElement robot = new XElement("robot");
-            robot.SetAttributeValue("name", Name);
-            XML = new XDocument(robot);
-
-            // go through the ZOSimOccurrences and convert into URDF Links and Joints    
-            foreach (Transform child in transform) {  // BUG: Should only ever be one base object for URDF!!!
-                ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
-                if (simOccurence) {
-                    ZOExportURDF exportURDF = new ZOExportURDF();
-                    exportURDF.BuildURDF(robot, simOccurence, this.transform.WorldTranslationRotationMatrix());                    
-                }
-            }
-
+            ZOExportURDF exportURDF = new ZOExportURDF();
+            XDocument urdfXML = exportURDF.BuildURDF(this);
             string urdfFilePath = Path.Combine(URDFExportDirectory, $"{Name}.urdf");
-            XML.Save(urdfFilePath);
+            urdfXML.Save(urdfFilePath);
 
         }
 

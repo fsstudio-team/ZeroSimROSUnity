@@ -14,6 +14,9 @@ namespace ZO.ImportExport {
 
 
     public class ZOExportURDF {
+        public XDocument XML {
+            get; set;
+        } = new XDocument();
 
         protected readonly struct URDFJoint {
             public URDFJoint(ZOSimOccurrence child, ZOSimOccurrence parent, Vector3 anchor, Vector3 connectedAnchor) {
@@ -56,7 +59,24 @@ namespace ZO.ImportExport {
         /// <param name="robot">The robot XML document</param>
         /// <param name="simOccurrence">The root `ZOSimOccurence`</param>
         /// <param name="baseTransform">The base relative transform, usually the transform of the `ZODocumentRoot`</param>
-        public void BuildURDF(XElement robot, ZOSimOccurrence simOccurrence, Matrix4x4 baseTransform) {
+        public XDocument BuildURDF(ZOSimDocumentRoot documentRoot) {
+
+            // create root document and robot element
+            XElement robot = new XElement("robot");
+            robot.SetAttributeValue("name", documentRoot.Name);
+            XML = new XDocument(robot);
+
+            // go through the ZOSimOccurrences and convert into URDF Links and Joints    
+            ZOSimOccurrence simOccurrence = null;
+            foreach (Transform child in documentRoot.transform) {  // BUG: Should only ever be one base object for URDF!!!
+                simOccurrence = child.GetComponent<ZOSimOccurrence>();
+                if (simOccurrence) {
+                    break;  // BUG: stops at first sim occurrence
+                }
+            }
+
+            Matrix4x4 baseTransform = documentRoot.transform.WorldTranslationRotationMatrix();
+
 
             List<URDFJoint> joints = new List<URDFJoint>();
 
@@ -66,7 +86,7 @@ namespace ZO.ImportExport {
             // build links
             HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
             foreach (URDFJoint joint in joints) {
-                
+
                 if (links.Contains(joint.Parent) == false) { // build parent link if not exist
                     Vector3 offset = -1.0f * joint.ConnectedAnchor;
                     if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
@@ -104,6 +124,8 @@ namespace ZO.ImportExport {
                 robot.Add(jointX);
 
             }
+
+            return XML;
 
         }
 
