@@ -3532,6 +3532,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: teapot
       objectReference: {fileID: 0}
+    - target: {fileID: -890894850248633325, guid: 17be92f99b8fb14eaa65adc226ac3fd4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ee87d3c7aff907920a745c6fd0164cf6, type: 2}
+    - target: {fileID: 7069507564420078126, guid: 17be92f99b8fb14eaa65adc226ac3fd4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e115d419d8845cbbfb2488170128cdbd, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17be92f99b8fb14eaa65adc226ac3fd4, type: 3}
 --- !u!4 &1753407360 stripped

@@ -92,7 +92,7 @@ namespace ZO.Export {
     }
 
     public class ZOExportOBJ : EditorWindow {
-        public bool _exportSubMeshes = false;
+        public bool _exportSubMeshes = true;
         public bool _zeroPosition = true;
         private string _selectedNames;
 
@@ -142,7 +142,6 @@ namespace ZO.Export {
             }
 
             string meshName = gameObject.name;
-            // string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
 
             ZOObjExporter.Start();
 
@@ -187,6 +186,15 @@ namespace ZO.Export {
                         string materialString = ZOObjExporter.MaterialToString(material);
                         mtlFileString.Append(materialString);
                         materialNames.Add(material.name);
+
+                        // handle texture
+                        if (material.HasProperty("_MainTex")) {
+                            string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
+                            if (string.IsNullOrEmpty(assetPath) == false) {
+                                string texName = Path.GetFileName(assetPath);
+                                File.Copy(assetPath, Path.Combine(fileDirectory, texName));
+                            }
+                        }
                     }
                 }
             }
@@ -205,6 +213,14 @@ namespace ZO.Export {
                             string materialString = ZOObjExporter.MaterialToString(material);
                             mtlFileString.Append(materialString);
                             materialNames.Add(material.name);
+                            // handle texture
+                            if (material.HasProperty("_MainTex")) {
+                                string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
+                                if (string.IsNullOrEmpty(assetPath) == false) {
+                                    string texName = Path.GetFileName(assetPath);
+                                    File.Copy(assetPath, Path.Combine(fileDirectory, texName));
+                                }
+                            }
                         }
                     }
                 }
