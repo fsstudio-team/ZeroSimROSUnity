@@ -57,16 +57,16 @@ namespace ZO.ImportExport {
             foreach (Vector3 vv in mesh.vertices) {
                 Vector3 v = transform.TransformPoint(vv);
                 numVertices++;
-                sb.Append(string.Format("v {0} {1} {2}\n", v.x, v.y, -v.z));
+                sb.AppendLine($"v {v.x} {v.y} {v.z}");
             }
-            sb.Append("\n");
+            sb.AppendLine();
             foreach (Vector3 nn in mesh.normals) {
                 Vector3 v = r * nn;
-                sb.Append(string.Format("vn {0} {1} {2}\n", -v.x, -v.y, v.z));
+                sb.AppendLine($"vn {v.x} {v.y} {v.z}");
             }
-            sb.Append("\n");
+            sb.AppendLine();
             foreach (Vector3 v in mesh.uv) {
-                sb.Append(string.Format("vt {0} {1}\n", v.x, v.y));
+                sb.AppendLine($"vt {v.x} {v.y}");
             }
 
             for (int material = 0; material < mesh.subMeshCount; material++) {
