@@ -62,6 +62,8 @@ namespace ZO.ImportExport {
             get { return _collisionMeshesToExport; }
         }
 
+        static protected float _meshScale = 10.0f; 
+
         public static void ExportToDirectory(ZOSimDocumentRoot documentRoot, string directoryPath) {
             ZOExportURDF exportURDF = new ZOExportURDF();
             XDocument urdfXML = exportURDF.BuildURDF(documentRoot);
@@ -332,7 +334,8 @@ namespace ZO.ImportExport {
                 } else {  // regular mesh so export meshes as OBJ
                     XElement mesh = new XElement("mesh");
                     mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
-                    mesh.SetAttributeValue("scale", visualTransform.localScale.ToXMLString());
+                    Vector3 scale = visualTransform.localScale * _meshScale;
+                    mesh.SetAttributeValue("scale", scale.ToXMLString());
                     geometry.Add(mesh);
 
                     _visualMeshesToExport.Add(visualTransform);
