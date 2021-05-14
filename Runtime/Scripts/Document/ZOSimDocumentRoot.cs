@@ -9,6 +9,7 @@ using ZO.ROS.Publisher;
 using ZO.ROS.Controllers;
 using ZO.ROS.Unity.Service;
 using ZO.Math;
+using ZO.ImportExport;
 namespace ZO.Document {
 
     /// <summary>
@@ -261,9 +262,8 @@ namespace ZO.Document {
             foreach (Transform child in transform) {  // BUG: Should only ever be one base object for URDF!!!
                 ZOSimOccurrence simOccurence = child.GetComponent<ZOSimOccurrence>();
                 if (simOccurence) {
-                    ZOSimOccurrence.BuildURDF(robot, simOccurence, this.transform.WorldTranslationRotationMatrix());
-                    // simOccurence.BuildURDFJoints(this, robot, null, this.transform.WorldTranslationRotationMatrix());
-                    
+                    ZOExportURDF exportURDF = new ZOExportURDF();
+                    exportURDF.BuildURDF(robot, simOccurence, this.transform.WorldTranslationRotationMatrix());                    
                 }
             }
 

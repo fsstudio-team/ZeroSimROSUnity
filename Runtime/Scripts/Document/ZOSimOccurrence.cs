@@ -1016,11 +1016,15 @@ namespace ZO.Document {
 
         #region URDF
 
-        public XElement XML { get; }
-
+        private List<Transform> _visualMeshesToExport = new List<Transform>();
+        private List<Transform> _collisionMeshesToExport = new List<Transform>();
         protected void BuildURDFVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists
             MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
+            if (meshFilter == null) {
+                // Check children
+                meshFilter = visualTransform.GetComponentInChildren<MeshFilter>();
+            }
             if (meshFilter) {
 
                 MeshRenderer meshRenderer = visualTransform.GetComponent<MeshRenderer>();
@@ -1040,8 +1044,7 @@ namespace ZO.Document {
                     if (collider) {
                         //TODO: add box collider
                     }
-                }
-                if (meshFilter.sharedMesh.name.Contains("Sphere")) {
+                } else if (meshFilter.sharedMesh.name.Contains("Sphere")) {
                     XElement sphere = new XElement("sphere");
                     float radius = visualTransform.localScale.x / 2.0f;
                     sphere.SetAttributeValue("radius", radius);
@@ -1052,17 +1055,7 @@ namespace ZO.Document {
                         //TODO: add box collider
                     }
 
-                }
-                // if (meshFilter.sharedMesh.name.Contains("Capsule")) {
-                //     collider = go.GetComponent<CapsuleCollider>();
-                //     primitiveJSON = new JObject(
-                //         new JProperty("type", "primitive.capsule"),
-                //         new JProperty("dimensions", go.transform.localScale.ToJSON()),
-                //         new JProperty("has_collisions", collider ? true : false),
-                //         new JProperty("color", meshRenderer.sharedMaterial.color.ToJSON())
-                //     );
-                // }
-                if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
+                } else if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
                     XElement cylinder = new XElement("cylinder");
                     float radius = visualTransform.localScale.x / 2.0f;
                     float height = visualTransform.localScale.y * 2.0f;
@@ -1076,19 +1069,22 @@ namespace ZO.Document {
                         //TODO: add box collider
                     }
 
+                } else {  // regular mesh so export meshes as OBJ
+                    XElement mesh = new XElement("mesh");
+                    mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
+                    mesh.SetAttributeValue("scale", visualTransform.localScale.ToXMLString());
+                    geometry.Add(mesh);
+
+                    _visualMeshesToExport.Add(visualTransform);
                 }
 
                 if (geometry.HasElements) {
                     // build origin
                     Vector3 position = visualTransform.localPosition + anchorOffset;
-                    Vector3 xyz = position.Unity2Ros();//visualTransform.localPosition.Unity2Ros();
+                    Vector3 xyz = position.Unity2Ros();
                     Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
                                                 visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
                                                 -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
-                    // Vector3 xyz = jointTransform.position.Unity2Ros();
-                    // Vector3 rpy = new Vector3(-transform.eulerAngles.z * Mathf.Deg2Rad,
-                    //                             transform.eulerAngles.x * Mathf.Deg2Rad,
-                    //                             -transform.eulerAngles.y * Mathf.Deg2Rad);
 
                     XElement origin = new XElement("origin");
                     origin.SetAttributeValue("xyz", xyz.ToXMLString());
@@ -1099,27 +1095,6 @@ namespace ZO.Document {
                     visual.Add(geometry);
                     link.Add(visual);
                 }
-
-
-                // // add name
-                // primitiveJSON.Add("name", go.name);
-
-                // // add transform
-                // primitiveJSON.Add("translation", go.transform.localPosition.ToJSON());
-                // primitiveJSON.Add("rotation_quaternion", go.transform.localRotation.ToJSON());
-                // primitiveJSON.Add("scale", go.transform.localScale.ToJSON());
-
-
-                // // generate physics material if necessary (friction, restitution)
-                // if (collider != null && collider.sharedMaterial != null) {
-                //     primitiveJSON.Add("physics_material",
-                //         new JObject(
-                //             new JProperty("bounciness", collider.sharedMaterial.bounciness),
-                //             new JProperty("dynamic_friction", collider.sharedMaterial.dynamicFriction),
-                //             new JProperty("static_friction", collider.sharedMaterial.staticFriction)
-                //         )
-                //     );
-                // }
 
             }
 
@@ -1153,89 +1128,7 @@ namespace ZO.Document {
 
         }
 
-        protected readonly struct URDFJoint {
-            public URDFJoint(ZOSimOccurrence child, ZOSimOccurrence parent, Vector3 anchor, Vector3 connectedAnchor) {
-                Child = child;
-                Parent = parent;
-                Anchor = anchor;
-                ConnectedAnchor = connectedAnchor;
-            }
-
-
-            public ZOSimOccurrence Child {
-                get;
-            }
-
-            public ZOSimOccurrence Parent {
-                get;
-            }
-
-            public Vector3 Anchor {
-                get;
-            }
-
-            public Vector3 ConnectedAnchor {
-                get;
-            }
-
-            public static bool operator ==(URDFJoint a, URDFJoint b) {
-                return a.Equals(b);
-            }
-            public static bool operator !=(URDFJoint a, URDFJoint b) {
-                return !a.Equals(b);
-            }
-
-        }
-
-        public static void BuildURDF(XElement robot, ZOSimOccurrence simOccurrence, Matrix4x4 baseTransform) {
-            List<URDFJoint> joints = new List<URDFJoint>();
-
-            simOccurrence.BuildURDFJoints(robot, null, baseTransform, ref joints);
-
-
-            // build links
-            HashSet<ZOSimOccurrence> links = new HashSet<ZOSimOccurrence>();
-            foreach (URDFJoint joint in joints) {
-                if (links.Contains<ZOSimOccurrence>(joint.Parent) == false) { // build parent link if not exist
-                    Vector3 offset = -1.0f * joint.ConnectedAnchor;
-                    if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
-                        offset = Vector3.zero;
-                    }
-                    joint.Parent.BuildURDFLink(robot, offset);
-                    links.Add(joint.Parent);
-                }
-                if (links.Contains<ZOSimOccurrence>(joint.Child) == false) { // build child link if not exist
-                    Vector3 offset = -1.0f * joint.ConnectedAnchor;
-                    joint.Child.BuildURDFLink(robot, offset);
-                    links.Add(joint.Child);
-                }
-            }
-
-            if (joints.Count == 0) { // if we don't have any joints then create a dummy world link and joint to first link
-                
-                XElement link = new XElement("link");
-                link.SetAttributeValue("name", "World");
-                robot.Add(link);
-
-                simOccurrence.BuildURDFLink(robot, Vector3.zero);
-
-                XElement jointX = new XElement("joint");
-                jointX.SetAttributeValue("name", $"World_to_{simOccurrence.Name}");
-                jointX.SetAttributeValue("type", "fixed");
-
-                XElement parentX = new XElement("parent");
-                parentX.SetAttributeValue("link", "World");
-                jointX.Add(parentX);
-
-                XElement childX = new XElement("child");
-                childX.SetAttributeValue("link", simOccurrence.Name);
-                jointX.Add(childX);
-                robot.Add(jointX);
-
-            }
-
-        }
-
+#if BLAHBLAH
         protected void BuildURDFJoints(XElement robot, ZOSimOccurrence parent, Matrix4x4 worldJointMatrix, ref List<URDFJoint> joints) {
 
             // if we have a parent build a joint
@@ -1305,24 +1198,6 @@ namespace ZO.Document {
                 }
 
 
-                // build origin
-
-                // Vector3 xyz = jointTransform.localPosition.Unity2Ros();
-                // Vector3 rpy = new Vector3(-jointTransform.localEulerAngles.z * Mathf.Deg2Rad,
-                //                             jointTransform.localEulerAngles.x * Mathf.Deg2Rad,
-                //                             -jointTransform.localEulerAngles.y * Mathf.Deg2Rad);
-
-                // remember everything is relative to parent.
-                // TODO: THOUGH MAYBE IT IS RELATIVE TO PARENT JOINT WHICH MAY NOT BE THE SAME!!!                
-
-                // Vector3 xyz = jointMatrix.Position().Unity2Ros();
-                // Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
-
-                // XElement origin = new XElement("origin");
-                // origin.SetAttributeValue("xyz", xyz.ToXMLString());
-                // origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                // jointX.Add(origin);
-
                 robot.Add(jointX);
 
                 XElement parentX = new XElement("parent");
@@ -1333,10 +1208,6 @@ namespace ZO.Document {
                 childX.SetAttributeValue("link", this.Name);
                 jointX.Add(childX);
 
-
-                // build the links
-                // parent.BuildURDFLink(documentRoot, robot, parent);
-                // this.BuildURDFLink(documentRoot, robot, parent);
             }
             // recursively go through the children
             foreach (Transform child in transform) {
@@ -1347,6 +1218,8 @@ namespace ZO.Document {
             }
 
         }
+
+#endif // 0
 
         /// <summary>
         /// Sets the state of the object from XML. XML could come from file or network or wherever.

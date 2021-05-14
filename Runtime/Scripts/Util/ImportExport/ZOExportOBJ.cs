@@ -80,10 +80,6 @@ namespace ZO.ImportExport {
                                         triangles[i] + 1 + _startIndex,
                                         triangles[i + 1] + 1 + _startIndex,
                                         triangles[i + 2] + 1 + _startIndex));
-                    // sb.Append(string.Format("f {0}//{0} {1}//{1} {2}//{2}\n", // pos, None, Norm
-                    //                     triangles[i] + 1 + _startIndex, 
-                    //                     triangles[i + 1] + 1 + _startIndex, 
-                    //                     triangles[i + 2] + 1 + _startIndex));
 
                 }
             }
@@ -103,7 +99,6 @@ namespace ZO.ImportExport {
 #if UNITY_EDITOR // AssetDatabase not available during runtime
                 string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                 string texName = Path.GetFileName(assetPath);
-                // string exportPath = Path.Combine(dir, texName);
                 sb.AppendFormat("map_Kd {0}", texName).AppendLine();
 #endif // #if UNITY_EDITOR 
 
@@ -186,8 +181,6 @@ namespace ZO.ImportExport {
                             string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                             if (string.IsNullOrEmpty(assetPath) == false) {
                                 TextureAssetPaths.Add(assetPath);
-                                // string texName = Path.GetFileName(assetPath);
-                                // File.Copy(assetPath, Path.Combine(directoryPath, texName));
                             }
 #endif // UNITY_EDITOR                            
                         }
@@ -202,7 +195,6 @@ namespace ZO.ImportExport {
                 meshFilter = child.GetComponent<MeshFilter>();
 
                 if (meshFilter != null) {
-                    // meshString.Append(ZOObjExporterScript.MeshToString(meshFilter, transform));
                     Material[] materials = meshFilter.GetComponent<Renderer>().sharedMaterials;
                     foreach (Material material in materials) {
                         if (materialNames.Contains(material.name) == false) {
@@ -215,8 +207,6 @@ namespace ZO.ImportExport {
                                 string assetPath = AssetDatabase.GetAssetPath(material.GetTexture("_MainTex"));
                                 if (string.IsNullOrEmpty(assetPath) == false) {
                                     TextureAssetPaths.Add(assetPath);
-                                    // string texName = Path.GetFileName(assetPath);
-                                    // File.Copy(assetPath, Path.Combine(directoryPath, texName));
                                 }
 #endif // UNITY_EDITOR                                
                             }
@@ -226,8 +216,6 @@ namespace ZO.ImportExport {
             }
 
             MtlLibraryString = mtlFileString.ToString();
-            // string mtlFilePath = Path.Combine(directoryPath, $"{meshName}.mtl");
-            // WriteToFile(mtlFileString.ToString(), mtlFilePath);
 
             End();
 
