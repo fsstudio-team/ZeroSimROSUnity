@@ -72,12 +72,12 @@ namespace ZO.ImportExport {
                     if (joints[0] == joint) {  // if base joint do not apply any offset to parent link
                         offset = Vector3.zero;
                     }
-                    joint.Parent.BuildURDFLink(robot, offset);
+                    BuildURDFLink(joint.Parent, robot, offset);
                     links.Add(joint.Parent);
                 }
                 if (links.Contains(joint.Child) == false) { // build child link if not exist
                     Vector3 offset = -1.0f * joint.ConnectedAnchor;
-                    joint.Child.BuildURDFLink(robot, offset);
+                    BuildURDFLink(joint.Child, robot, offset);
                     links.Add(joint.Child);
                 }
             }
@@ -88,7 +88,7 @@ namespace ZO.ImportExport {
                 link.SetAttributeValue("name", "World");
                 robot.Add(link);
 
-                simOccurrence.BuildURDFLink(robot, Vector3.zero);
+                BuildURDFLink(simOccurrence, robot, Vector3.zero);
 
                 XElement jointX = new XElement("joint");
                 jointX.SetAttributeValue("name", $"World_to_{simOccurrence.Name}");
@@ -194,8 +194,122 @@ namespace ZO.ImportExport {
                     BuildURDFJoints(robot, child, childOfChild, worldJointMatrix, ref joints);
                 }
             }
+        }
+
+        /// <summary>
+        /// URDF has a "flattened" hierarchy where the hierarchy is build by URDF joints.
+        /// </summary>
+        protected void BuildURDFLink(ZOSimOccurrence simOccurrence, XElement robot, Vector3 anchorOffset) {
+
+            XElement link = new XElement("link");
+            link.SetAttributeValue("name", simOccurrence.Name);
+            robot.Add(link);
+
+
+            // build the visual elements
+            // go through the children
+            foreach (Transform child in simOccurrence.transform) {
+
+                // check for any visuals
+                // NOTE: a gameobject named visuals is treated as a special container of visual objects
+                if (child.name.ToLower() == "visuals") {
+                    // go through the children of the visuals and get all the models
+                    foreach (Transform visualsChild in child) {
+                        // check if it is a primitive type (cube, sphere, cylinder, etc)
+                        BuildURDFVisuals(visualsChild, link, anchorOffset);
+                    }
+                }
+
+            }
+        }
+
+
+        private List<Transform> _visualMeshesToExport = new List<Transform>();
+        private List<Transform> _collisionMeshesToExport = new List<Transform>();
+        protected void BuildURDFVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
+            // build 3d primitive if exists
+            MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
+            if (meshFilter == null) {
+                // Check children
+                meshFilter = visualTransform.GetComponentInChildren<MeshFilter>();
+            }
+            if (meshFilter) {
+
+                MeshRenderer meshRenderer = visualTransform.GetComponent<MeshRenderer>();
+                Collider collider = null;
+                XElement visual = new XElement("visual");
+                visual.SetAttributeValue("name", visualTransform.name);
+                XElement geometry = new XElement("geometry");
+
+                if (meshFilter.sharedMesh.name.Contains("Cube")) {
+                    XElement box = new XElement("box");
+
+                    Vector3 boxSize = visualTransform.localScale.Unity2RosScale();
+                    box.SetAttributeValue("size", boxSize.ToXMLString());
+                    geometry.Add(box);
+
+                    collider = visualTransform.GetComponent<BoxCollider>();
+                    if (collider) {
+                        //TODO: add box collider
+                    }
+                } else if (meshFilter.sharedMesh.name.Contains("Sphere")) {
+                    XElement sphere = new XElement("sphere");
+                    float radius = visualTransform.localScale.x / 2.0f;
+                    sphere.SetAttributeValue("radius", radius);
+                    geometry.Add(sphere);
+
+                    collider = visualTransform.GetComponent<SphereCollider>();
+                    if (collider) {
+                        //TODO: add box collider
+                    }
+
+                } else if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
+                    XElement cylinder = new XElement("cylinder");
+                    float radius = visualTransform.localScale.x / 2.0f;
+                    float height = visualTransform.localScale.y * 2.0f;
+                    cylinder.SetAttributeValue("radius", radius);
+                    cylinder.SetAttributeValue("length", height);
+
+                    geometry.Add(cylinder);
+
+                    collider = visualTransform.GetComponent<MeshCollider>();
+                    if (collider) {
+                        //TODO: add box collider
+                    }
+
+                } else {  // regular mesh so export meshes as OBJ
+                    XElement mesh = new XElement("mesh");
+                    mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
+                    mesh.SetAttributeValue("scale", visualTransform.localScale.ToXMLString());
+                    geometry.Add(mesh);
+
+                    _visualMeshesToExport.Add(visualTransform);
+                }
+
+                if (geometry.HasElements) {
+                    // build origin
+                    Vector3 position = visualTransform.localPosition + anchorOffset;
+                    Vector3 xyz = position.Unity2Ros();
+                    Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                                                visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                                                -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
+
+                    XElement origin = new XElement("origin");
+                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
+
+                    visual.Add(origin);
+
+                    visual.Add(geometry);
+                    link.Add(visual);
+                }
+
+            }
+
 
         }
+
+
 
 
 
