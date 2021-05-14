@@ -50,14 +50,7 @@ namespace ZO.Editor {
                 } else if (!System.IO.Directory.Exists(_URDFExportDirectory)) {
                     EditorUtility.DisplayDialog("URDF Export Error", "Export root folder must be defined and folder must exist.", "Ok");
                 } else {
-                    // documentRoot.ExportURDF(_URDFExportDirectory);
-                    ZOExportURDF exportURDF = new ZOExportURDF();
-                    XDocument urdfXML = exportURDF.BuildURDF(documentRoot);
-                    string urdfFilePath = Path.Combine(_URDFExportDirectory, $"{documentRoot.Name}.urdf");
-                    urdfXML.Save(urdfFilePath);
-
-                    Debug.Log($"INFO: ZOSimDocumentRoot Saved URDF: {urdfFilePath}");
-
+                    ZOExportURDF.ExportToDirectory(documentRoot, _URDFExportDirectory);
                 }
 
 

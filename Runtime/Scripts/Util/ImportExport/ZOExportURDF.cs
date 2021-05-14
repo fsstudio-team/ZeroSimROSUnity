@@ -52,6 +52,38 @@ namespace ZO.ImportExport {
 
         }
 
+        private List<Transform> _visualMeshesToExport = new List<Transform>();
+        public List<Transform> VisualMeshesToExport {
+            get {return _visualMeshesToExport; }
+        } 
+
+        private List<Transform> _collisionMeshesToExport = new List<Transform>();
+        public List<Transform> CollisionMeshesToExport {
+            get { return _collisionMeshesToExport; }
+        }
+
+        public static void ExportToDirectory(ZOSimDocumentRoot documentRoot, string directoryPath) {
+            ZOExportURDF exportURDF = new ZOExportURDF();
+            XDocument urdfXML = exportURDF.BuildURDF(documentRoot);
+            string urdfFilePath = Path.Combine(directoryPath, $"{documentRoot.Name}.urdf");
+            urdfXML.Save(urdfFilePath);
+
+            // save out visual and collision meshes
+            foreach(Transform meshTransform in exportURDF.VisualMeshesToExport) {
+                ZOExportOBJ exportOBJ = new ZOExportOBJ();
+                exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, true);
+            }
+
+            foreach(Transform meshTransform in exportURDF.CollisionMeshesToExport) {
+                ZOExportOBJ exportOBJ = new ZOExportOBJ();
+                exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, true);
+            }
+
+            Debug.Log($"INFO: ZOExportURDF Saved URDF: {urdfFilePath}");
+
+        }
+
+
         /// <summary>
         /// Recursively build a URDF xml document given the base/root `ZOSimOccurrence`.
         /// Really should only be used by `ZODocumentRoot`.  See: `ZODocumentRoot.ExportURDF`.
@@ -246,8 +278,6 @@ namespace ZO.ImportExport {
         }
 
 
-        private List<Transform> _visualMeshesToExport = new List<Transform>();
-        private List<Transform> _collisionMeshesToExport = new List<Transform>();
         protected void BuildURDFVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists
             MeshFilter meshFilter = visualTransform.GetComponent<MeshFilter>();
