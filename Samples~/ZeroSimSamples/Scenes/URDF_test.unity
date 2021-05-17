@@ -836,7 +836,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290498956}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -844,7 +844,7 @@ Transform:
   - {fileID: 1357432954}
   m_Father: {fileID: 63962903}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!114 &290498958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4124,11 +4124,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2761172348088701093, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: JointMarker1
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348088701094, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4144,11 +4139,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1164543194}
-    - target: {fileID: 2761172348238204255, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: Hand
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348238204256, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4164,11 +4154,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 623542022}
-    - target: {fileID: 2761172348259037097, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: JointMarker3
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348259037098, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4184,16 +4169,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1575773637}
-    - target: {fileID: 2761172348352995842, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: BaseCube
-      objectReference: {fileID: 0}
-    - target: {fileID: 2761172348352995842, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348352995844, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4204,11 +4179,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 22652528}
-    - target: {fileID: 2761172348534080120, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: Elbow
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348534080122, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4219,11 +4189,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1042415718}
-    - target: {fileID: 2761172348620982721, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: JointMarker2
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172348620982722, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4299,11 +4264,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2761172349569614648, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: Shoulder
-      objectReference: {fileID: 0}
     - target: {fileID: 2761172349569614650, guid: 89108e8d609b569839a30991930882ef,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4314,10 +4274,5 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 358699685}
-    - target: {fileID: 2761172349971327372, guid: 89108e8d609b569839a30991930882ef,
-        type: 3}
-      propertyPath: m_Name
-      value: BaseCube
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89108e8d609b569839a30991930882ef, type: 3}
