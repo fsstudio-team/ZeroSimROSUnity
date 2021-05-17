@@ -54,11 +54,11 @@ namespace ZO.ImportExport {
 
         private List<Transform> _visualMeshesToExport = new List<Transform>();
         public List<Transform> VisualMeshesToExport {
-            get {return _visualMeshesToExport; }
-        } 
+            get { return _visualMeshesToExport; }
+        }
 
-        private List<Transform> _collisionMeshesToExport = new List<Transform>();
-        public List<Transform> CollisionMeshesToExport {
+        private List<Mesh> _collisionMeshesToExport = new List<Mesh>();
+        public List<Mesh> CollisionMeshesToExport {
             get { return _collisionMeshesToExport; }
         }
 
@@ -70,14 +70,15 @@ namespace ZO.ImportExport {
             urdfXML.Save(urdfFilePath);
 
             // save out visual and collision meshes
-            foreach(Transform meshTransform in exportURDF.VisualMeshesToExport) {
+            foreach (Transform meshTransform in exportURDF.VisualMeshesToExport) {
                 ZOExportOBJ exportOBJ = new ZOExportOBJ();
                 exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
             }
 
-            foreach(Transform meshTransform in exportURDF.CollisionMeshesToExport) {
+            foreach (Mesh mesh in exportURDF.CollisionMeshesToExport) {
                 ZOExportOBJ exportOBJ = new ZOExportOBJ();
-                exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
+                string collisionMeshFilePath = Path.Combine(directoryPath, $"{mesh.name}_collider.obj");
+                exportOBJ.ExportMesh(mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF);
             }
 
             Debug.Log($"INFO: ZOExportURDF Saved URDF: {urdfFilePath}");
@@ -272,12 +273,103 @@ namespace ZO.ImportExport {
                     foreach (Transform visualsChild in child) {
                         // check if it is a primitive type (cube, sphere, cylinder, etc)
                         BuildURDFVisuals(visualsChild, link, anchorOffset);
+
+                        // we will do any collider that are attached to the visual
+                        BuildURDFCollisions(visualsChild, link, anchorOffset);
+                    }
+                }
+
+                if (child.name.ToLower() == "collisions") {
+                    // go through the children of the collisions and get all the models
+                    foreach (Transform collisionChild in child) {
+                        BuildURDFCollisions(collisionChild, link, anchorOffset);
                     }
                 }
 
             }
         }
 
+
+        protected void BuildURDFCollisions(Transform collisionTransform, XElement link, Vector3 anchorOffset) {
+            Collider[] colliders = collisionTransform.GetComponentsInChildren<Collider>();
+            foreach (Collider collider in colliders) {
+                XElement collision = new XElement("collision");
+                collision.SetAttributeValue("name", collisionTransform.name);
+                XElement geometry = new XElement("geometry");
+                Vector3 center = Vector3.zero;
+
+                if (collider.GetType() == typeof(BoxCollider)) {
+                    BoxCollider boxCollider = collider as BoxCollider;
+                    XElement box = new XElement("box");
+
+                    Vector3 boxSize = new Vector3(boxCollider.size.x * collider.transform.localScale.x,
+                                                    boxCollider.size.y * collider.transform.localScale.y,
+                                                    boxCollider.size.z * collider.transform.localScale.z);
+                    box.SetAttributeValue("size", boxSize.Unity2RosScale().ToXMLString());
+                    geometry.Add(box);
+
+                    center = new Vector3(boxCollider.center.x * boxCollider.transform.localScale.x,
+                                        boxCollider.center.y * boxCollider.transform.localScale.y,
+                                        boxCollider.center.z * boxCollider.transform.localScale.z);
+                } else if (collider.GetType() == typeof(SphereCollider)) {
+                    SphereCollider sphereCollider = collider as SphereCollider;
+                    XElement sphere = new XElement("sphere");
+                    float radius = sphereCollider.radius * collider.transform.localScale.x;
+                    sphere.SetAttributeValue("radius", radius);
+                    geometry.Add(sphere);
+
+                    center = new Vector3(sphereCollider.center.x * sphereCollider.transform.localScale.x,
+                                        sphereCollider.center.y * sphereCollider.transform.localScale.y,
+                                        sphereCollider.center.z * sphereCollider.transform.localScale.z);
+
+
+                } else if (collider.GetType() == typeof(CapsuleCollider)) {
+                    CapsuleCollider capsuleCollider = collider as CapsuleCollider;
+                    XElement cylinder = new XElement("cylinder");
+                    float radius = capsuleCollider.radius * collider.transform.localScale.x;
+                    float height = capsuleCollider.height * collider.transform.localScale.y;
+                    cylinder.SetAttributeValue("radius", radius);
+                    cylinder.SetAttributeValue("length", height);
+                    geometry.Add(cylinder);
+
+                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.localScale.x,
+                                        capsuleCollider.center.y * capsuleCollider.transform.localScale.y,
+                                        capsuleCollider.center.z * capsuleCollider.transform.localScale.z);
+
+
+                } else if (collider.GetType() == typeof(MeshCollider)) {
+                    MeshCollider meshCollider = collider as MeshCollider;
+                    _collisionMeshesToExport.Add(meshCollider.sharedMesh);
+
+                    XElement mesh = new XElement("mesh");
+                    mesh.SetAttributeValue("filename", $"{meshCollider.sharedMesh.name}_collider.obj");
+                    Vector3 scale = collisionTransform.localScale;
+                    mesh.SetAttributeValue("scale", scale.ToXMLString());
+                    geometry.Add(mesh);
+
+                }
+
+
+                if (geometry.HasElements) {
+                    // build origin
+                    Vector3 position = collisionTransform.localPosition + anchorOffset + center;
+                    Vector3 xyz = position.Unity2Ros();
+                    Vector3 rpy = new Vector3(-collisionTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                                                collisionTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                                                -collisionTransform.localEulerAngles.y * Mathf.Deg2Rad);
+
+                    XElement origin = new XElement("origin");
+                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
+
+                    collision.Add(origin);
+
+                    collision.Add(geometry);
+                    link.Add(collision);
+                }
+
+            }
+        }
 
         protected void BuildURDFVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists

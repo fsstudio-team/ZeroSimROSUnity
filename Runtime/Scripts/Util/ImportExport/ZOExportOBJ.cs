@@ -43,8 +43,49 @@ namespace ZO.ImportExport {
             _startIndex = 0;
         }
 
+        protected string MeshToString(Mesh mesh, ZOExportOBJ.Orientation orientation) {
 
-        protected string MeshToString(MeshFilter meshFilter, Transform transform, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
+            int numVertices = 0;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (Vector3 vv in mesh.vertices) {                
+                Vector3 v = vv;
+                numVertices++;
+                if (orientation == Orientation.Unity) {
+                    sb.AppendLine($"v {v.x} {v.y} {v.z}");
+                } else if (orientation == Orientation.URDF) {
+                    sb.AppendLine($"v {v.z} {v.x} {v.y}");
+                }
+            }
+            sb.AppendLine();
+            foreach (Vector3 nn in mesh.normals) {
+                Vector3 v = nn;
+                if (orientation == Orientation.Unity) {
+                    sb.AppendLine($"vn {v.x} {v.y} {v.z}");
+                } else if (orientation == Orientation.URDF) {
+                    sb.AppendLine($"vn {v.z} {v.x} {v.y}");
+                }
+            }
+
+            for (int submesh = 0; submesh < mesh.subMeshCount; submesh++) {
+                int[] triangles = mesh.GetTriangles(submesh);
+                for (int i = 0; i < triangles.Length; i += 3) {
+                    sb.AppendLine(string.Format("f {0}//{0} {1}//{1} {2}//{2}", // only exporting position and normal, no UV
+                                        triangles[i] + 1 + _startIndex,
+                                        triangles[i + 1] + 1 + _startIndex,
+                                        triangles[i + 2] + 1 + _startIndex));
+
+                }
+
+            }
+
+            _startIndex += numVertices;
+            return sb.ToString();
+        }
+
+
+        protected string MeshFilterToString(MeshFilter meshFilter, Transform transform, bool applyLocalTransform, ZOExportOBJ.Orientation orientation) {
             Vector3 s = transform.localScale;
             Vector3 p = transform.localPosition;
             Quaternion r = transform.localRotation;
@@ -141,7 +182,7 @@ namespace ZO.ImportExport {
 
             MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
             if (meshFilter != null) {
-                meshString.Append(MeshToString(meshFilter, transform, applyLocalTransform, orientation));
+                meshString.Append(MeshFilterToString(meshFilter, transform, applyLocalTransform, orientation));
             }
 
             for (int i = 0; i < transform.childCount; i++) {
@@ -264,6 +305,26 @@ namespace ZO.ImportExport {
                 File.Copy(sourceTexturePath, Path.Combine(directoryPath, Path.GetFileName(sourceTexturePath)), true);
             }
 
+        }
+
+        public void ExportMesh(Mesh mesh, string meshPath, ZOExportOBJ.Orientation orientation) {
+            Start();
+
+            StringBuilder meshString = new StringBuilder();
+
+            meshString.Append("#" + Path.GetFileName(meshPath)
+                              + "\n#" + System.DateTime.Now.ToLongDateString()
+                              + "\n#" + System.DateTime.Now.ToLongTimeString()
+                              + "\n#-------"
+                              + "\n\n");
+
+            meshString.Append(MeshToString(mesh, orientation));
+
+            OBJString = meshString.ToString();
+
+            using (StreamWriter sw = new StreamWriter(meshPath)) {
+                sw.Write(OBJString);
+            }
         }
     }
 

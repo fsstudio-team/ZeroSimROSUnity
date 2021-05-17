@@ -10,6 +10,7 @@
     - [Using RViz for Turtlebot](#using-rviz-for-turtlebot)
     - [Running Universal Robot UR10 Arm Test Scene with MoveIt!](#running-universal-robot-ur10-arm-test-scene-with-moveit)
     - [Running Image Segmentation Test](#running-image-segmentation-test)
+    - [Export URDF](#export-urdf)
 
 ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
@@ -55,9 +56,11 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 * Machine Learning tools:
   * Image Segmentation for training semantic segmentation algorithms. 
 
+* URDF Export
+
 * **COMING SOON:**
   * More complete documentation.
-  * URDF import & export.
+  * URDF import.
   * Finish Docker integration with Unity. (Currently incomplete)
   * Secure communications via WebSockets.
   * Support for other Physics engines such as Bullet or Havok.
@@ -186,3 +189,15 @@ roslaunch zero_sim_ros basic_unity_editor.launch
 7. In the VNC window press the *LEFT* mouse button and select "Terminal". ![noVNC Terminal](Documentation~/images/novnc_terminal.png)
 8. In the new terminal run `rqt_image_view /image/segmentation_image`.  
 9. Open up a second terminal and run `rqt_image_view /image/image_raw` ![RQT Image View Segmentation](Documentation~/images/rqt_image_view_segmentation.png)
+
+
+### Export URDF
+
+1. Make sure that the ZeroSim samples are installed as outlined above.
+2. Open scene the `URDF_test.scene` in the ZeroSim samples.
+3. Select `SimpleRobotArm` in the scene hierarchy.   
+![Select Simple Robot Arm](Documentation~/images/select_simple_robot_arm.png)
+4. Select `Export URDF` in the root properties view. ![Export URDF](Documentation~/images/export_urdf.png)
+5. Select the directory to export to.
+6. An excellent online URDF viewer is available: https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html  Just drag and drop the files exported above.
+
