@@ -57,8 +57,8 @@ namespace ZO.ImportExport {
             get { return _visualMeshesToExport; }
         }
 
-        private List<Transform> _collisionMeshesToExport = new List<Transform>();
-        public List<Transform> CollisionMeshesToExport {
+        private List<Mesh> _collisionMeshesToExport = new List<Mesh>();
+        public List<Mesh> CollisionMeshesToExport {
             get { return _collisionMeshesToExport; }
         }
 
@@ -75,9 +75,10 @@ namespace ZO.ImportExport {
                 exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
             }
 
-            foreach (Transform meshTransform in exportURDF.CollisionMeshesToExport) {
+            foreach (Mesh mesh in exportURDF.CollisionMeshesToExport) {
                 ZOExportOBJ exportOBJ = new ZOExportOBJ();
-                exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
+                string collisionMeshFilePath = Path.Combine(directoryPath, $"{mesh.name}_collider.obj");
+                exportOBJ.ExportMesh(mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF);
             }
 
             Debug.Log($"INFO: ZOExportURDF Saved URDF: {urdfFilePath}");
@@ -322,7 +323,32 @@ namespace ZO.ImportExport {
                                         sphereCollider.center.z * sphereCollider.transform.localScale.z);
 
 
+                } else if (collider.GetType() == typeof(CapsuleCollider)) {
+                    CapsuleCollider capsuleCollider = collider as CapsuleCollider;
+                    XElement cylinder = new XElement("cylinder");
+                    float radius = capsuleCollider.radius * collider.transform.localScale.x;
+                    float height = capsuleCollider.height * collider.transform.localScale.y;
+                    cylinder.SetAttributeValue("radius", radius);
+                    cylinder.SetAttributeValue("length", height);
+                    geometry.Add(cylinder);
+
+                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.localScale.x,
+                                        capsuleCollider.center.y * capsuleCollider.transform.localScale.y,
+                                        capsuleCollider.center.z * capsuleCollider.transform.localScale.z);
+
+
+                } else if (collider.GetType() == typeof(MeshCollider)) {
+                    MeshCollider meshCollider = collider as MeshCollider;
+                    _collisionMeshesToExport.Add(meshCollider.sharedMesh);
+
+                    XElement mesh = new XElement("mesh");
+                    mesh.SetAttributeValue("filename", $"{meshCollider.sharedMesh.name}_collider.obj");
+                    Vector3 scale = collisionTransform.localScale;
+                    mesh.SetAttributeValue("scale", scale.ToXMLString());
+                    geometry.Add(mesh);
+
                 }
+
 
                 if (geometry.HasElements) {
                     // build origin
