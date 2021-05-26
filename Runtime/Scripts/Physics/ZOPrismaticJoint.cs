@@ -289,6 +289,25 @@ namespace ZO.Physics {
                     } else {
                         ConnectedAnchor = transform.TransformPoint(Anchor);
                     }
+
+                    // update the name
+                    if (_name == null) {
+                        _name = Type;
+
+                        ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                        if (occurrence) {
+                            _name = _name + "_from_" + occurrence.Name;
+                        }
+
+                        if (UnityConfigurableJoint.connectedBody) {
+                            ZOSimOccurrence connected_occurrence = UnityConfigurableJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
+
+                            if (connected_occurrence) {
+                                _name = _name + "_to_" + connected_occurrence.Name;
+                            }
+                        }
+                    }
+
                 }
 
             }

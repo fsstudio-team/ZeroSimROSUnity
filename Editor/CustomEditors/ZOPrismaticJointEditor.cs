@@ -24,7 +24,6 @@ namespace ZO.Editor {
             if (prismaticJoint.GetComponent<ConfigurableJoint>()) {
 
                 prismaticJoint.GetComponent<ConfigurableJoint>().hideFlags = HideFlags.HideInInspector;
-                Debug.Log("hey");
             }            
         }
 
