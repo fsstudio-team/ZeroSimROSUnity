@@ -167,53 +167,15 @@ namespace ZO.ImportExport {
 
             // if we have a parent build a joint
             if (parent) {
-                XElement jointX = new XElement("joint");
-                jointX.SetAttributeValue("name", $"{parent.Name}_to_{child.Name}");
-                // Transform jointTransform = this.transform;
-                Matrix4x4 jointMatrix = Matrix4x4.identity;
 
-                ZOHingeJoint hingeJoint = parent.GetComponent<ZOHingeJoint>();
-                if (hingeJoint != null) {
-                    jointX.SetAttributeValue("type", "revolute");
+                ZOJointInterface[] zoJoints = parent.GetComponents<ZOJointInterface>();
 
-                    // create axis
-                    Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
-                    XElement axisX = new XElement("axis");
-                    axisX.SetAttributeValue("xyz", axis.ToXMLString());
-                    jointX.Add(axisX);
-
-                    // create limits
-                    // TODO:
-                    XElement limitX = new XElement("limit");
-                    limitX.SetAttributeValue("effort", 10000f); // HACK
-                    limitX.SetAttributeValue("velocity", 3.14f); // HACK
-                    jointX.Add(limitX);
-
-                    // Add the anchor position
-                    jointMatrix = parent.transform.WorldTranslationRotationMatrix();
-                    jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor);
-
-                    // save this off as the new world joint matrix
-                    Matrix4x4 newWorldJointMatrix = jointMatrix;
-
-                    // subtract out the parent root
-                    jointMatrix = jointMatrix * worldJointMatrix.inverse;
-                    worldJointMatrix = newWorldJointMatrix;
-
-                    Vector3 xyz = jointMatrix.Position().Unity2Ros();
-                    Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
-
-                    XElement origin = new XElement("origin");
-                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
-                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                    jointX.Add(origin);
-
-                    URDFJoint joint = new URDFJoint(child, parent, hingeJoint.Anchor, hingeJoint.ConnectedAnchor);
-                    joints.Add(joint);
-
-
-                } else { // children of the parent even without an explicit joint are "fixed" joints
-
+                // even if there are no explicit fixed joint children of the parent are "automatically" set as fixed.
+                if (zoJoints.Length == 0) {
+                    XElement jointX = new XElement("joint");
+                    jointX.SetAttributeValue("name", $"Fixed_{parent.Name}_to_{child.Name}");
+                    // Transform jointTransform = this.transform;
+                    Matrix4x4 jointMatrix = Matrix4x4.identity;
                     jointX.SetAttributeValue("type", "fixed");
                     jointMatrix = parent.transform.WorldTranslationRotationMatrix().inverse * child.transform.WorldTranslationRotationMatrix();
 
@@ -225,22 +187,146 @@ namespace ZO.ImportExport {
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
                     jointX.Add(origin);
 
-                    URDFJoint joint = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
-                    joints.Add(joint);
+                    URDFJoint j = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
+                    joints.Add(j);
+
+                    robot.Add(jointX);
+
+                    XElement parentX = new XElement("parent");
+                    parentX.SetAttributeValue("link", parent.Name);
+                    jointX.Add(parentX);
+
+                    XElement childX = new XElement("child");
+                    childX.SetAttributeValue("link", child.Name);
+                    jointX.Add(childX);
 
 
                 }
 
+                foreach (ZOJointInterface joint in zoJoints) {
+                    if (joint.ConnectedOccurrence == child) {  // only if this joint is pointing at us
+                        XElement jointX = new XElement("joint");
+                        jointX.SetAttributeValue("name", $"{joint.Type}_{parent.Name}_to_{child.Name}");
+                        // Transform jointTransform = this.transform;
+                        Matrix4x4 jointMatrix = Matrix4x4.identity;
 
-                robot.Add(jointX);
 
-                XElement parentX = new XElement("parent");
-                parentX.SetAttributeValue("link", parent.Name);
-                jointX.Add(parentX);
+                        if (joint.GetType() == typeof(ZOHingeJoint)) {
+                            // TODO: distinguish between revolute (a hinge with limits) vs continuous (joint with no limits)
+                            ZOHingeJoint hingeJoint = joint as ZOHingeJoint;
+                            jointX.SetAttributeValue("type", "revolute");
 
-                XElement childX = new XElement("child");
-                childX.SetAttributeValue("link", child.Name);
-                jointX.Add(childX);
+                            // create axis
+                            Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
+                            XElement axisX = new XElement("axis");
+                            axisX.SetAttributeValue("xyz", axis.ToXMLString());
+                            jointX.Add(axisX);
+
+                            // create limits
+                            // TODO:
+                            XElement limitX = new XElement("limit");
+                            limitX.SetAttributeValue("effort", 10000f); // HACK
+                            limitX.SetAttributeValue("velocity", 3.14f); // HACK
+                            jointX.Add(limitX);
+
+                            // Add the anchor position
+                            jointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                            jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor);
+
+                            // save this off as the new world joint matrix
+                            Matrix4x4 newWorldJointMatrix = jointMatrix;
+
+                            // subtract out the parent root
+                            jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            worldJointMatrix = newWorldJointMatrix;
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, hingeJoint.Anchor, hingeJoint.ConnectedAnchor);
+                            joints.Add(j);
+
+
+                        } else if (joint.GetType() == typeof(ZOPrismaticJoint)) {
+                            ZOPrismaticJoint prismaticJoint = joint as ZOPrismaticJoint;
+                            jointX.SetAttributeValue("type", "prismatic");
+
+                            // create axis
+                            Vector3 axis = -prismaticJoint.Axis.Unity2Ros();  // NOTE:  need to negate axis
+                            XElement axisX = new XElement("axis");
+                            axisX.SetAttributeValue("xyz", axis.ToXMLString());
+                            jointX.Add(axisX);
+
+                            // create limits
+                            // TODO:
+                            XElement limitX = new XElement("limit");
+                            limitX.SetAttributeValue("lower", prismaticJoint.JointLimits.LowerLimit);
+                            limitX.SetAttributeValue("upper", prismaticJoint.JointLimits.UpperLimit);
+                            limitX.SetAttributeValue("effort", 10000f); // HACK
+                            limitX.SetAttributeValue("velocity", 10000f); // HACK
+                            jointX.Add(limitX);
+
+                            // Add the anchor position
+                            jointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                            jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+
+                            // save this off as the new world joint matrix
+                            Matrix4x4 newWorldJointMatrix = jointMatrix;
+
+                            // subtract out the parent root
+                            jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            worldJointMatrix = newWorldJointMatrix;
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, prismaticJoint.Anchor, prismaticJoint.ConnectedAnchor);
+                            joints.Add(j);
+
+                        } else { // children of the parent even without an explicit joint are "fixed" joints
+
+                            jointX.SetAttributeValue("type", "fixed");
+                            jointMatrix = parent.transform.WorldTranslationRotationMatrix().inverse * child.transform.WorldTranslationRotationMatrix();
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
+                            joints.Add(j);
+
+
+                        }
+
+
+                        robot.Add(jointX);
+
+                        XElement parentX = new XElement("parent");
+                        parentX.SetAttributeValue("link", parent.Name);
+                        jointX.Add(parentX);
+
+                        XElement childX = new XElement("child");
+                        childX.SetAttributeValue("link", child.Name);
+                        jointX.Add(childX);
+
+
+
+                    }
+                }
 
             }
             // recursively go through the children
@@ -449,25 +535,26 @@ namespace ZO.ImportExport {
                 XElement inertial = new XElement("inertial");
                 XElement mass = new XElement("mass");
                 mass.SetAttributeValue("value", rigidbody.mass);
+                inertial.Add(mass);
 
                 // calculate the inertia components
                 // Unity/PhysX is kinda weird in that it is represented by a diagonal vector and and rotation quaternion.
                 Matrix4x4 lambdaMatrix = new Matrix4x4();
-                lambdaMatrix[0,0] = rigidbody.inertiaTensor.x;
-                lambdaMatrix[1,1] = rigidbody.inertiaTensor.y;
-                lambdaMatrix[2,2] = rigidbody.inertiaTensor.z;
-                lambdaMatrix[3,3] = 1.0f;
+                lambdaMatrix[0, 0] = rigidbody.inertiaTensor.x;
+                lambdaMatrix[1, 1] = rigidbody.inertiaTensor.y;
+                lambdaMatrix[2, 2] = rigidbody.inertiaTensor.z;
+                lambdaMatrix[3, 3] = 1.0f;
 
                 Matrix4x4 qMatrix = Matrix4x4.Rotate(rigidbody.inertiaTensorRotation);
                 Matrix4x4 qMatrixTransposed = qMatrix.transpose;
                 Matrix4x4 inertiaMatrix = qMatrix * lambdaMatrix * qMatrixTransposed;
 
-                float ixx = inertiaMatrix[2,2]; 
-                float ixy = -inertiaMatrix[0,2];
-                float ixz = inertiaMatrix[1,2]; 
-                float iyy = inertiaMatrix[0,0]; 
-                float iyz = -inertiaMatrix[0,1];
-                float izz = inertiaMatrix[1,1];
+                float ixx = inertiaMatrix[2, 2];
+                float ixy = -inertiaMatrix[0, 2];
+                float ixz = inertiaMatrix[1, 2];
+                float iyy = inertiaMatrix[0, 0];
+                float iyz = -inertiaMatrix[0, 1];
+                float izz = inertiaMatrix[1, 1];
 
                 XElement inertia = new XElement("inertia");
                 inertia.SetAttributeValue("ixx", ixx);
@@ -485,7 +572,7 @@ namespace ZO.ImportExport {
                 origin.SetAttributeValue("rpy", Vector3.zero.ToXMLString());  // BUG:  always zero?
                 inertial.Add(origin);
 
-                
+
                 link.Add(inertial);
             }
         }
