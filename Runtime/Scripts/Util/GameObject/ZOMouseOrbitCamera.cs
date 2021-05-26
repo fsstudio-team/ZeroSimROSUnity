@@ -1,21 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace ZO {
+namespace ZO.Util {
     public class ZOMouseOrbitCamera : MonoBehaviour {
 
         public Transform target;
-        public float distance = 5.0f;
-        public float xSpeed = 120.0f;
-        public float ySpeed = 120.0f;
+        public float _distance = 5.0f;
+        public float _xSpeed = 120.0f;
+        public float _ySpeed = 120.0f;
 
-        public float yMinLimit = -20f;
-        public float yMaxLimit = 80f;
+        public float _yMinLimit = -20f;
+        public float _yMaxLimit = 80f;
 
-        public float distanceMin = .5f;
-        public float distanceMax = 15f;
+        public float _distanceMin = .5f;
+        public float _distanceMax = 15f;
 
-        private Rigidbody rigidbody;
+        private Rigidbody _rigidbody;
 
         float x = 0.0f;
         float y = 0.0f;
@@ -26,35 +26,35 @@ namespace ZO {
             x = angles.y;
             y = angles.x;
 
-            rigidbody = GetComponent<Rigidbody>();
+            _rigidbody = GetComponent<Rigidbody>();
 
             // Make the rigid body not change rotation
-            if (rigidbody != null) {
-                rigidbody.freezeRotation = true;
+            if (_rigidbody != null) {
+                _rigidbody.freezeRotation = true;
             }
         }
 
         void LateUpdate() {
             if (target) {
                 if (Input.GetMouseButton(0)) {
-                    x += Input.GetAxis("Mouse X") * xSpeed * distance * 0.02f;
-                    y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+                    x += Input.GetAxis("Mouse X") * _xSpeed * _distance * 0.02f;
+                    y -= Input.GetAxis("Mouse Y") * _ySpeed * 0.02f;
                 }
 
-                y = ClampAngle(y, yMinLimit, yMaxLimit);
+                y = ClampAngle(y, _yMinLimit, _yMaxLimit);
 
                 Quaternion rotation = Quaternion.Euler(y, x, 0);
 
                 
-                float distanceDelta = distance - (Input.GetAxis("Mouse ScrollWheel") * 5.0f);
+                float distanceDelta = _distance - (Input.GetAxis("Mouse ScrollWheel") * 5.0f);
                 // Debug.Log("INFOO: Mouse scroll wheel: " + distanceDelta);
-                distance = Mathf.Clamp(distanceDelta, distanceMin, distanceMax);
+                _distance = Mathf.Clamp(distanceDelta, _distanceMin, _distanceMax);
 
                 // RaycastHit hit;
                 // if (UnityEngine.Physics.Linecast(target.position, transform.position, out hit)) {
                 //     distance -= hit.distance;
                 // }
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -_distance);
                 Vector3 position = rotation * negDistance + target.position;
 
                 transform.rotation = rotation;
