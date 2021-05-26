@@ -23,7 +23,7 @@ namespace ZO.Editor {
             ZO.Physics.ZOPrismaticJoint prismaticJoint = target as ZO.Physics.ZOPrismaticJoint;
             if (prismaticJoint.GetComponent<ConfigurableJoint>()) {
 
-                prismaticJoint.GetComponent<ConfigurableJoint>().hideFlags = HideFlags.HideInInspector;
+                // prismaticJoint.GetComponent<ConfigurableJoint>().hideFlags = HideFlags.HideInInspector;
             }            
         }
 
