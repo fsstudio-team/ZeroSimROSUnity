@@ -88,19 +88,6 @@ namespace ZO.Physics {
 
                 UnityConfigurableJoint.linearLimit = _prismaticLimits;
 
-                if (ConnectedBody != null) {
-
-                    Vector3 lowerLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.LowerLimit));
-                    Vector3 upperLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.UpperLimit));
-                    Vector3 midPoint = (lowerLimit + upperLimit) * 0.5f;
-                    Vector3 localMidpoint = ConnectedBody.transform.InverseTransformPoint(midPoint);
-
-                    UnityConfigurableJoint.connectedAnchor = localMidpoint;
-                } else {
-                    //TODO:
-                }
-
-
             }
         }
 
@@ -202,19 +189,6 @@ namespace ZO.Physics {
             set {
                 UnityConfigurableJoint.anchor = value;
 
-                if (ConnectedBody != null) {
-
-                    Vector3 lowerLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.LowerLimit));
-                    Vector3 upperLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.UpperLimit));
-                    Vector3 midPoint = (lowerLimit + upperLimit) * 0.5f;
-                    Vector3 localMidpoint = ConnectedBody.transform.InverseTransformPoint(midPoint);
-
-                    UnityConfigurableJoint.connectedAnchor = localMidpoint;
-                } else {
-                    //TODO
-
-                }
-
             }
         }
 
@@ -222,20 +196,6 @@ namespace ZO.Physics {
         public Vector3 ConnectedAnchor {
             get {
                 return UnityConfigurableJoint.connectedAnchor;
-            }
-            set {
-                // Vector3 newConnectedAnchor = value;
-                if (ConnectedBody != null) {
-
-                    Vector3 lowerLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.LowerLimit));
-                    Vector3 upperLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.UpperLimit));
-                    Vector3 midPoint = (lowerLimit + upperLimit) * 0.5f;
-                    Vector3 localMidpoint = ConnectedBody.transform.InverseTransformPoint(midPoint);
-
-                    UnityConfigurableJoint.connectedAnchor = localMidpoint;
-                } else {
-                    //TODO:
-                }
             }
         }
 
@@ -284,11 +244,6 @@ namespace ZO.Physics {
             set {
                 if (UnityConfigurableJoint.connectedBody != value) {
                     UnityConfigurableJoint.connectedBody = value;
-                    if (UnityConfigurableJoint.connectedBody != null) {
-                        ConnectedAnchor = UnityConfigurableJoint.connectedBody.transform.InverseTransformPoint(Anchor);
-                    } else {
-                        ConnectedAnchor = transform.TransformPoint(Anchor);
-                    }
                 }
 
                 // update the name
@@ -369,6 +324,11 @@ namespace ZO.Physics {
         private void OnValidate() {
             SetupPrismaticJointFromConfigurableJoint();
         }
+        private void OnDestroy() {
+            if ((Application.isEditor == true) && (Application.isPlaying == false) && (UnityConfigurableJoint != null) && (Application.isLoadingLevel == false)) {
+                DestroyImmediate(UnityConfigurableJoint);
+            }
+        }
 
 
 
@@ -403,7 +363,7 @@ namespace ZO.Physics {
         }
 
         protected void SetupPrismaticJointFromConfigurableJoint() {
-            UnityConfigurableJoint.autoConfigureConnectedAnchor = false;
+            UnityConfigurableJoint.autoConfigureConnectedAnchor = true;
             UnityConfigurableJoint.yMotion = ConfigurableJointMotion.Locked;
             UnityConfigurableJoint.zMotion = ConfigurableJointMotion.Locked;
             UnityConfigurableJoint.angularXMotion = ConfigurableJointMotion.Locked;
@@ -417,14 +377,6 @@ namespace ZO.Physics {
             EnableCollisions = _enableCollisions;
 
         }
-
-        // private void OnDestroy() {
-        //     if ((Application.isEditor ==true) && (Application.isPlaying == false) && (_hingeJoint != null) && (Application.isLoadingLevel == false)) {
-        //         DestroyImmediate(_hingeJoint);
-        //     }
-        // }
-
-
 
     }
 

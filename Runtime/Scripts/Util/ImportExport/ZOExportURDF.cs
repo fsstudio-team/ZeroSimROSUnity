@@ -237,7 +237,8 @@ namespace ZO.ImportExport {
                             Matrix4x4 newWorldJointMatrix = jointMatrix;
 
                             // subtract out the parent root
-                            jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            //jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            jointMatrix = worldJointMatrix.inverse * jointMatrix;
                             worldJointMatrix = newWorldJointMatrix;
 
                             Vector3 xyz = jointMatrix.Position().Unity2Ros();
@@ -278,10 +279,12 @@ namespace ZO.ImportExport {
                             // Vector3 xyz = prismaticJoint.Anchor.Unity2Ros();//localAnchor.Unity2Ros();
                             // Vector3 rpy = Vector3.zero; // BUGBUG
                             jointMatrix = prismaticJoint.transform.WorldTranslationRotationMatrix();
-                            // jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+                            jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+
+// TODO: the links should be offset by the connected anchor.  Not the way done below.
                             Vector3 worldConnectedAnchor = prismaticJoint.ConnectedBody.transform.TransformPoint(prismaticJoint.ConnectedAnchor);
                             Vector3 relativeToParentConnectedAnchor = prismaticJoint.transform.InverseTransformPoint(worldConnectedAnchor);
-                            jointMatrix = jointMatrix.AddTranslation(relativeToParentConnectedAnchor);
+                            // jointMatrix = jointMatrix.AddTranslation(relativeToParentConnectedAnchor);
 
                             // save this off as the new world joint matrix
                             Matrix4x4 newWorldJointMatrix = jointMatrix;
@@ -301,6 +304,7 @@ namespace ZO.ImportExport {
                             jointX.Add(origin);
 
                             URDFJoint j = new URDFJoint(child, parent, prismaticJoint.Anchor, prismaticJoint.ConnectedAnchor);
+                            // URDFJoint j = new URDFJoint(child, parent, prismaticJoint.Anchor, Vector3.zero);
                             joints.Add(j);
 
                         } else { // children of the parent even without an explicit joint are "fixed" joints
