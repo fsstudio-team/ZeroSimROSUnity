@@ -272,14 +272,24 @@ namespace ZO.ImportExport {
                             jointX.Add(limitX);
 
                             // Add the anchor position
-                            jointMatrix = parent.transform.WorldTranslationRotationMatrix();
-                            jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+                            // Vector3 worldAnchor = prismaticJoint.transform.TransformPoint(prismaticJoint.Anchor);
+                            // Vector3 localAnchor = worldJointMatrix.inverse.MultiplyPoint(worldAnchor);
+                            // worldJointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                            // Vector3 xyz = prismaticJoint.Anchor.Unity2Ros();//localAnchor.Unity2Ros();
+                            // Vector3 rpy = Vector3.zero; // BUGBUG
+                            jointMatrix = prismaticJoint.transform.WorldTranslationRotationMatrix();
+                            // jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+                            Vector3 worldConnectedAnchor = prismaticJoint.ConnectedBody.transform.TransformPoint(prismaticJoint.ConnectedAnchor);
+                            Vector3 relativeToParentConnectedAnchor = prismaticJoint.transform.InverseTransformPoint(worldConnectedAnchor);
+                            jointMatrix = jointMatrix.AddTranslation(relativeToParentConnectedAnchor);
 
                             // save this off as the new world joint matrix
                             Matrix4x4 newWorldJointMatrix = jointMatrix;
 
                             // subtract out the parent root
-                            jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            // jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            jointMatrix = worldJointMatrix.inverse * jointMatrix;
+
                             worldJointMatrix = newWorldJointMatrix;
 
                             Vector3 xyz = jointMatrix.Position().Unity2Ros();
