@@ -43,14 +43,14 @@ namespace ZO.ImportExport {
             _startIndex = 0;
         }
 
-        protected string MeshToString(Mesh mesh, ZOExportOBJ.Orientation orientation) {
+        protected string MeshToString(Mesh mesh, ZOExportOBJ.Orientation orientation, Vector3 scale) {
 
             int numVertices = 0;
 
             StringBuilder sb = new StringBuilder();
 
             foreach (Vector3 vv in mesh.vertices) {
-                Vector3 v = vv;
+                Vector3 v = new Vector3(vv.x * scale.x, vv.y * scale.y, vv.z * scale.z);
                 numVertices++;
                 if (orientation == Orientation.Unity) {
                     sb.AppendLine($"v {v.x} {v.y} {v.z}");
@@ -316,7 +316,7 @@ namespace ZO.ImportExport {
 
         }
 
-        public void ExportMesh(Mesh mesh, string meshPath, ZOExportOBJ.Orientation orientation) {
+        public void ExportMesh(Mesh mesh, string meshPath, ZOExportOBJ.Orientation orientation, Vector3 scale) {
             Start();
 
             StringBuilder meshString = new StringBuilder();
@@ -327,7 +327,7 @@ namespace ZO.ImportExport {
                               + "\n#-------"
                               + "\n\n");
 
-            meshString.Append(MeshToString(mesh, orientation));
+            meshString.Append(MeshToString(mesh, orientation, scale));
 
             OBJString = meshString.ToString();
 

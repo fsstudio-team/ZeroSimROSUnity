@@ -57,8 +57,14 @@ namespace ZO.ImportExport {
             get { return _visualMeshesToExport; }
         }
 
-        private List<Mesh> _collisionMeshesToExport = new List<Mesh>();
-        public List<Mesh> CollisionMeshesToExport {
+        public struct CollisionMesh {
+            public Mesh mesh;
+            public Vector3 scale;
+        }
+        private List<CollisionMesh> _collisionMeshesToExport = new List<CollisionMesh>();
+
+        
+        public List<CollisionMesh> CollisionMeshesToExport {
             get { return _collisionMeshesToExport; }
         }
 
@@ -75,10 +81,10 @@ namespace ZO.ImportExport {
                 exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
             }
 
-            foreach (Mesh mesh in exportURDF.CollisionMeshesToExport) {
+            foreach (CollisionMesh collisionMesh in exportURDF.CollisionMeshesToExport) {
                 ZOExportOBJ exportOBJ = new ZOExportOBJ();
-                string collisionMeshFilePath = Path.Combine(directoryPath, $"{mesh.name}_collider.obj");
-                exportOBJ.ExportMesh(mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF);
+                string collisionMeshFilePath = Path.Combine(directoryPath, $"{collisionMesh.mesh.name}_collider.obj");
+                exportOBJ.ExportMesh(collisionMesh.mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF, collisionMesh.scale);
             }
 
             Debug.Log($"INFO: ZOExportURDF Saved URDF: {urdfFilePath}");
@@ -442,7 +448,11 @@ namespace ZO.ImportExport {
 
                 } else if (collider.GetType() == typeof(MeshCollider)) {
                     MeshCollider meshCollider = collider as MeshCollider;
-                    _collisionMeshesToExport.Add(meshCollider.sharedMesh);
+                    CollisionMesh collisionMesh = new CollisionMesh {
+                        mesh = meshCollider.sharedMesh,
+                        scale = collisionTransform.lossyScale
+                    };
+                    _collisionMeshesToExport.Add(collisionMesh);
 
                     XElement mesh = new XElement("mesh");
                     mesh.SetAttributeValue("filename", $"{meshCollider.sharedMesh.name}_collider.obj");

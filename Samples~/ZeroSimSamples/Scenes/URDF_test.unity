@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465791, g: 0.4964133, b: 0.57481784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2969,13 +2969,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 131165625}
-  distance: 2
-  xSpeed: 120
-  ySpeed: 120
-  yMinLimit: 0
-  yMaxLimit: 80
-  distanceMin: 1
-  distanceMax: 15
+  _distance: 5
+  _xSpeed: 120
+  _ySpeed: 120
+  _yMinLimit: -20
+  _yMaxLimit: 80
+  _distanceMin: 0.5
+  _distanceMax: 15
 --- !u!1 &1357432953
 GameObject:
   m_ObjectHideFlags: 0
@@ -3005,7 +3005,7 @@ Transform:
   m_GameObject: {fileID: 1357432953}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 2050636604}
   m_RootOrder: 0
