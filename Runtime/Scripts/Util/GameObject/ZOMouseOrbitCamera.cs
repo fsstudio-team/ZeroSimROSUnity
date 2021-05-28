@@ -36,7 +36,7 @@ namespace ZO.Util {
 
         void LateUpdate() {
             if (target) {
-                if (Input.GetMouseButton(0)) {
+                if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftShift) == false) {
                     x += Input.GetAxis("Mouse X") * _xSpeed * _distance * 0.02f;
                     y -= Input.GetAxis("Mouse Y") * _ySpeed * 0.02f;
                 }

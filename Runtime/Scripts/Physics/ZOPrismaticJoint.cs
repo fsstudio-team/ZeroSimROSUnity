@@ -288,11 +288,13 @@ namespace ZO.Physics {
 
                 Quaternion worldAxisRotation = Quaternion.LookRotation(transform.TransformDirection(Axis));
 
-                Vector3 lowerLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.LowerLimit));
+                Vector3 lowerLimit = transform.TransformPoint(Anchor - (Axis * UnityConfigurableJoint.linearLimit.limit));
+                // Vector3 lowerLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.LowerLimit));
                 Handles.color = Color.red;
                 Handles.CylinderHandleCap(0, lowerLimit, worldAxisRotation, HandleUtility.GetHandleSize(lowerLimit) * 0.2f, EventType.Repaint);
 
-                Vector3 upperLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.UpperLimit));
+                // Vector3 upperLimit = transform.TransformPoint(Anchor + (JointDirection * JointLimits.UpperLimit));
+                Vector3 upperLimit = transform.TransformPoint(Anchor + (Axis * UnityConfigurableJoint.linearLimit.limit));
                 Handles.color = Color.blue;
                 Handles.CylinderHandleCap(0, upperLimit, worldAxisRotation, HandleUtility.GetHandleSize(lowerLimit) * 0.2f, EventType.Repaint);
 
@@ -324,12 +326,6 @@ namespace ZO.Physics {
         private void OnValidate() {
             SetupPrismaticJointFromConfigurableJoint();
         }
-        // private void OnDestroy() {
-        //     if ((Application.isEditor == true) && (Application.isPlaying == false) && (UnityConfigurableJoint != null) && (Application.isLoadingLevel == false)) {
-        //         DestroyImmediate(UnityConfigurableJoint);
-        //         UnityConfigurableJoint = null;
-        //     }
-        // }
 
 
 
