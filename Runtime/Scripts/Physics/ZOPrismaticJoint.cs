@@ -324,11 +324,12 @@ namespace ZO.Physics {
         private void OnValidate() {
             SetupPrismaticJointFromConfigurableJoint();
         }
-        private void OnDestroy() {
-            if ((Application.isEditor == true) && (Application.isPlaying == false) && (UnityConfigurableJoint != null) && (Application.isLoadingLevel == false)) {
-                DestroyImmediate(UnityConfigurableJoint);
-            }
-        }
+        // private void OnDestroy() {
+        //     if ((Application.isEditor == true) && (Application.isPlaying == false) && (UnityConfigurableJoint != null) && (Application.isLoadingLevel == false)) {
+        //         DestroyImmediate(UnityConfigurableJoint);
+        //         UnityConfigurableJoint = null;
+        //     }
+        // }
 
 
 
