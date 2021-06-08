@@ -414,39 +414,39 @@ namespace ZO.ImportExport {
                     BoxCollider boxCollider = collider as BoxCollider;
                     XElement box = new XElement("box");
 
-                    Vector3 boxSize = new Vector3(boxCollider.size.x * collider.transform.localScale.x,
-                                                    boxCollider.size.y * collider.transform.localScale.y,
-                                                    boxCollider.size.z * collider.transform.localScale.z);
+                    Vector3 boxSize = new Vector3(boxCollider.size.x * collider.transform.lossyScale.x,
+                                                    boxCollider.size.y * collider.transform.lossyScale.y,
+                                                    boxCollider.size.z * collider.transform.lossyScale.z);
                     box.SetAttributeValue("size", boxSize.Unity2RosScale().ToXMLString());
                     geometry.Add(box);
 
-                    center = new Vector3(boxCollider.center.x * boxCollider.transform.localScale.x,
-                                        boxCollider.center.y * boxCollider.transform.localScale.y,
-                                        boxCollider.center.z * boxCollider.transform.localScale.z);
+                    center = new Vector3(boxCollider.center.x * boxCollider.transform.lossyScale.x,
+                                        boxCollider.center.y * boxCollider.transform.lossyScale.y,
+                                        boxCollider.center.z * boxCollider.transform.lossyScale.z);
                 } else if (collider.GetType() == typeof(SphereCollider)) {
                     SphereCollider sphereCollider = collider as SphereCollider;
                     XElement sphere = new XElement("sphere");
-                    float radius = sphereCollider.radius * collider.transform.localScale.x;
+                    float radius = sphereCollider.radius * collider.transform.lossyScale.x;
                     sphere.SetAttributeValue("radius", radius);
                     geometry.Add(sphere);
 
-                    center = new Vector3(sphereCollider.center.x * sphereCollider.transform.localScale.x,
-                                        sphereCollider.center.y * sphereCollider.transform.localScale.y,
-                                        sphereCollider.center.z * sphereCollider.transform.localScale.z);
+                    center = new Vector3(sphereCollider.center.x * sphereCollider.transform.lossyScale.x,
+                                        sphereCollider.center.y * sphereCollider.transform.lossyScale.y,
+                                        sphereCollider.center.z * sphereCollider.transform.lossyScale.z);
 
 
                 } else if (collider.GetType() == typeof(CapsuleCollider)) {
                     CapsuleCollider capsuleCollider = collider as CapsuleCollider;
                     XElement cylinder = new XElement("cylinder");
-                    float radius = capsuleCollider.radius * collider.transform.localScale.x;
-                    float height = capsuleCollider.height * collider.transform.localScale.y;
+                    float radius = capsuleCollider.radius * collider.transform.lossyScale.x;
+                    float height = capsuleCollider.height * collider.transform.lossyScale.y;
                     cylinder.SetAttributeValue("radius", radius);
                     cylinder.SetAttributeValue("length", height);
                     geometry.Add(cylinder);
 
-                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.localScale.x,
-                                        capsuleCollider.center.y * capsuleCollider.transform.localScale.y,
-                                        capsuleCollider.center.z * capsuleCollider.transform.localScale.z);
+                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.lossyScale.x,
+                                        capsuleCollider.center.y * capsuleCollider.transform.lossyScale.y,
+                                        capsuleCollider.center.z * capsuleCollider.transform.lossyScale.z);
 
 
                 } else if (collider.GetType() == typeof(MeshCollider)) {
@@ -459,7 +459,7 @@ namespace ZO.ImportExport {
 
                     XElement mesh = new XElement("mesh");
                     mesh.SetAttributeValue("filename", $"{meshCollider.sharedMesh.name}_collider.obj");
-                    Vector3 scale = collisionTransform.localScale;
+                    Vector3 scale = collisionTransform.lossyScale.Unity2RosScale();
                     mesh.SetAttributeValue("scale", scale.ToXMLString());
                     geometry.Add(mesh);
 
@@ -503,20 +503,20 @@ namespace ZO.ImportExport {
                     if (meshFilter.sharedMesh.name.Contains("Cube")) {
                         XElement box = new XElement("box");
 
-                        Vector3 boxSize = visualTransform.localScale.Unity2RosScale();
+                        Vector3 boxSize = visualTransform.lossyScale.Unity2RosScale();
                         box.SetAttributeValue("size", boxSize.ToXMLString());
                         geometry.Add(box);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Sphere")) {
                         XElement sphere = new XElement("sphere");
-                        float radius = visualTransform.localScale.x / 2.0f;
+                        float radius = visualTransform.lossyScale.x / 2.0f;
                         sphere.SetAttributeValue("radius", radius);
                         geometry.Add(sphere);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
                         XElement cylinder = new XElement("cylinder");
-                        float radius = visualTransform.localScale.x / 2.0f;
-                        float height = visualTransform.localScale.y * 2.0f;
+                        float radius = visualTransform.lossyScale.x / 2.0f;
+                        float height = visualTransform.lossyScale.y * 2.0f;
                         cylinder.SetAttributeValue("radius", radius);
                         cylinder.SetAttributeValue("length", height);
 
@@ -526,7 +526,7 @@ namespace ZO.ImportExport {
                     } else {  // regular mesh so export meshes as OBJ
                         XElement mesh = new XElement("mesh");
                         mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
-                        Vector3 scale = visualTransform.localScale;
+                        Vector3 scale = visualTransform.lossyScale.Unity2RosScale();
                         mesh.SetAttributeValue("scale", scale.ToXMLString());
                         geometry.Add(mesh);
 
