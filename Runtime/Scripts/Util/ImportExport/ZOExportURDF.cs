@@ -63,7 +63,7 @@ namespace ZO.ImportExport {
         }
         private List<CollisionMesh> _collisionMeshesToExport = new List<CollisionMesh>();
 
-        
+
         public List<CollisionMesh> CollisionMeshesToExport {
             get { return _collisionMeshesToExport; }
         }
@@ -264,7 +264,7 @@ namespace ZO.ImportExport {
                             jointX.SetAttributeValue("type", "prismatic");
 
                             // create axis
-                            Vector3 axis = -prismaticJoint.Axis.Unity2Ros();  // NOTE:  need to negate axis
+                            Vector3 axis = prismaticJoint.Axis.Unity2Ros();
                             XElement axisX = new XElement("axis");
                             axisX.SetAttributeValue("xyz", axis.ToXMLString());
                             jointX.Add(axisX);
@@ -272,8 +272,11 @@ namespace ZO.ImportExport {
                             // create limits
                             // TODO:
                             XElement limitX = new XElement("limit");
-                            limitX.SetAttributeValue("lower", prismaticJoint.JointLimits.LowerLimit);
-                            limitX.SetAttributeValue("upper", prismaticJoint.JointLimits.UpperLimit);
+                            limitX.SetAttributeValue("lower", -prismaticJoint.UnityConfigurableJoint.linearLimit.limit);  //HACK: quick hack to get the "correct" limit
+                            limitX.SetAttributeValue("upper", prismaticJoint.UnityConfigurableJoint.linearLimit.limit);   //HACK: quick hack to get the "correct" limit
+
+                            // limitX.SetAttributeValue("lower", prismaticJoint.JointLimits.LowerLimit);
+                            // limitX.SetAttributeValue("upper", prismaticJoint.JointLimits.UpperLimit);
                             limitX.SetAttributeValue("effort", 10000f); // HACK
                             limitX.SetAttributeValue("velocity", 10000f); // HACK
                             jointX.Add(limitX);
@@ -287,7 +290,7 @@ namespace ZO.ImportExport {
                             jointMatrix = prismaticJoint.transform.WorldTranslationRotationMatrix();
                             jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
 
-// TODO: the links should be offset by the connected anchor.  Not the way done below.
+                            // TODO: the links should be offset by the connected anchor.  Not the way done below.
                             Vector3 worldConnectedAnchor = prismaticJoint.ConnectedBody.transform.TransformPoint(prismaticJoint.ConnectedAnchor);
                             Vector3 relativeToParentConnectedAnchor = prismaticJoint.transform.InverseTransformPoint(worldConnectedAnchor);
                             // jointMatrix = jointMatrix.AddTranslation(relativeToParentConnectedAnchor);
