@@ -27,6 +27,8 @@ namespace ZO.Physics {
         public Rigidbody _connectedBody;
         public Vector3 _anchor = Vector3.zero;
         public Vector3 _axis = Vector3.forward;
+        public bool _useMotor = true;
+        public float _motorForce = 1.0f;
 
         [SerializeField] [ZOReadOnlyAttribute] public UnityEngine.HingeJoint _hingeJoint;
 
@@ -37,6 +39,34 @@ namespace ZO.Physics {
         public UnityEngine.HingeJoint UnityHingeJoint {
             get {
                 return _hingeJoint;
+            }
+        }
+
+        /// <summary>
+        /// Flag to indicate if using joint motor or freewheeling.
+        /// </summary>
+        /// <value></value>
+        public bool UseMotor {
+            get {
+                return UnityHingeJoint.useMotor;
+            }
+            set {
+                UnityHingeJoint.useMotor = value;
+            }
+        }
+
+        /// <summary>
+        /// The maximum force the motor uses.
+        /// </summary>
+        /// <value></value>
+        public float MotorForce {
+            get {
+                return UnityHingeJoint.motor.force;
+            }
+            set {
+                JointMotor jointMotor = UnityHingeJoint.motor;
+                jointMotor.force = value;
+                UnityHingeJoint.motor = jointMotor;
             }
         }
 
@@ -229,6 +259,8 @@ namespace ZO.Physics {
             Axis = _axis;
             ConnectedBody = _connectedBody;
             Anchor = _anchor;
+            UseMotor = _useMotor;
+            MotorForce = _motorForce;
         }
 
         #endregion
