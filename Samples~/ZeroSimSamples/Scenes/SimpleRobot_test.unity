@@ -595,9 +595,9 @@ MonoBehaviour:
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
   _ROSTopic: 
-  _name: 
+  _name: ros.publisher.transform_ROSUnityManager
   _frameId: map
-  _childFrameId: 
+  _childFrameId: ros.publisher.transform_ROSUnityManager
 --- !u!134 &837473547
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -837,7 +837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0e3af0b8141964b85373790012f3b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1189395070}
+  target: {fileID: 1806465523}
   _distance: 5
   _xSpeed: 120
   _ySpeed: 120
@@ -975,6 +975,81 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1806465523 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 968823325036578807, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1883248262}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1883248262
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 968823323656958412, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_Name
+      value: SimpleAMR
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e40f2c3c7691c519a99f10bf56f8b75f, type: 3}
 --- !u!134 &1884966545
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -1248,6 +1323,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SimpleBot
+      objectReference: {fileID: 0}
+    - target: {fileID: 1933133040623375826, guid: 72ef474c4d4d897df96a2872360de7ef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1933133040999397960, guid: 72ef474c4d4d897df96a2872360de7ef,
         type: 3}
