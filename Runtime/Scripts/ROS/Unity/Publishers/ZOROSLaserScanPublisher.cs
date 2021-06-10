@@ -29,6 +29,8 @@ namespace ZO.ROS.Publisher {
             set => _lidar2DSensor = value;
         }
 
+        public string _parentTransformId;
+
 
         private ZOROSTransformPublisher _transformPublisher = null;
         public ZOROSTransformPublisher TransformPublisher {
@@ -67,6 +69,15 @@ namespace ZO.ROS.Publisher {
             if (UpdateRateHz == 0) {
                 UpdateRateHz = 10;
             }
+
+            if (_parentTransformId == "") {
+                ZOROSTransformPublisher parentTransformPublisher = transform.parent.GetComponent<ZOROSTransformPublisher>();
+                if (parentTransformPublisher != null) {
+                    _parentTransformId = parentTransformPublisher.ChildFrameID;
+                } else {
+                    _parentTransformId = "base_footprint";
+                }
+            }
         }
 
         private void Initialize() {
@@ -95,7 +106,7 @@ namespace ZO.ROS.Publisher {
 
         private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string name, float[] ranges) {
             _rosLaserScanMessage.header.Update();
-            _rosLaserScanMessage.header.frame_id = "base_footprint";//TransformPublisher.ChildFrameID;
+            _rosLaserScanMessage.header.frame_id = _parentTransformId;
             _rosLaserScanMessage.angle_min = lidar.MinAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_max = lidar.MaxAngleDegrees * Mathf.Deg2Rad;
             _rosLaserScanMessage.angle_increment = lidar.AngleIncrementDegrees * Mathf.Deg2Rad;

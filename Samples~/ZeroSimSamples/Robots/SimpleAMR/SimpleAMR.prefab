@@ -1600,7 +1600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12e3f183b8e3d462c8acb6acaee3cb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 0
+  _updateRateHz: 10
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
@@ -1609,7 +1609,7 @@ MonoBehaviour:
   _angleIncrementDegrees: 1
   _minRangeDistanceMeters: 0.1
   _maxRangeDistanceMeters: 20
-  _name: 
+  _name: lidar_2d_sensor.lidar2d
 --- !u!114 &924607322912362385
 MonoBehaviour:
   m_ObjectHideFlags: 0

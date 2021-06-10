@@ -136,7 +136,7 @@ namespace ZO.Sensors {
             }
 
             if (Name == "") {
-                Name = gameObject.name + "_camera";
+                Name = gameObject.name + "_" + Type;
             }
 
 
