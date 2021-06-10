@@ -51,6 +51,20 @@ namespace ZO.ROS.Publisher {
 
         }
 
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (ChildFrameID == "") {
+                ChildFrameID = Name;
+            }
+            if (FrameID == "") {
+                if (transform.parent) {
+                    FrameID = transform.parent.name;
+                }
+            }
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 10;
+            }
+        }
 
         public override string Type {
             get { return "ros.publisher.transform"; }

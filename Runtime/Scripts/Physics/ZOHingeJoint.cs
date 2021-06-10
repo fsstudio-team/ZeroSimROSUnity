@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
 using ZO.Document;
+using ZO.Util;
 
 
 namespace ZO.Physics {
@@ -23,7 +24,13 @@ namespace ZO.Physics {
     [ExecuteAlways]
     public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface, ZOJointInterface {
 
-        [SerializeField] public UnityEngine.HingeJoint _hingeJoint;
+        public Rigidbody _connectedBody;
+        public Vector3 _anchor = Vector3.zero;
+        public Vector3 _axis = Vector3.forward;
+        public bool _useMotor = true;
+        public float _motorForce = 1.0f;
+
+        [SerializeField] [ZOReadOnlyAttribute] public UnityEngine.HingeJoint _hingeJoint;
 
         /// <summary>
         /// The Unity hinge joint linked to this ZOSim hinge joint.
@@ -32,6 +39,34 @@ namespace ZO.Physics {
         public UnityEngine.HingeJoint UnityHingeJoint {
             get {
                 return _hingeJoint;
+            }
+        }
+
+        /// <summary>
+        /// Flag to indicate if using joint motor or freewheeling.
+        /// </summary>
+        /// <value></value>
+        public bool UseMotor {
+            get {
+                return UnityHingeJoint.useMotor;
+            }
+            set {
+                UnityHingeJoint.useMotor = value;
+            }
+        }
+
+        /// <summary>
+        /// The maximum force the motor uses.
+        /// </summary>
+        /// <value></value>
+        public float MotorForce {
+            get {
+                return UnityHingeJoint.motor.force;
+            }
+            set {
+                JointMotor jointMotor = UnityHingeJoint.motor;
+                jointMotor.force = value;
+                UnityHingeJoint.motor = jointMotor;
             }
         }
 
@@ -66,6 +101,39 @@ namespace ZO.Physics {
                 return UnityHingeJoint.connectedAnchor;
             }
         }
+
+        /// <summary>
+        /// The connected rigid body.  If null then it is the world.
+        /// </summary>
+        /// <value></value>
+        public Rigidbody ConnectedBody {
+            get {
+                return UnityHingeJoint.connectedBody;
+            }
+            set {
+                if (UnityHingeJoint.connectedBody != value) {
+                    UnityHingeJoint.connectedBody = value;
+                }
+
+                // update the name
+                _name = Type;
+
+                ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                if (occurrence) {
+                    _name = _name + "_from_" + occurrence.Name;
+                }
+
+                if (UnityHingeJoint.connectedBody) {
+                    ZOSimOccurrence connected_occurrence = UnityHingeJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
+
+                    if (connected_occurrence) {
+                        _name = _name + "_to_" + connected_occurrence.Name;
+                    }
+                }
+
+            }
+        }
+
 
         public bool _debug = false;
 
@@ -123,18 +191,6 @@ namespace ZO.Physics {
             }
         }
 
-        /// <summary>
-        /// The connected rigid body.  If null then it is the world.
-        /// </summary>
-        /// <value></value>
-        public Rigidbody ConnectedBody {
-            get {
-                return UnityHingeJoint.connectedBody;
-            }
-            set {
-                UnityHingeJoint.connectedBody = value;
-            }
-        }
 
         /// <summary>
         /// The connected ZOSim Occurrence.  Being null does not necessarily mean anything.
@@ -193,10 +249,18 @@ namespace ZO.Physics {
                 // Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
                 // float angle = ZO.Math.ZOMathUtil.FindQuaternionTwist(r, UnityHingeJoint.axis) * Mathf.Rad2Deg;
 
-                GUI.TextField(new Rect(10, 10, 300, 22), this.Name + " Angle: " + (_currentAngleRadians * Mathf.Rad2Deg).ToString("R2")
+                GUI.TextField(new Rect(10, 10, 400, 22), this.Name + " Angle: " + (Position * Mathf.Rad2Deg).ToString("R2")
                                 + " Target: " + (UnityHingeJoint.spring.targetPosition * Mathf.Rad2Deg).ToString("R2"));
 
             }
+        }
+
+        private void OnValidate() {
+            Axis = _axis;
+            ConnectedBody = _connectedBody;
+            Anchor = _anchor;
+            UseMotor = _useMotor;
+            MotorForce = _motorForce;
         }
 
         #endregion

@@ -164,7 +164,7 @@ namespace ZO.ROS.Unity {
         public static ZOROSUnityManager Instance {
             get => _instance;
         }
-            
+
         #endregion // Singleton
 
 
@@ -195,7 +195,7 @@ namespace ZO.ROS.Unity {
         #region Simulation Clock
 
         ClockMessage _clockMessage = new ClockMessage();
-        
+
         /// <summary>
         /// sim
         /// </summary>
@@ -244,7 +244,7 @@ namespace ZO.ROS.Unity {
 
 
                 ROSBridgeConnection.Serialization = _serializationType;
-                ROSBridgeConnection.ROSBridgeConnectEvent += delegate(ZOROSBridgeConnection rosBridge) {
+                ROSBridgeConnection.ROSBridgeConnectEvent += delegate (ZOROSBridgeConnection rosBridge) {
                     Debug.Log("INFO: Connected to ROS Bridge");
 
                     // advertise the transform broadcast
@@ -289,7 +289,7 @@ namespace ZO.ROS.Unity {
 
                 // run async task.  if cannot connect wait for a couple of seconds and try again
                 ROSBridgeConnection.Port = Port;
-                ROSBridgeConnection.Hostname = Hostname;                
+                ROSBridgeConnection.Hostname = Hostname;
                 Task rosBridgeConnectionTask = Task.Run(async () => {
                     await ROSBridgeConnection.ConnectAsync();
                 });
@@ -297,6 +297,7 @@ namespace ZO.ROS.Unity {
             }
 
         }
+
 
         private void OnDestroy() {
             ROSBridgeConnection.UnAdvertise("/tf");

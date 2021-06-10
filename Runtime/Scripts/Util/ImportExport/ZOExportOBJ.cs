@@ -9,7 +9,7 @@ namespace ZO.ImportExport {
     public class ZOExportOBJ {
 
         public enum Orientation {
-            URDF, 
+            URDF,
             Unity // Unity Default direction
         }
 
@@ -43,14 +43,14 @@ namespace ZO.ImportExport {
             _startIndex = 0;
         }
 
-        protected string MeshToString(Mesh mesh, ZOExportOBJ.Orientation orientation) {
+        protected string MeshToString(Mesh mesh, ZOExportOBJ.Orientation orientation, Vector3 scale) {
 
             int numVertices = 0;
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (Vector3 vv in mesh.vertices) {                
-                Vector3 v = vv;
+            foreach (Vector3 vv in mesh.vertices) {
+                Vector3 v = new Vector3(vv.x * scale.x, vv.y * scale.y, vv.z * scale.z);
                 numVertices++;
                 if (orientation == Orientation.Unity) {
                     sb.AppendLine($"v {v.x} {v.y} {v.z}");
@@ -106,7 +106,7 @@ namespace ZO.ImportExport {
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (Vector3 vv in mesh.vertices) {                
+            foreach (Vector3 vv in mesh.vertices) {
                 Vector3 v = vv;
                 if (applyLocalTransform == true) {
                     v = transform.TransformPoint(vv);
@@ -115,7 +115,7 @@ namespace ZO.ImportExport {
                 if (orientation == Orientation.Unity) {
                     sb.AppendLine($"v {v.x} {v.y} {v.z}");
                 } else if (orientation == Orientation.URDF) {
-                    sb.AppendLine($"v {v.z} {v.x} {v.y}");
+                    sb.AppendLine($"v {v.z} {-v.x} {v.y}");
                 }
             }
             sb.AppendLine();
@@ -124,7 +124,7 @@ namespace ZO.ImportExport {
                 if (orientation == Orientation.Unity) {
                     sb.AppendLine($"vn {v.x} {v.y} {v.z}");
                 } else if (orientation == Orientation.URDF) {
-                    sb.AppendLine($"vn {v.z} {v.x} {v.y}");
+                    sb.AppendLine($"vn {v.z} {-v.x} {v.y}");
                 }
             }
             sb.AppendLine();
@@ -139,10 +139,19 @@ namespace ZO.ImportExport {
 
                 int[] triangles = mesh.GetTriangles(material);
                 for (int i = 0; i < triangles.Length; i += 3) {
-                    sb.Append(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
-                                        triangles[i] + 1 + _startIndex,
-                                        triangles[i + 1] + 1 + _startIndex,
-                                        triangles[i + 2] + 1 + _startIndex));
+
+                    if (orientation == Orientation.Unity) {
+                        sb.Append(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
+                                            triangles[i] + 1 + _startIndex,
+                                            triangles[i + 1] + 1 + _startIndex,
+                                            triangles[i + 2] + 1 + _startIndex));
+                    } else if (orientation == Orientation.URDF) {
+                        sb.Append(string.Format("f {2}/{2}/{2} {1}/{1}/{1} {0}/{0}/{0}\n",
+                                            triangles[i] + 1 + _startIndex,
+                                            triangles[i + 1] + 1 + _startIndex,
+                                            triangles[i + 2] + 1 + _startIndex));
+                    }
+
 
                 }
             }
@@ -301,13 +310,13 @@ namespace ZO.ImportExport {
             }
 
             // copy the textures
-            foreach(string sourceTexturePath in TextureAssetPaths) {
+            foreach (string sourceTexturePath in TextureAssetPaths) {
                 File.Copy(sourceTexturePath, Path.Combine(directoryPath, Path.GetFileName(sourceTexturePath)), true);
             }
 
         }
 
-        public void ExportMesh(Mesh mesh, string meshPath, ZOExportOBJ.Orientation orientation) {
+        public void ExportMesh(Mesh mesh, string meshPath, ZOExportOBJ.Orientation orientation, Vector3 scale) {
             Start();
 
             StringBuilder meshString = new StringBuilder();
@@ -318,7 +327,7 @@ namespace ZO.ImportExport {
                               + "\n#-------"
                               + "\n\n");
 
-            meshString.Append(MeshToString(mesh, orientation));
+            meshString.Append(MeshToString(mesh, orientation, scale));
 
             OBJString = meshString.ToString();
 

@@ -74,6 +74,13 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection?.UnAdvertise(ROSTopic);
         }
 
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (RGBCameraSensor == null) {
+                RGBCameraSensor = GetComponent<ZORGBCamera>();
+            }
+        }
+
         private void Initialize() {
             // advertise
             ROSBridgeConnection.Advertise(ImageROSTopic, _rosImageMessage.MessageType);

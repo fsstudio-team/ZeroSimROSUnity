@@ -57,8 +57,14 @@ namespace ZO.ImportExport {
             get { return _visualMeshesToExport; }
         }
 
-        private List<Mesh> _collisionMeshesToExport = new List<Mesh>();
-        public List<Mesh> CollisionMeshesToExport {
+        public struct CollisionMesh {
+            public Mesh mesh;
+            public Vector3 scale;
+        }
+        private List<CollisionMesh> _collisionMeshesToExport = new List<CollisionMesh>();
+
+
+        public List<CollisionMesh> CollisionMeshesToExport {
             get { return _collisionMeshesToExport; }
         }
 
@@ -75,10 +81,10 @@ namespace ZO.ImportExport {
                 exportOBJ.ExportToDirectory(meshTransform.gameObject, directoryPath, true, false, ZOExportOBJ.Orientation.URDF);
             }
 
-            foreach (Mesh mesh in exportURDF.CollisionMeshesToExport) {
+            foreach (CollisionMesh collisionMesh in exportURDF.CollisionMeshesToExport) {
                 ZOExportOBJ exportOBJ = new ZOExportOBJ();
-                string collisionMeshFilePath = Path.Combine(directoryPath, $"{mesh.name}_collider.obj");
-                exportOBJ.ExportMesh(mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF);
+                string collisionMeshFilePath = Path.Combine(directoryPath, $"{collisionMesh.mesh.name}_collider.obj");
+                exportOBJ.ExportMesh(collisionMesh.mesh, collisionMeshFilePath, ZOExportOBJ.Orientation.URDF, collisionMesh.scale);
             }
 
             Debug.Log($"INFO: ZOExportURDF Saved URDF: {urdfFilePath}");
@@ -167,53 +173,25 @@ namespace ZO.ImportExport {
 
             // if we have a parent build a joint
             if (parent) {
-                XElement jointX = new XElement("joint");
-                jointX.SetAttributeValue("name", $"{parent.Name}_to_{child.Name}");
-                // Transform jointTransform = this.transform;
-                Matrix4x4 jointMatrix = Matrix4x4.identity;
 
-                ZOHingeJoint hingeJoint = parent.GetComponent<ZOHingeJoint>();
-                if (hingeJoint != null) {
-                    jointX.SetAttributeValue("type", "revolute");
+                ZOJointInterface[] zoJoints = parent.GetComponents<ZOJointInterface>();
 
-                    // create axis
-                    Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
-                    XElement axisX = new XElement("axis");
-                    axisX.SetAttributeValue("xyz", axis.ToXMLString());
-                    jointX.Add(axisX);
-
-                    // create limits
-                    // TODO:
-                    XElement limitX = new XElement("limit");
-                    limitX.SetAttributeValue("effort", 10000f); // HACK
-                    limitX.SetAttributeValue("velocity", 3.14f); // HACK
-                    jointX.Add(limitX);
-
-                    // Add the anchor position
-                    jointMatrix = parent.transform.WorldTranslationRotationMatrix();
-                    jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor);
-
-                    // save this off as the new world joint matrix
-                    Matrix4x4 newWorldJointMatrix = jointMatrix;
-
-                    // subtract out the parent root
-                    jointMatrix = jointMatrix * worldJointMatrix.inverse;
-                    worldJointMatrix = newWorldJointMatrix;
-
-                    Vector3 xyz = jointMatrix.Position().Unity2Ros();
-                    Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
-
-                    XElement origin = new XElement("origin");
-                    origin.SetAttributeValue("xyz", xyz.ToXMLString());
-                    origin.SetAttributeValue("rpy", rpy.ToXMLString());
-                    jointX.Add(origin);
-
-                    URDFJoint joint = new URDFJoint(child, parent, hingeJoint.Anchor, hingeJoint.ConnectedAnchor);
-                    joints.Add(joint);
+                // find if child is explicitly linked to a joint of the parent
+                bool isChildExplicitlyInAParentJoint = false;
+                foreach (ZOJointInterface joint in zoJoints) {
+                    if (joint.ConnectedOccurrence == child) {
+                        isChildExplicitlyInAParentJoint = true;
+                        break;
+                    }
+                }
 
 
-                } else { // children of the parent even without an explicit joint are "fixed" joints
-
+                // even if there are no explicit fixed joint children of the parent are "automatically" set as fixed.
+                if (zoJoints.Length == 0 || isChildExplicitlyInAParentJoint == false) {
+                    XElement jointX = new XElement("joint");
+                    jointX.SetAttributeValue("name", $"Fixed_{parent.Name}_to_{child.Name}");
+                    // Transform jointTransform = this.transform;
+                    Matrix4x4 jointMatrix = Matrix4x4.identity;
                     jointX.SetAttributeValue("type", "fixed");
                     jointMatrix = parent.transform.WorldTranslationRotationMatrix().inverse * child.transform.WorldTranslationRotationMatrix();
 
@@ -225,22 +203,163 @@ namespace ZO.ImportExport {
                     origin.SetAttributeValue("rpy", rpy.ToXMLString());
                     jointX.Add(origin);
 
-                    URDFJoint joint = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
-                    joints.Add(joint);
+                    URDFJoint j = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
+                    joints.Add(j);
+
+                    robot.Add(jointX);
+
+                    XElement parentX = new XElement("parent");
+                    parentX.SetAttributeValue("link", parent.Name);
+                    jointX.Add(parentX);
+
+                    XElement childX = new XElement("child");
+                    childX.SetAttributeValue("link", child.Name);
+                    jointX.Add(childX);
 
 
                 }
 
+                foreach (ZOJointInterface joint in zoJoints) {
+                    if (joint.ConnectedOccurrence == child) {  // only if this joint is pointing at us
+                        XElement jointX = new XElement("joint");
+                        jointX.SetAttributeValue("name", $"{joint.Type}_{parent.Name}_to_{child.Name}");
+                        // Transform jointTransform = this.transform;
+                        Matrix4x4 jointMatrix = Matrix4x4.identity;
 
-                robot.Add(jointX);
 
-                XElement parentX = new XElement("parent");
-                parentX.SetAttributeValue("link", parent.Name);
-                jointX.Add(parentX);
+                        if (joint.GetType() == typeof(ZOHingeJoint)) {
+                            // TODO: distinguish between revolute (a hinge with limits) vs continuous (joint with no limits)
+                            ZOHingeJoint hingeJoint = joint as ZOHingeJoint;
+                            jointX.SetAttributeValue("type", "revolute");
 
-                XElement childX = new XElement("child");
-                childX.SetAttributeValue("link", child.Name);
-                jointX.Add(childX);
+                            // create axis
+                            Vector3 axis = hingeJoint.UnityHingeJoint.axis.Unity2Ros();
+                            XElement axisX = new XElement("axis");
+                            axisX.SetAttributeValue("xyz", axis.ToXMLString());
+                            jointX.Add(axisX);
+
+                            // create limits
+                            // TODO:
+                            XElement limitX = new XElement("limit");
+                            limitX.SetAttributeValue("effort", 10000f); // HACK
+                            limitX.SetAttributeValue("velocity", 3.14f); // HACK
+                            jointX.Add(limitX);
+
+                            // Add the anchor position
+                            jointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                            jointMatrix = jointMatrix.AddTranslation(hingeJoint.Anchor);
+
+                            // save this off as the new world joint matrix
+                            Matrix4x4 newWorldJointMatrix = jointMatrix;
+
+                            // subtract out the parent root
+                            //jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            jointMatrix = worldJointMatrix.inverse * jointMatrix;
+                            worldJointMatrix = newWorldJointMatrix;
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, hingeJoint.Anchor, hingeJoint.ConnectedAnchor);
+                            joints.Add(j);
+
+
+                        } else if (joint.GetType() == typeof(ZOPrismaticJoint)) {
+                            ZOPrismaticJoint prismaticJoint = joint as ZOPrismaticJoint;
+                            jointX.SetAttributeValue("type", "prismatic");
+
+                            // create axis
+                            Vector3 axis = prismaticJoint.Axis.Unity2Ros();
+                            XElement axisX = new XElement("axis");
+                            axisX.SetAttributeValue("xyz", axis.ToXMLString());
+                            jointX.Add(axisX);
+
+                            // create limits
+                            // TODO:
+                            XElement limitX = new XElement("limit");
+                            limitX.SetAttributeValue("lower", -prismaticJoint.UnityConfigurableJoint.linearLimit.limit);  //HACK: quick hack to get the "correct" limit
+                            limitX.SetAttributeValue("upper", prismaticJoint.UnityConfigurableJoint.linearLimit.limit);   //HACK: quick hack to get the "correct" limit
+
+                            // limitX.SetAttributeValue("lower", prismaticJoint.JointLimits.LowerLimit);
+                            // limitX.SetAttributeValue("upper", prismaticJoint.JointLimits.UpperLimit);
+                            limitX.SetAttributeValue("effort", 10000f); // HACK
+                            limitX.SetAttributeValue("velocity", 10000f); // HACK
+                            jointX.Add(limitX);
+
+                            // Add the anchor position
+                            // Vector3 worldAnchor = prismaticJoint.transform.TransformPoint(prismaticJoint.Anchor);
+                            // Vector3 localAnchor = worldJointMatrix.inverse.MultiplyPoint(worldAnchor);
+                            // worldJointMatrix = parent.transform.WorldTranslationRotationMatrix();
+                            // Vector3 xyz = prismaticJoint.Anchor.Unity2Ros();//localAnchor.Unity2Ros();
+                            // Vector3 rpy = Vector3.zero; // BUGBUG
+                            jointMatrix = prismaticJoint.transform.WorldTranslationRotationMatrix();
+                            jointMatrix = jointMatrix.AddTranslation(prismaticJoint.Anchor);
+
+                            // TODO: the links should be offset by the connected anchor.  Not the way done below.
+                            Vector3 worldConnectedAnchor = prismaticJoint.ConnectedBody.transform.TransformPoint(prismaticJoint.ConnectedAnchor);
+                            Vector3 relativeToParentConnectedAnchor = prismaticJoint.transform.InverseTransformPoint(worldConnectedAnchor);
+                            // jointMatrix = jointMatrix.AddTranslation(relativeToParentConnectedAnchor);
+
+                            // save this off as the new world joint matrix
+                            Matrix4x4 newWorldJointMatrix = jointMatrix;
+
+                            // subtract out the parent root
+                            // jointMatrix = jointMatrix * worldJointMatrix.inverse;
+                            jointMatrix = worldJointMatrix.inverse * jointMatrix;
+
+                            worldJointMatrix = newWorldJointMatrix;
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, prismaticJoint.Anchor, prismaticJoint.ConnectedAnchor);
+                            // URDFJoint j = new URDFJoint(child, parent, prismaticJoint.Anchor, Vector3.zero);
+                            joints.Add(j);
+
+                        } else { // children of the parent even without an explicit joint are "fixed" joints
+
+                            jointX.SetAttributeValue("type", "fixed");
+                            jointMatrix = parent.transform.WorldTranslationRotationMatrix().inverse * child.transform.WorldTranslationRotationMatrix();
+
+                            Vector3 xyz = jointMatrix.Position().Unity2Ros();
+                            Vector3 rpy = jointMatrix.rotation.Unity2RosRollPitchYaw();
+
+                            XElement origin = new XElement("origin");
+                            origin.SetAttributeValue("xyz", xyz.ToXMLString());
+                            origin.SetAttributeValue("rpy", rpy.ToXMLString());
+                            jointX.Add(origin);
+
+                            URDFJoint j = new URDFJoint(child, parent, jointMatrix.Position(), Vector3.zero);
+                            joints.Add(j);
+
+
+                        }
+
+
+                        robot.Add(jointX);
+
+                        XElement parentX = new XElement("parent");
+                        parentX.SetAttributeValue("link", parent.Name);
+                        jointX.Add(parentX);
+
+                        XElement childX = new XElement("child");
+                        childX.SetAttributeValue("link", child.Name);
+                        jointX.Add(childX);
+
+
+
+                    }
+                }
 
             }
             // recursively go through the children
@@ -275,10 +394,10 @@ namespace ZO.ImportExport {
                     // go through the children of the visuals and get all the models
                     foreach (Transform visualsChild in child) {
                         // check if it is a primitive type (cube, sphere, cylinder, etc)
-                        BuildLinkVisuals(visualsChild, link, anchorOffset);
+                        BuildLinkVisuals(simOccurrence, visualsChild, link, anchorOffset);
 
                         // we will do any collider that are attached to the visual
-                        BuildLinkCollisions(visualsChild, link, anchorOffset);
+                        BuildLinkCollisions(simOccurrence, visualsChild, link, anchorOffset);
                     }
                 }
 
@@ -286,14 +405,14 @@ namespace ZO.ImportExport {
                 if (child.name.ToLower() == "collisions") {
                     // go through the children of the collisions and get all the models
                     foreach (Transform collisionChild in child) {
-                        BuildLinkCollisions(collisionChild, link, anchorOffset);
+                        BuildLinkCollisions(simOccurrence, collisionChild, link, anchorOffset);
                     }
                 }
             }
         }
 
 
-        protected void BuildLinkCollisions(Transform collisionTransform, XElement link, Vector3 anchorOffset) {
+        protected void BuildLinkCollisions(ZOSimOccurrence simOccurrence, Transform collisionTransform, XElement link, Vector3 anchorOffset) {
             Collider[] colliders = collisionTransform.GetComponentsInChildren<Collider>();
             foreach (Collider collider in colliders) {
                 XElement collision = new XElement("collision");
@@ -305,48 +424,52 @@ namespace ZO.ImportExport {
                     BoxCollider boxCollider = collider as BoxCollider;
                     XElement box = new XElement("box");
 
-                    Vector3 boxSize = new Vector3(boxCollider.size.x * collider.transform.localScale.x,
-                                                    boxCollider.size.y * collider.transform.localScale.y,
-                                                    boxCollider.size.z * collider.transform.localScale.z);
+                    Vector3 boxSize = new Vector3(boxCollider.size.x * collider.transform.lossyScale.x,
+                                                    boxCollider.size.y * collider.transform.lossyScale.y,
+                                                    boxCollider.size.z * collider.transform.lossyScale.z);
                     box.SetAttributeValue("size", boxSize.Unity2RosScale().ToXMLString());
                     geometry.Add(box);
 
-                    center = new Vector3(boxCollider.center.x * boxCollider.transform.localScale.x,
-                                        boxCollider.center.y * boxCollider.transform.localScale.y,
-                                        boxCollider.center.z * boxCollider.transform.localScale.z);
+                    center = new Vector3(boxCollider.center.x * boxCollider.transform.lossyScale.x,
+                                        boxCollider.center.y * boxCollider.transform.lossyScale.y,
+                                        boxCollider.center.z * boxCollider.transform.lossyScale.z);
                 } else if (collider.GetType() == typeof(SphereCollider)) {
                     SphereCollider sphereCollider = collider as SphereCollider;
                     XElement sphere = new XElement("sphere");
-                    float radius = sphereCollider.radius * collider.transform.localScale.x;
+                    float radius = sphereCollider.radius * collider.transform.lossyScale.x;
                     sphere.SetAttributeValue("radius", radius);
                     geometry.Add(sphere);
 
-                    center = new Vector3(sphereCollider.center.x * sphereCollider.transform.localScale.x,
-                                        sphereCollider.center.y * sphereCollider.transform.localScale.y,
-                                        sphereCollider.center.z * sphereCollider.transform.localScale.z);
+                    center = new Vector3(sphereCollider.center.x * sphereCollider.transform.lossyScale.x,
+                                        sphereCollider.center.y * sphereCollider.transform.lossyScale.y,
+                                        sphereCollider.center.z * sphereCollider.transform.lossyScale.z);
 
 
                 } else if (collider.GetType() == typeof(CapsuleCollider)) {
                     CapsuleCollider capsuleCollider = collider as CapsuleCollider;
                     XElement cylinder = new XElement("cylinder");
-                    float radius = capsuleCollider.radius * collider.transform.localScale.x;
-                    float height = capsuleCollider.height * collider.transform.localScale.y;
+                    float radius = capsuleCollider.radius * collider.transform.lossyScale.x;
+                    float height = capsuleCollider.height * collider.transform.lossyScale.y;
                     cylinder.SetAttributeValue("radius", radius);
                     cylinder.SetAttributeValue("length", height);
                     geometry.Add(cylinder);
 
-                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.localScale.x,
-                                        capsuleCollider.center.y * capsuleCollider.transform.localScale.y,
-                                        capsuleCollider.center.z * capsuleCollider.transform.localScale.z);
+                    center = new Vector3(capsuleCollider.center.x * capsuleCollider.transform.lossyScale.x,
+                                        capsuleCollider.center.y * capsuleCollider.transform.lossyScale.y,
+                                        capsuleCollider.center.z * capsuleCollider.transform.lossyScale.z);
 
 
                 } else if (collider.GetType() == typeof(MeshCollider)) {
                     MeshCollider meshCollider = collider as MeshCollider;
-                    _collisionMeshesToExport.Add(meshCollider.sharedMesh);
+                    CollisionMesh collisionMesh = new CollisionMesh {
+                        mesh = meshCollider.sharedMesh,
+                        scale = collisionTransform.lossyScale
+                    };
+                    _collisionMeshesToExport.Add(collisionMesh);
 
                     XElement mesh = new XElement("mesh");
                     mesh.SetAttributeValue("filename", $"{meshCollider.sharedMesh.name}_collider.obj");
-                    Vector3 scale = collisionTransform.localScale;
+                    Vector3 scale = collisionTransform.lossyScale.Unity2RosScale();
                     mesh.SetAttributeValue("scale", scale.ToXMLString());
                     geometry.Add(mesh);
 
@@ -374,36 +497,34 @@ namespace ZO.ImportExport {
             }
         }
 
-        protected void BuildLinkVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
+        protected void BuildLinkVisuals(ZOSimOccurrence simOccurrence, Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists
             // Check children
             MeshFilter[] meshFilters = visualTransform.GetComponentsInChildren<MeshFilter>();
             foreach (MeshFilter meshFilter in meshFilters) {
                 if (meshFilter) {
 
-                    MeshRenderer meshRenderer = visualTransform.GetComponent<MeshRenderer>();
-                    Collider collider = null;
                     XElement visual = new XElement("visual");
-                    visual.SetAttributeValue("name", visualTransform.name);
+                    visual.SetAttributeValue("name", meshFilter.name);
                     XElement geometry = new XElement("geometry");
 
                     if (meshFilter.sharedMesh.name.Contains("Cube")) {
                         XElement box = new XElement("box");
 
-                        Vector3 boxSize = visualTransform.localScale.Unity2RosScale();
+                        Vector3 boxSize = meshFilter.transform.lossyScale.Unity2RosScale();
                         box.SetAttributeValue("size", boxSize.ToXMLString());
                         geometry.Add(box);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Sphere")) {
                         XElement sphere = new XElement("sphere");
-                        float radius = visualTransform.localScale.x / 2.0f;
+                        float radius = meshFilter.transform.lossyScale.x / 2.0f;
                         sphere.SetAttributeValue("radius", radius);
                         geometry.Add(sphere);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
                         XElement cylinder = new XElement("cylinder");
-                        float radius = visualTransform.localScale.x / 2.0f;
-                        float height = visualTransform.localScale.y * 2.0f;
+                        float radius = meshFilter.transform.lossyScale.x / 2.0f;
+                        float height = meshFilter.transform.lossyScale.y * 2.0f;
                         cylinder.SetAttributeValue("radius", radius);
                         cylinder.SetAttributeValue("length", height);
 
@@ -412,21 +533,44 @@ namespace ZO.ImportExport {
 
                     } else {  // regular mesh so export meshes as OBJ
                         XElement mesh = new XElement("mesh");
-                        mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
-                        Vector3 scale = visualTransform.localScale;
+                        mesh.SetAttributeValue("filename", $"{meshFilter.name}.obj");
+                        Vector3 scale = meshFilter.transform.lossyScale.Unity2RosScale();
                         mesh.SetAttributeValue("scale", scale.ToXMLString());
                         geometry.Add(mesh);
 
-                        _visualMeshesToExport.Add(visualTransform);
+                        _visualMeshesToExport.Add(meshFilter.transform);
                     }
 
                     if (geometry.HasElements) {
+                        //Matrix4x4 simOccurrenceWorldMatrix = Matrix4x4.TRS(simOccurrence.transform.parent.position, simOccurrence.transform.parent.rotation, simOccurrence.transform.parent.lossyScale);// simOccurrence.transform.parent.WorldTranslationRotationMatrix();
+                        // Matrix4x4 simOccurrenceWorldMatrix = simOccurrence.transform.parent.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualWorldMatrix = visualTransform.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualWorldMatrix = Matrix4x4.TRS(visualTransform.position, visualTransform.rotation, visualTransform.lossyScale);// visualTransform.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualRelativeToSimOccurrence = simOccurrenceWorldMatrix.inverse * visualWorldMatrix;
+                        // Matrix4x4 visualRelativeToSimOccurrence = simOccurrence.transform.LocalTRSMatrix() * visualTransform.LocalTRSMatrix();
+
+                        // Vector3 position = visualRelativeToSimOccurrence.Position() + anchorOffset;
+
+                        // Vector3 position = new Vector3(visualRelativeToSimOccurrence.Position().x * simOccurrence.transform.parent.lossyScale.x,
+                        //                                 visualRelativeToSimOccurrence.Position().y * simOccurrence.transform.parent.lossyScale.y,
+                        //                                 visualRelativeToSimOccurrence.Position().z * simOccurrence.transform.parent.lossyScale.z) + anchorOffset;
+                        // Vector3 xyz = position.Unity2Ros();
+                        // Quaternion rotation = visualRelativeToSimOccurrence.rotation;
+                        // Vector3 rpy = new Vector3(-rotation.eulerAngles.z * Mathf.Deg2Rad,
+                        //                             rotation.eulerAngles.x * Mathf.Deg2Rad,
+                        //                             -rotation.eulerAngles.y * Mathf.Deg2Rad);
+
+                        Quaternion rotation = visualTransform.localRotation;
+
                         // build origin
                         Vector3 position = visualTransform.localPosition + anchorOffset;
                         Vector3 xyz = position.Unity2Ros();
-                        Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
-                                                    visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
-                                                    -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
+                        // Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                        //                             visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                        //                             -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
+                        Vector3 rpy = new Vector3(-rotation.eulerAngles.z * Mathf.Deg2Rad,
+                                                    rotation.eulerAngles.x * Mathf.Deg2Rad,
+                                                    -rotation.eulerAngles.y * Mathf.Deg2Rad);
 
                         XElement origin = new XElement("origin");
                         origin.SetAttributeValue("xyz", xyz.ToXMLString());
@@ -449,25 +593,26 @@ namespace ZO.ImportExport {
                 XElement inertial = new XElement("inertial");
                 XElement mass = new XElement("mass");
                 mass.SetAttributeValue("value", rigidbody.mass);
+                inertial.Add(mass);
 
                 // calculate the inertia components
                 // Unity/PhysX is kinda weird in that it is represented by a diagonal vector and and rotation quaternion.
                 Matrix4x4 lambdaMatrix = new Matrix4x4();
-                lambdaMatrix[0,0] = rigidbody.inertiaTensor.x;
-                lambdaMatrix[1,1] = rigidbody.inertiaTensor.y;
-                lambdaMatrix[2,2] = rigidbody.inertiaTensor.z;
-                lambdaMatrix[3,3] = 1.0f;
+                lambdaMatrix[0, 0] = rigidbody.inertiaTensor.x;
+                lambdaMatrix[1, 1] = rigidbody.inertiaTensor.y;
+                lambdaMatrix[2, 2] = rigidbody.inertiaTensor.z;
+                lambdaMatrix[3, 3] = 1.0f;
 
                 Matrix4x4 qMatrix = Matrix4x4.Rotate(rigidbody.inertiaTensorRotation);
                 Matrix4x4 qMatrixTransposed = qMatrix.transpose;
                 Matrix4x4 inertiaMatrix = qMatrix * lambdaMatrix * qMatrixTransposed;
 
-                float ixx = inertiaMatrix[2,2]; 
-                float ixy = -inertiaMatrix[0,2];
-                float ixz = inertiaMatrix[1,2]; 
-                float iyy = inertiaMatrix[0,0]; 
-                float iyz = -inertiaMatrix[0,1];
-                float izz = inertiaMatrix[1,1];
+                float ixx = inertiaMatrix[2, 2];
+                float ixy = -inertiaMatrix[0, 2];
+                float ixz = inertiaMatrix[1, 2];
+                float iyy = inertiaMatrix[0, 0];
+                float iyz = -inertiaMatrix[0, 1];
+                float izz = inertiaMatrix[1, 1];
 
                 XElement inertia = new XElement("inertia");
                 inertia.SetAttributeValue("ixx", ixx);
@@ -485,7 +630,7 @@ namespace ZO.ImportExport {
                 origin.SetAttributeValue("rpy", Vector3.zero.ToXMLString());  // BUG:  always zero?
                 inertial.Add(origin);
 
-                
+
                 link.Add(inertial);
             }
         }

@@ -130,6 +130,7 @@ namespace ZO.Sensors {
         #region ZOGameObjectBase        
         // Start is called before the first frame update
         protected override void ZOStart() {
+            base.ZOStart();
             Debug.Log("INFO: ZOLIDAR2D::Start");
             _rayCount = Mathf.RoundToInt(FOVDegrees / AngleIncrementDegrees);
             _rays = new Ray[_rayCount];
@@ -138,7 +139,14 @@ namespace ZO.Sensors {
         }
 
 
-        protected override void ZOOnDestroy() {
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 10;
+            }
+            if (Name == "") {
+                Name = gameObject.name + "_" + Type;
+            }
         }
 
         protected override void ZOFixedUpdateHzSynchronized() {
