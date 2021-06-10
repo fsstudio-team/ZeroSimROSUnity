@@ -53,7 +53,7 @@ namespace ZO.ROS.Controllers {
         public Rigidbody ConnectedRigidBody {
             get { return _connectedBody.GetComponent<Rigidbody>(); }
         }
-        [SerializeField][ZOReadOnly] public ZOHingeJoint _rightWheelMotor;
+        [SerializeField] [ZOReadOnly] public ZOHingeJoint _rightWheelMotor;
 
         /// <summary>
         /// Hinge joint that drives the right wheel.
@@ -63,8 +63,8 @@ namespace ZO.ROS.Controllers {
             get => _rightWheelMotor;
             set => _rightWheelMotor = value;
         }
-        
-        [SerializeField][ZOReadOnly] public ZOHingeJoint _leftWheelMotor;
+
+        [SerializeField] [ZOReadOnly] public ZOHingeJoint _leftWheelMotor;
 
         /// <summary>
         /// Hinge joint that drive the left wheel.
@@ -113,12 +113,30 @@ namespace ZO.ROS.Controllers {
             }
         }
 
+        void OnValidate() {
+            // make sure we have a name
+            if (string.IsNullOrEmpty(_name)) {
+                _name = gameObject.name + "_" + Type;
+            }
+
+        }
+
+        protected override void ZOAwake() {
+            base.ZOAwake();
+
+            // make sure we have a name
+            if (string.IsNullOrEmpty(_name)) {
+                _name = gameObject.name + "_" + Type;
+            }
+
+        }
 
         // Start is called before the first frame update
         protected override void ZOStart() {
+            base.ZOStart();
             // auto-connect to ROS Bridge connection and disconnect events
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
 
             if (ZOROSBridgeConnection.Instance.IsConnected) {
                 // subscribe to Twist Message
@@ -132,7 +150,7 @@ namespace ZO.ROS.Controllers {
 
         protected override void ZOOnDestroy() {
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeConnected;
+            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
         }
 
         protected override void ZOFixedUpdate() {
@@ -143,7 +161,7 @@ namespace ZO.ROS.Controllers {
             } else {
                 AngularVelocity = (float)_twistMessage.angular.z * Mathf.Rad2Deg;
             }
-            
+
         }
         protected override void ZOFixedUpdateHzSynchronized() {
 
