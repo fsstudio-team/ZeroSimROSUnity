@@ -54,6 +54,21 @@ namespace ZO.ROS.Publisher {
             }
         }
 
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (LIDAR2DSensor == null) {
+                LIDAR2DSensor = GetComponent<ZOLIDAR2D>();                
+            }
+
+            if (ROSTopic == "") {
+                ROSTopic = "scan";
+            }
+
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 10;
+            }
+        }
+
         private void Initialize() {
             // advertise
             ROSBridgeConnection.Advertise(ROSTopic, _rosLaserScanMessage.MessageType);
