@@ -176,8 +176,18 @@ namespace ZO.ImportExport {
 
                 ZOJointInterface[] zoJoints = parent.GetComponents<ZOJointInterface>();
 
+                // find if child is explicitly linked to a joint of the parent
+                bool isChildExplicitlyInAParentJoint = false;
+                foreach (ZOJointInterface joint in zoJoints) {
+                    if (joint.ConnectedOccurrence == child) {
+                        isChildExplicitlyInAParentJoint = true;
+                        break;
+                    }
+                }
+
+
                 // even if there are no explicit fixed joint children of the parent are "automatically" set as fixed.
-                if (zoJoints.Length == 0) {
+                if (zoJoints.Length == 0 || isChildExplicitlyInAParentJoint == false) {
                     XElement jointX = new XElement("joint");
                     jointX.SetAttributeValue("name", $"Fixed_{parent.Name}_to_{child.Name}");
                     // Transform jointTransform = this.transform;
@@ -384,10 +394,10 @@ namespace ZO.ImportExport {
                     // go through the children of the visuals and get all the models
                     foreach (Transform visualsChild in child) {
                         // check if it is a primitive type (cube, sphere, cylinder, etc)
-                        BuildLinkVisuals(visualsChild, link, anchorOffset);
+                        BuildLinkVisuals(simOccurrence, visualsChild, link, anchorOffset);
 
                         // we will do any collider that are attached to the visual
-                        BuildLinkCollisions(visualsChild, link, anchorOffset);
+                        BuildLinkCollisions(simOccurrence, visualsChild, link, anchorOffset);
                     }
                 }
 
@@ -395,14 +405,14 @@ namespace ZO.ImportExport {
                 if (child.name.ToLower() == "collisions") {
                     // go through the children of the collisions and get all the models
                     foreach (Transform collisionChild in child) {
-                        BuildLinkCollisions(collisionChild, link, anchorOffset);
+                        BuildLinkCollisions(simOccurrence, collisionChild, link, anchorOffset);
                     }
                 }
             }
         }
 
 
-        protected void BuildLinkCollisions(Transform collisionTransform, XElement link, Vector3 anchorOffset) {
+        protected void BuildLinkCollisions(ZOSimOccurrence simOccurrence, Transform collisionTransform, XElement link, Vector3 anchorOffset) {
             Collider[] colliders = collisionTransform.GetComponentsInChildren<Collider>();
             foreach (Collider collider in colliders) {
                 XElement collision = new XElement("collision");
@@ -487,36 +497,34 @@ namespace ZO.ImportExport {
             }
         }
 
-        protected void BuildLinkVisuals(Transform visualTransform, XElement link, Vector3 anchorOffset) {
+        protected void BuildLinkVisuals(ZOSimOccurrence simOccurrence, Transform visualTransform, XElement link, Vector3 anchorOffset) {
             // build 3d primitive if exists
             // Check children
             MeshFilter[] meshFilters = visualTransform.GetComponentsInChildren<MeshFilter>();
             foreach (MeshFilter meshFilter in meshFilters) {
                 if (meshFilter) {
 
-                    MeshRenderer meshRenderer = visualTransform.GetComponent<MeshRenderer>();
-                    Collider collider = null;
                     XElement visual = new XElement("visual");
-                    visual.SetAttributeValue("name", visualTransform.name);
+                    visual.SetAttributeValue("name", meshFilter.name);
                     XElement geometry = new XElement("geometry");
 
                     if (meshFilter.sharedMesh.name.Contains("Cube")) {
                         XElement box = new XElement("box");
 
-                        Vector3 boxSize = visualTransform.lossyScale.Unity2RosScale();
+                        Vector3 boxSize = meshFilter.transform.lossyScale.Unity2RosScale();
                         box.SetAttributeValue("size", boxSize.ToXMLString());
                         geometry.Add(box);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Sphere")) {
                         XElement sphere = new XElement("sphere");
-                        float radius = visualTransform.lossyScale.x / 2.0f;
+                        float radius = meshFilter.transform.lossyScale.x / 2.0f;
                         sphere.SetAttributeValue("radius", radius);
                         geometry.Add(sphere);
 
                     } else if (meshFilter.sharedMesh.name.Contains("Cylinder")) {
                         XElement cylinder = new XElement("cylinder");
-                        float radius = visualTransform.lossyScale.x / 2.0f;
-                        float height = visualTransform.lossyScale.y * 2.0f;
+                        float radius = meshFilter.transform.lossyScale.x / 2.0f;
+                        float height = meshFilter.transform.lossyScale.y * 2.0f;
                         cylinder.SetAttributeValue("radius", radius);
                         cylinder.SetAttributeValue("length", height);
 
@@ -525,21 +533,44 @@ namespace ZO.ImportExport {
 
                     } else {  // regular mesh so export meshes as OBJ
                         XElement mesh = new XElement("mesh");
-                        mesh.SetAttributeValue("filename", $"{visualTransform.name}.obj");
-                        Vector3 scale = visualTransform.lossyScale.Unity2RosScale();
+                        mesh.SetAttributeValue("filename", $"{meshFilter.name}.obj");
+                        Vector3 scale = meshFilter.transform.lossyScale.Unity2RosScale();
                         mesh.SetAttributeValue("scale", scale.ToXMLString());
                         geometry.Add(mesh);
 
-                        _visualMeshesToExport.Add(visualTransform);
+                        _visualMeshesToExport.Add(meshFilter.transform);
                     }
 
                     if (geometry.HasElements) {
+                        //Matrix4x4 simOccurrenceWorldMatrix = Matrix4x4.TRS(simOccurrence.transform.parent.position, simOccurrence.transform.parent.rotation, simOccurrence.transform.parent.lossyScale);// simOccurrence.transform.parent.WorldTranslationRotationMatrix();
+                        // Matrix4x4 simOccurrenceWorldMatrix = simOccurrence.transform.parent.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualWorldMatrix = visualTransform.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualWorldMatrix = Matrix4x4.TRS(visualTransform.position, visualTransform.rotation, visualTransform.lossyScale);// visualTransform.WorldTranslationRotationMatrix();
+                        // Matrix4x4 visualRelativeToSimOccurrence = simOccurrenceWorldMatrix.inverse * visualWorldMatrix;
+                        // Matrix4x4 visualRelativeToSimOccurrence = simOccurrence.transform.LocalTRSMatrix() * visualTransform.LocalTRSMatrix();
+
+                        // Vector3 position = visualRelativeToSimOccurrence.Position() + anchorOffset;
+
+                        // Vector3 position = new Vector3(visualRelativeToSimOccurrence.Position().x * simOccurrence.transform.parent.lossyScale.x,
+                        //                                 visualRelativeToSimOccurrence.Position().y * simOccurrence.transform.parent.lossyScale.y,
+                        //                                 visualRelativeToSimOccurrence.Position().z * simOccurrence.transform.parent.lossyScale.z) + anchorOffset;
+                        // Vector3 xyz = position.Unity2Ros();
+                        // Quaternion rotation = visualRelativeToSimOccurrence.rotation;
+                        // Vector3 rpy = new Vector3(-rotation.eulerAngles.z * Mathf.Deg2Rad,
+                        //                             rotation.eulerAngles.x * Mathf.Deg2Rad,
+                        //                             -rotation.eulerAngles.y * Mathf.Deg2Rad);
+
+                        Quaternion rotation = visualTransform.localRotation;
+
                         // build origin
                         Vector3 position = visualTransform.localPosition + anchorOffset;
                         Vector3 xyz = position.Unity2Ros();
-                        Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
-                                                    visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
-                                                    -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
+                        // Vector3 rpy = new Vector3(-visualTransform.localEulerAngles.z * Mathf.Deg2Rad,
+                        //                             visualTransform.localEulerAngles.x * Mathf.Deg2Rad,
+                        //                             -visualTransform.localEulerAngles.y * Mathf.Deg2Rad);
+                        Vector3 rpy = new Vector3(-rotation.eulerAngles.z * Mathf.Deg2Rad,
+                                                    rotation.eulerAngles.x * Mathf.Deg2Rad,
+                                                    -rotation.eulerAngles.y * Mathf.Deg2Rad);
 
                         XElement origin = new XElement("origin");
                         origin.SetAttributeValue("xyz", xyz.ToXMLString());
