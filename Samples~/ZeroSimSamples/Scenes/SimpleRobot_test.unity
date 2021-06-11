@@ -123,32 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &58768610 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 968823325036578806, guid: e40f2c3c7691c519a99f10bf56f8b75f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1883248262}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &58768617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 58768610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 10
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: 
-  _name: ros.publisher.transform_base_link
-  _frameId: map
-  _childFrameId: base_link
 --- !u!1 &155950647
 GameObject:
   m_ObjectHideFlags: 0
@@ -947,11 +921,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SimpleAMR
       objectReference: {fileID: 0}
-    - target: {fileID: 968823323656958412, guid: e40f2c3c7691c519a99f10bf56f8b75f,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 968823323656958414, guid: e40f2c3c7691c519a99f10bf56f8b75f,
         type: 3}
       propertyPath: m_RootOrder
@@ -1006,11 +975,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3152880150152461030, guid: e40f2c3c7691c519a99f10bf56f8b75f,
-        type: 3}
-      propertyPath: _parentTransformId
-      value: base_link
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40f2c3c7691c519a99f10bf56f8b75f, type: 3}
