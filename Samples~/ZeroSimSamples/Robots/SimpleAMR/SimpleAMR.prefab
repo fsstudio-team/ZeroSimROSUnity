@@ -900,6 +900,7 @@ GameObject:
   - component: {fileID: 968823325036578812}
   - component: {fileID: 968823325036578811}
   - component: {fileID: 968823325036578810}
+  - component: {fileID: 58768617}
   m_Layer: 0
   m_Name: base_link
   m_TagString: Untagged
@@ -1068,6 +1069,26 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &58768617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 968823325036578806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: 
+  _name: ros.publisher.transform_base_link
+  _frameId: map
+  _childFrameId: base_link
 --- !u!1 &968823325051699718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1649,3 +1670,4 @@ MonoBehaviour:
   _ROSTopic: scan
   _name: ros.publisher.scan_lidar_2d
   _lidar2DSensor: {fileID: 2109799646322946625}
+  _parentTransformId: base_link
