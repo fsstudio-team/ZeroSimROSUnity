@@ -3,6 +3,7 @@
   - [Overview](#overview)
   - [API Documentation](#api-documentation)
   - [Getting Started](#getting-started)
+    - [Video Tutorials](#video-tutorials)
     - [Recommended System](#recommended-system)
     - [Setting up a new Unity Project](#setting-up-a-new-unity-project)
     - [Getting ZeroSim ROS Docker Container](#getting-zerosim-ros-docker-container)
@@ -30,7 +31,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 * Advanced 3D Rendering, including the latest realtime ray tracing technology.
 * Sensors:
   * 2D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
-  * 3D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
+  * 3D LIDAR
   * Color camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
   * Color + depth camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
   * Stereo camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
@@ -70,6 +71,16 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 [API Documentation](https://fsstudio-team.github.io/ZeroSimROSUnity/api/index.html)
 
 ## Getting Started
+
+### Video Tutorials
+
+[![Tutorial #1: Install ZeroSim in Unity](./Documentation~/images/tutorial_1.png)](http://www.youtube.com/watch?v=Q_CyYt-9kY4&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
+
+[![Tutorial #2: Create a New ZeroSim Unity Scene](./Documentation~/images/tutorial_2.png)](http://www.youtube.com/watch?v=dQXihVeI5YE&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
+
+[![Tutorial #3: Connect to ROS](./Documentation~/images/tutorial_3.png)](http://www.youtube.com/watch?v=LvtnMmcixrY&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
+
+[![Tutorial #4: Build a Robot From Scratch](./Documentation~/images/tutorial_4.png)](http://www.youtube.com/watch?v=xGjx8cUVctM&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
 
 ### Recommended System
 
