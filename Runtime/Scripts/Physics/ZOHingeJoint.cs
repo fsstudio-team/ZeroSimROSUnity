@@ -22,7 +22,7 @@ namespace ZO.Physics {
     /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZOSerializationInterface, ZOJointInterface {
+    public class ZOHingeJoint : MonoBehaviour, ZOJointInterface {
 
         public Rigidbody _connectedBody;
         public Vector3 _anchor = Vector3.zero;
@@ -338,136 +338,6 @@ namespace ZO.Physics {
         }
 
 
-        /// <summary>
-        /// Serializes the ZOHingeJoint to ZOSim JSON.
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            // calculate the world anchor positions relative to the document root transform
-            // BUGBUG: maybe from the base of the joint chain which is not necessarily the document root?
-            Vector3 worldAnchor = this.transform.TransformPoint(UnityHingeJoint.anchor);
-            worldAnchor = documentRoot.transform.InverseTransformPoint(worldAnchor);
-
-            Vector3 worldConnectedAnchor = this.transform.TransformPoint(UnityHingeJoint.connectedAnchor);
-            worldConnectedAnchor = documentRoot.transform.InverseTransformPoint(worldConnectedAnchor);
-
-            Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
-            worldAxis = documentRoot.transform.InverseTransformDirection(worldAxis);
-
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("anchor", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.anchor)),
-                new JProperty("world_anchor", ZOSimDocumentRoot.ToJSON(worldAnchor)),
-                new JProperty("axis", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.axis)),
-                new JProperty("world_axis", ZOSimDocumentRoot.ToJSON(worldAxis)),
-                new JProperty("connected_anchor", ZOSimDocumentRoot.ToJSON(UnityHingeJoint.connectedAnchor)),
-                new JProperty("world_connected_anchor", ZOSimDocumentRoot.ToJSON(worldConnectedAnchor)),
-                new JProperty("use_spring", UnityHingeJoint.useSpring),
-                new JProperty("spring", new JObject(
-                    new JProperty("spring", UnityHingeJoint.spring.spring),
-                    new JProperty("damper", UnityHingeJoint.spring.damper),
-                    new JProperty("target_position", UnityHingeJoint.spring.targetPosition)
-                )),
-                new JProperty("use_motor", UnityHingeJoint.useMotor),
-                new JProperty("motor", new JObject(
-                    new JProperty("target_velocity", UnityHingeJoint.motor.targetVelocity),
-                    new JProperty("force", UnityHingeJoint.motor.force),
-                    new JProperty("free_spin", UnityHingeJoint.motor.freeSpin)
-                )),
-                new JProperty("use_limits", UnityHingeJoint.useLimits),
-                new JProperty("limits", new JObject(
-                    new JProperty("min", UnityHingeJoint.limits.min),
-                    new JProperty("max", UnityHingeJoint.limits.max),
-                    new JProperty("bounciness", UnityHingeJoint.limits.bounciness),
-                    new JProperty("bounce_min_velocity", UnityHingeJoint.limits.bounceMinVelocity),
-                    new JProperty("contact_distance", UnityHingeJoint.limits.contactDistance)
-                ))
-            );
-
-            if (UnityHingeJoint.connectedBody) {
-                ZOSimOccurrence connected_occurrence = UnityHingeJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
-
-                if (connected_occurrence) {
-                    json["connected_occurrence"] = connected_occurrence.Name;
-                } else {
-                    Debug.LogWarning("WARNING: Could not get connected occurrence for ZOHingeJoint: " + Name + "\nPerhaps there is a missing ZOSimOccurrence?");
-                }
-            } else {
-                Debug.LogWarning("WARNING: Could not get connected occurrence for ZOHingeJoint: " + Name);
-            }
-
-            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
-            if (parent_occurrence) {
-                json["parent_occurrence"] = parent_occurrence.Name;
-            }
-
-            _json = json;
-
-            return json;
-        }
-
-
-        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            // Assert.Equals(json["type"].Value<string>() == Type);
-
-            _json = json;
-            Name = json.ValueOrDefault("name", Name);
-            UnityHingeJoint.anchor = json.ToVector3OrDefault("anchor", UnityHingeJoint.anchor);
-            UnityHingeJoint.axis = json.ToVector3OrDefault("axis", UnityHingeJoint.axis);
-            UnityHingeJoint.connectedAnchor = json.ToVector3OrDefault("connected_anchor", UnityHingeJoint.connectedAnchor);
-            UnityHingeJoint.useSpring = json.ValueOrDefault<bool>("use_spring", UnityHingeJoint.useSpring);
-
-
-            if (json.ContainsKey("spring")) {
-                JObject springJSON = json["spring"].Value<JObject>();
-                JointSpring spring = UnityHingeJoint.spring;
-                spring.spring = springJSON.ValueOrDefault<float>("spring", spring.spring);
-                spring.damper = springJSON.ValueOrDefault<float>("damper", spring.damper);
-                spring.targetPosition = springJSON.ValueOrDefault<float>("target_position", spring.targetPosition);
-                UnityHingeJoint.spring = spring;
-
-            }
-
-            UnityHingeJoint.useMotor = json.ValueOrDefault<bool>("use_motor", UnityHingeJoint.useMotor);
-            if (json.ContainsKey("use_motor")) {
-                JObject motorJSON = json["motor"].Value<JObject>();
-                JointMotor motor = UnityHingeJoint.motor;
-                motor.targetVelocity = motorJSON.ValueOrDefault<float>("target_velocity", motor.targetVelocity);
-                motor.force = motorJSON.ValueOrDefault<float>("force", motor.force);
-                motor.freeSpin = motorJSON.ValueOrDefault<bool>("free_spin", motor.freeSpin);
-                UnityHingeJoint.motor = motor;
-            }
-
-            UnityHingeJoint.useLimits = json.ValueOrDefault<bool>("use_limits", UnityHingeJoint.useLimits);
-            if (json.ContainsKey("limits")) {
-                JObject limitsJSON = json["limits"].Value<JObject>();
-                JointLimits limits = UnityHingeJoint.limits;
-                limits.min = limitsJSON.ValueOrDefault<float>("min", limits.min);
-                limits.max = limitsJSON.ValueOrDefault<float>("max", limits.max);
-                limits.bounciness = limitsJSON.ValueOrDefault<float>("bounciness", limits.bounciness);
-                limits.bounceMinVelocity = limitsJSON.ValueOrDefault<float>("bounce_min_velocity", UnityHingeJoint.limits.bounceMinVelocity);
-                limits.contactDistance = limitsJSON.ValueOrDefault<float>("contact_distance", limits.contactDistance);
-                UnityHingeJoint.limits = limits;
-            }
-
-            // find connected body.  this likely will need to be done post LoadFromJSON as it may
-            // not be created yet.
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("connected_occurrence")) {
-                    ZOSimOccurrence connectedOccurrence = docRoot.GetOccurrence(JSON["connected_occurrence"].Value<string>());
-                    if (connectedOccurrence) {
-                        UnityHingeJoint.connectedBody = connectedOccurrence.GetComponent<Rigidbody>();
-                    } else {
-                        Debug.LogWarning("WARNING: ZOHingeJoint failed to find connected occurrence: " + JSON["connected_occurrence"].Value<string>());
-                    }
-
-                }
-            });
-
-        }
         #endregion
 
     }

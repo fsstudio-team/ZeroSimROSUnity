@@ -13,7 +13,7 @@ namespace ZO.ROS.Publisher {
     /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
     /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
     /// </summary>
-    public class ZOROSStereoImagePublisher : ZOROSUnityGameObjectBase, ZOSerializationInterface {
+    public class ZOROSStereoImagePublisher : ZOROSUnityGameObjectBase {
 
         public ZORGBCamera _leftCameraSensor;
         public ZORGBCamera _rightCameraSensor;
@@ -274,43 +274,6 @@ namespace ZO.ROS.Publisher {
         }
 
 
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            // TODO:  needs to be finished for this
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("left_camera_name", LeftCameraSensor.Name),
-                new JProperty("right_camera_name", LeftCameraSensor.Name)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            _json = json;
-            Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            // find connected camera.  needs to be done post load hence the Lamda
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("left_camera_name")) {
-                    ZORGBCamera[] rgbCameras = docRoot.gameObject.GetComponentsInChildren<ZORGBCamera>();
-                    foreach (ZORGBCamera camera in rgbCameras) {
-                        if (camera.Name == JSON["left_camera_name"].Value<string>()) {
-                            LeftCameraSensor = camera;
-                        }
-                        if (camera.Name == JSON["right_camera_name"].Value<string>()) {
-                            RightCameraSensor = camera;
-                        }
-
-                    }
-                }
-            });
-
-        }
 
         #endregion // ZOSerializationInterface
     }

@@ -187,37 +187,6 @@ namespace ZO.ROS.Publisher {
         }
 
 
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("imu_name", IMUSensor.Name)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            _json = json;
-            Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            // find connected imu.  needs to be done post load hence the Lamda
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("imu_name")) {
-                    ZOIMU[] imus = docRoot.gameObject.GetComponentsInChildren<ZOIMU>();
-                    foreach (ZOIMU l in imus) {
-                        if (l.Name == JSON["imu_name"].Value<string>()) {
-                            IMUSensor = l;
-                        }
-                    }
-                }
-            });
-
-        }
 
         #endregion // ZOSerializationInterface
 

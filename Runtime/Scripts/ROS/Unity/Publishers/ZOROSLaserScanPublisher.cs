@@ -127,37 +127,6 @@ namespace ZO.ROS.Publisher {
         }
 
 
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("lidar2d_name", LIDAR2DSensor.Name)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            _json = json;
-            Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            // find connected 2d lidar.  needs to be done post load hence the Lamda
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("lidar2d_name")) {
-                    ZOLIDAR2D[] lidars = docRoot.gameObject.GetComponentsInChildren<ZOLIDAR2D>();
-                    foreach (ZOLIDAR2D l in lidars) {
-                        if (l.Name == JSON["lidar2d_name"].Value<string>()) {
-                            LIDAR2DSensor = l;
-                        }
-                    }
-                }
-            });
-
-        }
 
         #endregion // ZOSerializationInterface
 

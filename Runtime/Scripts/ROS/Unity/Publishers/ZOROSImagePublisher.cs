@@ -13,7 +13,7 @@ namespace ZO.ROS.Publisher {
     /// See: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html
     /// To test run: `rosrun image_view image_view image:=/unity_image/image _image_transport:=raw`
     /// </summary>
-    public class ZOROSImagePublisher : ZOROSUnityGameObjectBase, ZOSerializationInterface {
+    public class ZOROSImagePublisher : ZOROSUnityGameObjectBase {
 
         public ZORGBCamera _rgbCameraSensor;
 
@@ -213,38 +213,6 @@ namespace ZO.ROS.Publisher {
             get { return "ros.publisher.image"; }
         }
 
-
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("rgb_camera_name", RGBCameraSensor.Name)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            _json = json;
-            Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            // find connected camera.  needs to be done post load hence the Lamda
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("rgb_camera_name")) {
-                    ZORGBCamera[] rgbCameras = docRoot.gameObject.GetComponentsInChildren<ZORGBCamera>();
-                    foreach (ZORGBCamera camera in rgbCameras) {
-                        if (camera.Name == JSON["rgb_camera_name"].Value<string>()) {
-                            RGBCameraSensor = camera;
-                        }
-                    }
-                }
-            });
-
-        }
 
         #endregion // ZOSerializationInterface
     }
