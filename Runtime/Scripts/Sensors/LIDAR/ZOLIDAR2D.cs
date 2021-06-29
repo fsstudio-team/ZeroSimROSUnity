@@ -14,7 +14,7 @@ namespace ZO.Sensors {
     /// <summary>
     /// 2D LIDAR Simulation.
     /// </summary>
-    public class ZOLIDAR2D : ZOGameObjectBase, ZOSerializationInterface {
+    public class ZOLIDAR2D : ZOGameObjectBase {
 
 
         [Header("FOV")]
@@ -196,50 +196,6 @@ namespace ZO.Sensors {
             }
         }
 
-        private JObject _json;
-        public JObject JSON {
-            get => _json;
-        }
-
-
-        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("min_angle_degrees", MinAngleDegrees),
-                new JProperty("max_angle_degrees", MaxAngleDegrees),
-                new JProperty("angle_increment_degrees", AngleIncrementDegrees),
-                new JProperty("min_range_distance_meters", MinRangeDistanceMeters),
-                new JProperty("max_range_distance_meters", MaxRangeDistanceMeters)
-
-            );
-
-
-            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
-            if (parent_occurrence) {
-                json["parent_occurrence"] = parent_occurrence.Name;
-            }
-
-            _json = json;
-
-            return json;
-        }
-
-
-        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            // Assert.Equals(json["type"].Value<string>() == Type);
-            _json = json;
-            Name = json.ValueOrDefault("name", Name);
-            UpdateRateHz = json.ValueOrDefault("update_rate_hz", UpdateRateHz);
-
-            MinAngleDegrees = json.ValueOrDefault("min_angle_degrees", MinAngleDegrees);
-            MaxAngleDegrees = json.ValueOrDefault("max_angle_degrees", MaxAngleDegrees);
-            AngleIncrementDegrees = json.ValueOrDefault("angle_increment_degrees", AngleIncrementDegrees);
-            MinRangeDistanceMeters = json.ValueOrDefault("min_range_distance_meters", MinRangeDistanceMeters);
-            MaxRangeDistanceMeters = json.ValueOrDefault("max_range_distance_meters", MaxRangeDistanceMeters);
-
-        }
         #endregion
 
 
