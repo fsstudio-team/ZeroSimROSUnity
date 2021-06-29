@@ -7,7 +7,7 @@ using ZO.Document;
 
 
 namespace ZO.ROS.Unity {
-    public abstract class ZOROSUnityGameObjectBase : ZOGameObjectBase, ZOROSUnityInterface, ZOSerializationInterface {
+    public abstract class ZOROSUnityGameObjectBase : ZOGameObjectBase, ZOROSUnityInterface {
 
 
         [Header("ROS Info")]
@@ -70,16 +70,6 @@ namespace ZO.ROS.Unity {
 
         #region ZOSerializationInterface
 
-        [Header("Zero Sim Serialization")]
-        protected JObject _json;
-        /// <summary>
-        /// The ZOSim JSON
-        /// </summary>
-        /// <value></value>
-        public virtual JObject JSON {
-            get => _json;
-            set => _json = value;
-        }
 
         /// <summary>
         /// The ZeroSim object type.  For example: "joint.hinge"
@@ -89,26 +79,6 @@ namespace ZO.ROS.Unity {
             get { return "undefined"; }
         }
 
-
-        /// <summary>
-        /// Dummy Serialize. Will throw exception if not implemented.`
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public virtual JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            throw new System.NotImplementedException("Derived class should implement");
-            return null;
-        }
-
-        /// <summary>
-        /// Dummy deserialize.  Will throw exception if not implemented.
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="json"></param>
-        public virtual void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            throw new System.NotImplementedException("Derived class should implement");
-        }
 
 
         /// <summary>

@@ -70,26 +70,6 @@ namespace ZO.ROS.Publisher {
             get { return "ros.publisher.transform"; }
         }
 
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("frame_id", FrameID),
-                new JProperty("child_frame_id", ChildFrameID)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            Name = json["name"].Value<string>();
-            FrameID = json["frame_id"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            ChildFrameID = json["child_frame_id"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-        }
 
         public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZOROSTransformPublisher::OnROSBridgeConnected");

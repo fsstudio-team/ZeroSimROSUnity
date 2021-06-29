@@ -162,7 +162,12 @@ namespace ZO.ROS.Unity {
         /// Singleton access to this ROS Unity Manager.
         /// </summary>
         public static ZOROSUnityManager Instance {
-            get => _instance;
+            get { 
+                if (_instance == null) {
+                    _instance = (ZOROSUnityManager)FindObjectOfType<ZOROSUnityManager>();
+                }
+                return _instance;
+            }
         }
 
         #endregion // Singleton

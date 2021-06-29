@@ -32,7 +32,7 @@ namespace ZO.ROS.Controllers {
     /// See: https://github.com/ros-controls/ros_controllers/blob/indigo-devel/diff_drive_controller/include/diff_drive_controller/diff_drive_controller.h
     /// </reference>
     /// TODO: Make this a ZOROSUnityGameObjectBase and a controller interface
-    public class ZODifferentialDriveController : ZOGameObjectBase, ZOSerializationInterface {
+    public class ZODifferentialDriveController : ZOGameObjectBase {
 
         public String _name;
         public string Name {
@@ -386,50 +386,5 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         }
 
 
-        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("connected_body", _connectedBody.Name),
-                new JProperty("right_wheel_motor", new JObject(
-                    new JProperty("occurrence_name", _rightWheelMotor.GetComponent<ZOSimOccurrence>().Name),
-                    new JProperty("hinge_joint_name", _rightWheelMotor.Name)
-                )),
-                new JProperty("left_wheel_motor", new JObject(
-                    new JProperty("occurrence_name", _leftWheelMotor.GetComponent<ZOSimOccurrence>().Name),
-                    new JProperty("hinge_joint_name", _leftWheelMotor.Name)
-                )),
-                new JProperty("wheel_radius", _wheelRadius),
-                new JProperty("wheel_seperation", _wheelSeperation),
-                new JProperty("update_rate_hz", UpdateRateHz)
-            );
-            JSON = json;
-            return json;
-        }
-
-        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            JSON = json;
-            Name = json["name"].Value<string>();
-            _wheelRadius = json["wheel_radius"].Value<float>();
-            _wheelSeperation = json["wheel_seperation"].Value<float>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-
-                // find and hook up the motors
-                if (JSON.ContainsKey("connected_body")) {
-                    _connectedBody = docRoot.GetOccurrence(JSON["connected_body"].Value<string>());
-                    ZOSimOccurrence rightWheelOccurrence = docRoot.GetOccurrence(JSON["right_wheel_motor"]["occurrence_name"].Value<string>());
-                    ZOSimOccurrence leftWheelOccurrence = docRoot.GetOccurrence(JSON["left_wheel_motor"]["occurrence_name"].Value<string>());
-
-                    _rightWheelMotor = rightWheelOccurrence.GetHingeJointNamed(JSON["right_wheel_motor"]["hinge_joint_name"].Value<string>());
-                    _leftWheelMotor = leftWheelOccurrence.GetHingeJointNamed(JSON["left_wheel_motor"]["hinge_joint_name"].Value<string>());
-
-
-                }
-            });
-
-        }
     }
-
 }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using UnityEngine;
+using Unity.Collections;
 using Newtonsoft.Json.Linq;
 using ZO.ROS.MessageTypes.Sensor;
 using ZO.ROS.MessageTypes.Geometry;
@@ -8,6 +9,7 @@ using ZO.Sensors;
 using ZO.ROS.Unity;
 using ZO.Document;
 
+
 namespace ZO.ROS.Publisher {
 
     /// <summary>
@@ -15,18 +17,18 @@ namespace ZO.ROS.Publisher {
     /// See: http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/LaserScan.html
     /// </summary>
     [RequireComponent(typeof(ZOROSTransformPublisher))]
-    [RequireComponent(typeof(ZOLIDAR2D))]
-    public class ZOROSLaserScanPublisher : ZOROSUnityGameObjectBase {
+    [RequireComponent(typeof(ZOLIDAR3D))]
+    public class ZOROSPointCloud2Publisher : ZOROSUnityGameObjectBase {
 
-        public ZOLIDAR2D _lidar2DSensor;
+        public ZOLIDAR3D _lidar3DSensor;
 
         /// <summary>
         /// The 2D LIDAR sensor to publish it's scan data.
         /// </summary>
         /// <value></value>
-        public ZOLIDAR2D LIDAR2DSensor {
-            get => _lidar2DSensor;
-            set => _lidar2DSensor = value;
+        public ZOLIDAR3D LIDAR3DSensor {
+            get => _lidar3DSensor;
+            set => _lidar3DSensor = value;
         }
 
         public string _parentTransformId;
@@ -46,7 +48,7 @@ namespace ZO.ROS.Publisher {
             }
         }
 
-        private LaserScanMessage _rosLaserScanMessage = new LaserScanMessage();
+        private PointCloud2Message _pointCloud2Message = new PointCloud2Message();
 
 
         protected override void ZOStart() {
@@ -58,34 +60,39 @@ namespace ZO.ROS.Publisher {
 
         protected override void ZOOnValidate() {
             base.ZOOnValidate();
-            if (LIDAR2DSensor == null) {
-                LIDAR2DSensor = GetComponent<ZOLIDAR2D>();                
+            if (LIDAR3DSensor == null) {
+                LIDAR3DSensor = GetComponent<ZOLIDAR3D>();
             }
 
             if (ROSTopic == "") {
-                ROSTopic = "scan";
+                ROSTopic = "point_cloud";
             }
 
             if (UpdateRateHz == 0) {
                 UpdateRateHz = 10;
             }
 
-            if (_parentTransformId == "") {
-                ZOROSTransformPublisher parentTransformPublisher = transform.parent.GetComponent<ZOROSTransformPublisher>();
-                if (parentTransformPublisher != null) {
-                    _parentTransformId = parentTransformPublisher.ChildFrameID;
+            if (_parentTransformId == "" || _parentTransformId == null) {
+                if (transform.parent != null) {
+                    ZOROSTransformPublisher parentTransformPublisher = transform.parent.GetComponent<ZOROSTransformPublisher>();
+                    if (parentTransformPublisher != null) {
+                        _parentTransformId = parentTransformPublisher.ChildFrameID;
+                    } else {
+                        _parentTransformId = ZOROSUnityManager.Instance.WorldFrameId;
+                    }
+
                 } else {
-                    _parentTransformId = "base_footprint";
+                    _parentTransformId = ZOROSUnityManager.Instance.WorldFrameId;
                 }
             }
         }
 
         private void Initialize() {
             // advertise
-            ROSBridgeConnection.Advertise(ROSTopic, _rosLaserScanMessage.MessageType);
+            ROSBridgeConnection.Advertise(ROSTopic, _pointCloud2Message.MessageType);
 
             // hookup to the sensor update delegate
-            _lidar2DSensor.OnPublishDelegate = OnPublishLidarScanDelegate;
+            _lidar3DSensor.OnPublishDelegate = OnPublishLidarScanDelegate;
 
         }
 
@@ -104,26 +111,20 @@ namespace ZO.ROS.Publisher {
             ROSBridgeConnection.UnAdvertise(ROSTopic);
         }
 
-        private Task OnPublishLidarScanDelegate(ZOLIDAR2D lidar, string name, float[] ranges) {
-            _rosLaserScanMessage.header.Update();
-            _rosLaserScanMessage.header.frame_id = _parentTransformId;
-            _rosLaserScanMessage.angle_min = lidar.MinAngleDegrees * Mathf.Deg2Rad;
-            _rosLaserScanMessage.angle_max = lidar.MaxAngleDegrees * Mathf.Deg2Rad;
-            _rosLaserScanMessage.angle_increment = lidar.AngleIncrementDegrees * Mathf.Deg2Rad;
-            _rosLaserScanMessage.time_increment = lidar.TimeIncrementSeconds;
-            _rosLaserScanMessage.scan_time = lidar.ScanTimeSeconds;
-            _rosLaserScanMessage.range_min = lidar.MinRangeDistanceMeters;
-            _rosLaserScanMessage.range_max = lidar.MaxRangeDistanceMeters;
-            _rosLaserScanMessage.ranges = ranges;
+        private Task OnPublishLidarScanDelegate(ZOLIDAR3D lidar, string name, NativeArray<Vector3> positions, NativeArray<Vector3> normals) {
+            _pointCloud2Message = PointCloud2Message.CreateXYZPointCloud(positions.ToArray());
+            _pointCloud2Message.header.Update();
+            _pointCloud2Message.header.frame_id = _parentTransformId;
 
-            ROSBridgeConnection.Publish(_rosLaserScanMessage, ROSTopic, Name);
+
+            ROSBridgeConnection.Publish(_pointCloud2Message, ROSTopic, Name);
 
             return Task.CompletedTask;
         }
 
         #region ZOSerializationInterface
         public override string Type {
-            get { return "ros.publisher.scan"; }
+            get { return "ros.publisher.point_cloud2"; }
         }
 
 

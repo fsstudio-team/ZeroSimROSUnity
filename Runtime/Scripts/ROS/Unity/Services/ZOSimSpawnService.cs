@@ -56,14 +56,14 @@ namespace ZO.ROS.Unity.Service {
                     newZoSimModel.transform.rotation = rotation;
 
                     // load from JSON
-                    ZOSimDocumentRoot simDocumentRoot = newZoSimModel.AddComponent<ZOSimDocumentRoot>();
-                    JObject zosimModelJSON = JObject.Parse(spawnRequest.model_zosim);
-                    simDocumentRoot.Deserialize(zosimModelJSON);
+                    // ZOSimDocumentRoot simDocumentRoot = newZoSimModel.AddComponent<ZOSimDocumentRoot>();
+                    // JObject zosimModelJSON = JObject.Parse(spawnRequest.model_zosim);
+                    // simDocumentRoot.Deserialize(zosimModelJSON);
 
                     // fixup name
                     // TODO: check that the name is unique and if not generate a unique name or maybe return a
                     // warning that the name is not unique?  probably the later.
-                    simDocumentRoot.Name = spawnRequest.model_name;
+                    // simDocumentRoot.Name = spawnRequest.model_name;
 
                     // report back success
                     ROSBridgeConnection.ServiceResponse<ZOSimSpawnServiceResponse>(new ZOSimSpawnServiceResponse() {

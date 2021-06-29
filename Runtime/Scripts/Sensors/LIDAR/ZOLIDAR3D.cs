@@ -56,7 +56,6 @@ namespace ZO.Sensors {
         /// A generic LIDAR sensor.  
         /// </summary>
 
-        public string _lidarId = "Not Set";
         public enum ReferenceFrame {
             RightHanded_XBackward_YLeft_ZUp,
             LeftHanded_XRight_YUp_ZForward // Unity Standard
@@ -156,6 +155,17 @@ namespace ZO.Sensors {
             _raycastBatchJob.Dispose();
         }
 
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 10;
+            }
+            if (Name == "" || Name == null) {
+                Name = gameObject.name + "_" + Type;
+            }
+        }
+
+
         protected override async void ZOFixedUpdateHzSynchronized() {
             UnityEngine.Profiling.Profiler.BeginSample("ZOLIDAR::ZOUpdateHzSynchronized");
             if (_transformHitsJobHandle.IsCompleted == true) {
@@ -164,7 +174,7 @@ namespace ZO.Sensors {
 
                 if (OnPublishDelegate != null) {
                     UnityEngine.Profiling.Profiler.BeginSample("ZOLIDAR::ZOUpdateHzSynchronized::Publish");
-                    await OnPublishDelegate(this, _lidarId, _hitPositions, _hitNormals);
+                    await OnPublishDelegate(this, Name, _hitPositions, _hitNormals);
                     UnityEngine.Profiling.Profiler.EndSample();
                 }
 
@@ -198,6 +208,24 @@ namespace ZO.Sensors {
             UnityEngine.Profiling.Profiler.EndSample();
 
         }
+
+        #region ZOSerializationInterface
+        public string Type {
+            get { return "sensor.lidar3d"; }
+        }
+
+        [SerializeField] public string _name = "";
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
+
+        #endregion
+
 
     }
 }

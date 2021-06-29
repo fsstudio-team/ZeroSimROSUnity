@@ -144,6 +144,237 @@ namespace ZO.ROS.MessageTypes.Sensor {
         }
     }
 
+
+    /// <summary>
+    /// This message holds the description of one point entry in the
+    /// PointCloud2 message format.
+    /// uint8 INT8    = 1
+    /// uint8 UINT8   = 2
+    /// uint8 INT16   = 3
+    /// uint8 UINT16  = 4
+    /// uint8 INT32   = 5
+    /// uint8 UINT32  = 6
+    /// uint8 FLOAT32 = 7
+    /// uint8 FLOAT64 = 8
+    /// </summary>
+    public class PointFieldMessage : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return PointFieldMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "sensor_msgs/PointField";
+
+
+        /// <summary>
+        /// name of field.
+        /// </summary>
+        /// <value></value>
+        public string name { get; set; }
+
+        /// <summary>
+        /// Offset from start of point struct
+        /// </summary>
+        /// <value></value>
+        public uint offset { get; set; }
+
+        /// <summary>
+        /// Datatype enumeration.
+        /// uint8 INT8    = 1
+        /// uint8 UINT8   = 2
+        /// uint8 INT16   = 3
+        /// uint8 UINT16  = 4
+        /// uint8 INT32   = 5
+        /// uint8 UINT32  = 6
+        /// uint8 FLOAT32 = 7
+        /// uint8 FLOAT64 = 8
+        /// </summary>
+        /// <value></value>
+        public byte datatype { get; set; }
+
+        /// <summary>
+        /// How many elements in the field
+        /// </summary>
+        /// <value></value>
+        public uint count { get; set; }
+
+        public PointFieldMessage() {
+            this.name = "";
+            this.offset = 0;
+            this.datatype = 1;
+            this.count = 0;
+        }
+
+        public PointFieldMessage(string name, uint offset, byte datatype, uint count) {
+            this.name = name;
+            this.offset = offset;
+            this.datatype = datatype;
+            this.count = count;
+        }
+
+        public static PointFieldMessage[] CreateXYZPointFieldArray(uint count) {
+            PointFieldMessage[] pointFieldMessages = new PointFieldMessage[3];
+
+            // x
+            pointFieldMessages[0] = new PointFieldMessage();
+            pointFieldMessages[0].name = "x";
+            pointFieldMessages[0].offset = 0;
+            pointFieldMessages[0].datatype = 7; // float32
+            pointFieldMessages[0].count = count;
+
+            // y
+            pointFieldMessages[1] = new PointFieldMessage();
+            pointFieldMessages[1].name = "y";
+            pointFieldMessages[1].offset = 4;
+            pointFieldMessages[1].datatype = 7; // float32
+            pointFieldMessages[1].count = count;
+
+            // z
+            pointFieldMessages[2] = new PointFieldMessage();
+            pointFieldMessages[2].name = "z";
+            pointFieldMessages[2].offset = 8;
+            pointFieldMessages[2].datatype = 7; // float32
+            pointFieldMessages[2].count = count;
+
+            return pointFieldMessages;
+
+        }
+
+    }
+
+    /// <summary>
+    /// This message holds a collection of N-dimensional points, which may
+    /// contain additional information such as normals, intensity, etc. The
+    /// point data is stored as a binary blob, its layout described by the
+    /// contents of the "fields" array.
+    /// 
+    /// The point cloud data may be organized 2d (image-like) or 1d
+    /// (unordered). Point clouds organized as 2d images may be produced by
+    /// camera depth sensors such as stereo or time-of-flight.
+    /// </summary>
+    public class PointCloud2Message : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return PointCloud2Message.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "sensor_msgs/PointCloud2";
+
+
+        /// <summary>
+        /// Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
+        /// </summary>
+        /// <value></value>
+        public HeaderMessage header { get; set; }
+
+
+        /// <summary>
+        /// 2D structure of the point cloud. If the cloud is unordered, height is
+        /// 1 and width is the length of the point cloud.
+        /// </summary>
+        /// <value></value>
+        public uint height { get; set; }
+        public uint width { get; set; }
+
+        /// <summary>
+        /// Describes the channels and their layout in the binary data blob.
+        /// </summary>
+        /// <value></value>
+        public PointFieldMessage[] fields { get; set; }
+
+        /// <summary>
+        /// Is this data bigendian?
+        /// </summary>
+        /// <value></value>
+        public bool is_bigendian { get; set; }
+
+        /// <summary>
+        /// Length of a point in bytes
+        /// </summary>
+        /// <value></value>
+        public uint point_step { get; set; }
+
+        /// <summary>
+        /// Length of a row in bytes
+        /// </summary>
+        /// <value></value>
+        public uint row_step { get; set; }
+
+        /// <summary>
+        /// Actual point data, size is (row_step*height)
+        /// </summary>
+        /// <value></value>
+        public byte[] data { get; set; }
+
+        /// <summary>
+        /// True if there are no invalid points
+        /// </summary>
+        /// <value></value>
+        public bool is_dense { get; set; }
+
+        public PointCloud2Message() {
+            this.header = new HeaderMessage();
+            this.height = 0;
+            this.width = 0;
+            this.fields = new PointFieldMessage[0];
+            this.is_bigendian = false;
+            this.point_step = 0;
+            this.row_step = 0;
+            this.data = new byte[0];
+            this.is_dense = true;
+
+        }
+
+        public PointCloud2Message(HeaderMessage header, uint height, uint width, PointFieldMessage[] pointFieldMessages, bool is_bigendian, uint point_step, uint row_step, byte[] data, bool is_dense) {
+            this.header = header;
+            this.height = height;
+            this.width = width;
+            this.fields = pointFieldMessages;
+            this.is_bigendian = is_bigendian;
+            this.point_step = point_step;
+            this.row_step = row_step;
+            this.data = data;
+            this.is_dense = is_dense;
+
+        }
+
+        public void Update() {
+            this.header.Update();
+        }
+
+        public static PointCloud2Message CreateXYZPointCloud(UnityEngine.Vector3[] pointsInUnityCoordinates) {
+            byte[] byteData = new byte[sizeof(float) * 3 * pointsInUnityCoordinates.Length];
+
+            // public void FromUnityVector3(UnityEngine.Vector3 v) {
+            // this.x = (double)v.z;
+            // this.y = -(double)v.x;
+            // this.z = (double)v.y;
+            // }
+
+            int byteDataOffset = 0;
+            foreach (UnityEngine.Vector3 v in pointsInUnityCoordinates) {
+                Buffer.BlockCopy(BitConverter.GetBytes(v.z), 0, byteData, byteDataOffset + (0 * sizeof(float)), sizeof(float));
+                Buffer.BlockCopy(BitConverter.GetBytes(-v.x), 0, byteData, byteDataOffset + (1 * sizeof(float)), sizeof(float));
+                Buffer.BlockCopy(BitConverter.GetBytes(v.y), 0, byteData, byteDataOffset + (2 * sizeof(float)), sizeof(float));
+                byteDataOffset += (3 * sizeof(float));
+            }
+
+            PointCloud2Message pointCloud2Message = new PointCloud2Message(new HeaderMessage(),
+                                                                            height: 1,
+                                                                            width: (uint)pointsInUnityCoordinates.Length,
+                                                                            pointFieldMessages: PointFieldMessage.CreateXYZPointFieldArray((uint)pointsInUnityCoordinates.Length),
+                                                                            is_bigendian: false,
+                                                                            point_step: sizeof(float) * 3,
+                                                                            row_step: sizeof(float) * 12 * (uint)pointsInUnityCoordinates.Length,
+                                                                            byteData,
+                                                                            false);
+
+            return pointCloud2Message;
+        }
+
+
+    }
+
     /// <summary>
     /// This is a message that holds data to describe the state of a set of torque controlled joints. 
     /// 

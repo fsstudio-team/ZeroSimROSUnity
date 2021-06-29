@@ -20,7 +20,7 @@ namespace ZO.ROS.Publisher {
     ///     `depth_registered/image_rect (sensor_msgs/Image)`: Rectified depth image, registered to the RGB camera. 
     /// 
     /// </summary>
-    public class ZOROSRGBDepthPublisher : ZOROSUnityGameObjectBase, ZOSerializationInterface {
+    public class ZOROSRGBDepthPublisher : ZOROSUnityGameObjectBase {
 
         [Header("RGB Depth Publisher")]
         public ZORGBDepthCamera _rgbDepthCameraSensor;
@@ -150,48 +150,6 @@ namespace ZO.ROS.Publisher {
         }
 
 
-        /// <summary>
-        /// Serialize to ZoSim JSON.
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public override JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("ros_topic", ROSTopic),
-                new JProperty("update_rate_hz", UpdateRateHz),
-                new JProperty("rgbd_camera_name", RGBDepthCameraSensor.Name)
-            );
-            JSON = json;
-            return json;
-        }
-
-        /// <summary>
-        /// Deserialize from ZoSim JSON
-        /// </summary>
-        /// <param name="documentRoot"></param>
-        /// <param name="json"></param>
-        public override void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            _json = json;
-            Name = json["name"].Value<string>();
-            ROSTopic = json["ros_topic"].Value<string>();
-            UpdateRateHz = json["update_rate_hz"].Value<float>();
-
-            // find connected camera.  needs to be done post load hence the Lamda
-            documentRoot.OnPostDeserializationNotification((docRoot) => {
-                if (JSON.ContainsKey("rgbd_camera_name")) {
-                    ZORGBDepthCamera[] rgbdCameras = docRoot.gameObject.GetComponentsInChildren<ZORGBDepthCamera>();
-                    foreach (ZORGBDepthCamera camera in rgbdCameras) {
-                        if (camera.Name == JSON["rgbd_camera_name"].Value<string>()) {
-                            RGBDepthCameraSensor = camera;
-                        }
-                    }
-                }
-            });
-
-        }
 
         #endregion // ZOSerializationInterface
     }
