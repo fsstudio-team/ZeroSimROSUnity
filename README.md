@@ -31,7 +31,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 * Advanced 3D Rendering, including the latest realtime ray tracing technology.
 * Sensors:
   * 2D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
-  * 3D LIDAR
+  * 3D LIDAR -> ROS [PointCloud2](http://docs.ros.org/en/api/sensor_msgs/html/msg/PointCloud2.html)
   * Color camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
   * Color + depth camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
   * Stereo camera -> ROS [Image](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/Image.html) and ROS [CameraInfo](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html) message.
