@@ -61,28 +61,47 @@ namespace ZO.ImportExport {
                 XmlNode[] xmlVisuals = xmlLink.GetChildrenByName("visual");
 
                 foreach (XmlNode xmlVisual in xmlVisuals) {
+                    
+                    
                     XmlNode[] xmlGeometries = xmlVisual.GetChildrenByName("geometry");
 
                     foreach (XmlNode xmlGeom in xmlGeometries) {
-                        XmlNode xmlBox = xmlGeom.GetChildByName("box");
+                        
                         GameObject visualGeo = null;
+
+                        XmlNode xmlBox = xmlGeom.GetChildByName("box");
                         if (xmlBox != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            Vector3 size = xmlBox.Attributes["size"].Value.FromURDFStringToVector3();
+                            
+                            visualGeo.transform.localScale = size.Ros2UnityScale();
                         }
+                        
                         XmlNode xmlCylinder = xmlGeom.GetChildByName("cylinder");
                         if (xmlCylinder != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            float radius = float.Parse(xmlCylinder.Attributes["radius"].Value);
+                            float length = float.Parse(xmlCylinder.Attributes["length"].Value);
+                            visualGeo.transform.localScale = new Vector3(radius * 2.0f, length * 0.5f, radius * 2.0f);
                         }
+                        
                         XmlNode xmlSphere = xmlGeom.GetChildByName("sphere");
                         if (xmlSphere != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            float radius = float.Parse(xmlSphere.Attributes["radius"].Value);
+                            visualGeo.transform.localScale = new Vector3(radius * 2.0f, radius * 2.0f, radius * 2.0f);
                         }
+
                         XmlNode xmlMesh = xmlGeom.GetChildByName("mesh");
                         if (xmlMesh != null) {
                             // TODO
                         }
                         if (visualGeo != null) {
                             visualGeo.transform.SetParent(goVisualsEmpty.transform);
+                            string visualName = xmlVisual.Attributes["name"].Value;
+                            if (visualName != null) {
+                                visualGeo.name = visualName;
+                            }
                         }
 
                     }
