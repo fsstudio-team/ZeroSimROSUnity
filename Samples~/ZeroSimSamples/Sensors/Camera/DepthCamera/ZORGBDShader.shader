@@ -1,8 +1,15 @@
-﻿Shader "ZOSim/ZODepthShader"
+﻿Shader "ZeroSim/ZORGBDShader"
 {
     Properties
     {
         [HideInInspector]_MainTex ("Texture", 2D) = "white" {}
+
+        [Toggle(FLIP_Y)]
+        _FlipY ("Flip Y", Float) = 0        
+
+        [Toggle(FLIP_X)]
+        _FlipX ("Flip X", Float) = 0        
+
     }
     SubShader
     {
@@ -18,6 +25,10 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma shader_feature FLIP_Y
+            #pragma shader_feature FLIP_X
+
+
             // make fog work
             #pragma multi_compile_fog
 
@@ -49,6 +60,14 @@
                 //convert the vertex positions from object space to clip space so they can be rendered
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
+                #ifdef FLIP_Y                
+                    o.uv.y = 1.0 - o.uv.y;
+                #endif       
+
+                #ifdef FLIP_X                
+                    o.uv.x = 1.0 - o.uv.x;
+                #endif                
+
                 return o;
             }
 
