@@ -13,35 +13,6 @@ using ZO.Util;
 namespace ZO.Sensors {
 
     /// <summary>
-    /// This job process the framebuffer data of float32 R, G, B, D pixels and converts to 
-    /// </summary>
-    [BurstCompile(CompileSynchronously = true)]
-    struct ZOPostProcessFrameBuffer : IJobParallelForBatch {
-        [ReadOnly] public float DepthScale;
-        [ReadOnly] public NativeArray<float> FrameBuffer;
-
-        public NativeArray<float> DepthValues;
-        public NativeArray<byte> RGBValues;
-        public void Execute(int startIndex, int count) {
-            int end = startIndex + count;
-            int pixelIdx = startIndex / 4;
-            int rgbPixelIdx = pixelIdx * 3;
-            float r = FrameBuffer[startIndex + 0];
-            float g = FrameBuffer[startIndex + 0];
-            float b = FrameBuffer[startIndex + 0];
-            float d = FrameBuffer[startIndex + 0];
-
-            RGBValues[rgbPixelIdx + 0] = (byte)(b * 255.0f);
-            RGBValues[rgbPixelIdx + 1] = (byte)(g * 255.0f);
-            RGBValues[rgbPixelIdx + 2] = (byte)(r * 255.0f);
-            DepthValues[pixelIdx] = d * DepthScale;
-
-
-        }
-    };
-
-
-    /// <summary>
     /// A RGB image + depth camera sensor. 
     /// </summary>
     public class ZORGBDepthCamera : ZOGameObjectBase {
@@ -52,15 +23,6 @@ namespace ZO.Sensors {
         };
 
         [Header("Camera Parameters")]
-        public string _cameraId = "none";
-
-        /// <summary>
-        /// The unique name identifying this depth camera.
-        /// </summary>
-        /// <value></value>
-        public string Name {
-            get => _cameraId;
-        }
         public Camera _camera;
 
         /// <summary>
@@ -170,11 +132,32 @@ namespace ZO.Sensors {
         private Queue<Task> _publishTasks = new Queue<Task>();
 
 
-        protected override void ZOReset() {
-            base.ZOReset();
-            UpdateRateHz = 30;
-            
+
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            // if camera is not assigned see if we have a camera component on this game object
+            if (_camera == null) {
+                _camera = this.GetComponent<Camera>();
+            }
+
+            // if no post process material then assign default
+            if (_rgbDepthCameraShader == null) {
+#if UNITY_EDITOR
+                _rgbDepthCameraShader = Resources.Load<Material>("ZORGBDMaterial");
+#else // UNITY_EDITOR
+                _rgbDepthCameraShader = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBDMaterial");
+#endif // UNITY_EDITOR                
+            }
+
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 10;
+            }
+
+            if (Name == "") {
+                Name = gameObject.name + "_" + Type;
+            }
         }
+
 
         protected override void ZOAwake() {
             base.ZOAwake();
@@ -300,7 +283,7 @@ namespace ZO.Sensors {
                                     _averageDepth = d;
 
                                 }
-                                OnPublishDelegate(this, _cameraId, _width, _height, _colorPixels24, _depthBufferFloat);
+                                OnPublishDelegate(this, Name, _width, _height, _colorPixels24, _depthBufferFloat);
                             });
 
                             _publishTasks.Enqueue(publishTask);
@@ -326,6 +309,19 @@ namespace ZO.Sensors {
             _rgbValues.Dispose();
         }
 
+        public string Type {
+            get { return "sensor.rgbdebthgcamera"; }
+        }
+
+        [SerializeField] public string _name;
+        public string Name {
+            get {
+                return _name;
+            }
+            private set {
+                _name = value;
+            }
+        }
 
 
     }

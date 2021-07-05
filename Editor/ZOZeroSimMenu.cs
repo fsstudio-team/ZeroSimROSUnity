@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using ZO.Document;
-
+using ZO.ImportExport;
 namespace ZO.Editor {
     public static class ZOZeroSimMenu {
         [MenuItem("GameObject/ZeroSim/New Robot", false, 0)]
@@ -12,8 +12,8 @@ namespace ZO.Editor {
             GameObject baseOccurrence = new GameObject("base");
             baseOccurrence.transform.SetParent(documentRoot.transform);
             ZOSimOccurrence occurrence = baseOccurrence.AddComponent<ZOSimOccurrence>();
-            occurrence.DocumentRoot = docRoot; 
-            
+            occurrence.DocumentRoot = docRoot;
+
 
             GameObject visuals = new GameObject("visuals");
             visuals.transform.SetParent(occurrence.transform);
@@ -32,11 +32,26 @@ namespace ZO.Editor {
             GameObject cubeCollision = new GameObject("MyExampleCollisionCube");
             cubeCollision.AddComponent<BoxCollider>();
             cubeCollision.transform.SetParent(collisions.transform);
-            
-            
+
+
 
             Undo.RegisterCreatedObjectUndo(documentRoot, "Create ZeroSim Robot " + documentRoot.name);
             Selection.activeGameObject = documentRoot;
         }
+
+
+
+        [MenuItem("GameObject/ZeroSim/Import URDF...", false, 0)]
+        static void ImportURDF(MenuCommand menuCommand) {
+            string filePath = EditorUtility.OpenFilePanel("Import URDF", ".", "urdf");
+
+            if (filePath.Length == 0) {
+                return;
+            }
+
+            ZOImportURDF.Import(filePath);
+
+        }
+
     }
 }

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: ZORGBDMaterial
   m_Shader: {fileID: 4800000, guid: 3418ba1366544ec639259f6cd77f32d8, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: FLIP_Y
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -60,6 +60,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _FlipX: 0
+    - _FlipY: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

@@ -17,7 +17,7 @@ namespace ZO.Sensors {
     /// Simulation of a color RGB camera sensor.
     /// </summary>
     [RequireComponent(typeof(Camera))] //[ExecuteInEditMode]
-    public class ZORGBCamera : ZOGameObjectBase, ZOSerializationInterface {
+    public class ZORGBCamera : ZOGameObjectBase {
         [Header("Camera Parameters")]
         public Camera _camera;
         // public bool _isMonochrome = false;
@@ -287,60 +287,6 @@ namespace ZO.Sensors {
             }
         }
 
-        private JObject _json;
-        public JObject JSON {
-            get => _json;
-        }
-
-
-        public JObject Serialize(ZOSimDocumentRoot documentRoot, UnityEngine.Object parent = null) {
-            JObject json = new JObject(
-                new JProperty("name", Name),
-                new JProperty("type", Type),
-                new JProperty("width", _width),
-                new JProperty("height", _height),
-                new JProperty("aspect_ratio", UnityCamera.aspect),
-                new JProperty("field_of_view", UnityCamera.fieldOfView),
-                new JProperty("depth", UnityCamera.depth),
-                new JProperty("sensor_size", UnityCamera.sensorSize.ToJSON()),
-                new JProperty("focal_length", UnityCamera.focalLength)
-            );
-
-
-            ZOSimOccurrence parent_occurrence = GetComponent<ZOSimOccurrence>();
-            if (parent_occurrence) {
-                json["parent_occurrence"] = parent_occurrence.Name;
-            }
-
-            _json = json;
-
-            return json;
-        }
-
-
-        public void Deserialize(ZOSimDocumentRoot documentRoot, JObject json) {
-            // Assert.Equals(json["type"].Value<string>() == Type);
-
-            if (UnityCamera == null) {  // check if there is already a camera assigned.
-                UnityCamera = GetComponent<Camera>();  // check if we have a camera component but it is unassigend
-                if (UnityCamera == null) {
-                    // we have no camera so create one
-                    UnityCamera = gameObject.AddComponent<Camera>();
-                }
-            }
-            _json = json;
-            Name = json.ValueOrDefault("name", Name);
-            _width = json.ValueOrDefault("width", _width);
-            _height = json.ValueOrDefault("height", _height);
-            UnityCamera.aspect = json.ValueOrDefault("aspect_ratio", UnityCamera.aspect);
-            UnityCamera.fieldOfView = json.ValueOrDefault("field_of_view", UnityCamera.fieldOfView);
-            UnityCamera.depth = json.ValueOrDefault("depth", UnityCamera.depth);
-            UnityCamera.sensorSize = json.ToVector2OrDefault("sensor_size", UnityCamera.sensorSize);
-            UnityCamera.focalLength = json.ValueOrDefault("focal_length", UnityCamera.focalLength);
-
-            Initialize();
-
-        }
         #endregion
 
 
