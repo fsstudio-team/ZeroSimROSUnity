@@ -33,6 +33,26 @@ namespace ZO.Util.Extensions {
                             -q.eulerAngles.y * Mathf.Deg2Rad);
         }
 
+        public static Quaternion RosRollPitchYawToQuaternion(this Vector3 rpy) {
+            // Negate X and Z because we're going from Right to Left handed rotations. Y is handled because the axis itself is flipped
+            rpy.x *= -1;
+            rpy.z *= -1;
+            rpy *= Mathf.Rad2Deg;
+
+            // swap the angle values
+            rpy = new Vector3(rpy.y, rpy.z, rpy.x);
+
+            // Applying rotations in ZYX ordering, as indicated above
+            Quaternion q = Quaternion.identity;
+
+            q *= Quaternion.Euler(0, rpy.y, 0);
+            q *= Quaternion.Euler(rpy.x, 0, 0);
+            q *= Quaternion.Euler(0, 0, rpy.z);
+
+
+            return q;
+        }
+
         public static string ToXMLString(this Vector3 v) {
             return $"{v.x} {v.y} {v.z}";
         }
@@ -58,7 +78,7 @@ namespace ZO.Util.Extensions {
             Debug.LogWarning($"Could not parse string: {s}");
 
             return Vector3.zero;
-        } 
+        }
 
 
     }

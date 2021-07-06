@@ -61,22 +61,22 @@ namespace ZO.ImportExport {
                 XmlNode[] xmlVisuals = xmlLink.GetChildrenByName("visual");
 
                 foreach (XmlNode xmlVisual in xmlVisuals) {
-                    
-                    
+
+
                     XmlNode[] xmlGeometries = xmlVisual.GetChildrenByName("geometry");
 
                     foreach (XmlNode xmlGeom in xmlGeometries) {
-                        
+
                         GameObject visualGeo = null;
 
                         XmlNode xmlBox = xmlGeom.GetChildByName("box");
                         if (xmlBox != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             Vector3 size = xmlBox.Attributes["size"].Value.FromURDFStringToVector3();
-                            
+
                             visualGeo.transform.localScale = size.Ros2UnityScale();
                         }
-                        
+
                         XmlNode xmlCylinder = xmlGeom.GetChildByName("cylinder");
                         if (xmlCylinder != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -84,7 +84,7 @@ namespace ZO.ImportExport {
                             float length = float.Parse(xmlCylinder.Attributes["length"].Value);
                             visualGeo.transform.localScale = new Vector3(radius * 2.0f, length * 0.5f, radius * 2.0f);
                         }
-                        
+
                         XmlNode xmlSphere = xmlGeom.GetChildByName("sphere");
                         if (xmlSphere != null) {
                             visualGeo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -97,14 +97,23 @@ namespace ZO.ImportExport {
                             // TODO
                         }
                         if (visualGeo != null) {
+                            // set parent
                             visualGeo.transform.SetParent(goVisualsEmpty.transform);
                             string visualName = xmlVisual.Attributes["name"].Value;
                             if (visualName != null) {
                                 visualGeo.name = visualName;
                             }
+
+                            // set transform
+                            XmlNode xmlOrigin = xmlVisual.GetChildByName("origin");
+                            Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
+                            visualGeo.transform.localPosition = transform.Item1;
+                            visualGeo.transform.localRotation = transform.Item2;
+
                         }
 
                     }
+
                 }
 
                 // get the origin
@@ -118,6 +127,8 @@ namespace ZO.ImportExport {
 
                 // find link parent
                 GameObject linkParent = rootObject;
+                GameObject linkChild = goLink.Value.Item2;
+                XmlNode workingJoint = null;
                 foreach (XmlNode joint in xmlJoints) {
                     XmlNode xmlChildLink = joint.GetChildByName("child");
                     string childName = xmlChildLink.Attributes["link"].Value;
@@ -126,17 +137,47 @@ namespace ZO.ImportExport {
                         XmlNode xmlParentLink = joint.GetChildByName("parent");
                         string parentName = xmlParentLink.Attributes["link"].Value;
                         linkParent = goLinks[parentName].Item2;
+
+                        workingJoint = joint;
+
                         break;
                     }
 
                 }
 
-                goLink.Value.Item2.transform.SetParent(linkParent.transform);
-                ZOSimOccurrence occurrence = goLink.Value.Item2.AddComponent<ZOSimOccurrence>();
+                linkChild.transform.SetParent(linkParent.transform);
+                ZOSimOccurrence occurrence = linkChild.AddComponent<ZOSimOccurrence>();
+
+                // set transform
+                if (workingJoint != null) {
+                    XmlNode xmlOrigin = workingJoint.GetChildByName("origin");
+                    Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
+                    linkChild.transform.localPosition = transform.Item1;
+                    linkChild.transform.localRotation = transform.Item2;
+
+                }
+
 
             }
 
             return simDocumentRoot;
+        }
+
+        protected static Tuple<Vector3, Quaternion> OriginXMLToUnity(XmlNode xmlOrigin) {
+            Vector3 translation = Vector3.zero;
+            string xyz = xmlOrigin.Attributes["xyz"].Value;
+            if (xyz != null && xyz != "") {
+                translation = xyz.FromURDFStringToVector3().Ros2Unity();
+            }
+
+            Quaternion rotation = Quaternion.identity;
+            string rpy = xmlOrigin.Attributes["rpy"].Value;
+            if (rpy != null && rpy != "") {
+                rotation = rpy.FromURDFStringToVector3().RosRollPitchYawToQuaternion();
+            }
+            Tuple<Vector3, Quaternion> transform = new Tuple<Vector3, Quaternion>(translation, rotation);
+
+            return transform;
         }
 
     }
