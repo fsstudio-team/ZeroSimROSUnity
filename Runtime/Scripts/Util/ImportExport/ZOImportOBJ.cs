@@ -104,9 +104,9 @@ namespace ZO.ImportExport {
                 }
             }
 
-            // if (currentMaterial != null) {
-            //     materials.Add(currentMaterial);
-            // }
+            if (currentMaterial != null) {
+                materials.Add(currentMaterial);
+            }
 
             return materials.ToArray();
         }
