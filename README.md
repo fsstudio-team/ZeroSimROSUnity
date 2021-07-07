@@ -12,6 +12,7 @@
     - [Running Universal Robot UR10 Arm Test Scene with MoveIt!](#running-universal-robot-ur10-arm-test-scene-with-moveit)
     - [Running Image Segmentation Test](#running-image-segmentation-test)
     - [Export URDF](#export-urdf)
+    - [Import URDF](#import-urdf)
 
 ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
@@ -25,9 +26,8 @@ We are releasing ZeroSim as open source to support the community of roboticist a
 
 ZeroSim provides a multitude of tools for building robots and environments in Unity to interface with ROS.  We strive to provide the same functionality and ROS interfaces of [Gazebo](http://gazebosim.org/).  Including:
 
-* Dynamics simulation using the latest [PhysX 4.x](https://developer.nvidia.com/physx-sdk) integrated int Unity.
+* Dynamics simulation using the latest [PhysX 4.x](https://developer.nvidia.com/physx-sdk) integrated in Unity.
   * Hinge, ball, linear and fixed joints.
-  * Temporal Gauss-Seidel solver option making articulated or jointed configurations much more robust.
 * Advanced 3D Rendering, including the latest realtime ray tracing technology.
 * Sensors:
   * 2D LIDAR -> ROS [LaserScan]([sensor_msgs/LaserScan.msg](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)) message.
@@ -47,24 +47,24 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * ROS [JointState](http://wiki.ros.org/joint_state_publisher) publisher.
 
 * Full ROS messaging communications layers API.
-  * Premade standard ROS messages
+  * Many premade standard ROS messages
   * Subscribe and publish
   * Action Servers
-  * Fast and efficient message encoding using [ROS Bridge](http://wiki.ros.org/rosbridge_suite) and BSON over TCP.  
+  * Fast and efficient message encoding using [ROS Bridge](http://wiki.ros.org/rosbridge_suite) and BSON over TCP.
+  * Parameter server  
 
 * Ready to run prebuilt ROS Docker images available publically on DockerHub: https://hub.docker.com/r/zerodog/zerosim_ros_vnc
 
 * Machine Learning tools:
   * Image Segmentation for training semantic segmentation algorithms. 
 
-* URDF Export
+* URDF Import & Export 
+* ROS2 support via ROS Bridge Suite (https://github.com/RobotWebTools/rosbridge_suite)
 
 * **COMING SOON:**
-  * More complete documentation.
-  * URDF import.
-  * Finish Docker integration with Unity. (Currently incomplete)
+  * Configure and run Docker images within Unity Editor.
   * Secure communications via WebSockets.
-  * Support for other Physics engines such as Bullet or Havok.
+  * Drone controller.
 
 ## API Documentation
 
@@ -87,6 +87,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
   * Unity 2020.x or greater
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
+    * Note: Melodic is our primary development setup, but ZeroSim has reportedly be reported to run on Noetic and ROS2.
 
 ### Setting up a new Unity Project 
 
@@ -212,3 +213,6 @@ roslaunch zero_sim_ros basic_unity_editor.launch
 5. Select the directory to export to.
 6. An excellent online URDF viewer is available: https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html  Just drag and drop the files exported above.
 
+### Import URDF
+
+1. Right click and select `ZeroSim --> Import URDF...`
