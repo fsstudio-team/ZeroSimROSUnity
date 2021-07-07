@@ -128,15 +128,18 @@ namespace ZO.ImportExport {
                 // find link parent
                 GameObject linkParent = rootObject;
                 GameObject linkChild = goLink.Value.Item2;
+                XmlNode xmlChildLinkNode = goLink.Value.Item1;
+                XmlNode xmlParentLinkNode = null;
                 XmlNode workingJoint = null;
                 foreach (XmlNode joint in xmlJoints) {
-                    XmlNode xmlChildLink = joint.GetChildByName("child");
-                    string childName = xmlChildLink.Attributes["link"].Value;
+                    XmlNode xmlChildLinkName = joint.GetChildByName("child");
+                    string childName = xmlChildLinkName.Attributes["link"].Value;
 
                     if (goLink.Value.Item2.name == childName) {
-                        XmlNode xmlParentLink = joint.GetChildByName("parent");
-                        string parentName = xmlParentLink.Attributes["link"].Value;
+                        XmlNode xmlParentLinkName = joint.GetChildByName("parent");
+                        string parentName = xmlParentLinkName.Attributes["link"].Value;
                         linkParent = goLinks[parentName].Item2;
+                        xmlParentLinkNode = goLinks[parentName].Item1;
 
                         workingJoint = joint;
 
@@ -157,8 +160,29 @@ namespace ZO.ImportExport {
                     linkChild.transform.localRotation = transform.Item2;
 
                     // add rigidbody components
-                    Rigidbody childRigidBody = linkChild.AddComponent<Rigidbody>();
-                    Rigidbody parentRigidBody = linkParent.AddComponent<Rigidbody>();
+                    Rigidbody childRigidBody = null;
+                    Rigidbody parentRigidBody = null;
+
+                    XmlNode xmlInertial = xmlChildLinkNode.GetChildByName("inertial");
+                    if (xmlInertial != null) {
+                        childRigidBody = linkChild.AddComponent<Rigidbody>();
+                        
+                        float mass = 1.0f;
+                        float.TryParse(xmlInertial.GetChildByName("mass").Attributes["value"].Value, out mass);
+                        childRigidBody.mass = mass;
+
+                    }
+
+                    xmlInertial = xmlParentLinkNode.GetChildByName("inertial");
+                    parentRigidBody = linkParent.GetComponent<Rigidbody>();
+                    if (xmlInertial != null && parentRigidBody == null) {  
+                        parentRigidBody = linkParent.AddComponent<Rigidbody>();
+
+                        float mass = 1.0f;
+                        float.TryParse(xmlInertial.GetChildByName("mass").Attributes["value"].Value, out mass);
+                        parentRigidBody.mass = mass;
+
+                    }
 
                     // add joints
                     string jointType = workingJoint.Attributes["type"].Value;
@@ -170,6 +194,10 @@ namespace ZO.ImportExport {
 
                         XmlNode xmlAxis = workingJoint.GetChildByName("axis");
                         hingeJoint.Axis = xmlAxis.Attributes["xyz"].Value.FromURDFStringToVector3().Ros2Unity();
+                    }
+
+                    if (jointType == "prismatic") {
+                        Debug.LogWarning("WARNING: Prismatic joint not yet implemented.");
                     }
 
                 }
