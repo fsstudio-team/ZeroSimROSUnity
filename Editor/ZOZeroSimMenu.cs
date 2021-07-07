@@ -53,5 +53,18 @@ namespace ZO.Editor {
 
         }
 
+        [MenuItem("GameObject/ZeroSim/Import OBJ...", false, 0)]
+        static void ImportOBJ(MenuCommand menuCommand) {
+            string filePath = EditorUtility.OpenFilePanel("Import OBJ", ".", "obj");
+
+            if (filePath.Length == 0) {
+                return;
+            }
+
+            ZOImportOBJ.Import(filePath);
+
+        }
+
+
     }
 }

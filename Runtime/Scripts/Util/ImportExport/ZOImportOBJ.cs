@@ -1,224 +1,331 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace ZO.ImportExport {
     public class ZOImportOBJ {
+        public static string WorkingDirectory {
+            get; set;
+        } = ".";
 
-        private struct meshStruct {
-            public Vector3[] vertices;
-            public Vector3[] normals;
-            public Vector2[] uv;
-            public Vector2[] uv1;
-            public Vector2[] uv2;
-            public int[] triangles;
-            public int[] faceVerts;
-            public int[] faceUVs;
-            public Vector3[] faceData;
-            public string name;
-            public string fileName;
+        public static string FileName {
+            get; set;
+        } = "temp";
+
+
+        struct OBJFace {
+            public string materialName;
+            public string meshName;
+            public int[] indexes;
         }
 
-        // Use this for initialization
-        public static Mesh ImportFile(string filePath) {
-            meshStruct newMesh = createMeshStruct(filePath);
-            populateMeshStruct(ref newMesh);
+        protected static Vector2 ParseVector2(string[] lineComponents) {
+            Vector2 result = new Vector2(float.Parse(lineComponents[1]), float.Parse(lineComponents[2]));
+            return result;
+        }
 
-            Vector3[] newVerts = new Vector3[newMesh.faceData.Length];
-            Vector2[] newUVs = new Vector2[newMesh.faceData.Length];
-            Vector3[] newNormals = new Vector3[newMesh.faceData.Length];
-            int i = 0;
-            /* The following foreach loops through the facedata and assigns the appropriate vertex, uv, or normal
-             * for the appropriate Unity mesh array.
-             */
-            foreach (Vector3 v in newMesh.faceData) {
-                newVerts[i] = newMesh.vertices[(int)v.x - 1];
-                if (v.y >= 1)
-                    newUVs[i] = newMesh.uv[(int)v.y - 1];
+        protected static Vector3 ParseVector3(string[] lineComponents) {
+            Vector3 result = new Vector3(float.Parse(lineComponents[1]), float.Parse(lineComponents[2]), float.Parse(lineComponents[3]));
+            return result;
+        }
 
-                if (v.z >= 1)
-                    newNormals[i] = newMesh.normals[(int)v.z - 1];
-                i++;
+        protected static Color ParseColor(string[] lineComponents, float scale = 1.0f) {
+            Color result = new Color(float.Parse(lineComponents[1]) * scale, float.Parse(lineComponents[2]) * scale, float.Parse(lineComponents[3]) * scale);
+            return result;
+        }
+
+        protected static Material[] ImportMTLFile(string mtlFilePath) {
+            List<Material> materials = new List<Material>();
+            Material currentMaterial = null;
+
+            string workingDirectory = Path.GetDirectoryName(mtlFilePath);
+
+            using (StreamReader streamReader = new StreamReader(mtlFilePath)) {
+                while (!streamReader.EndOfStream) {
+                    string ln = streamReader.ReadLine();
+                    string l = ln.Trim().Replace("  ", " ");
+                    string[] lineComponents = l.Split(' ');
+                    string data = l.Remove(0, l.IndexOf(' ') + 1);
+
+                    if (lineComponents[0] == "newmtl") {
+                        if (currentMaterial != null) {
+                            materials.Add(currentMaterial);
+                        }
+                        currentMaterial = new Material(Shader.Find("Standard (Specular setup)"));
+                        currentMaterial.name = data;
+                    } else if (lineComponents[0] == "Kd") {
+                        currentMaterial.SetColor("_Color", ParseColor(lineComponents));
+                    } else if (lineComponents[0] == "map_Kd" && lineComponents.Length > 1) {
+                        string texturePath = Path.Combine(workingDirectory, lineComponents[1]);
+                        string textureType = Path.GetExtension(texturePath);
+                        if (textureType == ".png" || textureType == ".jpg") {
+                            Texture2D texture = new Texture2D(1,1);
+                            texture.LoadImage(File.ReadAllBytes(texturePath));
+                            currentMaterial.SetTexture("_MainTex", texture);
+                        }
+                        
+                    } else if (lineComponents[0] == "map_Bump") {
+                        // TODO
+                    } else if (lineComponents[0] == "Ks") {
+                        currentMaterial.SetColor("_SpecColor", ParseColor(lineComponents));
+                    } else if (lineComponents[0] == "Ka") {
+                        currentMaterial.SetColor("_EmissionColor", ParseColor(lineComponents, 0.05f));
+                        currentMaterial.EnableKeyword("_EMISSION");
+                    } else if (lineComponents[0] == "d") {
+                        float visibility = float.Parse(lineComponents[1]);
+                        if (visibility < 1) {
+                            Color temp = currentMaterial.color;
+
+                            temp.a = visibility;
+                            currentMaterial.SetColor("_Color", temp);
+
+                            // set transparency
+                            currentMaterial.SetFloat("_Mode", 3);
+                            currentMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            currentMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            currentMaterial.SetInt("_ZWrite", 0);
+                            currentMaterial.DisableKeyword("_ALPHATEST_ON");
+                            currentMaterial.EnableKeyword("_ALPHABLEND_ON");
+                            currentMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            currentMaterial.renderQueue = 3000;
+                        }
+
+                    } else if (lineComponents[0] == "Ns") {
+                        float Ns = float.Parse(lineComponents[1]);
+                        Ns = (Ns / 1000);
+                        currentMaterial.SetFloat("_Glossiness", Ns);
+
+                    }
+                }
             }
 
-            Mesh mesh = new Mesh();
+            if (currentMaterial != null) {
+                materials.Add(currentMaterial);
+            }
 
-            mesh.vertices = newVerts;
-            mesh.uv = newUVs;
-            mesh.normals = newNormals;
-            mesh.triangles = newMesh.triangles;
-
-            mesh.RecalculateBounds();
-            mesh.Optimize();
-
-            return mesh;
+            return materials.ToArray();
         }
 
-        private static meshStruct createMeshStruct(string filename) {
-            int triangles = 0;
-            int vertices = 0;
-            int vt = 0;
-            int vn = 0;
-            int face = 0;
-            meshStruct mesh = new meshStruct();
-            mesh.fileName = filename;
-            StreamReader stream = File.OpenText(filename);
-            string entireText = stream.ReadToEnd();
-            stream.Close();
-            using (StringReader reader = new StringReader(entireText)) {
-                string currentText = reader.ReadLine();
-                char[] splitIdentifier = { ' ' };
-                string[] brokenString;
-                while (currentText != null) {
-                    if (!currentText.StartsWith("f ") && !currentText.StartsWith("v ") && !currentText.StartsWith("vt ")
-                        && !currentText.StartsWith("vn ")) {
-                        currentText = reader.ReadLine();
-                        if (currentText != null) {
-                            currentText = currentText.Replace("  ", " ");
+        public static GameObject Import(string objFilePath) {
+            using (StreamReader streamReader = new StreamReader(objFilePath)) {
+                return Import(streamReader, Path.GetFileNameWithoutExtension(objFilePath), Path.GetDirectoryName(objFilePath));
+            }
+        }
+
+        public static GameObject Import(StreamReader streamReader, string meshName, string workingDirectory) {
+
+
+            bool hasNormals = false;
+            List<Vector3> vertices = new List<Vector3>();
+            List<Vector3> normals = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+
+            List<Vector3> uvertices = new List<Vector3>();
+            List<Vector3> unormals = new List<Vector3>();
+            List<Vector2> uuvs = new List<Vector2>();
+
+            List<string> materialNames = new List<string>();
+            List<string> objectNames = new List<string>();
+            Dictionary<string, int> hashtable = new Dictionary<string, int>();
+            List<OBJFace> faceList = new List<OBJFace>();
+            string cmaterial = "";
+            string cmesh = "default";
+            //CACHE
+            Material[] materials = null;
+
+            while (!streamReader.EndOfStream) {
+                string ln = streamReader.ReadLine();
+                if (ln.Length > 0 && ln[0] != '#') {
+                    string l = ln.Trim().Replace("  ", " ");
+                    string[] lineComponents = l.Split(' ');
+                    string data = l.Remove(0, l.IndexOf(' ') + 1);
+
+                    if (lineComponents[0] == "mtllib") {
+                        string mtlFilePath = Path.Combine(workingDirectory, lineComponents[1]);
+                        materials = ImportMTLFile(mtlFilePath);
+
+                    } else if ((lineComponents[0] == "g" || lineComponents[0] == "o")) {
+                        cmesh = data;
+                        if (!objectNames.Contains(cmesh)) {
+                            objectNames.Add(cmesh);
                         }
-                    } else {
-                        currentText = currentText.Trim();                           //Trim the current line
-                        brokenString = currentText.Split(splitIdentifier, 50);      //Split the line into an array, separating the original line by blank spaces
-                        switch (brokenString[0]) {
-                            case "v":
-                                vertices++;
-                                break;
-                            case "vt":
-                                vt++;
-                                break;
-                            case "vn":
-                                vn++;
-                                break;
-                            case "f":
-                                face = face + brokenString.Length - 1;
-                                triangles = triangles + 3 * (brokenString.Length - 2); /*brokenString.Length is 3 or greater since a face must have at least
-                                                                                     3 vertices.  For each additional vertice, there is an additional
-                                                                                     triangle in the mesh (hence this formula).*/
-                                break;
+                    } else if (lineComponents[0] == "usemtl") {
+                        cmaterial = data;
+                        if (!materialNames.Contains(cmaterial)) {
+                            materialNames.Add(cmaterial);
                         }
-                        currentText = reader.ReadLine();
-                        if (currentText != null) {
-                            currentText = currentText.Replace("  ", " ");
+
+                    } else if (lineComponents[0] == "v") {
+                        //VERTEX
+                        vertices.Add(ParseVector3(lineComponents));
+                    } else if (lineComponents[0] == "vn") {
+                        //VERTEX NORMAL
+                        normals.Add(ParseVector3(lineComponents));
+                    } else if (lineComponents[0] == "vt") {
+                        //VERTEX UV
+                        uvs.Add(ParseVector2(lineComponents));
+                    } else if (lineComponents[0] == "f") {
+                        int[] indexes = new int[lineComponents.Length - 1];
+                        for (int i = 1; i < lineComponents.Length; i++) {
+                            string component = lineComponents[i];
+                            int vertexIndex = -1;
+                            int normalIndex = -1;
+                            int uvIndex = -1;
+                            if (component.Contains("//")) {
+                                //doubleslash, no UVS.
+                                string[] elementComps = component.Split('/');
+                                vertexIndex = int.Parse(elementComps[0]) - 1;
+                                normalIndex = int.Parse(elementComps[2]) - 1;
+                            } else if (component.Count(x => x == '/') == 2) {
+                                //contains everything
+                                string[] elementComps = component.Split('/');
+                                vertexIndex = int.Parse(elementComps[0]) - 1;
+                                uvIndex = int.Parse(elementComps[1]) - 1;
+                                normalIndex = int.Parse(elementComps[2]) - 1;
+                            } else if (!component.Contains("/")) {
+                                //just vertex inedx
+                                vertexIndex = int.Parse(component) - 1;
+                            } else {
+                                //vertex and uv
+                                string[] elementComps = component.Split('/');
+                                vertexIndex = int.Parse(elementComps[0]) - 1;
+                                uvIndex = int.Parse(elementComps[1]) - 1;
+                            }
+                            string hashEntry = vertexIndex + "|" + normalIndex + "|" + uvIndex;
+                            if (hashtable.ContainsKey(hashEntry)) {
+                                indexes[i - 1] = hashtable[hashEntry];
+                            } else {
+                                //create a new hash entry
+                                indexes[i - 1] = hashtable.Count;
+                                hashtable[hashEntry] = hashtable.Count;
+                                uvertices.Add(vertices[vertexIndex]);
+                                if (normalIndex < 0 || (normalIndex > (normals.Count - 1))) {
+                                    unormals.Add(Vector3.zero);
+                                } else {
+                                    hasNormals = true;
+                                    unormals.Add(normals[normalIndex]);
+                                }
+                                if (uvIndex < 0 || (uvIndex > (uvs.Count - 1))) {
+                                    uuvs.Add(Vector2.zero);
+                                } else {
+                                    uuvs.Add(uvs[uvIndex]);
+                                }
+
+                            }
+                        }
+                        if (indexes.Length < 5 && indexes.Length >= 3) {
+                            OBJFace f1 = new OBJFace();
+                            f1.materialName = cmaterial;
+                            f1.indexes = new int[] { indexes[0], indexes[1], indexes[2] };
+                            f1.meshName = cmesh;
+                            faceList.Add(f1);
+                            if (indexes.Length > 3) {
+
+                                OBJFace f2 = new OBJFace();
+                                f2.materialName = cmaterial;
+                                f2.meshName = cmesh;
+                                f2.indexes = new int[] { indexes[2], indexes[3], indexes[0] };
+                                faceList.Add(f2);
+                            }
                         }
                     }
                 }
             }
-            mesh.triangles = new int[triangles];
-            mesh.vertices = new Vector3[vertices];
-            mesh.uv = new Vector2[vt];
-            mesh.normals = new Vector3[vn];
-            mesh.faceData = new Vector3[face];
-            return mesh;
-        }
 
-        private static void populateMeshStruct(ref meshStruct mesh) {
-            StreamReader stream = File.OpenText(mesh.fileName);
-            string entireText = stream.ReadToEnd();
-            stream.Close();
-            using (StringReader reader = new StringReader(entireText)) {
-                string currentText = reader.ReadLine();
+            if (objectNames.Count == 0)
+                objectNames.Add("default");
 
-                char[] splitIdentifier = { ' ' };
-                char[] splitIdentifier2 = { '/' };
-                string[] brokenString;
-                string[] brokenBrokenString;
-                int f = 0;
-                int f2 = 0;
-                int v = 0;
-                int vn = 0;
-                int vt = 0;
-                int vt1 = 0;
-                int vt2 = 0;
-                while (currentText != null) {
-                    if (!currentText.StartsWith("f ") && !currentText.StartsWith("v ") && !currentText.StartsWith("vt ") &&
-                        !currentText.StartsWith("vn ") && !currentText.StartsWith("g ") && !currentText.StartsWith("usemtl ") &&
-                        !currentText.StartsWith("mtllib ") && !currentText.StartsWith("vt1 ") && !currentText.StartsWith("vt2 ") &&
-                        !currentText.StartsWith("vc ") && !currentText.StartsWith("usemap ")) {
-                        currentText = reader.ReadLine();
-                        if (currentText != null) {
-                            currentText = currentText.Replace("  ", " ");
+            GameObject meshGameObject = new GameObject(meshName);
+            foreach (string obj in objectNames) {
+                meshGameObject.transform.localScale = new Vector3(-1, 1, 1);
+                Mesh m = new Mesh();
+                m.name = obj;
+                List<Vector3> processedVertices = new List<Vector3>();
+                List<Vector3> processedNormals = new List<Vector3>();
+                List<Vector2> processedUVs = new List<Vector2>();
+                List<int[]> processedIndexes = new List<int[]>();
+                Dictionary<int, int> remapTable = new Dictionary<int, int>();
+                List<string> meshMaterialNames = new List<string>();
+
+                OBJFace[] objFaces = faceList.Where(x => x.meshName == obj).ToArray();
+                foreach (string mn in materialNames) {
+                    OBJFace[] faces = objFaces.Where(x => x.materialName == mn).ToArray();
+                    if (faces.Length > 0) {
+                        int[] indexes = new int[0];
+                        foreach (OBJFace f in faces) {
+                            int l = indexes.Length;
+                            System.Array.Resize(ref indexes, l + f.indexes.Length);
+                            System.Array.Copy(f.indexes, 0, indexes, l, f.indexes.Length);
                         }
+                        meshMaterialNames.Add(mn);
+                        if (m.subMeshCount != meshMaterialNames.Count)
+                            m.subMeshCount = meshMaterialNames.Count;
+
+                        for (int i = 0; i < indexes.Length; i++) {
+                            int idx = indexes[i];
+                            if (remapTable.ContainsKey(idx)) {
+                                indexes[i] = remapTable[idx];
+                            } else {
+                                processedVertices.Add(uvertices[idx]);
+                                processedNormals.Add(unormals[idx]);
+                                processedUVs.Add(uuvs[idx]);
+                                remapTable[idx] = processedVertices.Count - 1;
+                                indexes[i] = remapTable[idx];
+                            }
+                        }
+
+                        processedIndexes.Add(indexes);
                     } else {
-                        currentText = currentText.Trim();
-                        brokenString = currentText.Split(splitIdentifier, 50);
-                        switch (brokenString[0]) {
-                            case "g":
-                                break;
-                            case "usemtl":
-                                break;
-                            case "usemap":
-                                break;
-                            case "mtllib":
-                                break;
-                            case "v":
-                                mesh.vertices[v] = new Vector3(System.Convert.ToSingle(brokenString[1]), System.Convert.ToSingle(brokenString[2]),
-                                                         System.Convert.ToSingle(brokenString[3]));
-                                v++;
-                                break;
-                            case "vt":
-                                mesh.uv[vt] = new Vector2(System.Convert.ToSingle(brokenString[1]), System.Convert.ToSingle(brokenString[2]));
-                                vt++;
-                                break;
-                            case "vt1":
-                                mesh.uv[vt1] = new Vector2(System.Convert.ToSingle(brokenString[1]), System.Convert.ToSingle(brokenString[2]));
-                                vt1++;
-                                break;
-                            case "vt2":
-                                mesh.uv[vt2] = new Vector2(System.Convert.ToSingle(brokenString[1]), System.Convert.ToSingle(brokenString[2]));
-                                vt2++;
-                                break;
-                            case "vn":
-                                mesh.normals[vn] = new Vector3(System.Convert.ToSingle(brokenString[1]), System.Convert.ToSingle(brokenString[2]),
-                                                        System.Convert.ToSingle(brokenString[3]));
-                                vn++;
-                                break;
-                            case "vc":
-                                break;
-                            case "f":
 
-                                int j = 1;
-                                List<int> intArray = new List<int>();
-                                while (j < brokenString.Length && ("" + brokenString[j]).Length > 0) {
-                                    Vector3 temp = new Vector3();
-                                    brokenBrokenString = brokenString[j].Split(splitIdentifier2, 3);    //Separate the face into individual components (vert, uv, normal)
-                                    temp.x = System.Convert.ToInt32(brokenBrokenString[0]);
-                                    if (brokenBrokenString.Length > 1)                                  //Some .obj files skip UV and normal
-                                    {
-                                        if (brokenBrokenString[1] != "")                                    //Some .obj files skip the uv and not the normal
-                                        {
-                                            temp.y = System.Convert.ToInt32(brokenBrokenString[1]);
-                                        }
-                                        temp.z = System.Convert.ToInt32(brokenBrokenString[2]);
-                                    }
-                                    j++;
-
-                                    mesh.faceData[f2] = temp;
-                                    intArray.Add(f2);
-                                    f2++;
-                                }
-                                j = 1;
-                                while (j + 2 < brokenString.Length)     //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
-                                {
-                                    mesh.triangles[f] = intArray[0];
-                                    f++;
-                                    mesh.triangles[f] = intArray[j];
-                                    f++;
-                                    mesh.triangles[f] = intArray[j + 1];
-                                    f++;
-
-                                    j++;
-                                }
-                                break;
-                        }
-                        currentText = reader.ReadLine();
-                        if (currentText != null) {
-                            currentText = currentText.Replace("  ", " ");       //Some .obj files insert double spaces, this removes them.
-                        }
                     }
                 }
+
+                m.vertices = processedVertices.ToArray();
+                m.normals = processedNormals.ToArray();
+                m.uv = processedUVs.ToArray();
+
+                for (int i = 0; i < processedIndexes.Count; i++) {
+                    m.SetTriangles(processedIndexes[i], i);
+                }
+
+                if (!hasNormals) {
+                    m.RecalculateNormals();
+                }
+                m.RecalculateBounds();
+                ;
+
+                MeshFilter mf = meshGameObject.AddComponent<MeshFilter>();
+                MeshRenderer mr = meshGameObject.AddComponent<MeshRenderer>();
+
+                Material[] processedMaterials = new Material[meshMaterialNames.Count];
+                for (int i = 0; i < meshMaterialNames.Count; i++) {
+
+                    if (materials == null) {
+                        processedMaterials[i] = new Material(Shader.Find("Standard (Specular setup)"));
+                    } else {
+                        Material mfn = Array.Find(materials, x => x.name == meshMaterialNames[i]); ;
+                        if (mfn == null) {
+                            processedMaterials[i] = new Material(Shader.Find("Standard (Specular setup)"));
+                        } else {
+                            processedMaterials[i] = mfn;
+                        }
+
+                    }
+                    processedMaterials[i].name = meshMaterialNames[i];
+                }
+
+                mr.materials = processedMaterials;
+                mf.mesh = m;
+
             }
+
+            return meshGameObject;
         }
+
     }
 }
