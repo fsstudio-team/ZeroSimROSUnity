@@ -39,7 +39,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960009185217398530}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -87,17 +87,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9438881b22c91134f968e2ed48f649c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _updateRateHz: 30
+  _updateRateHz: 10
   _debug: 0
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _cameraId: none
   _camera: {fileID: 960009185217398533}
   _width: 320
   _height: 240
-  _depthMaterial: {fileID: 2100000, guid: 7c59aa5bee31c319695fba4392cb8768, type: 2}
-  _depthScale: 100
-  _debugVisualizeRGB: {fileID: 0}
-  _debugVisualizeDepth: {fileID: 0}
+  _rgbDepthCameraShader: {fileID: 2100000, guid: d2f03b5f033866ec6b3b16cabc66b331,
+    type: 2}
+  _depthScale: 1
   _maxAsyncGPURequestQueue: 2
   _maxPublishTaskQueue: 2
+  _name: RGBDepthCamera_sensor.rgbdebthgcamera

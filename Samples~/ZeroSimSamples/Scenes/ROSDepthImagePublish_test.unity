@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465791, g: 0.4964133, b: 0.57481784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -157,6 +157,8 @@ MonoBehaviour:
   Hostname: localhost
   Port: 9090
   _serializationType: 1
+  _launchROSDocker: 0
+  _rosLaunchParameters: {fileID: 0}
   _worldFrameId: world
   _rootMapTransformPublisher: {fileID: 30226136}
 --- !u!4 &30226135
@@ -192,7 +194,7 @@ MonoBehaviour:
   _ROSTopic: 
   _name: ros.publisher.transform_ROSUnityManager
   _frameId: world
-  _childFrameId: 
+  _childFrameId: ros.publisher.transform_ROSUnityManager
 --- !u!1 &155950647
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +367,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &445573327
@@ -445,7 +448,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &975845539
 GameObject:
@@ -762,7 +765,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f63db7f27f0b322ab785c2fe0b3e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _zoSimDocumentFilePath: 
 --- !u!4 &1250070508
 Transform:
   m_ObjectHideFlags: 0
@@ -776,7 +778,7 @@ Transform:
   m_Children:
   - {fileID: 960009186413598539}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1298881059
 GameObject:
@@ -875,13 +877,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  distance: 0.2
-  xSpeed: 60
-  ySpeed: 60
-  yMinLimit: -20
-  yMaxLimit: 80
-  distanceMin: 0.01
-  distanceMax: 2
+  _distance: 5
+  _xSpeed: 120
+  _ySpeed: 120
+  _yMinLimit: -20
+  _yMaxLimit: 80
+  _distanceMin: 0.5
+  _distanceMax: 15
 --- !u!1 &1868798745
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,127 +916,8 @@ Transform:
   - {fileID: 1215811999}
   - {fileID: 1062548992}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1916065678
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 367586929377166707, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_Name
-      value: RGBCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166707, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.76
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.41
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 270
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166708, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: _width
-      value: 640
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: _height
-      value: 480
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: _updateRateHz
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: _debug
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166709, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: _postProcessMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: d2f03b5f033866ec6b3b16cabc66b331, type: 2}
-    - target: {fileID: 367586929377166710, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_projectionMatrixMode
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166710, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: near clip plane
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166710, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 367586929377166710, guid: bf48e06576e6281ca91670f71ef1f6b4,
-        type: 3}
-      propertyPath: m_TargetDisplay
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bf48e06576e6281ca91670f71ef1f6b4, type: 3}
 --- !u!20 &960009186413598536
 Camera:
   m_ObjectHideFlags: 0
@@ -1094,7 +977,6 @@ MonoBehaviour:
   _debug: 1
   _currentUpdateHz: 0
   _currentFixedUpdateHz: 0
-  _cameraId: none
   _camera: {fileID: 960009186413598536}
   _width: 640
   _height: 480
@@ -1103,6 +985,7 @@ MonoBehaviour:
   _depthScale: 1
   _maxAsyncGPURequestQueue: 2
   _maxPublishTaskQueue: 2
+  _name: ROSRGBDepthCameraSensor_sensor.rgbdebthgcamera
 --- !u!4 &960009186413598539
 Transform:
   m_ObjectHideFlags: 0
@@ -1176,7 +1059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd2f2e3616277d4579d5a38545164e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _documentRoot: {fileID: 0}
+  _documentRoot: {fileID: 1250070507}
 --- !u!114 &960009186413598546
 MonoBehaviour:
   m_ObjectHideFlags: 0
