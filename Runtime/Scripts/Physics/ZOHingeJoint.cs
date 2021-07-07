@@ -79,6 +79,7 @@ namespace ZO.Physics {
                 return UnityHingeJoint.axis;
             }
             set {
+                _axis = value;
                 UnityHingeJoint.axis = value;
             }
         }
@@ -92,6 +93,7 @@ namespace ZO.Physics {
                 return UnityHingeJoint.anchor;
             }
             set {
+                _anchor = value;
                 UnityHingeJoint.anchor = value;
             }
         }
@@ -112,6 +114,7 @@ namespace ZO.Physics {
             }
             set {
                 if (UnityHingeJoint.connectedBody != value) {
+                    _connectedBody = value;
                     UnityHingeJoint.connectedBody = value;
                 }
 

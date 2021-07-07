@@ -150,10 +150,27 @@ namespace ZO.ImportExport {
 
                 // set transform
                 if (workingJoint != null) {
+                    // set the transform
                     XmlNode xmlOrigin = workingJoint.GetChildByName("origin");
                     Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
                     linkChild.transform.localPosition = transform.Item1;
                     linkChild.transform.localRotation = transform.Item2;
+
+                    // add rigidbody components
+                    Rigidbody childRigidBody = linkChild.AddComponent<Rigidbody>();
+                    Rigidbody parentRigidBody = linkParent.AddComponent<Rigidbody>();
+
+                    // add joints
+                    string jointType = workingJoint.Attributes["type"].Value;
+                    if (jointType == "revolute") {
+
+                        ZOHingeJoint hingeJoint = linkParent.AddComponent<ZOHingeJoint>();
+                        hingeJoint.ConnectedBody = childRigidBody;
+                        hingeJoint.Anchor = transform.Item1;
+
+                        XmlNode xmlAxis = workingJoint.GetChildByName("axis");
+                        hingeJoint.Axis = xmlAxis.Attributes["xyz"].Value.FromURDFStringToVector3().Ros2Unity();
+                    }
 
                 }
 
