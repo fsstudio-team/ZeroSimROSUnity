@@ -60,7 +60,7 @@ namespace ZO.ImportExport {
                         currentMaterial.name = data;
                     } else if (lineComponents[0] == "Kd") {
                         currentMaterial.SetColor("_Color", ParseColor(lineComponents));
-                    } else if (lineComponents[0] == "map_Kd") {
+                    } else if (lineComponents[0] == "map_Kd" && lineComponents.Length > 1) {
                         string texturePath = Path.Combine(workingDirectory, lineComponents[1]);
                         string textureType = Path.GetExtension(texturePath);
                         if (textureType == ".png" || textureType == ".jpg") {
@@ -240,14 +240,9 @@ namespace ZO.ImportExport {
             if (objectNames.Count == 0)
                 objectNames.Add("default");
 
-            //build objects
-            GameObject parentObject = new GameObject(meshName);
-
-
+            GameObject meshGameObject = new GameObject(meshName);
             foreach (string obj in objectNames) {
-                GameObject subObject = new GameObject(obj);
-                subObject.transform.parent = parentObject.transform;
-                subObject.transform.localScale = new Vector3(-1, 1, 1);
+                meshGameObject.transform.localScale = new Vector3(-1, 1, 1);
                 Mesh m = new Mesh();
                 m.name = obj;
                 List<Vector3> processedVertices = new List<Vector3>();
@@ -273,9 +268,7 @@ namespace ZO.ImportExport {
 
                         for (int i = 0; i < indexes.Length; i++) {
                             int idx = indexes[i];
-                            //build remap table
                             if (remapTable.ContainsKey(idx)) {
-                                //ezpz
                                 indexes[i] = remapTable[idx];
                             } else {
                                 processedVertices.Add(uvertices[idx]);
@@ -306,8 +299,8 @@ namespace ZO.ImportExport {
                 m.RecalculateBounds();
                 ;
 
-                MeshFilter mf = subObject.AddComponent<MeshFilter>();
-                MeshRenderer mr = subObject.AddComponent<MeshRenderer>();
+                MeshFilter mf = meshGameObject.AddComponent<MeshFilter>();
+                MeshRenderer mr = meshGameObject.AddComponent<MeshRenderer>();
 
                 Material[] processedMaterials = new Material[meshMaterialNames.Count];
                 for (int i = 0; i < meshMaterialNames.Count; i++) {
@@ -331,7 +324,7 @@ namespace ZO.ImportExport {
 
             }
 
-            return parentObject;
+            return meshGameObject;
         }
 
     }

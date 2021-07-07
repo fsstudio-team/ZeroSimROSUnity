@@ -17,20 +17,16 @@ namespace ZO.ImportExport {
 
     public class ZOImportURDF {
 
-        public static string WorkingDirectory {
-            get; set;
-        } = ".";
 
         public static ZOSimDocumentRoot Import(string urdfFilePath) {
             using (StreamReader streamReader = new StreamReader(urdfFilePath)) {
-                WorkingDirectory = Path.GetDirectoryName(urdfFilePath);
                 XmlDocument xmlDocument = new XmlDocument();
                 xmlDocument.Load(streamReader);
-                return Import(xmlDocument);
+                return Import(xmlDocument, Path.GetDirectoryName(urdfFilePath));
             }
         }
 
-        public static ZOSimDocumentRoot Import(XmlDocument xmlDocument) {
+        public static ZOSimDocumentRoot Import(XmlDocument xmlDocument, string workingDirectory) {
             XmlNode robot = xmlDocument.GetChildByName("robot");
 
             GameObject rootObject = new GameObject(robot.Attributes["name"].Value);
@@ -94,7 +90,16 @@ namespace ZO.ImportExport {
 
                         XmlNode xmlMesh = xmlGeom.GetChildByName("mesh");
                         if (xmlMesh != null) {
-                            // TODO
+                            string meshFileName = xmlMesh.Attributes["filename"].Value;
+                            string meshFilePath = Path.Combine(workingDirectory, meshFileName);
+                            visualGeo = ZOImportOBJ.Import(meshFilePath);
+                            if (xmlMesh.Attributes["scale"] != null) {
+                                Vector3 scale = xmlMesh.Attributes["scale"].Value.FromURDFStringToVector3().Ros2UnityScale();
+                                visualGeo.transform.localScale = new Vector3(visualGeo.transform.localScale.x * scale.x, visualGeo.transform.localScale.y * scale.y, visualGeo.transform.localScale.z * scale.z);
+                            }
+                            
+                            visualGeo.transform.localRotation = Quaternion.Euler(270, 90, 0);
+                            
                         }
                         if (visualGeo != null) {
                             // set parent
@@ -107,8 +112,8 @@ namespace ZO.ImportExport {
                             // set transform
                             XmlNode xmlOrigin = xmlVisual.GetChildByName("origin");
                             Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
-                            visualGeo.transform.localPosition = transform.Item1;
-                            visualGeo.transform.localRotation = transform.Item2;
+                            visualGeo.transform.localPosition += transform.Item1;
+                            visualGeo.transform.localRotation *= transform.Item2;
 
                         }
 
