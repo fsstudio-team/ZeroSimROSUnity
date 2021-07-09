@@ -87,7 +87,7 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
   * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
   * Unity 2020.x or greater
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
-    * Note: Melodic is our primary development setup, but ZeroSim has reportedly be reported to run on Noetic and ROS2.
+    * Note: ROS Melodic is our primary supported development environment, but ZeroSim has reportedly been able to run on Noetic and ROS2.
 
 ### Setting up a new Unity Project 
 
