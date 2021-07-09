@@ -97,23 +97,25 @@ namespace ZO.ImportExport {
                                 Vector3 scale = xmlMesh.Attributes["scale"].Value.FromURDFStringToVector3().Ros2UnityScale();
                                 visualGeo.transform.localScale = new Vector3(visualGeo.transform.localScale.x * scale.x, visualGeo.transform.localScale.y * scale.y, visualGeo.transform.localScale.z * scale.z);
                             }
-                            
+
                             visualGeo.transform.localRotation = Quaternion.Euler(270, 90, 0);
-                            
+
                         }
                         if (visualGeo != null) {
                             // set parent
                             visualGeo.transform.SetParent(goVisualsEmpty.transform);
-                            string visualName = xmlVisual.Attributes["name"].Value;
-                            if (visualName != null) {
-                                visualGeo.name = visualName;
+                            if (xmlVisual.Attributes["name"] != null) {
+                                visualGeo.name = xmlVisual.Attributes["name"].Value;
                             }
 
                             // set transform
                             XmlNode xmlOrigin = xmlVisual.GetChildByName("origin");
-                            Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
-                            visualGeo.transform.localPosition += transform.Item1;
-                            visualGeo.transform.localRotation *= transform.Item2;
+                            if (xmlOrigin != null) {
+                                Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
+                                visualGeo.transform.localPosition += transform.Item1;
+                                visualGeo.transform.localRotation *= transform.Item2;
+
+                            }
 
                         }
 
@@ -171,7 +173,7 @@ namespace ZO.ImportExport {
                     XmlNode xmlInertial = xmlChildLinkNode.GetChildByName("inertial");
                     if (xmlInertial != null) {
                         childRigidBody = linkChild.AddComponent<Rigidbody>();
-                        
+
                         float mass = 1.0f;
                         float.TryParse(xmlInertial.GetChildByName("mass").Attributes["value"].Value, out mass);
                         childRigidBody.mass = mass;
@@ -180,7 +182,7 @@ namespace ZO.ImportExport {
 
                     xmlInertial = xmlParentLinkNode.GetChildByName("inertial");
                     parentRigidBody = linkParent.GetComponent<Rigidbody>();
-                    if (xmlInertial != null && parentRigidBody == null) {  
+                    if (xmlInertial != null && parentRigidBody == null) {
                         parentRigidBody = linkParent.AddComponent<Rigidbody>();
 
                         float mass = 1.0f;
@@ -214,6 +216,9 @@ namespace ZO.ImportExport {
         }
 
         protected static Tuple<Vector3, Quaternion> OriginXMLToUnity(XmlNode xmlOrigin) {
+            if (xmlOrigin == null) {
+                Debug.Log("BLAH");
+            }
             Vector3 translation = Vector3.zero;
             string xyz = xmlOrigin.Attributes["xyz"].Value;
             if (xyz != null && xyz != "") {

@@ -9,14 +9,10 @@ using System.Linq;
 
 namespace ZO.ImportExport {
     public class ZOImportOBJ {
-        public static string WorkingDirectory {
-            get; set;
-        } = ".";
 
-        public static string FileName {
+        public static bool SplitByMaterial {
             get; set;
-        } = "temp";
-
+        } = true;
 
         struct OBJFace {
             public string materialName;
@@ -64,11 +60,11 @@ namespace ZO.ImportExport {
                         string texturePath = Path.Combine(workingDirectory, lineComponents[1]);
                         string textureType = Path.GetExtension(texturePath);
                         if (textureType == ".png" || textureType == ".jpg") {
-                            Texture2D texture = new Texture2D(1,1);
+                            Texture2D texture = new Texture2D(1, 1);
                             texture.LoadImage(File.ReadAllBytes(texturePath));
                             currentMaterial.SetTexture("_MainTex", texture);
                         }
-                        
+
                     } else if (lineComponents[0] == "map_Bump") {
                         // TODO
                     } else if (lineComponents[0] == "Ks") {
@@ -133,7 +129,7 @@ namespace ZO.ImportExport {
             List<string> objectNames = new List<string>();
             Dictionary<string, int> hashtable = new Dictionary<string, int>();
             List<OBJFace> faceList = new List<OBJFace>();
-            string cmaterial = "";
+            string cmaterial = "default";
             string cmesh = "default";
             //CACHE
             Material[] materials = null;
@@ -149,7 +145,7 @@ namespace ZO.ImportExport {
                         string mtlFilePath = Path.Combine(workingDirectory, lineComponents[1]);
                         materials = ImportMTLFile(mtlFilePath);
 
-                    } else if ((lineComponents[0] == "g" || lineComponents[0] == "o")) {
+                    } else if ((lineComponents[0] == "g" || lineComponents[0] == "o") && SplitByMaterial == false) {
                         cmesh = data;
                         if (!objectNames.Contains(cmesh)) {
                             objectNames.Add(cmesh);
@@ -158,6 +154,12 @@ namespace ZO.ImportExport {
                         cmaterial = data;
                         if (!materialNames.Contains(cmaterial)) {
                             materialNames.Add(cmaterial);
+                        }
+
+                        if (SplitByMaterial) {
+                            if (!objectNames.Contains(cmaterial)) {
+                                objectNames.Add(cmaterial);
+                            }
                         }
 
                     } else if (lineComponents[0] == "v") {
@@ -222,13 +224,13 @@ namespace ZO.ImportExport {
                             OBJFace f1 = new OBJFace();
                             f1.materialName = cmaterial;
                             f1.indexes = new int[] { indexes[0], indexes[1], indexes[2] };
-                            f1.meshName = cmesh;
+                            f1.meshName = (SplitByMaterial) ? cmaterial : cmesh;
                             faceList.Add(f1);
                             if (indexes.Length > 3) {
 
                                 OBJFace f2 = new OBJFace();
                                 f2.materialName = cmaterial;
-                                f2.meshName = cmesh;
+                                f2.meshName = (SplitByMaterial) ? cmaterial : cmesh;;
                                 f2.indexes = new int[] { indexes[2], indexes[3], indexes[0] };
                                 faceList.Add(f2);
                             }
@@ -237,12 +239,21 @@ namespace ZO.ImportExport {
                 }
             }
 
-            if (objectNames.Count == 0)
+            if (objectNames.Count == 0) {
                 objectNames.Add("default");
+            }
 
-            GameObject meshGameObject = new GameObject(meshName);
+            if (materialNames.Count == 0) {
+                materialNames.Add("default");
+            }
+
+            GameObject parentGameObject = new GameObject(meshName);
+
+            // GameObject meshGameObject = new GameObject(meshName);
             foreach (string obj in objectNames) {
-                meshGameObject.transform.localScale = new Vector3(-1, 1, 1);
+                GameObject childGameObject = new GameObject(obj);
+                childGameObject.transform.parent = parentGameObject.transform;
+                childGameObject.transform.localScale = new Vector3(-1, 1, 1);
                 Mesh m = new Mesh();
                 m.name = obj;
                 List<Vector3> processedVertices = new List<Vector3>();
@@ -253,6 +264,7 @@ namespace ZO.ImportExport {
                 List<string> meshMaterialNames = new List<string>();
 
                 OBJFace[] objFaces = faceList.Where(x => x.meshName == obj).ToArray();
+
                 foreach (string mn in materialNames) {
                     OBJFace[] faces = objFaces.Where(x => x.materialName == mn).ToArray();
                     if (faces.Length > 0) {
@@ -297,10 +309,17 @@ namespace ZO.ImportExport {
                     m.RecalculateNormals();
                 }
                 m.RecalculateBounds();
-                ;
 
-                MeshFilter mf = meshGameObject.AddComponent<MeshFilter>();
-                MeshRenderer mr = meshGameObject.AddComponent<MeshRenderer>();
+                MeshFilter mf = childGameObject.GetComponent<MeshFilter>();
+                if (mf == null) {
+                    mf = childGameObject.AddComponent<MeshFilter>();
+                }
+                MeshRenderer mr = childGameObject.GetComponent<MeshRenderer>();
+                if (mr == null) {
+                    mr = childGameObject.AddComponent<MeshRenderer>();
+                }
+
+
 
                 Material[] processedMaterials = new Material[meshMaterialNames.Count];
                 for (int i = 0; i < meshMaterialNames.Count; i++) {
@@ -324,7 +343,7 @@ namespace ZO.ImportExport {
 
             }
 
-            return meshGameObject;
+            return parentGameObject;
         }
 
     }
