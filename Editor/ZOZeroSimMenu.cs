@@ -52,7 +52,9 @@ namespace ZO.Editor {
             }
 
             ZOSimDocumentRoot documentRoot = ZOImportURDF.Import(filePath);
-
+            GameObject prefabGo = MakeGameObjectPrefab(documentRoot.gameObject, saveToDirectory);
+            Object.DestroyImmediate(documentRoot.gameObject);
+            PrefabUtility.InstantiatePrefab(prefabGo);
 
         }
 
@@ -61,29 +63,57 @@ namespace ZO.Editor {
             string filePath = EditorUtility.OpenFilePanel("Import OBJ", ".", "obj");
             string saveToDirectory = EditorUtility.OpenFolderPanel("Save to folder...", Path.Combine(Path.GetDirectoryName(Application.dataPath), "Assets"), "");
 
-            if (filePath.Length == 0) {
+            if (string.IsNullOrEmpty(filePath) == true) {
                 return;
             }
 
             GameObject go = ZOImportOBJ.Import(filePath);
+            GameObject prefabGo = MakeGameObjectPrefab(go, saveToDirectory);
+            Object.DestroyImmediate(go);
+            PrefabUtility.InstantiatePrefab(prefabGo);
 
-            // build a prefab from the GameObject 
-            MeshFilter[] meshFilters = go.GetComponentsInChildren<MeshFilter>();
+
+        }
+
+        static GameObject MakeGameObjectPrefab(GameObject gameObject, string saveToDirectory) {
+
+            // save any meshes and materials 
+            MeshFilter[] meshFilters = gameObject.GetComponentsInChildren<MeshFilter>();
+            MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+
+            foreach (MeshRenderer meshRenderer in meshRenderers) {
+                SaveMaterial(meshRenderer.sharedMaterial, saveToDirectory);
+            }
+
 
             foreach (MeshFilter meshFilter in meshFilters) {
-                string meshAssetPath = Path.Combine(saveToDirectory, $"{meshFilter.name}.asset");
-                meshAssetPath = meshAssetPath.Substring(Application.dataPath.Length);
-                Debug.Log("INFO: saving to relative path: " + meshAssetPath);
-                Mesh msh = new Mesh();
-                msh.vertices = meshFilter.sharedMesh.vertices;
-                msh.triangles = meshFilter.sharedMesh.triangles;
-                msh.uv = meshFilter.sharedMesh.uv;
-                msh.uv2 = meshFilter.sharedMesh.uv2;
-                msh.RecalculateNormals();
-                msh.RecalculateBounds();
-
-                AssetDatabase.CreateAsset(msh, "Assets/" + meshAssetPath);
+                SaveMesh(meshFilter.sharedMesh, saveToDirectory);
             }
+
+            string path = Path.Combine(saveToDirectory, gameObject.name + ".prefab");
+            path = FileUtil.GetProjectRelativePath(path);
+
+            return PrefabUtility.SaveAsPrefabAsset(gameObject, path);
+
+        }
+
+
+        public static void SaveMaterial(Material material, string saveToDirectory) {
+            string path = Path.Combine(saveToDirectory, material.name + ".mat");
+            path = FileUtil.GetProjectRelativePath(path);
+            path = AssetDatabase.GenerateUniqueAssetPath(path);
+            Debug.Log($"INFO: Saving material at path: {path}");
+            AssetDatabase.CreateAsset(material, path);
+            AssetDatabase.SaveAssets();
+        }
+
+        public static void SaveMesh(Mesh mesh, string saveToDirectory) {
+            string path = Path.Combine(saveToDirectory, mesh.name + ".asset");
+            path = FileUtil.GetProjectRelativePath(path);
+            Debug.Log($"INFO: Saving mesh at path: {path}");
+            path = AssetDatabase.GenerateUniqueAssetPath(path);
+            AssetDatabase.CreateAsset(mesh, path);
+            AssetDatabase.SaveAssets();
 
         }
 
