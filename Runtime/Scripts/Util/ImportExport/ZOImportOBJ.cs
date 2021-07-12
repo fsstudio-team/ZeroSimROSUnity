@@ -10,9 +10,9 @@ using System.Linq;
 namespace ZO.ImportExport {
     public class ZOImportOBJ {
 
-        public static bool SplitByMaterial {
-            get; set;
-        } = true;
+        // public static bool SplitByMaterial {
+        //     get; set;
+        // } = true;
 
         struct OBJFace {
             public string materialName;
@@ -107,13 +107,13 @@ namespace ZO.ImportExport {
             return materials.ToArray();
         }
 
-        public static GameObject Import(string objFilePath) {
+        public static GameObject Import(string objFilePath, bool splitByMaterial ) {
             using (StreamReader streamReader = new StreamReader(objFilePath)) {
-                return Import(streamReader, Path.GetFileNameWithoutExtension(objFilePath), Path.GetDirectoryName(objFilePath));
+                return Import(streamReader, Path.GetFileNameWithoutExtension(objFilePath), Path.GetDirectoryName(objFilePath), splitByMaterial);
             }
         }
 
-        public static GameObject Import(StreamReader streamReader, string meshName, string workingDirectory) {
+        public static GameObject Import(StreamReader streamReader, string meshName, string workingDirectory, bool splitByMaterial) {
 
 
             bool hasNormals = false;
@@ -145,7 +145,7 @@ namespace ZO.ImportExport {
                         string mtlFilePath = Path.Combine(workingDirectory, lineComponents[1]);
                         materials = ImportMTLFile(mtlFilePath);
 
-                    } else if ((lineComponents[0] == "g" || lineComponents[0] == "o") && SplitByMaterial == false) {
+                    } else if ((lineComponents[0] == "g" || lineComponents[0] == "o") && splitByMaterial == false) {
                         cmesh = data;
                         if (!objectNames.Contains(cmesh)) {
                             objectNames.Add(cmesh);
@@ -156,7 +156,7 @@ namespace ZO.ImportExport {
                             materialNames.Add(cmaterial);
                         }
 
-                        if (SplitByMaterial) {
+                        if (splitByMaterial) {
                             if (!objectNames.Contains(cmaterial)) {
                                 objectNames.Add(cmaterial);
                             }
@@ -224,13 +224,13 @@ namespace ZO.ImportExport {
                             OBJFace f1 = new OBJFace();
                             f1.materialName = cmaterial;
                             f1.indexes = new int[] { indexes[0], indexes[1], indexes[2] };
-                            f1.meshName = (SplitByMaterial) ? cmaterial : cmesh;
+                            f1.meshName = (splitByMaterial) ? cmaterial : cmesh;
                             faceList.Add(f1);
                             if (indexes.Length > 3) {
 
                                 OBJFace f2 = new OBJFace();
                                 f2.materialName = cmaterial;
-                                f2.meshName = (SplitByMaterial) ? cmaterial : cmesh;;
+                                f2.meshName = (splitByMaterial) ? cmaterial : cmesh;;
                                 f2.indexes = new int[] { indexes[2], indexes[3], indexes[0] };
                                 faceList.Add(f2);
                             }

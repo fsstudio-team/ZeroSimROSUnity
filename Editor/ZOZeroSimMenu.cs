@@ -67,7 +67,7 @@ namespace ZO.Editor {
                 return;
             }
 
-            GameObject go = ZOImportOBJ.Import(filePath);
+            GameObject go = ZOImportOBJ.Import(filePath, true);
             GameObject prefabGo = MakeGameObjectPrefab(go, saveToDirectory);
             Object.DestroyImmediate(go);
             PrefabUtility.InstantiatePrefab(prefabGo);
@@ -86,7 +86,10 @@ namespace ZO.Editor {
                 if (!Directory.Exists(materialSaveToDirectory)) {
                     Directory.CreateDirectory(materialSaveToDirectory);
                 }
-                SaveMaterial(meshRenderer.sharedMaterial, materialSaveToDirectory);
+                if (meshRenderer.sharedMaterial != null) {
+                    SaveMaterial(meshRenderer.sharedMaterial, materialSaveToDirectory);
+                }
+
             }
 
 
@@ -108,12 +111,20 @@ namespace ZO.Editor {
 
 
         public static void SaveMaterial(Material material, string saveToDirectory) {
+            // if (material.name == "Default-Material") {
+            //     return;
+            // }
             string path = Path.Combine(saveToDirectory, material.name + ".mat");
             path = FileUtil.GetProjectRelativePath(path);
             path = AssetDatabase.GenerateUniqueAssetPath(path);
             Debug.Log($"INFO: Saving material at path: {path}");
-            AssetDatabase.CreateAsset(material, path);
-            AssetDatabase.SaveAssets();
+            if (AssetDatabase.Contains(material) == false) {
+                AssetDatabase.CreateAsset(material, path);
+                AssetDatabase.SaveAssets();
+            } else {
+                Debug.Log($"INFO: Material already exists: {material.name}");
+            }
+
         }
 
         public static void SaveMesh(Mesh mesh, string saveToDirectory) {
@@ -121,8 +132,12 @@ namespace ZO.Editor {
             path = FileUtil.GetProjectRelativePath(path);
             Debug.Log($"INFO: Saving mesh at path: {path}");
             path = AssetDatabase.GenerateUniqueAssetPath(path);
-            AssetDatabase.CreateAsset(mesh, path);
-            AssetDatabase.SaveAssets();
+            if (AssetDatabase.Contains(mesh) == false) {
+                AssetDatabase.CreateAsset(mesh, path);
+                AssetDatabase.SaveAssets();
+            } else {
+                Debug.Log($"INFO: Mesh already exists: {mesh.name}");
+            }
 
         }
 

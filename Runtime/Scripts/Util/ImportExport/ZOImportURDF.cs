@@ -37,7 +37,6 @@ namespace ZO.ImportExport {
             XmlNode[] xmlLinks = robot.GetChildrenByName("link");
             Dictionary<string, Tuple<XmlNode, GameObject>> goLinks = new Dictionary<string, Tuple<XmlNode, GameObject>>();
 
-            // find root link. which is a link without an explicit parent
 
             // create links
             foreach (XmlNode xmlLink in xmlLinks) {
@@ -92,7 +91,7 @@ namespace ZO.ImportExport {
                         if (xmlMesh != null) {
                             string meshFileName = xmlMesh.Attributes["filename"].Value;
                             string meshFilePath = Path.Combine(workingDirectory, meshFileName);
-                            visualGeo = ZOImportOBJ.Import(meshFilePath);
+                            visualGeo = ZOImportOBJ.Import(meshFilePath, splitByMaterial: true);
                             if (xmlMesh.Attributes["scale"] != null) {
                                 Vector3 scale = xmlMesh.Attributes["scale"].Value.FromURDFStringToVector3().Ros2UnityScale();
                                 visualGeo.transform.localScale = new Vector3(visualGeo.transform.localScale.x * scale.x, visualGeo.transform.localScale.y * scale.y, visualGeo.transform.localScale.z * scale.z);
@@ -123,10 +122,97 @@ namespace ZO.ImportExport {
 
                 }
 
-                // get the origin
-                // XmlNode origin = 
+                // process the collisions
+                XmlNode[] xmlCollisions = xmlLink.GetChildrenByName("collision");
+
+                foreach (XmlNode xmlCollision in xmlCollisions) {
+
+
+                    XmlNode[] xmlGeometries = xmlCollision.GetChildrenByName("geometry");
+
+                    foreach (XmlNode xmlGeom in xmlGeometries) {
+
+                        GameObject collisionGeo = null;
+
+                        XmlNode xmlBox = xmlGeom.GetChildByName("box");
+                        if (xmlBox != null) {
+                            collisionGeo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            Vector3 size = xmlBox.Attributes["size"].Value.FromURDFStringToVector3();
+
+                            collisionGeo.transform.localScale = size.Ros2UnityScale();
+                        }
+
+                        XmlNode xmlCylinder = xmlGeom.GetChildByName("cylinder");
+                        if (xmlCylinder != null) {
+                            collisionGeo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            float radius = float.Parse(xmlCylinder.Attributes["radius"].Value);
+                            float length = float.Parse(xmlCylinder.Attributes["length"].Value);
+                            collisionGeo.transform.localScale = new Vector3(radius * 2.0f, length * 0.5f, radius * 2.0f);
+                        }
+
+                        XmlNode xmlSphere = xmlGeom.GetChildByName("sphere");
+                        if (xmlSphere != null) {
+                            collisionGeo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            float radius = float.Parse(xmlSphere.Attributes["radius"].Value);
+                            collisionGeo.transform.localScale = new Vector3(radius * 2.0f, radius * 2.0f, radius * 2.0f);
+                        }
+
+                        XmlNode xmlMesh = xmlGeom.GetChildByName("mesh");
+                        if (xmlMesh != null) {
+                            string meshFileName = xmlMesh.Attributes["filename"].Value;
+                            string meshFilePath = Path.Combine(workingDirectory, meshFileName);
+                            collisionGeo = ZOImportOBJ.Import(meshFilePath, splitByMaterial: false);
+
+                            MeshFilter[] meshFilters = collisionGeo.GetComponentsInChildren<MeshFilter>();
+                            foreach (MeshFilter meshFilter in meshFilters) {
+                                MeshCollider meshCollider = collisionGeo.AddComponent<MeshCollider>();
+
+                                // add mesh collider
+                                meshCollider.sharedMesh = meshFilter.sharedMesh;
+                                meshCollider.convex = true;
+
+                                // remove mesh renderer and mesh filter
+                                GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshRenderer>());
+                                GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshFilter>());
+
+                            }
+
+
+                            if (xmlMesh.Attributes["scale"] != null) {
+                                Vector3 scale = xmlMesh.Attributes["scale"].Value.FromURDFStringToVector3().Ros2UnityScale();
+                                collisionGeo.transform.localScale = new Vector3(collisionGeo.transform.localScale.x * scale.x, collisionGeo.transform.localScale.y * scale.y, collisionGeo.transform.localScale.z * scale.z);
+                            }
+
+                            collisionGeo.transform.localRotation = Quaternion.Euler(270, 90, 0);
+
+
+
+
+                        }
+                        if (collisionGeo != null) {
+                            // set parent
+                            collisionGeo.transform.SetParent(goCollisionsEmpty.transform);
+                            if (xmlCollision.Attributes["name"] != null) {
+                                collisionGeo.name = xmlCollision.Attributes["name"].Value;
+                            }
+
+                            // set transform
+                            XmlNode xmlOrigin = xmlCollision.GetChildByName("origin");
+                            if (xmlOrigin != null) {
+                                Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
+                                collisionGeo.transform.localPosition += transform.Item1;
+                                collisionGeo.transform.localRotation *= transform.Item2;
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
             }
+
 
             // create hierarchy from joints
             XmlNode[] xmlJoints = robot.GetChildrenByName("joint");
