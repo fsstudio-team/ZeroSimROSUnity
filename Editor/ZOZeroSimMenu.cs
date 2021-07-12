@@ -82,12 +82,21 @@ namespace ZO.Editor {
             MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
             foreach (MeshRenderer meshRenderer in meshRenderers) {
-                SaveMaterial(meshRenderer.sharedMaterial, saveToDirectory);
+                string materialSaveToDirectory = Path.Combine(saveToDirectory, "materials");
+                if (!Directory.Exists(materialSaveToDirectory)) {
+                    Directory.CreateDirectory(materialSaveToDirectory);
+                }
+                SaveMaterial(meshRenderer.sharedMaterial, materialSaveToDirectory);
             }
 
 
             foreach (MeshFilter meshFilter in meshFilters) {
-                SaveMesh(meshFilter.sharedMesh, saveToDirectory);
+                string meshSaveToDirectory = Path.Combine(saveToDirectory, "meshes");
+                if (!Directory.Exists(meshSaveToDirectory)) {
+                    Directory.CreateDirectory(meshSaveToDirectory);
+                }
+
+                SaveMesh(meshFilter.sharedMesh, meshSaveToDirectory);
             }
 
             string path = Path.Combine(saveToDirectory, gameObject.name + ".prefab");
