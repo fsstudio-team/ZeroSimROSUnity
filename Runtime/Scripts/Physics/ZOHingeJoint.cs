@@ -119,19 +119,22 @@ namespace ZO.Physics {
                 }
 
                 // update the name
-                _name = Type;
+                if (string.IsNullOrEmpty(Name)) {
+                    Name = Type;
 
-                ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
-                if (occurrence) {
-                    _name = _name + "_from_" + occurrence.Name;
-                }
-
-                if (UnityHingeJoint.connectedBody) {
-                    ZOSimOccurrence connected_occurrence = UnityHingeJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
-
-                    if (connected_occurrence) {
-                        _name = _name + "_to_" + connected_occurrence.Name;
+                    ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                    if (occurrence) {
+                        Name = Name + "_from_" + occurrence.Name;
                     }
+
+                    if (UnityHingeJoint.connectedBody) {
+                        ZOSimOccurrence connected_occurrence = UnityHingeJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
+
+                        if (connected_occurrence) {
+                            Name = Name + "_to_" + connected_occurrence.Name;
+                        }
+                    }
+
                 }
 
             }
@@ -288,19 +291,19 @@ namespace ZO.Physics {
                 _hingeJoint = gameObject.AddComponent<UnityEngine.HingeJoint>();
             }
 
-            if (_name == null) {
-                _name = Type;
+            if (string.IsNullOrEmpty(Name)) {
+                Name = Type;
 
                 ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
                 if (occurrence) {
-                    _name = _name + "_from_" + occurrence.Name;
+                    Name = Name + "_from_" + occurrence.Name;
                 }
 
                 if (UnityHingeJoint.connectedBody) {
                     ZOSimOccurrence connected_occurrence = UnityHingeJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
 
                     if (connected_occurrence) {
-                        _name = _name + "_to_" + connected_occurrence.Name;
+                        Name = Name + "_to_" + connected_occurrence.Name;
                     }
                 }
             }
@@ -314,7 +317,6 @@ namespace ZO.Physics {
         // }
 
 
-        #region ZOSerializationInterface
         public string Type {
             get { return "joint.hinge"; }
         }
@@ -324,24 +326,13 @@ namespace ZO.Physics {
             get {
                 return _name;
             }
-            private set {
+            set {
                 _name = value;
             }
         }
 
-        private JObject _json;
-        public JObject JSON {
-            get {
-                // if (_json == null) {
-                //     _json = BuildJSON();
-                // }
-                return _json;
-
-            }
-        }
 
 
-        #endregion
 
     }
 

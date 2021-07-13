@@ -234,7 +234,7 @@ namespace ZO.ImportExport {
                 GameObject linkChild = goLink.Value.Item2;
                 XmlNode xmlChildLinkNode = goLink.Value.Item1;
                 XmlNode xmlParentLinkNode = null;
-                XmlNode workingJoint = null;
+                XmlNode xmlWorkingJoint = null;
                 foreach (XmlNode joint in xmlJoints) {
                     XmlNode xmlChildLinkName = joint.GetChildByName("child");
                     string childName = xmlChildLinkName.Attributes["link"].Value;
@@ -245,7 +245,7 @@ namespace ZO.ImportExport {
                         linkParent = goLinks[parentName].Item2;
                         xmlParentLinkNode = goLinks[parentName].Item1;
 
-                        workingJoint = joint;
+                        xmlWorkingJoint = joint;
 
                         break;
                     }
@@ -256,9 +256,9 @@ namespace ZO.ImportExport {
                 ZOSimOccurrence occurrence = linkChild.AddComponent<ZOSimOccurrence>();
 
                 // set transform
-                if (workingJoint != null) {
+                if (xmlWorkingJoint != null) {
                     // set the transform
-                    XmlNode xmlOrigin = workingJoint.GetChildByName("origin");
+                    XmlNode xmlOrigin = xmlWorkingJoint.GetChildByName("origin");
                     Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
                     linkChild.transform.localPosition = transform.Item1;
                     linkChild.transform.localRotation = transform.Item2;
@@ -289,15 +289,20 @@ namespace ZO.ImportExport {
                     }
 
                     // add joints
-                    string jointType = workingJoint.Attributes["type"].Value;
+                    string jointType = xmlWorkingJoint.Attributes["type"].Value;
                     if (jointType == "revolute") {
 
                         ZOHingeJoint hingeJoint = linkParent.AddComponent<ZOHingeJoint>();
                         hingeJoint.ConnectedBody = childRigidBody;
                         hingeJoint.Anchor = transform.Item1;
 
-                        XmlNode xmlAxis = workingJoint.GetChildByName("axis");
+                        XmlNode xmlAxis = xmlWorkingJoint.GetChildByName("axis");
                         hingeJoint.Axis = xmlAxis.Attributes["xyz"].Value.FromURDFStringToVector3().Ros2Unity();
+
+                        if (xmlWorkingJoint.Attributes["name"] != null) {
+                            hingeJoint.Name = xmlWorkingJoint.Attributes["name"].Value;
+                        }
+
                     }
 
                     if (jointType == "prismatic") {
@@ -313,9 +318,6 @@ namespace ZO.ImportExport {
         }
 
         protected static Tuple<Vector3, Quaternion> OriginXMLToUnity(XmlNode xmlOrigin) {
-            if (xmlOrigin == null) {
-                Debug.Log("BLAH");
-            }
             Vector3 translation = Vector3.zero;
             string xyz = xmlOrigin.Attributes["xyz"].Value;
             if (xyz != null && xyz != "") {
