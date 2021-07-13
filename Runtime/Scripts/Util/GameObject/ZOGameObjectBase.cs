@@ -37,7 +37,7 @@ namespace ZO.Util {
                 if (UpdateRateHz == 0.0f) {
                     return 0.0f; // avoid divide by zero
                 }
-                
+
                 return 1.0f / UpdateRateHz;
             }
         }
@@ -66,6 +66,23 @@ namespace ZO.Util {
         }
 
         private static float _nextUpdateTimeOffset = 0.0f;
+
+        #region Threading
+        // See: https://stackoverflow.com/questions/41330771/use-unity-api-from-another-thread-or-call-a-function-in-the-main-thread
+
+        private List<System.Action> _actionQueuesUpdateFunc = new List<System.Action>();
+        private List<System.Action> _actionCopiedQueueUpdateFunc = new List<System.Action>();
+
+
+        public System.Action ExecuteInUpdate {
+            set {
+                _actionQueuesUpdateFunc.Add(value);
+            }
+        }
+
+
+        #endregion // Threading
+
 
 #if UNITY_EDITOR
 
@@ -105,7 +122,7 @@ namespace ZO.Util {
         /// <summary>
         /// OnValidate function for Zero Sim Obects
         /// </summary>
-        protected virtual void ZOOnValidate() {}
+        protected virtual void ZOOnValidate() { }
 
 
         /// <summary>
@@ -195,6 +212,18 @@ namespace ZO.Util {
         /// IMPORTANT: do not redefine this method in child classes, use ZOUpdate() instead.
         /// </summary>
         void Update() {
+
+            // run queued actions
+            _actionCopiedQueueUpdateFunc.Clear();
+            lock (_actionQueuesUpdateFunc) {
+                _actionCopiedQueueUpdateFunc.AddRange(_actionQueuesUpdateFunc);
+                _actionQueuesUpdateFunc.Clear();
+            }
+
+            foreach (System.Action action in _actionCopiedQueueUpdateFunc) {
+                action.Invoke();
+            }
+
             ZOUpdate();
 
             if (Time.time >= _nextUpdateTime) {

@@ -13,17 +13,6 @@ namespace ZO.Editor {
         public override void OnInspectorGUI() {
             DrawPropertiesExcluding(serializedObject, _dontIncludeMe);
             serializedObject.ApplyModifiedProperties();
-
-            // DrawDefaultInspector();
-
-            // ZO.Physics.ZOHingeJoint hingeJoint = (ZO.Physics.ZOHingeJoint)target;
-
-            // UnityEngine.HingeJoint unityHinge = hingeJoint.UnityHinge;
-
-            // serializedObject.Update();
-            // SerializedProperty serializedProperty = serializedObject.FindProperty("_hinge");
-            // EditorGUILayout.PropertyField(serializedProperty);
-            // serializedObject.ApplyModifiedProperties();
         }
     }
 

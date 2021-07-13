@@ -4,11 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using ZO.ROS.Publisher;
-using ZO.ROS.Controllers;
-using ZO.ROS.Unity.Service;
-using ZO.Math;
+using ZO.ROS;
+using ZO.ROS.Unity;
 using ZO.ImportExport;
 namespace ZO.Document {
 
@@ -26,25 +23,21 @@ namespace ZO.Document {
     ///             ZOSimOccurrence:
     /// ```
     /// 
-    /// It is primarily responsible for serialization of the Unity structure to ZoSim JSON document and 
-    /// deserialization from ZoSim JSON document to a Unity structure.
     /// </summary>
     [ExecuteAlways]
-    public class ZOSimDocumentRoot : MonoBehaviour {
+    public class ZOSimDocumentRoot : ZOROSUnityGameObjectBase {
 
+
+        public bool _publishRobotDescription = false;
 
         /// <summary>
-        /// The ZOSim JSON document path.
+        /// Publish URDF robot description to ROS parameter server /robot_description
         /// </summary>
         /// <value></value>
-        private string _zoSimDocumentFilePath;
-        public string ZOSimDocumentFilePath {
-            get { return _zoSimDocumentFilePath; }
-            set { _zoSimDocumentFilePath = value; }
+        public bool PublishRobotDescription {
+            get => _publishRobotDescription;
+            set => _publishRobotDescription = value;
         }
-        
-
-
 
 
         /// <summary>
@@ -55,8 +48,16 @@ namespace ZO.Document {
         /// <value></value>
         public string Name {
 
-            get => gameObject.name;
-            set => gameObject.name = value;
+            get {
+                if (string.IsNullOrEmpty(_name)) {
+                    _name = gameObject.name;
+                }
+                return _name;
+            }
+            set {
+                gameObject.name = value;
+                _name = value;
+            }
         }
 
 
@@ -69,7 +70,7 @@ namespace ZO.Document {
         /// <returns>ZOSimOccurrence</returns>
         public ZOSimOccurrence GetOccurrence(string occurrenceName) {
             ZOSimOccurrence[] children = this.transform.GetComponentsInChildren<ZOSimOccurrence>(true);
-            foreach(ZOSimOccurrence child in children) {
+            foreach (ZOSimOccurrence child in children) {
                 if (child.Name == occurrenceName) {
                     return child;
                 }
@@ -77,6 +78,26 @@ namespace ZO.Document {
             return null;
         }
 
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
+            Debug.Log("INFO: ZOSimDocumentRoot::OnROSBridgeConnected");
+
+            if (PublishRobotDescription == true) {
+                ExecuteInUpdate = () => {
+                    Debug.Log("INFO: ZOSimDocumentRoot publishing robot description.");
+                    ZOExportURDF exportURDF = new ZOExportURDF();
+                    XDocument urdfXML = exportURDF.BuildURDF(this);
+                    string urdfString = "<?xml version='1.0' encoding='utf-8'?>\n" + urdfXML.ToString();
+                    ZOROSAPI.SetParam("robot_description", urdfString, Name);
+
+                };
+
+            }
+
+        }
+
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
+            Debug.Log("INFO: ZOSimDocumentRoot::OnROSBridgeDisconnected");
+        }
 
 
 
