@@ -22,13 +22,20 @@ namespace ZO.Physics {
     /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
-    public class ZOHingeJoint : MonoBehaviour, ZOJointInterface {
+    public class ZOHingeJoint : ZOGameObjectBase, ZOJointInterface {
 
         public Rigidbody _connectedBody;
         public Vector3 _anchor = Vector3.zero;
         public Vector3 _axis = Vector3.forward;
+
+        [Header("Joint Motor Control")]
         public bool _useMotor = true;
         public float _motorForce = 1.0f;
+
+        [Header("Joint Torsional Spring Control")]
+        public bool _useSpring = false;
+        public float _springConstant = 100.0f;
+        public float _springDampening = 20.0f;
 
         [SerializeField] [ZOReadOnlyAttribute] public UnityEngine.HingeJoint _hingeJoint;
 
@@ -51,6 +58,7 @@ namespace ZO.Physics {
                 return UnityHingeJoint.useMotor;
             }
             set {
+                _useMotor = value;
                 UnityHingeJoint.useMotor = value;
             }
         }
@@ -67,6 +75,53 @@ namespace ZO.Physics {
                 JointMotor jointMotor = UnityHingeJoint.motor;
                 jointMotor.force = value;
                 UnityHingeJoint.motor = jointMotor;
+            }
+        }
+
+
+        /// <summary>
+        /// Use spring to drive joint.
+        /// </summary>
+        /// <value></value>
+        public bool UseSpring {
+            get {
+                return UnityHingeJoint.useSpring;
+            }
+            set {
+                _useSpring = value;
+                UnityHingeJoint.useSpring = value;
+            }
+        }
+
+        /// <summary>
+        /// Spring constant force.
+        /// </summary>
+        /// <value></value>
+        public float SpringConstant {
+            get {
+                return UnityHingeJoint.spring.spring;
+            }
+            set {
+                JointSpring spring = UnityHingeJoint.spring;
+                _springConstant = value;
+                spring.spring = value;
+                UnityHingeJoint.spring = spring;
+            }
+        }
+
+        /// <summary>
+        /// The damper force used to dampen the spring.
+        /// </summary>
+        /// <value></value>
+        public float SpringDampening {
+            get {
+                return UnityHingeJoint.spring.damper;
+            }
+            set {
+                JointSpring spring = UnityHingeJoint.spring;
+                _springDampening = value;
+                spring.damper = value;
+                UnityHingeJoint.spring = spring;
             }
         }
 
@@ -141,9 +196,6 @@ namespace ZO.Physics {
         }
 
 
-        public bool _debug = false;
-
-
         #region ZOJointInterface
 
         /// <summary>
@@ -172,7 +224,9 @@ namespace ZO.Physics {
         /// </summary>
         /// <value></value>
         public float Velocity {
-            get { return UnityHingeJoint.velocity * Mathf.Deg2Rad; }
+            get {
+                return UnityHingeJoint.velocity * Mathf.Deg2Rad;
+            }
 
             set {
                 JointMotor motor = UnityHingeJoint.motor;
@@ -187,7 +241,7 @@ namespace ZO.Physics {
 
 
         /// <summary>
-        /// The effor that is applied to the hinge Nm
+        /// The effort that is applied to the hinge (Nm)
         /// </summary>
         /// <value></value>
         public float Effort {
@@ -226,7 +280,8 @@ namespace ZO.Physics {
         private float _currentAngleRadians = 0;
 
         #region MonoBehaviour
-        private void Start() {
+        protected override void ZOStart() {
+            base.ZOStart();
             // calculate starting "zero" joint angle in radians
             // NOTE: this has to be done because there is a bug in the Unity HingeJoint angle :-/
             if (ConnectedBody) {
@@ -235,7 +290,8 @@ namespace ZO.Physics {
             }
         }
 
-        private void FixedUpdate() {
+        protected override void ZOFixedUpdate() {
+            base.ZOFixedUpdate();
             // calculate joint angle relative to the starting joint
             // NOTE: this has to be done because there is a bug in the Unity HingeJoint angle :-/
             Quaternion r = Quaternion.Inverse(this.transform.rotation) * ConnectedBody.transform.rotation;
@@ -244,7 +300,8 @@ namespace ZO.Physics {
 
         }
 
-        private void OnGUI() {
+        protected override void ZOOnGUI() {
+            base.ZOOnGUI();
             if (_debug) {
                 // Vector3 worldAxis = this.transform.rotation * UnityHingeJoint.axis;
                 // ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
@@ -261,12 +318,16 @@ namespace ZO.Physics {
             }
         }
 
-        private void OnValidate() {
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
             Axis = _axis;
             ConnectedBody = _connectedBody;
             Anchor = _anchor;
             UseMotor = _useMotor;
             MotorForce = _motorForce;
+            UseSpring = _useSpring;
+            SpringConstant = _springConstant;
+            SpringDampening = _springDampening;
         }
 
         #endregion
@@ -278,7 +339,8 @@ namespace ZO.Physics {
         /// <summary>
         /// Reset is a MonoBehavior method that gets called on creation of this component.
         /// </summary>
-        private void Reset() {
+        protected override void ZOReset() {
+            base.ZOReset();
             CreateRequirements();
         }
 
@@ -330,9 +392,6 @@ namespace ZO.Physics {
                 _name = value;
             }
         }
-
-
-
 
     }
 

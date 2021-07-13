@@ -114,9 +114,6 @@ namespace ZO.Physics {
         private JObject _json;
         public JObject JSON {
             get {
-                // if (_json == null) {
-                //     _json = BuildJSON(_documentRoot);
-                // }
                 return _json;
             }
         }
