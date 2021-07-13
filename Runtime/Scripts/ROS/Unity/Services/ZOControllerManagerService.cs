@@ -60,7 +60,7 @@ namespace ZO.ROS.Unity.Service {
         protected override void ZOReset() {
             base.ZOReset();
             _ROSTopic = "controller_manager";
-            UpdateRateHz = 5.0f;
+            UpdateRateHz = 25.0f;
         }
 
 

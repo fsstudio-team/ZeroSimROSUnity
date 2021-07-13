@@ -138,7 +138,7 @@ namespace ZO.ROS.Controllers {
         protected override void ZOReset() {
             base.ZOReset();
             UpdateRateHz = 25.0f;
-            ROSTopic = "/arm_controller";
+            ROSTopic = "/arm_controller/follow_joint_trajectory";
         }
 
 

@@ -136,10 +136,11 @@ namespace ZO.ImportExport {
 
                         XmlNode xmlBox = xmlGeom.GetChildByName("box");
                         if (xmlBox != null) {
-                            collisionGeo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            collisionGeo = new GameObject("box_collider"); 
+                            BoxCollider boxCollider = collisionGeo.AddComponent<BoxCollider>();
                             Vector3 size = xmlBox.Attributes["size"].Value.FromURDFStringToVector3();
 
-                            collisionGeo.transform.localScale = size.Ros2UnityScale();
+                            boxCollider.size = size.Ros2UnityScale();
                         }
 
                         XmlNode xmlCylinder = xmlGeom.GetChildByName("cylinder");
@@ -148,13 +149,23 @@ namespace ZO.ImportExport {
                             float radius = float.Parse(xmlCylinder.Attributes["radius"].Value);
                             float length = float.Parse(xmlCylinder.Attributes["length"].Value);
                             collisionGeo.transform.localScale = new Vector3(radius * 2.0f, length * 0.5f, radius * 2.0f);
+                            MeshCollider meshCollider = collisionGeo.AddComponent<MeshCollider>();
+                            meshCollider.sharedMesh = collisionGeo.GetComponent<MeshFilter>().sharedMesh;
+                            meshCollider.convex = true;
+
+                            GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshRenderer>());
+                            GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshFilter>());
+                            
                         }
 
                         XmlNode xmlSphere = xmlGeom.GetChildByName("sphere");
                         if (xmlSphere != null) {
-                            collisionGeo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            collisionGeo = new GameObject("sphere_collider");// GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
                             float radius = float.Parse(xmlSphere.Attributes["radius"].Value);
-                            collisionGeo.transform.localScale = new Vector3(radius * 2.0f, radius * 2.0f, radius * 2.0f);
+                            SphereCollider sphereCollider = collisionGeo.AddComponent<SphereCollider>();
+                            sphereCollider.radius = radius;
+                            // collisionGeo.transform.localScale = new Vector3(radius * 2.0f, radius * 2.0f, radius * 2.0f);
                         }
 
                         XmlNode xmlMesh = xmlGeom.GetChildByName("mesh");
@@ -165,15 +176,15 @@ namespace ZO.ImportExport {
 
                             MeshFilter[] meshFilters = collisionGeo.GetComponentsInChildren<MeshFilter>();
                             foreach (MeshFilter meshFilter in meshFilters) {
-                                MeshCollider meshCollider = collisionGeo.AddComponent<MeshCollider>();
+                                MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();
 
                                 // add mesh collider
                                 meshCollider.sharedMesh = meshFilter.sharedMesh;
                                 meshCollider.convex = true;
 
                                 // remove mesh renderer and mesh filter
-                                GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshRenderer>());
-                                GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshFilter>());
+                                GameObject.DestroyImmediate(meshFilter.gameObject.GetComponent<MeshRenderer>());
+                                // GameObject.DestroyImmediate(meshFilter.gameObject.GetComponent<MeshFilter>());
 
                             }
 
