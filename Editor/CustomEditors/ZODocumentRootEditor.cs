@@ -17,10 +17,13 @@ namespace ZO.Editor {
     public class ZOSimDocumentRootEditor : UnityEditor.Editor {
 
         private string _URDFExportDirectory = "";
+        private static readonly string[] _dontIncludeMe = new string[] { "_updateRateHz", "_ROSTopic", "_debug" };
 
         public override void OnInspectorGUI() {
 
-            DrawDefaultInspector();
+            DrawPropertiesExcluding(serializedObject, _dontIncludeMe);
+            serializedObject.ApplyModifiedProperties();
+
 
             ZOSimDocumentRoot documentRoot = (ZOSimDocumentRoot)target;
 
@@ -42,7 +45,7 @@ namespace ZO.Editor {
             }
             */
             if (GUILayout.Button("Export URDF...")) {
-                
+
                 _URDFExportDirectory = EditorUtility.OpenFolderPanel("Select URDF export directory", _URDFExportDirectory, "");
 
                 if (_URDFExportDirectory.Length == 0) {

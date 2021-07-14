@@ -312,454 +312,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1001 &583497697
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 676297860039415631, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 676297860039415631, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 676297860039415631, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 676297860039415631, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 760603644798476819, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 760603644798476819, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 760603644798476819, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 760603644798476819, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 931814699277953971, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 931814699277953971, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 931814699277953971, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 931814699277953971, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 1032015369410523242, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1032015369410523242, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1032015369410523242, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 1032015369410523242, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 1032015369410523242, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0.000000029802322
-      objectReference: {fileID: 0}
-    - target: {fileID: 1182000561168588408, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1182000561168588408, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.776
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2601618387698676100, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2601618387698676100, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2601618387698676100, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 2601618387698676100, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311906666308590211, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311906666308590211, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311906666308590211, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311906666308590211, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: -3.5527137e-15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3523248114665548031, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: -0.000000029802326
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567395317506921705, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567395317506921705, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567395317506921705, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567395317506921705, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567395317506921705, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.00000005960466
-      objectReference: {fileID: 0}
-    - target: {fileID: 4555311518855041502, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _publishRobotDescription
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5830821453960704648, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173189509550592291, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173189509550592291, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173189509550592291, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173189509550592291, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 6333007760445125465, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6917490108409379090, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6917490108409379090, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6917490108409379090, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.damper
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 6917490108409379090, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Spring.spring
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 7005136135752982604, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_Name
-      value: ur10_ROS_Rigged
-      objectReference: {fileID: 0}
-    - target: {fileID: 7101055011083880171, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7101055011083880171, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7101055011083880171, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 7101055011083880171, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 7429235361803461244, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964903929262277668, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useMotor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964903929262277668, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _useSpring
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964903929262277668, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springConstant
-      value: 350
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964903929262277668, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: _springDampening
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 8547224873603944641, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8573512998447167770, guid: deb490986494ea25daf0a8f02103001f,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: deb490986494ea25daf0a8f02103001f, type: 3}
---- !u!4 &583497698 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2186087121581147325, guid: deb490986494ea25daf0a8f02103001f,
-    type: 3}
-  m_PrefabInstance: {fileID: 583497697}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &583497699 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7005136135752982604, guid: deb490986494ea25daf0a8f02103001f,
-    type: 3}
-  m_PrefabInstance: {fileID: 583497697}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &583497700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583497699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2947e0954970ddd6a59186d7cdb9ed1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 25
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: controller_manager
-  _name: undefined_ur10_ROS_Rigged
---- !u!114 &583497701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583497699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d36c6557ae9159219ad0227b4d7962e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 25
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: /arm_controller/follow_joint_trajectory
-  _name: controller.arm_controller_ur10_ROS_Rigged
-  _allowedJointPositionError: 0.01
---- !u!114 &583497702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583497699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 129fe926cb5f9784893878adb84b7b04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 25
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: /joint_states
-  _name: ros.publisher.joint_states_ur10_ROS_Rigged
---- !u!114 &583497703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583497699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92d51467c4cc0f96098e2785b3b15847, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &663082054 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 20697ea7cbeed561983199f2eaa2bce2,
@@ -1063,7 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0e3af0b8141964b85373790012f3b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 583497698}
+  target: {fileID: 1761938124}
   _distance: 5
   _xSpeed: 120
   _ySpeed: 120
@@ -1071,3 +623,78 @@ MonoBehaviour:
   _yMaxLimit: 80
   _distanceMin: 0.5
   _distanceMax: 15
+--- !u!1001 &1761938122
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.773
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2272114143465497255, guid: c40afa6a87646339292b564daf277032,
+        type: 3}
+      propertyPath: m_Name
+      value: ur10
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c40afa6a87646339292b564daf277032, type: 3}
+--- !u!4 &1761938124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1659618612808004847, guid: c40afa6a87646339292b564daf277032,
+    type: 3}
+  m_PrefabInstance: {fileID: 1761938122}
+  m_PrefabAsset: {fileID: 0}
