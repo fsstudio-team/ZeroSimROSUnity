@@ -222,7 +222,7 @@ namespace ZO.ImportExport {
                 foreach (ZOJointInterface joint in zoJoints) {
                     if (joint.ConnectedOccurrence == child) {  // only if this joint is pointing at us
                         XElement jointX = new XElement("joint");
-                        jointX.SetAttributeValue("name", $"{joint.Type}_{parent.Name}_to_{child.Name}");
+                        jointX.SetAttributeValue("name", $"{joint.Name}");
                         // Transform jointTransform = this.transform;
                         Matrix4x4 jointMatrix = Matrix4x4.identity;
 
@@ -241,8 +241,12 @@ namespace ZO.ImportExport {
                             // create limits
                             // TODO:
                             XElement limitX = new XElement("limit");
-                            limitX.SetAttributeValue("effort", 10000f); // HACK
-                            limitX.SetAttributeValue("velocity", 3.14f); // HACK
+                            limitX.SetAttributeValue("effort", 330.0f); // HACK
+                            limitX.SetAttributeValue("velocity", 2.16f); // HACK
+                            limitX.SetAttributeValue("lower", -6.28318530718); // HACK
+                            limitX.SetAttributeValue("upper", 6.28318530718); // HACK
+                            limitX.SetAttributeValue("velocity", 2.16f); // HACK
+
                             jointX.Add(limitX);
 
                             // Add the anchor position
