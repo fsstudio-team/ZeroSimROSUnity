@@ -80,7 +80,11 @@ ZeroSim provides a multitude of tools for building robots and environments in Un
 
 [![Tutorial #3: Connect to ROS](./Documentation~/images/tutorial_3.png)](http://www.youtube.com/watch?v=LvtnMmcixrY&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
 
-[![Tutorial #4: Build a Robot From Scratch](./Documentation~/images/tutorial_4.png)](http://www.youtube.com/watch?v=xGjx8cUVctM&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")
+[![Tutorial #4: Build a Robot From Scratch](./Documentation~/images/tutorial_4.png)](http://www.youtube.com/watch?v=xGjx8cUVctM&list=PL-GMA_Bq2CR9JnLjbMSXAtcpZFqwlu6mz "Video Title")  
+
+[![Tutorial #5: Import URDF Robot Universal Robots UR10 Arm](./Documentation~/images/tutorial_5.png)](https://youtu.be/VJyvjJUfjv8)
+
+https://youtu.be/VJyvjJUfjv8
 
 ### Recommended System
 
