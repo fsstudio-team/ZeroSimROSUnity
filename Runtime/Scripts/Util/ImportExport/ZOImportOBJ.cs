@@ -62,6 +62,7 @@ namespace ZO.ImportExport {
                         if (textureType == ".png" || textureType == ".jpg") {
                             Texture2D texture = new Texture2D(1, 1);
                             texture.LoadImage(File.ReadAllBytes(texturePath));
+                            texture.name = Path.GetFileNameWithoutExtension(texturePath);
                             currentMaterial.SetTexture("_MainTex", texture);
                         }
 
@@ -255,6 +256,7 @@ namespace ZO.ImportExport {
                 childGameObject.transform.parent = parentGameObject.transform;
                 childGameObject.transform.localScale = new Vector3(-1, 1, 1);
                 Mesh m = new Mesh();
+                m.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;  // TODO: check vertex count to determine indexFormat
                 m.name = obj;
                 List<Vector3> processedVertices = new List<Vector3>();
                 List<Vector3> processedNormals = new List<Vector3>();
@@ -307,6 +309,11 @@ namespace ZO.ImportExport {
 
                 if (!hasNormals) {
                     m.RecalculateNormals();
+                }
+                if (hasNormals) {
+                    m.RecalculateNormals();
+                    m.RecalculateTangents();
+
                 }
                 m.RecalculateBounds();
 

@@ -46,7 +46,7 @@ namespace ZO.Document {
         /// something unique!
         /// </summary>
         /// <value></value>
-        public string Name {
+        public override string Name {
 
             get {
                 if (string.IsNullOrEmpty(_name)) {
@@ -59,6 +59,11 @@ namespace ZO.Document {
                 _name = value;
             }
         }
+
+        public override string Type {
+            get { return "documentroot"; }
+        }
+
 
 
 

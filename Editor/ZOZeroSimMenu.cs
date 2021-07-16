@@ -117,10 +117,28 @@ namespace ZO.Editor {
             string path = Path.Combine(saveToDirectory, material.name + ".mat");
             path = FileUtil.GetProjectRelativePath(path);
             path = AssetDatabase.GenerateUniqueAssetPath(path);
-            Debug.Log($"INFO: Saving material at path: {path}");
+
             if (AssetDatabase.Contains(material) == false) {
+
+                if (material.mainTexture != null) {
+                    string texturePath = Path.Combine(saveToDirectory, material.mainTexture.name + ".asset");
+                    texturePath = FileUtil.GetProjectRelativePath(texturePath);
+                    texturePath = AssetDatabase.GenerateUniqueAssetPath(texturePath);
+                    if (AssetDatabase.Contains(material.mainTexture) == false) {
+                        Debug.Log($"INFO: Saving material at path: {texturePath}");
+                        AssetDatabase.CreateAsset(material.mainTexture, texturePath);
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
+
+                    }
+
+                }
+
+                Debug.Log($"INFO: Saving material at path: {path}");
                 AssetDatabase.CreateAsset(material, path);
                 AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+
             } else {
                 Debug.Log($"INFO: Material already exists: {material.name}");
             }
@@ -135,6 +153,7 @@ namespace ZO.Editor {
             if (AssetDatabase.Contains(mesh) == false) {
                 AssetDatabase.CreateAsset(mesh, path);
                 AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
             } else {
                 Debug.Log($"INFO: Mesh already exists: {mesh.name}");
             }
