@@ -293,6 +293,15 @@ namespace ZO.ImportExport {
                     if (jointType == "revolute") {
 
                         ZOHingeJoint hingeJoint = linkParent.AddComponent<ZOHingeJoint>();
+
+                        // make sure link child has a rigid body, as they may not have "inertial" defined"
+                        if (childRigidBody == null) {
+                            childRigidBody = linkChild.GetComponent<Rigidbody>();
+                            if (childRigidBody == null) {
+                                childRigidBody = linkChild.AddComponent<Rigidbody>();
+                            }
+                            
+                        }
                         hingeJoint.ConnectedBody = childRigidBody;
                         hingeJoint.Anchor = transform.Item1;
 
