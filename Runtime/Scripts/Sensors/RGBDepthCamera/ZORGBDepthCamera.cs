@@ -15,6 +15,7 @@ namespace ZO.Sensors {
     /// <summary>
     /// A RGB image + depth camera sensor. 
     /// </summary>
+    [RequireComponent(typeof(Camera))]
     public class ZORGBDepthCamera : ZOGameObjectBase {
 
         public enum FrameOutputType {
@@ -34,7 +35,7 @@ namespace ZO.Sensors {
         }
 
         public int _width = 1280;
-        
+
         /// <summary>
         /// Camera frame width in pixels.  (readonly)
         /// </summary>
@@ -59,7 +60,7 @@ namespace ZO.Sensors {
         /// <value></value>
         float _fieldOfViewDegrees = 0;
         public float FieldOfViewDegrees {
-            get => _fieldOfViewDegrees;            
+            get => _fieldOfViewDegrees;
         }
 
         float _focalLengthMM = 0;
@@ -86,7 +87,7 @@ namespace ZO.Sensors {
 
         [Header("Depth")]
         public Material _rgbDepthCameraShader;
-        public float _depthScale = 100.0f;
+        public float _depthScale = 1.0f;
 
 
 
@@ -135,25 +136,25 @@ namespace ZO.Sensors {
 
         protected override void ZOOnValidate() {
             base.ZOOnValidate();
+
+
             // if camera is not assigned see if we have a camera component on this game object
-            if (_camera == null) {
-                _camera = this.GetComponent<Camera>();
+            if (_camera == null && TryGetComponent<Camera>(out _camera) == false) {
+                _camera = gameObject.AddComponent<Camera>();
             }
+
+            _camera.enabled = false;
 
             // if no post process material then assign default
             if (_rgbDepthCameraShader == null) {
-#if UNITY_EDITOR
                 _rgbDepthCameraShader = Resources.Load<Material>("ZORGBDMaterial");
-#else // UNITY_EDITOR
-                _rgbDepthCameraShader = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBDMaterial");
-#endif // UNITY_EDITOR                
             }
 
             if (UpdateRateHz == 0) {
                 UpdateRateHz = 10;
             }
 
-            if (Name == "") {
+            if (string.IsNullOrEmpty(Name) == true) {
                 Name = gameObject.name + "_" + Type;
             }
         }
@@ -165,7 +166,7 @@ namespace ZO.Sensors {
             if (UnityCamera.usePhysicalProperties) {
                 _focalLengthMM = UnityCamera.focalLength;
                 _sensorSizeMM = UnityCamera.sensorSize;
-            }            
+            }
         }
 
         // Start is called before the first frame update
@@ -173,7 +174,7 @@ namespace ZO.Sensors {
             if (_camera == null) {
                 _camera = this.GetComponent<Camera>();
             }
-            
+
 
             // setup the buffers
             _colorBuffer = new RenderTexture(_width, _height, 0, RenderTextureFormat.ARGB32);
@@ -230,7 +231,7 @@ namespace ZO.Sensors {
 
             GUI.Label(new Rect(320, 10, 100, 30), "Depth: " + _averageDepth.ToString());
         }
-        
+
 
 
         private float[] _depthBufferFloat;
@@ -247,7 +248,7 @@ namespace ZO.Sensors {
                 _asyncGPURequests.Enqueue(AsyncGPUReadbackPlugin.Request(_colorDepthRenderTexture));
             }
             UnityEngine.Profiling.Profiler.EndSample();
-        } 
+        }
 
         private void DoRenderTextureUpdate() {
             // ~~~ Handle Async GPU Readback ~~~ //

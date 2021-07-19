@@ -111,6 +111,10 @@ namespace ZO.ROS.Unity {
         /// On Unity Start will connect to ROS bridge connect and disconnect events.
         /// </summary>
         protected override void ZOStart() {
+            if (ZOROSUnityManager.Instance == null) {
+                return;
+            }
+
             // auto-connect to ROS Bridge connection and disconnect events
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
             ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
@@ -120,6 +124,9 @@ namespace ZO.ROS.Unity {
         /// On Unity Destroy will disconnect to ROS bridge connect and disconnect events.
         /// </summary>
         protected override void ZOOnDestroy() {
+            if (ZOROSUnityManager.Instance == null) {
+                return;
+            }
             ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
             ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
         }

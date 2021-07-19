@@ -3,7 +3,7 @@ using UnityEditor;
 using ZO.Document;
 namespace ZO.Editor {
 
-    [CustomEditor(typeof(ZOSimOccurrence))]
+    [CustomEditor(typeof(ZOSimOccurrence)), CanEditMultipleObjects]
     public class ZOSimOccurrenceEditor : UnityEditor.Editor {
 
         public override void OnInspectorGUI() {

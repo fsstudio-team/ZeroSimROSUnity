@@ -7,7 +7,7 @@ using ZO.ROS.Publisher;
 
 namespace ZO.Editor {
 
-    [CustomEditor(typeof(ZO.ROS.Publisher.ZOROSRGBDepthPublisher))]
+    [CustomEditor(typeof(ZO.ROS.Publisher.ZOROSRGBDepthPublisher)), CanEditMultipleObjects]
     public class ZOROSRGBDepthPublisherEditor : UnityEditor.Editor {
 
         /// <summary>

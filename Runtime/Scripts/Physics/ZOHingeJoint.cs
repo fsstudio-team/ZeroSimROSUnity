@@ -21,7 +21,7 @@ namespace ZO.Physics {
     /// which attempts to reach for a target angle by spinning around the joints axis. And a limit which 
     /// constrains the joint angle.
     /// </summary>
-    [ExecuteAlways]
+    [ExecuteAlways] [RequireComponent(typeof(HingeJoint))]
     public class ZOHingeJoint : ZOGameObjectBase, ZOJointInterface {
 
         public Rigidbody _connectedBody;

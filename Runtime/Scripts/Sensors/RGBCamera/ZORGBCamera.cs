@@ -153,9 +153,9 @@ namespace ZO.Sensors {
                 _camera = this.GetComponent<Camera>();
             }
 
-            if (_postProcessMaterial == null) {
-                _postProcessMaterial = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBPostProcessMaterial");
-            }
+            // if (_postProcessMaterial == null) {
+            //     _postProcessMaterial = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBPostProcessMaterial");
+            // }
 
             _renderTexture = new RenderTexture(_width, _height, 16, RenderTextureFormat.ARGB32);
             _camera.targetTexture = _renderTexture;

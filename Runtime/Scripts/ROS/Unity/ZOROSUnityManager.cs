@@ -173,29 +173,6 @@ namespace ZO.ROS.Unity {
         #endregion // Singleton
 
 
-        #region AssetBundle Management
-
-        private AssetBundle _defaultZeroSimAssets = null;
-        /// <summary>
-        /// Default Asset Bundle readonly accessor.
-        /// </summary>
-        /// <value>AssetBundle</value>
-        public AssetBundle DefaultAssets {
-            get {
-                if (_defaultZeroSimAssets == null) {
-                    // Load default asset bundles
-                    _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
-                    if (_defaultZeroSimAssets == null) {
-                        Debug.LogWarning("WARNING: failed to load default_zero_sim_assets asset bundle");
-                    } else {
-                        Debug.Log("INFO: Load default_zero_sim_assets asset bundle success!");
-                    }
-
-                }
-                return _defaultZeroSimAssets;
-            }
-        }
-        #endregion
 
         #region Simulation Clock
 
@@ -218,16 +195,6 @@ namespace ZO.ROS.Unity {
             } else if (_instance != this) {
                 Debug.LogError("ERROR: Cannot have two ZOROSUnityManager's!!!");
                 Destroy(this.gameObject);
-            }
-
-            if (_defaultZeroSimAssets == null) {
-                // Load default asset bundles
-                _defaultZeroSimAssets = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "default_zero_sim_assets"));
-                if (_defaultZeroSimAssets == null) {
-                    Debug.LogWarning("WARNING: failed to load zerosimrobots asset bundle");
-                } else {
-                    Debug.Log("INFO: Load zerosimrobots asset bundle success!");
-                }
             }
 
         }
@@ -308,10 +275,6 @@ namespace ZO.ROS.Unity {
             ROSBridgeConnection.UnAdvertise("/tf");
             // ROSBridgeConnection.UnAdvertiseService(_namespace + "/spawn_zosim_model");
             ROSBridgeConnection.Stop();
-            if (_defaultZeroSimAssets != null) {
-                _defaultZeroSimAssets.Unload(true);
-                _defaultZeroSimAssets = null;
-            }
         }
 
 

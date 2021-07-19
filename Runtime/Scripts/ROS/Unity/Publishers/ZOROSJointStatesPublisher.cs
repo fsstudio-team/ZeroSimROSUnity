@@ -9,6 +9,9 @@ using ZO.ROS.Unity;
 using ZO.Document;
 
 namespace ZO.ROS.Publisher {
+    /// <summary>
+    /// Publishes sensor_msgs/JointState messages for a robot.
+    /// </summary>
     public class ZOROSJointStatesPublisher : ZOROSUnityGameObjectBase {
 
         private JointStateMessage _jointStatesMessage = new JointStateMessage();

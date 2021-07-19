@@ -47,9 +47,20 @@ namespace ZO.ROS.Publisher {
         private ImageMessage _depthImageMessage = new ImageMessage();
         private CameraInfoMessage _cameraInfoMessage = new CameraInfoMessage();
 
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            if (UpdateRateHz == 0) {
+                UpdateRateHz = 30;
+            }
+
+            if (RGBDepthCameraSensor == null) {
+                TryGetComponent<ZORGBDepthCamera>(out _rgbDepthCameraSensor);
+            }
+        }
+
         protected override void ZOReset() {
             base.ZOReset();
-            UpdateRateHz = 30;
+            
         }
 
         protected override void ZOStart() {

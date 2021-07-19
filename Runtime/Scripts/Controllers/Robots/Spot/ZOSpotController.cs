@@ -4,16 +4,25 @@ using UnityEngine;
 using ZO.Util;
 using ZO.Physics;
 using ZO.Sensors;
+using ZO.ROS.Publisher;
 
 namespace ZO.Controllers {
 
+    [RequireComponent(typeof(ZOROSJointStatesPublisher))]
     public class ZOSpotController : ZOGameObjectBase {
 
+        
+
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            UpdateRateHz = 50;
+        }
         protected override void ZOStart() {
             base.ZOStart();
 
 
         }
+
 
 
         protected override void ZOUpdate() {
@@ -26,6 +35,10 @@ namespace ZO.Controllers {
             base.ZOFixedUpdate();
 
 
+        }
+
+        protected override void ZOUpdateHzSynchronized() {
+            base.ZOUpdateHzSynchronized();
         }
 
 
