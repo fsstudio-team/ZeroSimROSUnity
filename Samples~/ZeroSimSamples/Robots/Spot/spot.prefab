@@ -918,9 +918,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 5567270718545535799}
   _name: rear_right_knee
 --- !u!59 &5567270718545535799
@@ -935,11 +935,11 @@ HingeJoint:
   m_Anchor: {x: -0, y: -0.3205, z: 0.025}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000007450581, y: 0, z: 0.0000000055879354}
-  m_UseSpring: 0
+  m_ConnectedAnchor: {x: -0.000000007450581, y: -0.000000029802322, z: 0.0000000055879354}
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -1046,9 +1046,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 4688113880844656875}
   _name: front_left_knee
 --- !u!59 &4688113880844656875
@@ -1063,11 +1063,11 @@ HingeJoint:
   m_Anchor: {x: -0, y: -0.3205, z: 0.025}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000007450581, y: 0, z: 0.0000000055879354}
-  m_UseSpring: 0
+  m_ConnectedAnchor: {x: 0.000000007450581, y: -0.000000029802322, z: 0.0000000055879354}
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -1418,6 +1418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5017303058716476569}
   - component: {fileID: 7964164735594437179}
+  - component: {fileID: 1260152104}
   m_Layer: 0
   m_Name: spot
   m_TagString: Untagged
@@ -1459,6 +1460,18 @@ MonoBehaviour:
   _ROSTopic: 
   _name: spot
   _publishRobotDescription: 0
+--- !u!114 &1260152104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2619807027348755217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92d51467c4cc0f96098e2785b3b15847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2621388528877439615
 GameObject:
   m_ObjectHideFlags: 0
@@ -2040,9 +2053,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 7972079224947876424}
   _name: front_left_hip_y
 --- !u!59 &7972079224947876424
@@ -2058,10 +2071,10 @@ HingeJoint:
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000000007450581, y: 0, z: 0}
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -2563,9 +2576,9 @@ MonoBehaviour:
   _axis: {x: -0, y: 0, z: 1}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 3785745605974674851}
   _name: front_left_hip_x
 --- !u!54 &570012235415932074
@@ -2597,10 +2610,10 @@ HingeJoint:
   m_Axis: {x: -0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -3009,9 +3022,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 8417847484458362678}
   _name: rear_right_hip_y
 --- !u!59 &8417847484458362678
@@ -3027,10 +3040,10 @@ HingeJoint:
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.000000007450581, y: 0, z: 0}
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -3612,9 +3625,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 6372842726519693935}
   _name: rear_left_knee
 --- !u!59 &6372842726519693935
@@ -3629,11 +3642,11 @@ HingeJoint:
   m_Anchor: {x: -0, y: -0.3205, z: 0.025}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000007450581, y: 0, z: 0.0000000055879354}
-  m_UseSpring: 0
+  m_ConnectedAnchor: {x: 0.000000007450581, y: -0.000000029802322, z: 0.0000000055879354}
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -3940,9 +3953,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 1601658921213267037}
   _name: rear_left_hip_y
 --- !u!59 &1601658921213267037
@@ -3958,10 +3971,10 @@ HingeJoint:
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000000007450581, y: 0, z: 0}
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -4122,9 +4135,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 9004549238462136508}
   _name: front_right_hip_y
 --- !u!59 &9004549238462136508
@@ -4140,10 +4153,10 @@ HingeJoint:
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.000000007450581, y: 0, z: 0}
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
@@ -5151,9 +5164,9 @@ MonoBehaviour:
   _axis: {x: -1, y: 0, z: 0}
   _useMotor: 1
   _motorForce: 1
-  _useSpring: 0
-  _springConstant: 100
-  _springDampening: 20
+  _useSpring: 1
+  _springConstant: 350
+  _springDampening: 150
   _hingeJoint: {fileID: 7603706487818398267}
   _name: front_right_knee
 --- !u!59 &7603706487818398267
@@ -5168,11 +5181,11 @@ HingeJoint:
   m_Anchor: {x: -0, y: -0.3205, z: 0.025}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000007450581, y: 0, z: 0.0000000055879354}
-  m_UseSpring: 0
+  m_ConnectedAnchor: {x: -0.000000007450581, y: -0.000000029802322, z: 0.0000000055879354}
+  m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 20
+    spring: 350
+    damper: 150
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
