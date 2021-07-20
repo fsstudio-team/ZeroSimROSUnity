@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 using Newtonsoft.Json.Linq;
 using ZO.Util.Extensions;
 using ZO.Document;
+using ZO.Util;
 
 
 namespace ZO.Physics {
@@ -21,9 +22,12 @@ namespace ZO.Physics {
     /// constrains the joint angle.
     /// </summary>
     [ExecuteAlways]
-    public class ZOFixedJoint : MonoBehaviour, ZOJointInterface {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(HingeJoint))]
+    public class ZOFixedJoint : ZOGameObjectBase, ZOJointInterface {
 
         [SerializeField] public UnityEngine.FixedJoint _fixedJoint;
+        public Rigidbody _connectedBody;
 
         /// <summary>
         /// The Unity fixed joint linked to this ZOSim fixed joint.
@@ -68,12 +72,39 @@ namespace ZO.Physics {
         /// The connected rigid body.  If null then it is the world.
         /// </summary>
         /// <value></value>
+        /// <summary>
+        /// The connected rigid body.  If null then it is the world.
+        /// </summary>
+        /// <value></value>
         public Rigidbody ConnectedBody {
             get {
                 return UnityFixedJoint.connectedBody;
             }
             set {
-                UnityFixedJoint.connectedBody = value;
+                if (UnityFixedJoint.connectedBody != value) {
+                    _connectedBody = value;
+                    UnityFixedJoint.connectedBody = value;
+                }
+
+                // update the name
+                if (string.IsNullOrEmpty(Name)) {
+                    Name = Type;
+
+                    ZOSimOccurrence occurrence = GetComponent<ZOSimOccurrence>();
+                    if (occurrence) {
+                        Name = Name + "_from_" + occurrence.Name;
+                    }
+
+                    if (UnityFixedJoint.connectedBody) {
+                        ZOSimOccurrence connected_occurrence = UnityFixedJoint.connectedBody.gameObject.GetComponent<ZOSimOccurrence>();
+
+                        if (connected_occurrence) {
+                            Name = Name + "_to_" + connected_occurrence.Name;
+                        }
+                    }
+
+                }
+
             }
         }
 
@@ -90,6 +121,11 @@ namespace ZO.Physics {
 
         #endregion
 
+
+        protected override void ZOOnValidate() {
+            base.ZOOnValidate();
+            ConnectedBody = _connectedBody;
+        }
 
 
         /// <summary>
@@ -128,7 +164,6 @@ namespace ZO.Physics {
         }
 
 
-        #region ZOSerializationInterface
         public string Type {
             get { return "joint.fixed"; }
         }
@@ -143,19 +178,6 @@ namespace ZO.Physics {
             }
         }
 
-        private JObject _json;
-        public JObject JSON {
-            get {
-                // if (_json == null) {
-                //     _json = BuildJSON();
-                // }
-                return _json;
-
-            }
-        }
-
-
-        #endregion
 
     }
 

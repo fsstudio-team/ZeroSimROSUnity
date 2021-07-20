@@ -134,6 +134,12 @@ namespace ZO.ROS.MessageTypes.Geometry {
             get { return ToUnityQuaternion(); }
             set { FromUnityQuaternion(value); }
         }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public UnityEngine.Quaternion ROSQuaternion {
+            get { return new UnityEngine.Quaternion((float)this.x, (float)this.y, (float)this.z, (float)this.w); }
+        }
+
     }
 
     /// <summary>

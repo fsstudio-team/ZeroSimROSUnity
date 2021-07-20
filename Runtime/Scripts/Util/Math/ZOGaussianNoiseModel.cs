@@ -18,26 +18,32 @@ namespace ZO.Math {
         public double _biasMean = 0;
         public double BiasMean {
             get { return _biasMean; }
-            set { _biasMean = value; _needToCalculateBias = true; }
+            set {
+                _biasMean = value;
+                _needToCalculateBias = System.Math.Abs(value) > 0 ? true : false;
+            }
         }
-        
+
         public double _biasStdDev = 0;
         public double BiasStdDev {
             get { return _biasStdDev; }
-            set { _biasStdDev = value; _needToCalculateBias = true; }
+            set {
+                _biasStdDev = value;
+                _needToCalculateBias = System.Math.Abs(value) > 0 ? true : false;
+            }
         }
 
         private System.Random _random = new System.Random();
-        private bool _needToCalculateBias = true;
+        private bool _needToCalculateBias = false;
         private double _bias = 0.0;
 
-        public double Apply(double v) {   
+        public double Apply(double v) {
             if (_needToCalculateBias == true) {  // initialize the bias
                 _bias = ZORandom.NextGaussian(_random, _biasMean, _biasStdDev);
                 if (_random.NextDouble() < 0.5) {
                     _bias = -_bias;
                 }
-            }     
+            }
             double whiteNoise = ZO.Math.ZORandom.NextGaussian(_random, _mean, _stdDev);
             double output = v + _bias + whiteNoise;
             return output;

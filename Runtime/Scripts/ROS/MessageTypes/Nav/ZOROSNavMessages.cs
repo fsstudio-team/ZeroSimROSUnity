@@ -12,7 +12,11 @@ namespace ZO.ROS.MessageTypes.Nav {
     public class OdometryMessage : ZOROSMessageInterface {
 
         [Newtonsoft.Json.JsonIgnore]
-        public string MessageType { get { return "nav_msgs/Odometry"; } }
+        public string MessageType { get { return OdometryMessage.Type; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "nav_msgs/Odometry";
+
 
         public HeaderMessage header { get; set; }
         public string child_frame_id { get; set; }
