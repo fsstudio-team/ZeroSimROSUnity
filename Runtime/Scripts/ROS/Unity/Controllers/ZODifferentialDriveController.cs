@@ -32,17 +32,8 @@ namespace ZO.ROS.Controllers {
     /// See: https://github.com/ros-controls/ros_controllers/blob/indigo-devel/diff_drive_controller/include/diff_drive_controller/diff_drive_controller.h
     /// </reference>
     /// TODO: Make this a ZOROSUnityGameObjectBase and a controller interface
-    public class ZODifferentialDriveController : ZOGameObjectBase {
+    public class ZODifferentialDriveController : ZOROSUnityGameObjectBase {
 
-        public String _name;
-        public string Name {
-            get {
-                if (string.IsNullOrEmpty(_name))
-                    _name = gameObject.name + "_" + Type;
-                return _name;
-            }
-            private set => _name = value;
-        }
 
         public ZOSimOccurrence _connectedBody;
 
@@ -99,15 +90,10 @@ namespace ZO.ROS.Controllers {
             get => _angularVelocity;
         }
 
-        private JObject _json;
-        public JObject JSON {
-            get => _json;
-            set => _json = value;
-        }
 
 
 
-        public string Type {
+        public override string Type {
             get {
                 return "controller.differential_drive";
             }
@@ -115,8 +101,8 @@ namespace ZO.ROS.Controllers {
 
         void OnValidate() {
             // make sure we have a name
-            if (string.IsNullOrEmpty(_name)) {
-                _name = gameObject.name + "_" + Type;
+            if (string.IsNullOrEmpty(Name)) {
+                Name = gameObject.name + "_" + Type;
             }
 
         }
@@ -125,33 +111,13 @@ namespace ZO.ROS.Controllers {
             base.ZOAwake();
 
             // make sure we have a name
-            if (string.IsNullOrEmpty(_name)) {
-                _name = gameObject.name + "_" + Type;
+            if (string.IsNullOrEmpty(Name)) {
+                Name = gameObject.name + "_" + Type;
             }
 
         }
 
-        // Start is called before the first frame update
-        protected override void ZOStart() {
-            base.ZOStart();
-            // auto-connect to ROS Bridge connection and disconnect events
-            ZOROSUnityManager.Instance.ROSBridgeConnectEvent += OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent += OnROSBridgeDisconnected;
 
-            if (ZOROSBridgeConnection.Instance.IsConnected) {
-                // subscribe to Twist Message
-                ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(Name, _ROSTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
-
-                // adverise Odometry Message
-                ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
-
-            }
-        }
-
-        protected override void ZOOnDestroy() {
-            ZOROSUnityManager.Instance.ROSBridgeConnectEvent -= OnROSBridgeConnected;
-            ZOROSUnityManager.Instance.ROSBridgeDisconnectEvent -= OnROSBridgeDisconnected;
-        }
 
         protected override void ZOFixedUpdate() {
             // update the motors from the twist message
@@ -356,7 +322,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
         private TransformStampedMessage _transformMessage = new TransformStampedMessage();
 
 
-        public void OnROSBridgeConnected(object rosUnityManager) {
+        public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager)  {
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeConnected");
 
             // subscribe to Twist Message
@@ -366,7 +332,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
             ZOROSBridgeConnection.Instance.Advertise("/odom", _odometryMessage.MessageType);
         }
 
-        public void OnROSBridgeDisconnected(object rosUnityManager) {
+        public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
             ZOROSBridgeConnection.Instance.UnAdvertise(_ROSTopicSubscription);
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeDisconnected");
         }
