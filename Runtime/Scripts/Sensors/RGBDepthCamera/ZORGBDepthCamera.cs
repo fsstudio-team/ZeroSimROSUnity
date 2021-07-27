@@ -268,7 +268,6 @@ namespace ZO.Sensors {
                         if (_publishTasks.Count < _maxPublishTaskQueue) {
 
                             Task publishTask = Task.Run(() => {
-                                float inverseScale = 1.0f / _depthScale;
                                 float r, g, b, d;
                                 for (int z = 0, c = 0, p = 0; z < (_width * _height); z++, c += 3, p += 4) {
                                     r = rawTextureData[p];
@@ -279,7 +278,7 @@ namespace ZO.Sensors {
                                     _colorPixels24[c + 0] = (byte)(r * 255.0f);
                                     _colorPixels24[c + 1] = (byte)(g * 255.0f);
                                     _colorPixels24[c + 2] = (byte)(b * 255.0f);
-                                    _depthBufferFloat[z] = d * inverseScale;
+                                    _depthBufferFloat[z] = d * _depthScale;
 
                                     _averageDepth = d;
 
