@@ -33,7 +33,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// z forward
         /// </summary>
         /// <param name="v">Unity Vector3</param>
-        public void FromUnityVector3(UnityEngine.Vector3 v) {
+        public void FromUnityVector3ToROS(UnityEngine.Vector3 v) {
             this.x = (double)v.z;
             this.y = -(double)v.x;
             this.z = (double)v.y;
@@ -62,7 +62,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Vector3 UnityVector3 {
             get { return ToUnityVector3(); }
-            set { FromUnityVector3(value); }
+            set { FromUnityVector3ToROS(value); }
         }
     }
 
@@ -122,7 +122,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// z forward                
         /// </summary>
         /// <param name="q"></param>
-        public void FromUnityQuaternion(UnityEngine.Quaternion q) {
+        public void FromUnityQuaternionToROS(UnityEngine.Quaternion q) {
             this.x = (double)-q.x;
             this.y = (double)-q.z;
             this.z = (double)-q.y;
@@ -132,7 +132,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Quaternion UnityQuaternion {
             get { return ToUnityQuaternion(); }
-            set { FromUnityQuaternion(value); }
+            set { FromUnityQuaternionToROS(value); }
         }
 
         [Newtonsoft.Json.JsonIgnore]
@@ -235,8 +235,8 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// </summary>
         /// <param name="transform"></param>
         public void FromLocalUnityTransform(UnityEngine.Transform transform) {
-            this.translation.UnityVector3 = transform.localPosition;
-            this.rotation.UnityQuaternion = transform.localRotation;
+            this.translation.FromUnityVector3ToROS(transform.localPosition);
+            this.rotation.FromUnityQuaternionToROS(transform.localRotation);
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// Does Unity to ROS coordinate system transform.
         /// </summary>
         /// <param name="transform"></param>
-        public void FromGlobalUnityTransform(UnityEngine.Transform transform) {
+        public void FromGlobalUnityTransformToROS(UnityEngine.Transform transform) {
             translation.UnityVector3 = transform.position;
             rotation.UnityQuaternion = transform.rotation;
         }
@@ -256,7 +256,7 @@ namespace ZO.ROS.MessageTypes.Geometry {
 
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Transform GlobalUnityTransform {
-            set { FromGlobalUnityTransform(value); }
+            set { FromGlobalUnityTransformToROS(value); }
         }
 
     }
@@ -292,13 +292,13 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// Does Unity to ROS coordinate system transform.
         /// </summary>
         /// <param name="transform"></param>
-        public void FromLocalUnityTransform(UnityEngine.Transform transform) {
+        public void FromLocalUnityTransformToROS(UnityEngine.Transform transform) {
             this.transform.LocalUnityTransform = transform;
         }
 
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Transform UnityLocalTransform {
-            set { FromLocalUnityTransform(value); }
+            set { FromLocalUnityTransformToROS(value); }
         }
 
         /// <summary>
@@ -306,13 +306,13 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// Does Unity to ROS coordinate system transform.
         /// </summary>
         /// <param name="transform"></param>
-        public void FromGlobalUnityTransform(UnityEngine.Transform transform) {
+        public void FromGlobalUnityTransformToROS(UnityEngine.Transform transform) {
             this.transform.GlobalUnityTransform = transform;
         }
 
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Transform GlobalUnityTransform {
-            set { FromGlobalUnityTransform(value); }
+            set { FromGlobalUnityTransformToROS(value); }
         }
 
     }

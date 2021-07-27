@@ -185,7 +185,7 @@ namespace ZO.ROS.Publisher {
             theta2 += (rot1 + rot2);
 
             Quaternion yawQuaternion = Quaternion.EulerAngles(0, (float)theta2, 0);
-            currentOdomMessage.pose.pose.orientation.FromUnityQuaternion(yawQuaternion);
+            currentOdomMessage.pose.pose.orientation.FromUnityQuaternionToROS(yawQuaternion);
 
         }
 
