@@ -424,14 +424,14 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// Does Unity to ROS coordinate system transform.
         /// </summary>
         /// <param name="transform"></param>
-        public void FromLocalUnityTransform(UnityEngine.Transform transform) {
+        public void FromLocalUnityTransformToROS(UnityEngine.Transform transform) {
             this.position.UnityVector3 = transform.localPosition;
             this.orientation.UnityQuaternion = transform.localRotation;
         }
 
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Transform LocalUnityTransform {
-            set { FromLocalUnityTransform(value); }
+            set { FromLocalUnityTransformToROS(value); }
         }
 
         /// <summary>
@@ -439,14 +439,14 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// Does Unity to ROS coordinate system transform.
         /// </summary>
         /// <param name="transform"></param>
-        public void FromGlobalUnityTransform(UnityEngine.Transform transform) {
+        public void FromGlobalUnityTransformToROS(UnityEngine.Transform transform) {
             this.position.UnityVector3 = transform.position;
             this.orientation.UnityQuaternion = transform.rotation;
         }
 
         [Newtonsoft.Json.JsonIgnore]
         public UnityEngine.Transform GlobalUnityTransform {
-            set { FromGlobalUnityTransform(value); }
+            set { FromGlobalUnityTransformToROS(value); }
         }
 
     }

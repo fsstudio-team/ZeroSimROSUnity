@@ -69,14 +69,15 @@ namespace ZO.ROS.Publisher {
                 _transformStampedMessage.header.Update();
                 _transformStampedMessage.header.frame_id = ZOROSUnityManager.Instance.WorldFrameId; // connect to the world
                 _transformStampedMessage.child_frame_id = "odom";
-                _transformStampedMessage.UnityLocalTransform = Rigidbody.transform;
+                _transformStampedMessage.FromLocalUnityTransformToROS(Rigidbody.transform);
                 ZOROSUnityManager.Instance.BroadcastTransform(_transformStampedMessage);
 
 
                 _currentOdometryMessage.Update(); // update times stamps
 
                 // BUGBUG: not super clear on where the pose should be?
-                _currentOdometryMessage.pose.pose.GlobalUnityTransform = Rigidbody.transform;
+                // _currentOdometryMessage.pose.pose.GlobalUnityTransform = Rigidbody.transform;
+                _currentOdometryMessage.pose.pose.FromLocalUnityTransformToROS(Rigidbody.transform);
 
                 // get velocity in /odom frame
                 Vector3 linear = Rigidbody.velocity;
