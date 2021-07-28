@@ -123,10 +123,11 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// </summary>
         /// <param name="q"></param>
         public void FromUnityQuaternionToROS(UnityEngine.Quaternion q) {
-            this.x = (double)-q.x;
-            this.y = (double)-q.z;
+            this.x = (double)-q.z;
+            this.y = (double)q.x;
             this.z = (double)-q.y;
             this.w = (double)q.w;
+
         }
 
         [Newtonsoft.Json.JsonIgnore]
@@ -245,8 +246,8 @@ namespace ZO.ROS.MessageTypes.Geometry {
         /// </summary>
         /// <param name="transform"></param>
         public void FromGlobalUnityTransformToROS(UnityEngine.Transform transform) {
-            translation.UnityVector3 = transform.position;
-            rotation.UnityQuaternion = transform.rotation;
+            translation.FromUnityVector3ToROS(transform.position);
+            rotation.FromUnityQuaternionToROS(transform.rotation);
         }
 
         [Newtonsoft.Json.JsonIgnore]

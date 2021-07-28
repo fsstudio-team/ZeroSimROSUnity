@@ -34,12 +34,10 @@ namespace ZO.ROS.Publisher {
         protected override void ZOStart() {
             base.ZOStart();
             // if the child frame id is not set then set it to be the name of this game object.
-            if (ChildFrameID.Length == 0) {
+            if (string.IsNullOrEmpty(ChildFrameID) == true) {
                 ChildFrameID = this.gameObject.name;
             }
 
-            // TODO: autoset frameId by looking up the hierarch for a parent ZOROSTransformPublisher
-            // if no parent found then set to "map"
         }
         protected override void ZOUpdateHzSynchronized() {
             _transformMessage.header.Update();
@@ -53,12 +51,14 @@ namespace ZO.ROS.Publisher {
 
         protected override void ZOOnValidate() {
             base.ZOOnValidate();
-            if (ChildFrameID == "") {
+            if (string.IsNullOrEmpty(ChildFrameID) == true) {
                 ChildFrameID = Name;
             }
-            if (FrameID == "") {
+            if (string.IsNullOrEmpty(FrameID) == true) {
                 if (transform.parent) {
                     FrameID = transform.parent.name;
+                } else {
+                    FrameID = ZOROSUnityManager.Instance.WorldFrameId;
                 }
             }
             if (UpdateRateHz == 0) {
