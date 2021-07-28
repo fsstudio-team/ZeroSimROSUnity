@@ -16,13 +16,14 @@ namespace ZO.Sensors {
     [BurstCompile(CompileSynchronously = true)]
     struct ZOPrepareRaycastCommands : IJobParallelFor {
         public Vector3 Position;
+        public Quaternion Orientation;
         public float Distance;
         public NativeArray<RaycastCommand> RaycastCommands;
         [ReadOnly]
         public NativeArray<Vector3> RaycastDirections;
 
         public void Execute(int i) {
-            RaycastCommands[i] = new RaycastCommand(Position, RaycastDirections[i], Distance);
+            RaycastCommands[i] = new RaycastCommand(Position, Orientation * RaycastDirections[i], Distance);
         }
     };
 
@@ -147,7 +148,8 @@ namespace ZO.Sensors {
         }
 
 
-        private void OnDestroy() {
+        private void ZOOnDestroy() {
+            base.ZOOnDestroy();
             _transformHitsJobHandle.Complete();
             _rayDirections.Dispose();
             _hitNormals.Dispose();
@@ -185,6 +187,7 @@ namespace ZO.Sensors {
                 // SetupRaycasts();
                 var setupRaycastsJob = new ZOPrepareRaycastCommands() {
                     Position = transform.position,
+                    Orientation = transform.rotation,
                     Distance = _maxRange,
                     RaycastDirections = _rayDirections,
                     RaycastCommands = _raycastBatchJob.RaycastCommands

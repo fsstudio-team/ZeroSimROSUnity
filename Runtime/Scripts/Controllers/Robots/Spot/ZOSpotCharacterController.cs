@@ -4,9 +4,14 @@ using UnityEngine;
 using System;
 
 namespace ZO {
+    /// <summary>
+    /// Handles all the Unity specific "Character Control" stuff like movement and animation.
+    /// </summary>
     public class ZOSpotCharacterController : MonoBehaviour {
 
         public Rigidbody _rigidBody;
+        public Transform _frontCollider = null;
+        public Transform _rearCollider = null;
         public float _maxFloorAngle = 45;
         public float _maxForwardVelocity = 1.0f;
 
