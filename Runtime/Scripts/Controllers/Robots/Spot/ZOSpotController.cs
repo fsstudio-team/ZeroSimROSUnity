@@ -10,16 +10,23 @@ using ZO.ROS.Publisher;
 using ZO.ROS.Unity;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Geometry;
+using ZO.ROS.MessageTypes.Nav;
 
 
 namespace ZO.Controllers {
 
     [RequireComponent(typeof(ZOROSJointStatesPublisher))]
+    [RequireComponent(typeof(ZOSpotCharacterController))]
     public class ZOSpotController : ZOROSUnityGameObjectBase {
 
 
         public string _TwistTopicSubscription = "/cmd_vel";
         private TwistMessage _twistMessage = new TwistMessage();
+        private TwistWithCovarianceStampedMessage _twistPublishMessage = new TwistWithCovarianceStampedMessage();
+        private ZOROSFakeOdometryPublisher _odomPublisher = null;
+
+
+        
 
 
         protected override void ZOOnValidate() {
@@ -30,6 +37,8 @@ namespace ZO.Controllers {
         protected override void ZOStart() {
             base.ZOStart();
 
+            _odomPublisher = GetComponentInChildren<ZOROSFakeOdometryPublisher>(true);
+                        
 
         }
 
@@ -49,6 +58,13 @@ namespace ZO.Controllers {
 
         protected override void ZOUpdateHzSynchronized() {
             base.ZOUpdateHzSynchronized();
+
+            if (_odomPublisher && ZOROSBridgeConnection.Instance.IsConnected == true) {
+                _twistPublishMessage.header = _odomPublisher.CurrentOdometryMessage.header;            
+                _twistPublishMessage.twist = _odomPublisher.CurrentOdometryMessage.twist;
+                ZOROSBridgeConnection.Instance.Publish<TwistWithCovarianceStampedMessage>(_twistPublishMessage, "/odometry/twist");
+                
+            }
         }
 
 
@@ -62,11 +78,14 @@ namespace ZO.Controllers {
 
             // subscribe to Twist Message
             ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(Name, _TwistTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+            
+            // advertise twist
+            ZOROSBridgeConnection.Instance.Advertise("/odometry/twist", TwistWithCovarianceStampedMessage.Type);
 
         }
 
         public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
-            ZOROSBridgeConnection.Instance.UnAdvertise(_TwistTopicSubscription);
+            ZOROSBridgeConnection.Instance.UnAdvertise("/odometry/twist");
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeDisconnected");
         }
 

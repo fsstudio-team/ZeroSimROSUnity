@@ -213,6 +213,37 @@ namespace ZO.ROS.MessageTypes.Geometry {
     }
 
     /// <summary>
+    /// This represents an estimated twist with reference coordinate frame and timestamp.
+    /// See: https://docs.ros.org/en/api/geometry_msgs/html/msg/TwistWithCovarianceStamped.html
+    /// </summary>
+    public class TwistWithCovarianceStampedMessage : ZOROSMessageInterface {
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string MessageType { get { return TwistWithCovarianceStampedMessage.Type; } }
+        [Newtonsoft.Json.JsonIgnore]
+        public static string Type = "geometry_msgs/TwistWithCovarianceStamped";
+
+        public HeaderMessage header { get; set; }
+
+        //  This expresses velocity in free space with uncertainty.
+        public TwistWithCovarianceMessage twist { get; set; }
+
+        public TwistWithCovarianceStampedMessage() {
+            this.twist = new TwistWithCovarianceMessage();
+        }
+
+        public TwistWithCovarianceStampedMessage(TwistWithCovarianceMessage twist) {
+            this.twist = twist;
+        }
+
+        public void Update() {
+             header.Update();
+        }
+
+
+    }
+
+    /// <summary>
     /// This represents the transform between two coordinate frames in free space.
     /// See: http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Transform.html
     /// </summary>

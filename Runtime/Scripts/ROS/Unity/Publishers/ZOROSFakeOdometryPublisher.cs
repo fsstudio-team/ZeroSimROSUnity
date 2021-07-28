@@ -33,6 +33,12 @@ namespace ZO.ROS.Publisher {
             }
         }
 
+        public OdometryMessage CurrentOdometryMessage {
+            get {
+                return _currentOdometryMessage;
+            }
+        }
+
         private ZOGaussianNoiseModel _noiseModel = new ZOGaussianNoiseModel();
         private OdometryMessage _currentOdometryMessage = null;
         private OdometryMessage _previousOdometryMessage = null;
