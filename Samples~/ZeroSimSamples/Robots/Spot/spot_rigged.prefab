@@ -196,26 +196,6 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &662680489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705516937584561444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateRateHz: 10
-  _debug: 0
-  _currentUpdateHz: 0
-  _currentFixedUpdateHz: 0
-  _ROSTopic: 
-  _name: ros.publisher.transform_body
-  _frameId: map
-  _childFrameId: body
 --- !u!114 &662680477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,6 +219,26 @@ MonoBehaviour:
   _a2: 15
   _a3: 0.05
   _a4: 0.01
+--- !u!114 &662680489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705516937584561444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6013e0556113f1e9f95189e724e765fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: 
+  _name: ros.publisher.transform_body
+  _frameId: map
+  _childFrameId: body
 --- !u!114 &1690162258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,6 +289,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spotCharacterController: {fileID: 971641630}
+--- !u!114 &820716398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7918743296464092362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129fe926cb5f9784893878adb84b7b04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 10
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: /joint_states
+  _name: ros.publisher.joint_states_spot_rigged
+--- !u!114 &820716399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7918743296464092362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff33c65ed3465152791a1661420ca26e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateRateHz: 50
+  _debug: 0
+  _currentUpdateHz: 0
+  _currentFixedUpdateHz: 0
+  _ROSTopic: 
+  _name: spot_rigged
+  _TwistTopicSubscription: /cmd_vel
 --- !u!1001 &5313802871329697755
 PrefabInstance:
   m_ObjectHideFlags: 0

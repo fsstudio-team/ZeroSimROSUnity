@@ -10,7 +10,7 @@ using ZO.ROS.Publisher;
 using ZO.ROS.Unity;
 using ZO.ROS.MessageTypes;
 using ZO.ROS.MessageTypes.Geometry;
-using ZO.ROS.MessageTypes.Nav;
+using ZO.ROS.MessageTypes.StdSrvs;
 
 
 namespace ZO.Controllers {
@@ -24,9 +24,12 @@ namespace ZO.Controllers {
         private TwistMessage _twistMessage = new TwistMessage();
         private TwistWithCovarianceStampedMessage _twistPublishMessage = new TwistWithCovarianceStampedMessage();
         private ZOROSFakeOdometryPublisher _odomPublisher = null;
+        private bool IsClaimed {
+            get; set;
+        } = false;
 
 
-        
+
 
 
         protected override void ZOOnValidate() {
@@ -38,7 +41,7 @@ namespace ZO.Controllers {
             base.ZOStart();
 
             _odomPublisher = GetComponentInChildren<ZOROSFakeOdometryPublisher>(true);
-                        
+
 
         }
 
@@ -59,11 +62,11 @@ namespace ZO.Controllers {
         protected override void ZOUpdateHzSynchronized() {
             base.ZOUpdateHzSynchronized();
 
-            if (_odomPublisher && ZOROSBridgeConnection.Instance.IsConnected == true) {
-                _twistPublishMessage.header = _odomPublisher.CurrentOdometryMessage.header;            
+            if (_odomPublisher && ROSBridgeConnection.IsConnected == true) {
+                _twistPublishMessage.header = _odomPublisher.CurrentOdometryMessage.header;
                 _twistPublishMessage.twist = _odomPublisher.CurrentOdometryMessage.twist;
-                ZOROSBridgeConnection.Instance.Publish<TwistWithCovarianceStampedMessage>(_twistPublishMessage, "/odometry/twist");
-                
+                ROSBridgeConnection.Publish<TwistWithCovarianceStampedMessage>(_twistPublishMessage, "/odometry/twist");
+
             }
         }
 
@@ -76,16 +79,68 @@ namespace ZO.Controllers {
         public override void OnROSBridgeConnected(ZOROSUnityManager rosUnityManager) {
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeConnected");
 
-            // subscribe to Twist Message
-            ZOROSBridgeConnection.Instance.Subscribe<TwistMessage>(Name, _TwistTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
-            
-            // advertise twist
-            ZOROSBridgeConnection.Instance.Advertise("/odometry/twist", TwistWithCovarianceStampedMessage.Type);
+            // subscribe to Twist Message (i.e. control)
+            ROSBridgeConnection.Subscribe<TwistMessage>(Name, _TwistTopicSubscription, _twistMessage.MessageType, OnROSTwistMessageReceived);
+
+            // advertise odometry twist
+            ROSBridgeConnection.Advertise("/odometry/twist", TwistWithCovarianceStampedMessage.Type);
+
+            // advertise services
+            ROSBridgeConnection.AdvertiseService<TriggerServiceRequest>("claim",
+                TriggerServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    TriggerServiceRequest triggerServiceRequest = msg as TriggerServiceRequest;
+
+                    Debug.Log("INFO: ZOSpotController::TriggerServiceRequest");
+
+                    if (IsClaimed == true) {
+                        ROSBridgeConnection.ServiceResponse<TriggerServiceResponse>(new TriggerServiceResponse(false, "Already claimed"), "claim", false, id);
+
+                    } else {
+                        IsClaimed = true;
+                        ROSBridgeConnection.ServiceResponse<TriggerServiceResponse>(new TriggerServiceResponse(true, "success"), "claim", false, id);
+
+
+                    }
+
+
+
+                    return Task.CompletedTask;
+
+                });
+
+            // advertise services
+            ROSBridgeConnection.AdvertiseService<TriggerServiceRequest>("release",
+                TriggerServiceRequest.Type,
+                (rosBridge, msg, id) => {
+                    TriggerServiceRequest triggerServiceRequest = msg as TriggerServiceRequest;
+
+                    Debug.Log("INFO: ZOSpotController::TriggerServiceRequest");
+
+                    if (IsClaimed == false) {
+                        ROSBridgeConnection.ServiceResponse<TriggerServiceResponse>(new TriggerServiceResponse(false, "Not claimed"), "release", false, id);
+
+                    } else {
+                        IsClaimed = false;
+                        ROSBridgeConnection.ServiceResponse<TriggerServiceResponse>(new TriggerServiceResponse(true, "success"), "release", false, id);
+
+
+                    }
+
+
+
+                    return Task.CompletedTask;
+
+                });
+
 
         }
 
         public override void OnROSBridgeDisconnected(ZOROSUnityManager rosUnityManager) {
-            ZOROSBridgeConnection.Instance.UnAdvertise("/odometry/twist");
+            ROSBridgeConnection.UnAdvertise("/odometry/twist");
+            ROSBridgeConnection.UnAdvertiseService("claim");
+            ROSBridgeConnection.UnAdvertiseService("release");
+
             Debug.Log("INFO: ZODifferentialDriveController::OnROSBridgeDisconnected");
         }
 
