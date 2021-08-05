@@ -11,8 +11,50 @@ namespace ZO {
 
         public Rigidbody _rigidBody;
         public Transform _frontCollider = null;
+
+        public CapsuleCollider FrontColliderCapsule {
+            get {
+                return _frontCollider?.GetComponent<CapsuleCollider>();
+            }
+        }
+
+        public Rigidbody FrontColliderRigidBody {
+            get {
+                return _frontCollider?.GetComponent<Rigidbody>();
+            }
+        }
+
+        public ZOGroundDetector FrontGroundDetector {
+            get {
+                return _frontCollider?.GetComponent<ZOGroundDetector>();
+            }
+        }
         public Transform _rearCollider = null;
+        public CapsuleCollider RearColliderCapsule {
+            get {
+                return _rearCollider?.GetComponent<CapsuleCollider>();
+            }
+        }
+
+        public ZOGroundDetector RearGroundDetector {
+            get {
+                return _rearCollider?.GetComponent<ZOGroundDetector>();
+            }
+        }
+
+        public Rigidbody RearColliderRigidBody {
+            get {
+                return _rearCollider?.GetComponent<Rigidbody>();
+            }
+        }
+
+
         public float _maxFloorAngle = 45;
+
+        public float MaxFloorAngle {
+            get => _maxFloorAngle;
+            set => _maxFloorAngle = value;
+        }
         public float _maxForwardVelocity = 1.0f;
 
         public float MaxForwardVelocity {
@@ -34,10 +76,41 @@ namespace ZO {
         private Vector2 _targetVelocity = Vector2.zero;
         private float _targetTurnVelocityDegreesPerSecond = 0.0f;
 
+        private float _lieDownScale = 0.5f;
+
+        private bool IsFrontGrounded {
+            get {
+                return FrontGroundDetector.IsGrounded;
+            }
+        }
+
+        private bool IsRearGrounded {
+            get {
+                return RearGroundDetector.IsGrounded;
+            }
+        }
+
+
+        private Vector3 FrontGroundNormal {
+            get {
+                return FrontGroundDetector.GroundNormal;
+            }
+        }
+
+
+        private Vector3 RearGroundNormal {
+            get {
+                return RearGroundDetector.GroundNormal;
+            }
+        }
+
+
+
         public enum StateEnum {
             Off,
-            Down,
+            Sitting,
             UpAndReady,
+            Busy,
             Error
         }
 
@@ -60,13 +133,13 @@ namespace ZO {
 
 
         public delegate void SpotControllerStatusDelegate(ZOSpotCharacterController thisClass, Vector2 linearVelocity, float turnVelocityDegreesPerSecond, float orientationDegrees, ZOSpotCharacterController.StateEnum state, ZOSpotCharacterController.ErrorEnum error);
-        private event SpotControllerStatusDelegate _spotContrllerStatusDelegate;
+        private event SpotControllerStatusDelegate _spotControllerStatusDelegate;
         public event SpotControllerStatusDelegate SpotControllerStatus {
             add {
-                _spotContrllerStatusDelegate += value;
+                _spotControllerStatusDelegate += value;
             }
             remove {
-                _spotContrllerStatusDelegate -= value;
+                _spotControllerStatusDelegate -= value;
             }
         }
 
@@ -74,7 +147,8 @@ namespace ZO {
 
         // Start is called before the first frame update
         void Start() {
-
+            // start sitting down
+            Sit();
         }
 
         // Update is called once per frame
@@ -82,24 +156,82 @@ namespace ZO {
 
         }
 
+
+
         void FixedUpdate() {
 
-            _rigidBody.velocity = _rigidBody.transform.rotation * new Vector3(_targetVelocity.x, _rigidBody.velocity.y, _targetVelocity.y);
+            if (IsFrontGrounded || IsRearGrounded) {
 
-            Vector3 angularVelocity = _rigidBody.angularVelocity;
-            angularVelocity.y = _targetTurnVelocityDegreesPerSecond * Mathf.Deg2Rad;
-            _rigidBody.angularVelocity = angularVelocity;
+                Vector3 angularVelocity = _rigidBody.angularVelocity;
+                float torqueYaw = (_targetTurnVelocityDegreesPerSecond * Mathf.Deg2Rad) - angularVelocity.y;
+                _rigidBody.AddRelativeTorque(new Vector3(0, torqueYaw, 0), ForceMode.VelocityChange);
 
-            if (_spotContrllerStatusDelegate != null) {
-                _spotContrllerStatusDelegate.Invoke(this, new Vector2(_rigidBody.velocity.x, _rigidBody.velocity.z), _rigidBody.angularVelocity.y * Mathf.Rad2Deg, transform.rotation.eulerAngles.y, State, Error);
+                Vector3 localVelocity = _rigidBody.transform.InverseTransformDirection(_rigidBody.velocity);
+                Vector3 targetVelocity = new Vector3(_targetVelocity.x, 0, _targetVelocity.y);
+                Vector3 deltaVelocity = targetVelocity - localVelocity;
+                deltaVelocity = _rigidBody.transform.TransformDirection(deltaVelocity);
+                _rigidBody.AddForce(deltaVelocity, ForceMode.VelocityChange);
+
 
             }
+
+
+            if (_spotControllerStatusDelegate != null) {
+                _spotControllerStatusDelegate.Invoke(this, new Vector2(_rigidBody.velocity.x, _rigidBody.velocity.z), _rigidBody.angularVelocity.y * Mathf.Rad2Deg, transform.rotation.eulerAngles.y, State, Error);
+
+            }
+
+            // obey gravity
+            if (IsFrontGrounded == true) {
+                Vector3 gravity = -FrontGroundNormal * UnityEngine.Physics.gravity.magnitude * 20.2f;
+                FrontColliderRigidBody.AddForce(gravity, ForceMode.Acceleration);
+            } else {
+                FrontColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 2.2f, ForceMode.Acceleration);
+            }
+
+            if (IsRearGrounded == true) {
+                Vector3 gravity = -RearGroundNormal * UnityEngine.Physics.gravity.magnitude * 20.2f;
+                RearColliderRigidBody.AddForce(gravity, ForceMode.Acceleration);
+            } else {
+                RearColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 2.2f, ForceMode.Acceleration);
+            }
+
+            // if (IsFrontGrounded == false || IsRearGrounded == false) {
+            //     _rigidBody.AddForce(UnityEngine.Physics.gravity, ForceMode.Acceleration);
+            // }
+
+        }
+
+
+
+
+        public void TurnOn() {
+
+        }
+
+        public void Stand() {
+            if (State == ZOSpotCharacterController.StateEnum.Sitting) {
+                FrontColliderCapsule.height = FrontColliderCapsule.height * (1.0f / _lieDownScale);
+                RearColliderCapsule.height = RearColliderCapsule.height * (1.0f / _lieDownScale);
+                State = ZOSpotCharacterController.StateEnum.UpAndReady;
+            }
+        }
+
+        public void Sit() {
+            if (State == ZOSpotCharacterController.StateEnum.UpAndReady || State == ZOSpotCharacterController.StateEnum.Off) {
+                FrontColliderCapsule.height = FrontColliderCapsule.height * _lieDownScale;
+                RearColliderCapsule.height = RearColliderCapsule.height * _lieDownScale;
+                State = ZOSpotCharacterController.StateEnum.Sitting;
+            }
+
         }
 
 
         public void Move(Vector2 targetVelocity, float targetTurnVelocityDegreesPerSecond) {
-            _targetVelocity = targetVelocity;
-            _targetTurnVelocityDegreesPerSecond = targetTurnVelocityDegreesPerSecond;
+            if (State == ZOSpotCharacterController.StateEnum.UpAndReady) {
+                _targetVelocity = targetVelocity;
+                _targetTurnVelocityDegreesPerSecond = targetTurnVelocityDegreesPerSecond;
+            }
         }
         // void Sit(Delegate OnSitFinishedOrError)
         // void Stand(Delegate OnStandFinishedOrError)
