@@ -10,7 +10,7 @@ using ZO.Controllers;
 
 namespace ZO.Editor {
 
-    [CustomEditor(typeof(ZOSpotController))]
+    [CustomEditor(typeof(ZOSpotROSController))]
     public class ZOSpotControllerEditor : UnityEditor.Editor {
 
         /// <summary>

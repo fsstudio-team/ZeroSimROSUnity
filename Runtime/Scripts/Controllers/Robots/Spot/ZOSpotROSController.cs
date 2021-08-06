@@ -16,8 +16,8 @@ using ZO.ROS.MessageTypes.StdSrvs;
 namespace ZO.Controllers {
 
     [RequireComponent(typeof(ZOROSJointStatesPublisher))]
-    [RequireComponent(typeof(ZOSpotCharacterController))]
-    public class ZOSpotController : ZOROSUnityGameObjectBase {
+    [RequireComponent(typeof(ZOSpotUnityCharacterController))]
+    public class ZOSpotROSController : ZOROSUnityGameObjectBase {
 
 
         public string _TwistTopicSubscription = "/cmd_vel";

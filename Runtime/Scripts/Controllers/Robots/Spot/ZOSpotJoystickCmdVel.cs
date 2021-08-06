@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ZO {
     public class ZOSpotJoystickCmdVel : MonoBehaviour {
 
-        public ZOSpotCharacterController _spotCharacterController;
+        public ZOSpotUnityCharacterController _spotCharacterController;
 
 
         // Start is called before the first frame update

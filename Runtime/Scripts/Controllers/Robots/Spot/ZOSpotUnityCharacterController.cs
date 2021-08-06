@@ -7,9 +7,9 @@ namespace ZO {
     /// <summary>
     /// Handles all the Unity specific "Character Control" stuff like movement and animation.
     /// </summary>
-    public class ZOSpotCharacterController : MonoBehaviour {
+    public class ZOSpotUnityCharacterController : MonoBehaviour {
 
-        public Rigidbody _rigidBody;
+        public Rigidbody _torsoRigidBody;
         public Transform _frontCollider = null;
 
         public CapsuleCollider FrontColliderCapsule {
@@ -114,10 +114,10 @@ namespace ZO {
             Error
         }
 
-        public ZOSpotCharacterController.StateEnum State {
+        public ZOSpotUnityCharacterController.StateEnum State {
             get;
             private set;
-        } = ZOSpotCharacterController.StateEnum.Off;
+        } = ZOSpotUnityCharacterController.StateEnum.Off;
 
         public enum ErrorEnum {
             Ok,
@@ -125,14 +125,14 @@ namespace ZO {
             ErrorShutdown
         }
 
-        public ZOSpotCharacterController.ErrorEnum Error {
+        public ZOSpotUnityCharacterController.ErrorEnum Error {
             get;
             private set;
-        } = ZOSpotCharacterController.ErrorEnum.Ok;
+        } = ZOSpotUnityCharacterController.ErrorEnum.Ok;
 
 
 
-        public delegate void SpotControllerStatusDelegate(ZOSpotCharacterController thisClass, Vector2 linearVelocity, float turnVelocityDegreesPerSecond, float orientationDegrees, ZOSpotCharacterController.StateEnum state, ZOSpotCharacterController.ErrorEnum error);
+        public delegate void SpotControllerStatusDelegate(ZOSpotUnityCharacterController thisClass, Vector2 linearVelocity, float turnVelocityDegreesPerSecond, float orientationDegrees, ZOSpotUnityCharacterController.StateEnum state, ZOSpotUnityCharacterController.ErrorEnum error);
         private event SpotControllerStatusDelegate _spotControllerStatusDelegate;
         public event SpotControllerStatusDelegate SpotControllerStatus {
             add {
@@ -162,22 +162,22 @@ namespace ZO {
 
             if (IsFrontGrounded || IsRearGrounded) {
 
-                Vector3 angularVelocity = _rigidBody.angularVelocity;
+                Vector3 angularVelocity = _torsoRigidBody.angularVelocity;
                 float torqueYaw = (_targetTurnVelocityDegreesPerSecond * Mathf.Deg2Rad) - angularVelocity.y;
-                _rigidBody.AddRelativeTorque(new Vector3(0, torqueYaw, 0), ForceMode.VelocityChange);
+                _torsoRigidBody.AddRelativeTorque(new Vector3(0, torqueYaw, 0), ForceMode.VelocityChange);
 
-                Vector3 localVelocity = _rigidBody.transform.InverseTransformDirection(_rigidBody.velocity);
+                Vector3 localVelocity = _torsoRigidBody.transform.InverseTransformDirection(_torsoRigidBody.velocity);
                 Vector3 targetVelocity = new Vector3(_targetVelocity.x, 0, _targetVelocity.y);
                 Vector3 deltaVelocity = targetVelocity - localVelocity;
-                deltaVelocity = _rigidBody.transform.TransformDirection(deltaVelocity);
-                _rigidBody.AddForce(deltaVelocity, ForceMode.VelocityChange);
+                deltaVelocity = _torsoRigidBody.transform.TransformDirection(deltaVelocity);
+                _torsoRigidBody.AddForce(deltaVelocity, ForceMode.VelocityChange);
 
 
             }
 
 
             if (_spotControllerStatusDelegate != null) {
-                _spotControllerStatusDelegate.Invoke(this, new Vector2(_rigidBody.velocity.x, _rigidBody.velocity.z), _rigidBody.angularVelocity.y * Mathf.Rad2Deg, transform.rotation.eulerAngles.y, State, Error);
+                _spotControllerStatusDelegate.Invoke(this, new Vector2(_torsoRigidBody.velocity.x, _torsoRigidBody.velocity.z), _torsoRigidBody.angularVelocity.y * Mathf.Rad2Deg, transform.rotation.eulerAngles.y, State, Error);
 
             }
 
@@ -210,25 +210,25 @@ namespace ZO {
         }
 
         public void Stand() {
-            if (State == ZOSpotCharacterController.StateEnum.Sitting) {
+            if (State == ZOSpotUnityCharacterController.StateEnum.Sitting) {
                 FrontColliderCapsule.height = FrontColliderCapsule.height * (1.0f / _lieDownScale);
                 RearColliderCapsule.height = RearColliderCapsule.height * (1.0f / _lieDownScale);
-                State = ZOSpotCharacterController.StateEnum.UpAndReady;
+                State = ZOSpotUnityCharacterController.StateEnum.UpAndReady;
             }
         }
 
         public void Sit() {
-            if (State == ZOSpotCharacterController.StateEnum.UpAndReady || State == ZOSpotCharacterController.StateEnum.Off) {
+            if (State == ZOSpotUnityCharacterController.StateEnum.UpAndReady || State == ZOSpotUnityCharacterController.StateEnum.Off) {
                 FrontColliderCapsule.height = FrontColliderCapsule.height * _lieDownScale;
                 RearColliderCapsule.height = RearColliderCapsule.height * _lieDownScale;
-                State = ZOSpotCharacterController.StateEnum.Sitting;
+                State = ZOSpotUnityCharacterController.StateEnum.Sitting;
             }
 
         }
 
 
         public void Move(Vector2 targetVelocity, float targetTurnVelocityDegreesPerSecond) {
-            if (State == ZOSpotCharacterController.StateEnum.UpAndReady) {
+            if (State == ZOSpotUnityCharacterController.StateEnum.UpAndReady) {
                 _targetVelocity = targetVelocity;
                 _targetTurnVelocityDegreesPerSecond = targetTurnVelocityDegreesPerSecond;
             }
