@@ -220,21 +220,21 @@ namespace ZO.ROS.MessageTypes.Sensor {
             pointFieldMessages[0].name = "x";
             pointFieldMessages[0].offset = 0;
             pointFieldMessages[0].datatype = 7; // float32
-            pointFieldMessages[0].count = count;
+            pointFieldMessages[0].count = 1;
 
             // y
             pointFieldMessages[1] = new PointFieldMessage();
             pointFieldMessages[1].name = "y";
             pointFieldMessages[1].offset = 4;
             pointFieldMessages[1].datatype = 7; // float32
-            pointFieldMessages[1].count = count;
+            pointFieldMessages[1].count = 1;
 
             // z
             pointFieldMessages[2] = new PointFieldMessage();
             pointFieldMessages[2].name = "z";
             pointFieldMessages[2].offset = 8;
             pointFieldMessages[2].datatype = 7; // float32
-            pointFieldMessages[2].count = count;
+            pointFieldMessages[2].count = 1;
 
             return pointFieldMessages;
 
