@@ -186,14 +186,14 @@ namespace ZO {
                 Vector3 gravity = -FrontGroundNormal * UnityEngine.Physics.gravity.magnitude * 20.2f;
                 FrontColliderRigidBody.AddForce(gravity, ForceMode.Acceleration);
             } else {
-                FrontColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 2.2f, ForceMode.Acceleration);
+                FrontColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 16.2f, ForceMode.Acceleration);
             }
 
             if (IsRearGrounded == true) {
                 Vector3 gravity = -RearGroundNormal * UnityEngine.Physics.gravity.magnitude * 20.2f;
                 RearColliderRigidBody.AddForce(gravity, ForceMode.Acceleration);
             } else {
-                RearColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 2.2f, ForceMode.Acceleration);
+                RearColliderRigidBody.AddForce(UnityEngine.Physics.gravity * 16.2f, ForceMode.Acceleration);
             }
 
             // if (IsFrontGrounded == false || IsRearGrounded == false) {
