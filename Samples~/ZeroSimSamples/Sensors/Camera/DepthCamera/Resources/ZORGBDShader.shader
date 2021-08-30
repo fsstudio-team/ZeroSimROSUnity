@@ -37,13 +37,14 @@
             struct appdata
             {
                 float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                float2 uv : TEXCOORD0;                
             };
 
             struct v2f
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
+                float4 viewDir : TEXCOORD1;
             };
 
             sampler2D _MainTex;
@@ -66,7 +67,9 @@
 
                 #ifdef FLIP_X                
                     o.uv.x = 1.0 - o.uv.x;
-                #endif                
+                #endif 
+
+                o.viewDir = mul (unity_CameraInvProjection, float4 (o.uv * 2.0 - 1.0, 1.0, 1.0));               
 
                 return o;
             }
@@ -75,12 +78,13 @@
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
                 //get depth from depth texture
-                float depth = tex2D(_CameraDepthTexture, i.uv).r;
+                float depth01 = tex2D(_CameraDepthTexture, i.uv).r;
                 // //linear depth between camera and far clipping plane
-                depth = Linear01Depth(depth);
+                depth01 = Linear01Depth(depth01);
                 //depth as distance from camera in units 
-                depth = depth * _ProjectionParams.z;
-                col.a = depth;
+                // depth = depth * _ProjectionParams.z;
+                float3 viewPos = (i.viewDir.xyz / i.viewDir.w) * depth01;
+                col.a = length(viewPos);
                 return col;
             }
             ENDCG

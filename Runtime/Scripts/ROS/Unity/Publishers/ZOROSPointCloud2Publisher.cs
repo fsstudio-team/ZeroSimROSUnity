@@ -122,14 +122,10 @@ namespace ZO.ROS.Publisher {
             return Task.CompletedTask;
         }
 
-        #region ZOSerializationInterface
         public override string Type {
             get { return "ros.publisher.point_cloud2"; }
         }
 
-
-
-        #endregion // ZOSerializationInterface
 
     }
 

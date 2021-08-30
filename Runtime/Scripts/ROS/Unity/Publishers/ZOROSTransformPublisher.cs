@@ -7,6 +7,10 @@ using ZO.ROS.Unity;
 using ZO.Document;
 
 namespace ZO.ROS.Publisher {
+    /// <summary>
+    /// Publish ROS TF of the Unity Transform this script is attached to.
+    /// See: http://wiki.ros.org/tf
+    /// </summary>
     public class ZOROSTransformPublisher : ZOROSUnityGameObjectBase {
         public string _frameId = "";
         public string _childFrameId = "";

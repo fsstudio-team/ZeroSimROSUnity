@@ -169,7 +169,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 30226133}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.4141068, y: 3.3824363, z: -2.2803702}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -903,5 +903,5 @@ MonoBehaviour:
   _currentFixedUpdateHz: 0
   _ROSTopic: 
   _name: ros.publisher.transform_ROSPointCloud2Publisher
-  _frameId: 
+  _frameId: map
   _childFrameId: ros.publisher.transform_ROSPointCloud2Publisher
