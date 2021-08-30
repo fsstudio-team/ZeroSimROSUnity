@@ -126,8 +126,6 @@ namespace ZO.Sensors {
             if (_postProcessMaterial == null) {
 #if UNITY_EDITOR
                 _postProcessMaterial = Resources.Load<Material>("ZORGBPostProcessMaterial");
-#else // UNITY_EDITOR
-                _postProcessMaterial = ZOROSUnityManager.Instance.DefaultAssets.LoadAsset<Material>("ZORGBPostProcessMaterial");
 #endif // UNITY_EDITOR                
             }
 
