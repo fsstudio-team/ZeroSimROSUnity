@@ -92,27 +92,27 @@ namespace ZO.ROS.Unity {
         }
         #endregion // ROSBridgeConnection
 
-        #region ROS Docker Launch
-        public bool _launchROSDocker = false;
+        // #region ROS Docker Launch
+        // public bool _launchROSDocker = false;
 
-        /// <summary>
-        /// If set then launch docker image with ROS and execute ROS launch file.  
-        /// </summary>
-        /// <value></value>
-        public bool LaunchROSDocker {
-            get => _launchROSDocker;
-        }
-        public ZODockerRunParameters _rosLaunchParameters;
+        // /// <summary>
+        // /// If set then launch docker image with ROS and execute ROS launch file.  
+        // /// </summary>
+        // /// <value></value>
+        // public bool LaunchROSDocker {
+        //     get => _launchROSDocker;
+        // }
+        // public ZODockerRunParameters _rosLaunchParameters;
 
-        /// <summary>
-        /// The ROS Launch parameter scriptable object.
-        /// </summary>
-        /// <value></value>
-        public ZODockerRunParameters ROSLaunchParameters {
-            get => _rosLaunchParameters;
-        }
+        // /// <summary>
+        // /// The ROS Launch parameter scriptable object.
+        // /// </summary>
+        // /// <value></value>
+        // public ZODockerRunParameters ROSLaunchParameters {
+        //     get => _rosLaunchParameters;
+        // }
 
-        #endregion // Docker Launch
+        // #endregion // Docker Launch
 
 
         #region Tranform Publishing
@@ -208,10 +208,10 @@ namespace ZO.ROS.Unity {
                 }
 
                 // 
-                if (_launchROSDocker == true) {
-                    string launchCommand = $"";
-                    // ZO.Editor.ZODockerManager.DockerRun("zosim", launchCommand);
-                }
+                // if (_launchROSDocker == true) {
+                //     string launchCommand = $"";
+                //     // ZO.Editor.ZODockerManager.DockerRun("zosim", launchCommand);
+                // }
             } else { // in play mode
 
 

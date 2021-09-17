@@ -25,7 +25,7 @@ namespace ZO.Util {
         /// <summary>
         /// Volumes to mount.
         /// </summary>
-        public List<ZODocker.VolumeMapEntry> volumes = null;
+        // public List<ZODocker.VolumeMapEntry> volumes = null;
 
         /// <summary>
         /// Ports to expose.
