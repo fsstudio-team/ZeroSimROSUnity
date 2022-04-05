@@ -13,6 +13,7 @@
     - [Running Image Segmentation Test](#running-image-segmentation-test)
     - [Export URDF](#export-urdf)
     - [Import URDF](#import-urdf)
+      - [LEO Robot Example](#leo-robot-example)
 
 ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
@@ -220,3 +221,78 @@ roslaunch zero_sim_ros basic_unity_editor.launch
 ### Import URDF
 
 1. Right click and select `ZeroSim --> Import URDF...`
+
+#### LEO Robot Example
+
+1. Clone the Leo robot: `git clone --recursive https://github.com/LeoRover/leo_common.git`
+2. Checkout Melodic version.  `cd leo_common && git checkout melodic`.
+3. Startup ZeroSim Docker mounting the LEO directory:
+
+```
+
+# make sure you are in parent directory for `leo_common`
+cd .. 
+
+# run docker
+docker run -it --rm \
+--publish=9090:9090 \
+--publish=11311:11311 \
+--publish=8083:8083 \
+--publish=80:80 \
+--publish=5678:5678 \
+--name my_zerosim_vnc_docker \
+--volume=$(pwd)/leo_common/:/catkin_ws/src/leo_common/ \
+zerodog/zerosim_ros_vnc:latest \
+bash
+```
+4. In the Docker command prompt build the catkin workspace:
+
+```
+source devel/setup.bash
+catkin build
+# Make sure to source ROS again to get the new LEO robot
+source devel/setup.bash
+```
+5. In the Docker command prompt Run XAcro on the LEO robot to get the URDF:
+
+```
+rosrun xacro xacro src/leo_common/leo_description/urdf/leo_sim.urdf.xacro > /tmp/leo_sim.urdf
+```
+6. Convert LEO robot meshes to .obj for Unity.  In the Docker command prompt:
+
+```
+/zerosim_tools/convert_meshes_to_obj.sh ./src/leo_common/leo_description/models
+```
+
+7. Copy URDF from Docker to host:
+
+```
+# create a directory to store the URDF and meshes
+mkdir my_leo_robot
+
+# copy the URDF
+docker cp my_zerosim_vnc_docker:/tmp/leo_sim.urdf ./my_leo_robot 
+```
+
+8. Copy Meshes from Docker to host:
+
+```
+# Note we are preserving the path
+docker cp my_zerosim_vnc_docker:/catkin_ws/src/leo_common/leo_description/models ./my_leo_robot/leo_description/models
+```
+
+9. Fix the URDF paths to the meshes:
+
+```
+# First fix up the .DAEs to point to the OBJs
+sed -i 's#.dae#.obj#g' my_leo_robot/leo_sim.urdf
+
+# The fix up the .STLs to point to the OBJs
+sed -i 's#.stl#.obj#g' my_leo_robot/leo_sim.urdf
+
+# Now remove the `package://` because we are using the filesystem
+sed -i 's#package://#./#g' my_leo_robot/leo_sim.urdf 
+
+```
+
+10. In Unity import URDF by: Right click and select `ZeroSim --> Import URDF...`

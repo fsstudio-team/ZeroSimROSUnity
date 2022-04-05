@@ -136,7 +136,7 @@ namespace ZO.ImportExport {
 
                         XmlNode xmlBox = xmlGeom.GetChildByName("box");
                         if (xmlBox != null) {
-                            collisionGeo = new GameObject("box_collider"); 
+                            collisionGeo = new GameObject("box_collider");
                             BoxCollider boxCollider = collisionGeo.AddComponent<BoxCollider>();
                             Vector3 size = xmlBox.Attributes["size"].Value.FromURDFStringToVector3();
 
@@ -155,7 +155,7 @@ namespace ZO.ImportExport {
 
                             GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshRenderer>());
                             GameObject.DestroyImmediate(collisionGeo.GetComponent<MeshFilter>());
-                            
+
                         }
 
                         XmlNode xmlSphere = xmlGeom.GetChildByName("sphere");
@@ -259,9 +259,14 @@ namespace ZO.ImportExport {
                 if (xmlWorkingJoint != null) {
                     // set the transform
                     XmlNode xmlOrigin = xmlWorkingJoint.GetChildByName("origin");
-                    Tuple<Vector3, Quaternion> transform = OriginXMLToUnity(xmlOrigin);
-                    linkChild.transform.localPosition = transform.Item1;
-                    linkChild.transform.localRotation = transform.Item2;
+                    Tuple<Vector3, Quaternion> transform = new Tuple<Vector3, Quaternion>(Vector3.zero, Quaternion.identity);
+                    if (xmlOrigin != null) {
+                        transform = OriginXMLToUnity(xmlOrigin);
+                        linkChild.transform.localPosition = transform.Item1;
+                        linkChild.transform.localRotation = transform.Item2;
+                    } else {
+                        Debug.LogWarning("WARNING: Origin is null");
+                    }
 
                     // add rigidbody components
                     Rigidbody childRigidBody = null;
@@ -300,7 +305,7 @@ namespace ZO.ImportExport {
                             if (childRigidBody == null) {
                                 childRigidBody = linkChild.AddComponent<Rigidbody>();
                             }
-                            
+
                         }
                         hingeJoint.ConnectedBody = childRigidBody;
                         hingeJoint.Anchor = transform.Item1;
@@ -328,15 +333,22 @@ namespace ZO.ImportExport {
 
         protected static Tuple<Vector3, Quaternion> OriginXMLToUnity(XmlNode xmlOrigin) {
             Vector3 translation = Vector3.zero;
-            string xyz = xmlOrigin.Attributes["xyz"].Value;
-            if (xyz != null && xyz != "") {
-                translation = xyz.FromURDFStringToVector3().Ros2Unity();
+            if (xmlOrigin.Attributes["xyz"] != null) {
+                string xyz = xmlOrigin.Attributes["xyz"].Value;
+
+                if (xyz != null && xyz != "") {
+                    translation = xyz.FromURDFStringToVector3().Ros2Unity();
+                }
+
             }
 
             Quaternion rotation = Quaternion.identity;
-            string rpy = xmlOrigin.Attributes["rpy"].Value;
-            if (rpy != null && rpy != "") {
-                rotation = rpy.FromURDFStringToVector3().RosRollPitchYawToQuaternion();
+            if (xmlOrigin.Attributes["rpy"] != null) {
+                string rpy = xmlOrigin.Attributes["rpy"].Value;
+                if (rpy != null && rpy != "") {
+                    rotation = rpy.FromURDFStringToVector3().RosRollPitchYawToQuaternion();
+                }
+
             }
             Tuple<Vector3, Quaternion> transform = new Tuple<Vector3, Quaternion>(translation, rotation);
 

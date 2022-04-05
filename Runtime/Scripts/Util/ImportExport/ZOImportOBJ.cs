@@ -109,6 +109,7 @@ namespace ZO.ImportExport {
         }
 
         public static GameObject Import(string objFilePath, bool splitByMaterial ) {
+            Debug.Log($"INFO: Importing OBJ file: {objFilePath}");
             using (StreamReader streamReader = new StreamReader(objFilePath)) {
                 return Import(streamReader, Path.GetFileNameWithoutExtension(objFilePath), Path.GetDirectoryName(objFilePath), splitByMaterial);
             }
