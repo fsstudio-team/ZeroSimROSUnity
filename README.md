@@ -91,6 +91,7 @@ https://youtu.be/VJyvjJUfjv8
 
   * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
   * Unity 2020.x or greater
+  * Git LFS
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
     * Note: ROS Melodic is our primary supported development environment, but ZeroSim has reportedly been able to run on Noetic and ROS2.
 
@@ -98,12 +99,13 @@ https://youtu.be/VJyvjJUfjv8
 
 1. In Unity Hub create a new Unity project using Unity 2020.x or later. ![New Unity Project](Documentation~/images/new_unity_project.png)
 2. Add ZeroSim via Unity Packages:  
-   1. Unity Menu `Window -> Package Manager`
-   2. Select the `+` dropdown:   
+   1. IMPORTANT: Make sure GIT LFS is installed on your system before continuing!  
+   2. Unity Menu `Window -> Package Manager`
+   3. Select the `+` dropdown:   
    ![Dropdown](Documentation~/images/unity_package_manager.png)
-   1. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.git`.  Note this can take upto a few minutes to update but you should see the following:  
+   4. Select `Add Package From Git URL...` and enter `git@github.com:fsstudio-team/ZeroSimROSUnity.git`.  Note this can take upto a few minutes to update but you should see the following:  
    ![ZeroSim Package Installed](Documentation~/images/zerosim_package_installed.png) 
-   1. Import the ZeroSim Samples by selecting the Samples `Import` button in the Package Manager:  
+   5. Import the ZeroSim Samples by selecting the Samples `Import` button in the Package Manager:  
     ![Import ZeroSim Samples](Documentation~/images/import_zerosim_samples.png)
 3. **IMPORTANT** the default Unity physics settings do not work well with a lot of simulations.  It is very much recommended (required for probably most all simulations) to set the physics settings by opening the Unity menu `Edit -> Project Settings... -> Physics` and set the `Default Solver Iterations` to `30` and the `Default Solver Velocity Iterations` to `60`. ![Unity Physics Settings](Documentation~/images/unity_physics_settings.png) 
 4. **IMPORTANT** the default Unity fixed timestep setting does not work well with a lot of simulions.  It is very much recommended to set the `Fixed Timestep` setting by `Edit -> Project Settings... -> Time` to `0.005` ![Timestep Settings](Documentation~/images/unity_timestep_settings.png)
