@@ -269,8 +269,8 @@ rosrun xacro xacro src/leo_common/leo_description/urdf/leo_sim.urdf.xacro > /tmp
 7. Copy URDF from Docker to host:
 
 ```
-# create a directory to store the URDF and meshes
-mkdir my_leo_robot
+# create a directory and a sub-directory to store the URDF and meshes
+mkdir -p my_leo_robot/leo_description
 
 # copy the URDF
 docker cp my_zerosim_vnc_docker:/tmp/leo_sim.urdf ./my_leo_robot 
@@ -280,7 +280,7 @@ docker cp my_zerosim_vnc_docker:/tmp/leo_sim.urdf ./my_leo_robot
 
 ```
 # Note we are preserving the path
-docker cp my_zerosim_vnc_docker:/catkin_ws/src/leo_common/leo_description/models ./my_leo_robot/leo_description/models
+docker cp my_zerosim_vnc_docker:/catkin_ws/src/leo_common/leo_description/models ./my_leo_robot/leo_description
 ```
 
 9. Fix the URDF paths to the meshes:
