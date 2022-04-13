@@ -301,7 +301,6 @@ sed -i 's#package://#./#g' my_leo_robot/leo_sim.urdf
 10. In Unity import URDF by: Right click and select `ZeroSim --> Import URDF...`
 
 ### Modifying package source
-You can download and install the packages of this repositories on your Unity project and modify the package source code. You can do that by one of the following methods:
-
-1. Clone this repository in any folder on your computer. Install them as local packages into your project.
-2. Clone this repository inside a Packages folder in your Unity project.
+You can download and install this package in your Unity project and modify the package source code. You can do that by one of the following methods:
+1. Clone this repository in any folder on your computer. Install it with `Package Manager --> Add package from disk...`.
+2. Clone this repository inside the `Packages` folder in your Unity project.
