@@ -14,6 +14,7 @@
     - [Export URDF](#export-urdf)
     - [Import URDF](#import-urdf)
       - [LEO Robot Example](#leo-robot-example)
+    - [Modifying package source](#modifying-package-source)
 
 ZeroSim is a robotics simulation engine built on the easy to use [Unity 3D](https://unity.com/)  development platform and the power of the [Robotics Operating System (ROS)](https://www.ros.org/).  ZeroSim is designed for ease of use and rapid development of all sorts of robotics and simulation -- from warehouses and industrial settings, to farming and outdoors -- from robotic arms to ground and drone based mobile robots.
 
@@ -298,3 +299,9 @@ sed -i 's#package://#./#g' my_leo_robot/leo_sim.urdf
 ```
 
 10. In Unity import URDF by: Right click and select `ZeroSim --> Import URDF...`
+
+### Modifying package source
+You can download and install the packages of this repositories on your Unity project and modify the package source code. You can do that by one of the following methods:
+
+1. Clone this repository in any folder on your computer. Install them as local packages into your project.
+2. Clone this repository inside a Packages folder in your Unity project.
