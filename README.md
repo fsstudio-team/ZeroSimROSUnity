@@ -90,7 +90,7 @@ https://youtu.be/VJyvjJUfjv8
 ### Recommended System
 
   * Ubuntu 18.04 or 20.04 (may work on MacOS or Windows but currently untested)
-  * Unity 2020.x or greater
+  * Unity 2020.x LTS (*IMPORTANT:* Currnetly Unity 2021.x breaks a lot of things.  We hope to support 2021 in the near future.)
   * Git LFS
   * ROS Melodic (ZeroSim provides a pre-built Docker container for ROS functionality https://hub.docker.com/r/zerodog/zerosim_ros_vnc)
     * Note: ROS Melodic is our primary supported development environment, but ZeroSim has reportedly been able to run on Noetic and ROS2.
