@@ -154,7 +154,7 @@ namespace ZO.Sensors {
             // do raycasts
             // TODO: use batch raycasts like the 3d raycast
             for (int i = 0; i < _rayCount; i++) {
-                Vector3 axis = new Vector3(0, MinAngleDegrees - AngleIncrementDegrees * i, 0);
+                Vector3 axis = new Vector3(0, -1 * MinAngleDegrees - AngleIncrementDegrees * i, 0);
                 Vector3 direction = Quaternion.Euler(axis) * transform.forward;
                 _rays[i] = new Ray(transform.position, direction);
                 _ranges[i] = 0;
